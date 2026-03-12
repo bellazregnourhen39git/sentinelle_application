@@ -1,0 +1,6 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}\\sidra_env\\Scripts\\python.exe",
+    "python.analysis.extraPaths": [
+        "${workspaceFolder}\\sidra_env\\Lib\\site-packages"
+    ]
+}

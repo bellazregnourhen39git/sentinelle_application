@@ -1,0 +1,26 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0d9488;
+  --color-brand-700: #0f766e;
+  --color-brand-800: #115e59;
+  --color-brand-900: #134e4a;
+}
+
+@layer base {
+  body {
+    direction: ltr;
+  }
+  
+  body[dir="rtl"] {
+    direction: rtl;
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+  }
+}
+
+.glass-panel {
+  @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-xl rounded-2xl;
+}
