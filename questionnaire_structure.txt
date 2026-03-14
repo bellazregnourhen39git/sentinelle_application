@@ -1,0 +1,240 @@
+____°____
+MINISTERE DE LA SANTE
+____°____
+INSTITUT NATIONAL DE LA SANTE
+ENQUETE NATIONALE EN MILIEU SCOLAIRE 
+Les conduites à risque et facteurs associés en Tunisie
+« MedSPAD »
+Tout d’abord, veuillez lire ce qui suit :
+Ce questionnaire fait partie d’une étude internationale sur les comportements à risque et leurs facteurs chez les élèves des pays méditerranéens, auquel répondront des nombreux élèves de différents pays méditerranéens. Cette étude est appelée MedSPAD.
+L’élève qui va répondre à ce questionnaire demeure totalement anonyme. Vous ne devez ni écrire votre prénom ni mentionner n’importe qu’elle autre information qui puisse vous identifier.
+Une fois vous avez terminé de remplir ce questionnaire, veuillez le mettre dans une enveloppe mise à la disposition des élèves. Une fois tous les élèves ont mis leur questionnaire dans l’enveloppe, le responsable la prendra après l’avoir bien fermée et sans consulter aucun questionnaire.
+Votre classe a été choisie aléatoirement pour participer à cette étude qui est réalisée par l’Institut National de la Santé Publique (INSP). 
+Rappelez-vous bien que votre participation est volontaire, et que si vous avez une question à laquelle vous ne voulez pas répondre, pour une raison ou une autre, veuillez la laisser vide. L’important c’est que votre réponse soit aussi sincère et bien réfléchie que possible.
+Les résultats ne seront pas présentés par classe ou par lycée de façon individuelle. N’oubliez pas que vos réponses sont totalement anonymes.
+Si la réponse ne correspond pas exactement à ce que vous voulez dire, choisissez la réponse la plus proche.
+Indiquez la réponse à chaque question en mettant (x) dans la case correspondante.
+En cas de doute, levez la main et le responsable vous aidera.
+Merci pour votre coopération.
+Vous pouvez maintenant commencer à remplir le questionnaire.
+C.A01	Genre?
+C.A02	Date de naissance :
+	                                          Mois		           année
+C.A03	A Quelle fréquence pratiquez-vous chacune des activités suivantes ?
+(Cochez une seule case pour chaque ligne)
+C.A04	Au cours du dernier mois, combien de jours avez-vous manqué le lycée pour l'une des raisons suivantes ? 
+(Cochez une seule case pour chaque ligne)
+C.A05	Comment évaluez-vous votre rendement scolaire à la fin du dernier trimestre ?
+(Cochez une seule case)
+C.A07 Laquelle/lesquelles des personnes suivantes vit avec vous dans la même maison?
+(Cochez autant de cases que nécessaire)
+C .A07/2 Q11.a) : Si vous n’habitez pas avec vos parents ensemble, précisez pourquoi ?
+ Décès de l’un des parents ou bien les deux
+ Divorce
+ Migration
+ Autres causes
+Préciser
+…………………………………………………..
+O.A08	Durant les 30 derniers jours, combien de nuits avez vous passé en dehors de la maison ?
+(Cochez une seule case)
+C.A09	D’une manière générale, quel est votre degré de satisfaction de votre relation avec :
+(Cochez une seule case pour chaque ligne)
+Non applicable :* Personne non présente ou décédée
+C.B01 Quel est le plus haut niveau de scolarité atteint par votre père ? 
+(cochez une seule case)
+C.B02 Quel est le plus haut niveau de scolarité atteint par votre mère ? 
+(cochez une seule case)
+C.B03 	Votre père a-t-il un emploi ? 
+(Cochez une seule case)
+C.B04  Votre mère a-t-elle un emploi ?
+(Cochez une seule case)
+C.B05 	Comment décrivez-vous la situation économique de votre famille par rapport au niveau économique des autres familles en Tunisie ? 
+(Cochez une seule case)
+C.C01	À quel point pensez-vous qu'il serait difficile de vous procurer des cigarettes si vous le vouliez? 
+(Cochez une seule case)	
+C.C02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume des cigarettes? 
+(Cochez une seule case pour chaque ligne)
+C.C03	Combien de fois avez-vous fumé des cigarettes (sans compter les cigarettes électroniques)?
+(Cochez une seule case pour chaque ligne)
+C.C04	Combien de fois avez-vous fumé des cigarettes au cours des 30 DERNIERS JOURS? (sans compter les cigarettes électroniques) 
+(Cochez une seule case)
+C.C05	À quel âge avez-vous commencé à faire ce qui suit? 
+(Cochez une seule case pour chaque ligne)
+C.D01 À quel point pensez-vous qu'il serait difficile de vous procurer des cigarettes électroniques si vous le vouliez?  (cochez une seule case)
+C.D02  Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume des cigarettes électroniques?(Cochez une seule case pour chaque ligne)
+C.D03	Combien de fois avez-vous fumé des cigarettes électroniques?
+(Cochez une seule case pour chaque ligne)	
+C.D04	Combien de fois avez-vous fumé des cigarettes électroniques au cours des 30 DERNIERS JOURS? (Cochez une seule case)	
+C.D05	À quel âge avez-vous commencé à faire ce qui suit ?
+(Cochez une seule case pour chaque ligne)
+C.E01	À quel point pensez-vous qu'il serait difficile de vous procurer un narguilé si vous le vouliez ?
+(Cochez une seule case)
+C.E02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume le narguilé?
+(Cochez une seule case pour chaque ligne)
+C.E03	Combien de fois avez-vous fumé narguilé?
+(Cochez une seule case pour chaque ligne)	
+C.E04	Combien de fois avez-vous fumé le narguilé au cours des 30 DERNIERS JOURS ? 
+(Cochez une seule case)
+C.E05	À quel âge avez-vous commencé à faire ce qui suit?
+ (Cochez une seule case pour chaque ligne)
+C.G01	À quel point pensez-vous qu'il serait difficile de vous procurer les boissons suivantes si vous le vouliez ? (cochez une seule case pour chaque ligne)
+C.G02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme les boissons alcoolisées?  (Cochez une seule case pour chaque ligne)
+C.G03	Combien de fois avez-vous consommé des boissons alcoolisées? 
+                   (Cochez une seule case pour chaque ligne)	
+C.G04	Combien de fois avez-vous consommé les boissons alcoolisées suivantes au cours des 30 DERNIERS JOURS? (Cochez une seule case pour chaque ligne)
+C.G05  Durant les 30 DERNIERS JOURS, combien de fois avez-vous consommé 5 boissons alcoolisées ou plus à la même occasion (par exemple durant un samedi) ? (Notez qu'une seule boisson alcoolisée correspond à un verre de bière de 200 ml, un verre de vin, un demi-verre de cocktails longs (rhum et coca, gin et tonic, etc.)?
+(Cochez une seule case)	
+C.G06	Combien de fois (éventuellement) avez-vous été intoxiqué par la consommation des boissons alcoolisées, par exemple vous avez titubé en marchant, vous ne pouvait pas parler clairement, vous avez perdu la capacité de vous souvenir des événements ou vous avez vomi ? 
+(Cochez une seule case pour chaque ligne)
+C.G07	À quel âge avez-vous commencé à faire ce qui suit pour la première fois ? 
+(Cochez une seule case pour chaque ligne)
+C.H01	À quel point pensez-vous qu'il serait difficile de vous procurer des tranquillisants ou sédatifs sans prescription médicale si vous le vouliez? 
+(cochez une seule case)
+C.H02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme des tranquillisants ou sédatifs, sans prescription médicale? 
+(Cochez une seule case pour chaque ligne)
+C.H03	Combien de fois avez-vous consommé des tranquillisants ou sédatifs sans prescription médicale?
+ (Cochez une seule case pour chaque ligne)	
+C.H04	À quel âge avez-vous consommé pour la première fois des tranquillisants ou sédatifs sans prescription médicale ?
+(Cochez une seule case)
+C.I01	À quel point pensez-vous qu'il serait difficile de vous procurer du cannabis si vous le vouliez? 
+
+ (Cochez une seule case)
+C.I02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme le cannabis ?
+ (Cochez une seule case pour chaque ligne)
+C.I03	Combien de fois avez-vous consommé du cannabis? 
+(Cochez une seule case pour chaque ligne)
+C.I04	À quel âge avez-vous consommé du cannabis pour la première fois ? 
+(Cochez une seule case)
+C.I05	Durant les DERNIERS 12 MOIS, avez-vous pris l'un des types de cannabis suivants? 
+(Cochez une seule case pour chaque ligne)
+C.I06	Avez-vous consommé du cannabis durant les 12 DERNIERS MOIS ?
+(Cochez une seule case) 
+(Cochez une seule case pour chaque ligne)
+C.J01	À quel point pensez-vous qu'il serait difficile de vous procurer de la cocaïne si vous le vouliez? 
+(Cochez une seule case)
+C.J02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de la cocaïne? 
+(Cochez une seule case pour chaque ligne)
+C.J03	Combien de fois avez vous consommé la cocaïne? 
+ (Cochez une seule case pour chaque ligne)
+C.J04	À quel âge avez-vous consommé de la cocaïne pour la première fois ? 
+(Cochez une seule case)
+C.K01	À quel point pensez-vous qu'il serait difficile de vous procurer de l’Ecstasy si vous le vouliez? 
+(Cochez une seule case)
+C.K02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de l’Ecstasy? (Cochez une seule case pour chaque ligne)
+C.K03	Combien de fois avez-vous consommé de l’Ecstasy? 
+(Cochez une seule case pour chaque ligne)	
+C.K04	À quel âge avez-vous consommé de l’Ecstasy pour la première fois? 
+ (Cochez une seule case)
+C.L01	À quel point pensez-vous qu'il serait difficile de vous procurer de l’Héroïne si vous le vouliez? 
+(Cochez une seule case)
+C.L02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de l’Héroïne? 
+(Cochez une seule case pour chaque ligne)
+C.L03	 Combien de fois avez-vous consommé de l’Héroïne? 
+          (Cochez une seule case pour chaque ligne)
+C.L04	À quel âge avez-vous consommé pour la première fois de l’Héroïne? 
+(Cochez une seule case)
+O.M01	À quel point pensez-vous qu'il serait difficile de vous procurer des inhalants narcotiques si vous le vouliez? 
+(Cochez une seule case)
+O.M02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme des inhalants narcotiques? 
+  ( Cochez une seule case pour chaque ligne)
+O.M03	Combien de fois avez-vous consommé des inhalants narcotiques? 
+(Cochez une seule case pour chaque ligne)	
+O.M04	À quel âge avez-vous consommé des inhalants narcotiques pour la première fois? 
+(Cochez une seule case)	
+C.N01	À quel point pensez-vous qu'il serait difficile de vous procurer les substances suivantes si vous le vouliez? 
+(Cochez une seule case pour chaque ligne)
+C.N02	Combien de fois dans VOTRE VIE avez-vous utilisé chacune des substances suivantes ?
+(Cochez une seule case pour chaque ligne)
+C.N03  Au cours des12 DERNIERS MOIS, combien de fois avez-vous utilisé chacune des substances suivantes ? 
+(Cochez une seule case pour chaque ligne)
+C.N04	À quel âge avez-vous consommé pour la première fois chacune des substances suivantes ? 
+(Cochez une seule case pour chaque ligne)
+C.P01	Combien de fois avez-vous consommé l’une de ces substances? 
+(Cochez une seule case dans chaque ligne)	
+C.P02 	Si vous avez consommé l'une de ces nouvelles substances au cours des 12 derniers mois, quelle forme avaient-elles ? 
+(Cochez une ou plusieurs case(s))
+C.P03	Combien de fois DANS VOTRE VIE avez-vous consommé l'une des substances suivantes ?
+(Cochez une seule case pour chaque ligne)
+C.Q01	A quel point pensez-vous que les gens risquent de s’exposer au danger (physique ou autre) si… ?  (cochez une seule case pour chaque ligne)
+C.Q02	A quel point pensez-vous que les gens risquent de s’exposer au danger (physique ou autre) si… ?  (Cochez une seule case pour chaque ligne)
+C.Q03  Si vous avez eu un problème à cause de l’alcool/ des drogues, savez-vous à qui vous adresser pour obtenir de l’aide? 
+(Cochez une seule case pour chaque ligne)
+C.R01	Durant les 7 DERNIERS JOURS, combien d’heures avez-vous passé sur les réseaux sociaux en communiquant avec les autres sur internet?
+(Cochez une seule case pour chaque ligne)
+C.R02	Dans quelle mesure êtes-vous d’accord ou en désaccord avec les avis suivants concernant l’utilisation des réseaux sociaux pour communiquer avec les autres sur internet ? 
+(Cochez une seule case dans chaque ligne)
+C.S01	Durant les 30 DERNIERS JOURS, combien d’heures avez-vous passé sur les jeux vidéo ? 
+(Cochez une seule case pour chaque ligne)
+C.S02	Durant les 7 DERNIERS JOURS, combien de jours avez-vous passé sur les jeux vidéo? 
+(Cochez une seule case)
+C.S03	Dans quelle mesure êtes-vous d’accord ou en désaccord avec les avis suivants concernant les jeux vidéo ? 
+(Cochez une seule case dans chaque ligne)
+C.T01 	Combien de fois avez-vous joué aux jeux d’argent durant les 12 DERNIERS MOIS? 
+(cochez une seule case)
+C.T02 Si vous avez joué aux jeux d’argent durant les 12 DERNIERS MOIS, quel type de jeu avez-vous joué dans les espaces de jeux d’argent (HORS LIGNE)
+(Cochez une seule case pour chaque ligne)
+C.T03 Si vous avez joué aux jeux d’argent sur internet durant les 12 DERNIERS MOIS, à quels jeux avez-vous joué? 
+(Cochez une seule case pour chaque ligne)
+Maintenant, repensez aux jeux d’argent en général
+C.T04 	Avez-vous ressenti le besoin de multiplier de plus en plus la valeur vos mises?
+C.T05 Avez-vous déjà dû mentir à des personnes importantes pour vous sur le montant de vos mises?
+C.T06 	Si vous avez joué aux jeux d’argent durant les 12 DERNIERS MOIS…. 
+(Cochez une seule case pour chaque ligne)
+C.U01: Au cours des 12 derniers mois, combien de fois t'es-tu battu physiquement avec une ou plusieurs autres personnes ?
+1.	      0 fois
+2.	      1 fois
+3.	      2 ou 3 fois
+4.	      4 ou 5 fois
+5.	      6 ou 7 fois
+6.	      8 ou 9 fois
+7.	      10 ou 11 fois
+8.	      12 fois ou plus
+C.U02 : Quelles étaient les circonstances de la dernière bagarre ?
+1.	      Je me battais avec quelqu'un (J’étais l’initiateur)
+2.	      J’ai été attaqué, agressé ou maltraité par une (plusieurs) personne(s)
+C.U03 : Quel était le lieu de la bagarre ?
+1.	      Au sein du lycée
+2.	      A l’extérieur du lycée
+C.U04 : En cas de problème(s) telle qu’une bagarre entre toi et un ou plusieurs autres élèves, est ce que les personnels du lycée (Enseignants, surveillant, directeur) interviennent pour t’aider ?
+Oui 	Non 
+C.U05 : Avez-vous vécu ou ressenti, suite à une bagarre, une ou plusieurs conséquences de ce genre ? (Vous pouvez choisir une ou plusieurs propositions)
+1.	      Absentéisme du lycée
+2.	      Défaut de concentration aux études
+3.	      Anxiété et peur
+4.	      Cauchemars
+5.	      Insomnie
+La question suivante porte sur la blessure la plus grave que vous ayez eue au cours des 12 derniers mois. Une blessure est grave lorsqu’elle vous fait manquer au moins un jour entier de vos activités quotidiennes (tels que d’aller au lycée, le sport) et exige des soins médicaux.
+C.U06 : Au cours des 12 derniers mois, dans quelle circonstance avez-vous été très gravement blessé ?
+1.	      Je n'ai pas été très gravement blessé au cours des 12 derniers mois
+2.	      Je me suis blessé accidentellement
+3.	      Quelqu'un d'autre m'a blessé accidentellement
+4.	      Je me suis blessé délibérément
+5.	      Quelqu'un d'autre m'a blessé délibérément
+C.V01: Durant le mois passé, combien de fois avez-vous eu le sentiment de ne pas pouvoir contrôler les aspects importants de votre vie ?
+1.	      Jamais
+2.	      Presque jamais
+3.	      Parfois
+4.	      Assez souvent
+5.	      Très souvent
+C.V02: Durant le mois passé, combien de fois avez-vous eu confiance en votre capacité à gérer vos problèmes personnels ?
+1.	      Jamais
+2.	      Presque jamais
+3.	      Parfois
+4.	      Assez souvent
+5.	      Très souvent
+C.V3: Durant le mois passé, combien de fois avez-vous eu le sentiment les choses allaient comme vous le vouliez ?
+1.	      Jamais
+2.	      Presque jamais
+3.	      Parfois
+4.	      Assez souvent
+5.	      Très souvent
+C.V04: Durant le mois passé, combien de fois avez-vous eu le sentiment que les difficultés s'accumulaient tellement que vous ne pourriez pas les surmonter ?
+1.	      Jamais
+2.	      Presque jamais
+3.	      Parfois
+4.	      Assez souvent
+5.	      Très souvent
+C.Z01 Si vous étiez un consommateur d'alcool, pensez-vous que vous auriez répondu à ce questionnaire comme vous l'avez fait? 
+(Choisissez une seule réponse)
+C.Z02 Si vous étiez un consommateur de cannabis, pensez-vous que vous répondriez à ce questionnaire comme vous l’avez fait? (Choisissez une seule réponse)
+(Choisissez une seule réponse)

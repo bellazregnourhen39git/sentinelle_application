@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import (
     RegisterView, ProfileView, QuestionnaireSubmitView,
     SchoolStatsView, GovernorateStatsView, NationalStatsView,
-    SidraDataExportView
+    SidraDataExportView, HomepageView, SectionStatsView
 )
 
 urlpatterns = [
@@ -23,4 +23,8 @@ urlpatterns = [
 
     # SIDRA Integration
     path('sidra/export/', SidraDataExportView.as_view(), name='sidra_export'),
+
+    # Sentinelle Dashboards (New)
+    path('homepage/', HomepageView.as_view(), name='homepage'),
+    path('section-stats/<str:section_id>/', SectionStatsView.as_view(), name='section_stats'),
 ]
