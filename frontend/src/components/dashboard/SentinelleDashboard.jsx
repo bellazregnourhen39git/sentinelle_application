@@ -9,9 +9,78 @@ import SectionDetailPanel from './SectionDetailPanel';
 
 const SentinelleDashboard = () => {
     const [selectedSection, setSelectedSection] = useState(null);
+    const [selectedSectionData, setSelectedSectionData] = useState(null);
     const [homepageData, setHomepageData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+
+    const ALL_SECTIONS_INFO = {
+        'A': 'Données Démographiques', 'B': 'Contexte Familial', 'C': 'Cigarettes', 'D': 'E-cigarettes', 'E': 'Narguilé',
+        'G': 'Alcool', 'H': 'Tranquillisants', 'I': 'Cannabis', 'J': 'Cocaïne', 'K': 'Ecstasy', 
+        'L': 'Héroïne', 'M': 'Inhalants', 'N': 'Autres Substances', 'P': 'NPS', 'Q': 'Perception des Risques',
+        'R': 'Réseaux Sociaux', 'S': 'Jeux Vidéo', 'T': 'Jeux d\'Argent', 'U': 'Violence', 'V': 'Santé Mentale / Stress', 'Z': 'Honnêteté'
+    };
+
+    const SECTION_STATIC_DATA = {
+        'A': { p: "100%", e: 1450, i: "Faible", l: [100, 100, 100], n: [100, 100, 100], s: [{ label: "Rendement Scolaire Excellent (A05)", value: "32%" }, { label: "Absentéisme > 3 jours (A04)", value: "14%" }] },
+        'B': { p: "85.2%", e: 1420, i: "Moyen", l: [85.2, 80.1, 75.0], n: [82.0, 78.5, 72.0], s: [{ label: "Situation Éco. Défavorable (B05)", value: "28%" }, { label: "Parents Sans Emploi (B03/B04)", value: "12%" }] },
+        'C': { p: "12.8%", e: 1390, i: "Moyen", l: [12.8, 8.5, 4.2], n: [10.5, 7.0, 3.5], s: [{ label: "Usage Quotidien 30j (C04)", value: "6.5%" }, { label: "Amis Fumeurs (C02)", value: "45%" }] },
+        'D': { p: "19.5%", e: 1385, i: "Élevé", l: [19.5, 14.2, 9.8], n: [15.0, 10.5, 6.0], s: [{ label: "Usage Quotidien 30j (D04)", value: "8.2%" }, { label: "Accessibilité Facile (D01)", value: "62%" }] },
+        'E': { p: "6.4%", e: 1350, i: "Faible", l: [6.4, 3.2, 1.1], n: [7.5, 4.0, 1.5], s: [{ label: "Usage Quotidien 30j (E04)", value: "1.2%" }, { label: "Amis Consommateurs (E02)", value: "31%" }] },
+        'G': { p: "8.2%", e: 1370, i: "Moyen", l: [8.2, 5.1, 2.0], n: [7.1, 4.5, 1.8], s: [{ label: "Binge Drinking Récent (G05)", value: "18%" }, { label: "Ivresse/Intoxication (G06)", value: "11%" }] },
+        'H': { p: "4.1%", e: 1300, i: "Élevé", l: [4.1, 2.5, 1.2], n: [3.0, 1.8, 0.9], s: [{ label: "Sans Prescription (H03)", value: "4.1%" }, { label: "Initiation Précoce (H04)", value: "1.5%" }] },
+        'I': { p: "21.4%", e: 1365, i: "Élevé", l: [21.4, 15.0, 8.5], n: [15.2, 10.1, 4.8], s: [{ label: "Usage Derniers 12 Mois (I05)", value: "15%" }, { label: "Accessibilité Facile (I01)", value: "48%" }] },
+        'J': { p: "1.5%", e: 1290, i: "Élevé", l: [1.5, 0.8, 0.3], n: [1.2, 0.6, 0.2], s: [{ label: "Accessibilité Facile (J01)", value: "12%" }, { label: "Usage Unique (J03)", value: "0.8%" }] },
+        'K': { p: "2.8%", e: 1280, i: "Moyen", l: [2.8, 1.5, 0.5], n: [2.5, 1.2, 0.4], s: [{ label: "Amis Consommateurs (K02)", value: "5%" }, { label: "Accessibilité Facile (K01)", value: "18%" }] },
+        'L': { p: "0.4%", e: 1250, i: "Élevé", l: [0.4, 0.2, 0.1], n: [0.3, 0.1, 0.1], s: [{ label: "Entourage Consommateur (L02)", value: "1%" }, { label: "Accessibilité Facile (L01)", value: "3%" }] },
+        'M': { p: "3.2%", e: 1275, i: "Moyen", l: [3.2, 1.8, 0.7], n: [2.8, 1.5, 0.5], s: [{ label: "Accessibilité Facile (M01)", value: "42%" }, { label: "Entourage Usager (M02)", value: "8%" }] },
+        'N': { p: "5.5%", e: 1260, i: "Moyen", l: [5.5, 3.0, 1.2], n: [4.5, 2.5, 1.0], s: [{ label: "Cocktails Médicamenteux (N02)", value: "2.1%" }, { label: "Accessibilité Facile (N01)", value: "35%" }] },
+        'P': { p: "1.2%", e: 1240, i: "Élevé", l: [1.2, 0.7, 0.2], n: [0.9, 0.5, 0.1], s: [{ label: "Forme Solide (P02)", value: "0.5%" }, { label: "Usage 12 Derniers Mois (P01)", value: "0.7%" }] },
+        'Q': { p: "92.0%", e: 1400, i: "Faible", l: [92.0, 88.5, 85.0], n: [90.0, 85.0, 80.0], s: [{ label: "Risque Perçu Identifié (Q01)", value: "85%" }, { label: "Sait où Trouver de l'Aide (Q03)", value: "62%" }] },
+        'R': { p: "98.1%", e: 1410, i: "Faible", l: [98.1, 95.2, 90.5], n: [97.0, 93.5, 88.0], s: [{ label: "+4 Heures/Jour (R01)", value: "41%" }, { label: "Sentiment de Dépendance (R02)", value: "55%" }] },
+        'S': { p: "75.4%", e: 1395, i: "Moyen", l: [75.4, 65.0, 55.2], n: [70.5, 60.2, 50.5], s: [{ label: "Impact sur le Sommeil (S03)", value: "34%" }, { label: "Usage Quotidien (S02)", value: "52%" }] },
+        'T': { p: "14.2%", e: 1320, i: "Élevé", l: [14.2, 8.5, 4.1], n: [10.5, 6.0, 2.5], s: [{ label: "Besoin d'Augmenter les Mises (T04)", value: "5.5%" }, { label: "Mensonges sur Mises (T05)", value: "3.2%" }] },
+        'U': { p: "24.5%", e: 1335, i: "Élevé", l: [24.5, 15.2, 8.0], n: [18.5, 10.5, 5.0], s: [{ label: "Bagarre dans le Lycée (U03)", value: "12%" }, { label: "A Nécessité des Soins (U06)", value: "4%" }] },
+        'V': { p: "38.6%", e: 1345, i: "Élevé", l: [38.6, 25.4, 15.2], n: [32.0, 20.1, 12.5], s: [{ label: "Sentiment de Perte de Contrôle (V01)", value: "22%" }, { label: "Difficultés Insurmontables (V04)", value: "18%" }] },
+        'Z': { p: "88.5%", e: 1360, i: "Faible", l: [88.5, 85.0, 80.0], n: [90.5, 88.0, 82.5], s: [{ label: "Biais Déclaratif Alcool (Z01)", value: "11%" }, { label: "Biais Déclaratif Cannabis (Z02)", value: "15%" }] }
+    };
+
+    const statsBySection = Object.keys(ALL_SECTIONS_INFO).reduce((acc, key) => {
+        const data = SECTION_STATIC_DATA[key] || SECTION_STATIC_DATA['A'];
+        const sectionName = ALL_SECTIONS_INFO[key];
+        const trendWord = data.l[0] > data.n[0] ? "à la hausse" : (data.l[0] < data.n[0] ? "plus faible" : "stable");
+
+        acc[key] = {
+            prevalence: data.p,
+            echantillon: data.e,
+            indiceAlerte: data.i,
+            distributionComparative: { 
+                local: data.l, 
+                national: data.n, 
+                labels: ["Usage Life", "Usage 12M", "Usage 30j"] 
+            },
+            specificInsights: data.s,
+            correlations: [
+                { tag: "Santé Mentale", value: 45, label: "Lien Stéréotypé" },
+                { tag: "Environnement", value: 32, label: "Pression Sociale" },
+                { tag: "Accessibilité", value: 68, label: "Disponibilité Locale" },
+                { tag: "Scolarité", value: 54, label: "Performances Scolaires" },
+                { tag: "Famille", value: 29, label: "Consommation Parents" },
+                { tag: "Digital", value: 41, label: "Cyberdépendance" }
+            ],
+            interpretation: `L'indicateur pour [${sectionName}] montre une tendance ${trendWord} dans la zone locale par rapport aux données nationales.`
+        };
+        return acc;
+    }, {});
+
+    const handleSectionClick = (id) => {
+        setSelectedSection(id);
+        if (id) {
+            setSelectedSectionData(statsBySection[id] || statsBySection['A']);
+        } else {
+            setSelectedSectionData(null);
+        }
+    };
 
     const fetchHomepage = async () => {
         try {
@@ -81,7 +150,7 @@ const SentinelleDashboard = () => {
                 <RadialSectionWheel 
                     intensityData={intensityData}
                     activeSection={selectedSection}
-                    onSectionClick={setSelectedSection}
+                    onSectionClick={handleSectionClick}
                     totalSubmissions={homepageData?.headline?.n_submissions}
                 />
 
@@ -108,7 +177,8 @@ const SentinelleDashboard = () => {
                         >
                             <SectionDetailPanel 
                                 sectionId={selectedSection} 
-                                onBack={() => setSelectedSection(null)} 
+                                data={selectedSectionData}
+                                onBack={() => handleSectionClick(null)} 
                             />
                         </motion.div>
                     ) : (
@@ -217,7 +287,7 @@ const SentinelleDashboard = () => {
                             <div className="grid grid-cols-5 gap-5">
                                 {homepageData.top_sections.map((section, idx) => (
                                     <div key={idx} 
-                                         onClick={() => setSelectedSection(section.section_id)}
+                                         onClick={() => handleSectionClick(section.section_id)}
                                          className="group cursor-pointer bg-white p-8 rounded-[40px] shadow-lg shadow-slate-100 border border-slate-50 hover:border-slate-200 transition-all hover:scale-[1.05] hover:shadow-2xl active:scale-95">
                                         <div className="w-10 h-10 rounded-2xl flex items-center justify-center font-black text-white shadow-lg mb-6 group-hover:rotate-12 transition-transform" 
                                              style={{ backgroundColor: '#D85A30' }}>

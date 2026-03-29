@@ -1,214 +1,284 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { 
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, 
-    ResponsiveContainer, Cell
-} from 'recharts';
-import { 
-    Info, AlertCircle, Share2, Map as MapIcon,
-    ArrowUpRight, ArrowDownRight, Zap, ChevronLeft, Activity, Plus
+    X, 
+    TrendingUp, 
+    AlertTriangle, 
+    Users, 
+    ArrowLeft, 
+    Globe, 
+    BarChart, 
+    Zap,
+    Brain,
+    Activity,
+    ShieldCheck
 } from 'lucide-react';
-import api from '../../api';
+import TunisiaSVGMap from './TunisiaSVGMap';
 
-const SectionDetailPanel = ({ sectionId, onBack }) => {
-    const [data, setData] = useState(null);
-    const [loading, setLoading] = useState(true);
+const SectionDetailPanel = ({ sectionId, onBack, data }) => {
+    // Helper to normalize prevalence for map intensity
+    const getIntensity = (val) => {
+        if (!val) return 1.0;
+        const num = parseFloat(val);
+        if (isNaN(num)) return 1.0;
+        // Scale 0-100 to 0.5-2.5 range for map colors
+        return 0.5 + (num / 100) * 2.0;
+    };
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setLoading(true);
-            try {
-                const res = await api.get(`section-stats/${sectionId}/`, {
-                    params: { scope_type: 'national' }
-                });
-                setData(res.data);
-            } catch (err) {
-                console.error("Failed to fetch section stats", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchData();
-    }, [sectionId]);
-
-    if (loading) return (
-        <div className="flex flex-col items-center justify-center min-h-[400px] gap-6 bg-white rounded-[50px] shadow-xl shadow-slate-100 border border-slate-50">
-            <div className="relative w-12 h-12">
-                <div className="absolute inset-0 border-4 border-slate-50 rounded-full"></div>
-                <div className="absolute inset-0 border-4 border-t-brand-600 rounded-full animate-spin"></div>
-            </div>
-            <p className="text-[10px] font-black text-slate-300 uppercase tracking-[4px]">Chargement des données...</p>
-        </div>
-    );
-
-    if (!data) return (
-        <div className="p-12 bg-orange-50 rounded-[40px] border border-orange-100 text-center">
-            <AlertCircle className="w-12 h-12 text-orange-400 mx-auto mb-4" />
-            <h3 className="text-xl font-black text-orange-900 mb-2">Données Indisponibles</h3>
-            <p className="text-orange-700 text-sm font-medium">L'échantillon collecté pour cette section est actuellement insuffisant pour générer une analyse statistique fiable.</p>
-            <button onClick={onBack} className="mt-6 px-6 py-2 bg-orange-200 text-orange-900 rounded-xl font-black text-[10px] uppercase tracking-widest">
-                Retour
-            </button>
-        </div>
-    );
+    if (!data) return null;
 
     return (
-        <motion.div 
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="flex flex-col gap-10"
-        >
-            {/* Header / Intro */}
+        <div className="flex flex-col gap-10 pb-24 animate-in fade-in slide-in-from-right-10 duration-700">
+            {/* Context Navigation */}
             <div className="flex items-center justify-between">
                 <button 
                     onClick={onBack}
-                    className="group flex items-center gap-3 px-5 py-3 bg-white hover:bg-slate-900 text-slate-400 hover:text-white rounded-2xl shadow-sm border border-slate-100 transition-all font-black uppercase text-[10px] tracking-widest"
+                    className="flex items-center gap-3 text-slate-400 hover:text-brand-600 font-black text-[11px] uppercase tracking-[0.2em] transition-all bg-white/80 px-6 py-3 rounded-2xl border border-slate-100 hover:shadow-lg active:scale-95"
                 >
-                    <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
-                    Retour
+                    <ArrowLeft size={16} /> Dashboard Principal
                 </button>
-                <div className="text-right">
-                    <h2 className="text-3xl font-black text-slate-900 tracking-tighter uppercase">Section {sectionId}</h2>
-                    <p className="text-sm text-slate-400 font-bold uppercase tracking-widest leading-none mt-1">Détails Statistiques</p>
+                <div className="flex items-center gap-3 bg-brand-600 text-white px-5 py-2.5 rounded-2xl shadow-xl shadow-brand-100">
+                    <ShieldCheck size={14} className="animate-pulse" />
+                    <span className="text-[10px] font-black uppercase tracking-widest">Périmètre Analysé</span>
                 </div>
             </div>
 
-            {/* Block 1 — KPI Cards (3 cards) */}
-            <div className="grid grid-cols-3 gap-6">
-                {data.kpis.map((kpi, idx) => (
-                    <div key={idx} className="bg-white p-8 rounded-[40px] shadow-lg shadow-slate-100 border border-slate-50 flex flex-col justify-between group">
-                        <div className="flex items-start justify-between mb-4">
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[2px]">{kpi.label}</p>
-                            <Info size={14} className="text-slate-200 group-hover:text-brand-300 transition-colors" />
-                        </div>
-                        <p className="text-4xl font-black text-slate-900 tracking-tighter mb-4">{kpi.value}</p>
-                        <p className="text-[10px] font-medium text-slate-400 leading-relaxed italic border-t border-slate-50 pt-4">
-                            {kpi.desc}
-                        </p>
+            {/* PRIMARY KPIs GRID */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {/* PREVALENCE */}
+                <div className="bg-white p-8 rounded-[45px] shadow-2xl shadow-slate-100 border border-slate-50 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <TrendingUp size={80} className="text-brand-600" />
                     </div>
-                ))}
-            </div>
-
-            {/* Block 2 — Distribution Chart */}
-            <div className="bg-white p-12 rounded-[50px] shadow-xl shadow-slate-100 border border-slate-50">
-                <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-                    <div className="max-w-md">
-                        <h3 className="text-xl font-black text-slate-800 tracking-tight uppercase mb-2">Distribution Comparative</h3>
-                        <p className="text-sm text-slate-400 font-medium italic">
-                            "{data.chart.desc}"
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-6 text-[10px] font-black text-slate-400 uppercase tracking-widest bg-slate-50 px-6 py-3 rounded-2xl border border-slate-100">
-                        <div className="flex items-center gap-2">
-                            <div className="w-2.5 h-2.5 rounded-full bg-brand-600"></div> Local
+                    <div className="relative z-10">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Prévalence</p>
+                        <div className="flex items-baseline gap-1">
+                            <h2 className="text-6xl font-black text-slate-900 tracking-tighter tabular-nums">
+                                {data?.prevalence || "0"}
+                            </h2>
+                            <span className="text-xl font-bold text-slate-300">%</span>
                         </div>
-                        <div className="flex items-center gap-2">
-                            <div className="w-2.5 h-2.5 rounded-full bg-slate-200"></div> National
+                        <div className="mt-6 flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase">
+                            <div className="w-1.5 h-1.5 rounded-full bg-green-500" /> Population Locale
                         </div>
                     </div>
                 </div>
-                
-                <div className="h-[350px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data.chart.labels.map((l, i) => ({
-                            name: l,
-                            local: data.chart.datasets[0].data[i],
-                            national: data.chart.datasets[1].data[i]
-                        }))} margin={{ top: 0, right: 30, left: 0, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="10 10" vertical={false} stroke="#f1f5f9" />
-                            <XAxis 
-                                dataKey="name" 
-                                axisLine={false} 
-                                tickLine={false} 
-                                tick={{ fill: '#94a3b8', fontSize: 10, fontWeight: 900 }}
-                                dy={15}
-                            />
-                            <YAxis 
-                                axisLine={false} 
-                                tickLine={false} 
-                                tick={{ fill: '#cbd5e1', fontSize: 10 }}
-                                tickFormatter={(v) => `${v}%`}
-                            />
-                            <Tooltip 
-                                cursor={{ fill: '#f8fafc', radius: 10 }}
-                                contentStyle={{ borderRadius: '24px', border: 'none', boxShadow: '0 30px 60px rgba(0,0,0,0.1)', padding: '20px' }}
-                                itemStyle={{ fontWeight: 900, fontSize: '12px' }}
-                            />
-                            <Bar dataKey="local" fill="#3B82F6" radius={[12, 12, 0, 0]} barSize={40} />
-                            <Bar dataKey="national" fill="#e2e8f0" radius={[12, 12, 0, 0]} barSize={40} />
-                        </BarChart>
-                    </ResponsiveContainer>
-                </div>
-                
-                <div className="mt-12 p-6 bg-slate-50 rounded-[30px] border border-slate-100 italic">
-                    <p className="text-xs text-slate-500 leading-relaxed font-medium">
-                        <Activity size={14} className="inline-block mr-2 text-brand-600" />
-                        L'analyse de distribution permet d'isoler les déviances locales par rapport aux tendances nationales. Une barre locale significativement supérieure à la barre nationale indique une zone de tension nécessitant une intervention ciblée.
-                    </p>
-                </div>
-            </div>
 
-            {/* Block 3 — Map Block */}
-            <div className="bg-slate-900 p-12 rounded-[50px] shadow-2xl relative overflow-hidden group min-h-[400px] flex flex-col items-center justify-center">
-                <div className="absolute inset-0 opacity-10 flex items-center justify-center grayscale">
-                    <MapIcon size={300} strokeWidth={0.5} />
-                </div>
-                
-                <div className="relative z-10 text-center flex flex-col items-center">
-                    <div className="w-20 h-20 bg-slate-800 rounded-[30px] flex items-center justify-center text-brand-400 mb-8 border border-slate-700 shadow-inner group-hover:scale-110 transition-transform">
-                        <MapIcon size={32} />
+                {/* ECHANTILLON */}
+                <div className="bg-white p-8 rounded-[45px] shadow-2xl shadow-slate-100 border border-slate-50 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <Users size={80} className="text-brand-600" />
                     </div>
-                    <h3 className="text-xl font-black text-white uppercase tracking-[5px] mb-4">Visualisation Spatiale</h3>
-                    <p className="text-sm text-slate-500 max-w-sm font-medium leading-relaxed uppercase tracking-widest italic">
-                        Le module de cartographie choroplèthe génère une intensité de couleur basée sur la prévalence de la Section {sectionId} par gouvernorat.
-                    </p>
-                    <div className="mt-10 px-8 py-4 bg-slate-800/50 rounded-2xl border border-slate-700 backdrop-blur-md">
-                        <p className="text-[10px] font-black text-brand-300 uppercase tracking-[3px]">Génération dynamique en cours</p>
+                    <div className="relative z-10">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Échantillon</p>
+                        <div className="flex items-baseline gap-1">
+                            <h2 className="text-6xl font-black text-slate-900 tracking-tighter tabular-nums">
+                                {data?.echantillon || "0"}
+                            </h2>
+                            <span className="text-xs font-black text-slate-300 uppercase ml-2">Sujets</span>
+                        </div>
+                        <div className="mt-6 flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase">
+                            <div className="w-1.5 h-1.5 rounded-full bg-brand-500" /> Taille de l'Étude
+                        </div>
+                    </div>
+                </div>
+
+                {/* INDICE ALERTE */}
+                <div className="bg-slate-900 p-8 rounded-[45px] shadow-2xl shadow-slate-900/20 relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <AlertTriangle size={100} className="text-brand-400" />
+                    </div>
+                    <div className="relative z-10 h-full flex flex-col justify-between">
+                        <div>
+                            <p className="text-[10px] font-black text-brand-400 uppercase tracking-[0.3em] mb-4">Niveau de Risque</p>
+                            <h2 className="text-4xl font-black text-white tracking-tighter uppercase mb-6">
+                                {data?.indiceAlerte || "Normal"}
+                            </h2>
+                        </div>
+                        <div className="bg-white/10 px-4 py-2 rounded-2xl border border-white/10 inline-flex items-center gap-3">
+                            <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
+                            <span className="text-[10px] font-black text-brand-200 uppercase tracking-widest">Surveillance Active</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            {/* Block 4 — Correlations Block */}
-            <div className="bg-white p-12 rounded-[50px] shadow-xl shadow-slate-100 border border-slate-50 border-dashed border-4">
-                <div className="flex items-center justify-between mb-12">
+            {/* BLOCK 2 — INDICATEURS SPÉCIFIQUES & DISTRIBUTION */}
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
+                {/* INDICATEURS TABLE */}
+                <div className="bg-white p-10 rounded-[50px] shadow-2xl shadow-slate-100 border border-slate-50">
+                    <div className="flex items-center gap-4 mb-10">
+                        <div className="p-3 bg-brand-50 rounded-2xl">
+                            <Zap className="w-6 h-6 text-brand-600" />
+                        </div>
+                        <div>
+                            <h3 className="text-base font-black text-slate-900 uppercase tracking-wider">Dimensions de Vigilance</h3>
+                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Impact comportemental direct</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-6">
+                        {data?.specificInsights?.map((insight, idx) => (
+                            <div key={idx} className="group p-5 bg-slate-50/50 hover:bg-white hover:shadow-xl hover:shadow-slate-100 rounded-[30px] transition-all border border-transparent hover:border-slate-100">
+                                <div className="flex justify-between items-center mb-4">
+                                    <span className="text-[11px] font-black text-slate-600 uppercase tracking-tight">{insight?.label}</span>
+                                    <span className="text-base font-black text-slate-900">{insight?.value}</span>
+                                </div>
+                                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+                                    <motion.div 
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${parseFloat(insight?.value) || 0}%` }}
+                                        transition={{ duration: 1.5, ease: "circOut" }}
+                                        className="h-full bg-brand-600 rounded-full"
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* COMPARATIVE DISTRIBUTION (Enhanced visibility) */}
+                <div className="bg-white p-10 rounded-[50px] shadow-2xl shadow-slate-100 border border-slate-50">
+                    <div className="flex items-center justify-between mb-12">
+                        <div>
+                            <h3 className="text-base font-black text-slate-900 uppercase tracking-wider">Analyse Inter-Groupes</h3>
+                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Distribution comparative %</p>
+                        </div>
+                        <div className="p-3 bg-brand-600 rounded-2xl shadow-lg shadow-brand-100 text-white">
+                            <BarChart size={20} />
+                        </div>
+                    </div>
+                    
+                    <div className="h-[280px] flex items-end justify-between gap-6 px-4 bg-slate-50/50 rounded-[40px] border border-slate-100 border-dashed p-8">
+                        {data?.distributionComparative?.labels?.map((label, idx) => {
+                            const localVal = data?.distributionComparative?.local?.[idx] || 0;
+                            const nationalVal = data?.distributionComparative?.national?.[idx] || 0;
+                            
+                            return (
+                                <div key={idx} className="flex-1 flex flex-col items-center gap-4 h-full justify-end group">
+                                    <div className="w-full flex items-end justify-center gap-2 h-full relative">
+                                        {/* NATIONAL BAR (Background Benchmark) */}
+                                        <div className="w-4 flex flex-col items-center justify-end h-full relative group/nat">
+                                            <motion.div 
+                                                initial={{ height: 0 }}
+                                                animate={{ height: `${Math.max(5, nationalVal)}%` }}
+                                                transition={{ duration: 1, delay: idx * 0.1 + 0.2 }}
+                                                className="w-full bg-slate-200 rounded-t-lg shadow-sm relative"
+                                            >
+                                                <span className="absolute -top-6 text-[8px] font-black text-slate-400 opacity-0 group-hover/nat:opacity-100 transition-opacity">
+                                                    {nationalVal}% NAT
+                                                </span>
+                                            </motion.div>
+                                        </div>
+
+                                        {/* LOCAL BAR (Primary Data) */}
+                                        <div className="w-6 flex flex-col items-center justify-end h-full relative group/loc">
+                                            <motion.div 
+                                                initial={{ height: 0 }}
+                                                animate={{ height: `${Math.max(5, localVal)}%` }}
+                                                transition={{ duration: 1, delay: idx * 0.1 }}
+                                                className="w-full bg-gradient-to-t from-brand-600 to-brand-400 rounded-t-xl shadow-xl shadow-brand-100 relative"
+                                            >
+                                                <span className="absolute -top-8 text-[10px] font-black text-brand-600 opacity-0 group-hover/loc:opacity-100 transition-all group-hover/loc:-translate-y-1">
+                                                    {localVal}% LOC
+                                                </span>
+                                            </motion.div>
+                                        </div>
+                                    </div>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
+                                        {label}
+                                    </span>
+                                </div>
+                            );
+                        })}
+                    </div>
+                </div>
+            </div>
+
+            {/* BLOCK 3 — SPATIAL ANALYSIS (Tunisia Map) */}
+            <div className="bg-white p-2 rounded-[60px] shadow-2xl shadow-slate-100 border border-slate-50 overflow-hidden relative">
+                <div className="absolute top-10 left-12 z-20">
+                    <div className="flex items-center gap-3 mb-2">
+                        <Globe className="w-6 h-6 text-brand-600" />
+                        <h3 className="text-xl font-black text-slate-900 tracking-tighter">INTELLIGENCE TERRITORIALE</h3>
+                    </div>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[5px] ml-9">Gouvernorats de Tunisie</p>
+                </div>
+                
+                <div className="min-h-[550px] bg-slate-50/50 flex items-center justify-center rounded-[55px] overflow-visible">
+                    <TunisiaSVGMap 
+                        sectionId={data?.title} 
+                        intensity={getIntensity(data?.prevalence)} 
+                    />
+                </div>
+            </div>
+
+            {/* BLOCK 4 — INTERPRETATION IA & CORRÉLATIONS */}
+            <div className="bg-slate-900 p-12 rounded-[60px] shadow-2xl relative overflow-hidden group">
+                <div className="absolute -top-10 -left-10 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl" />
+                
+                <div className="flex items-start gap-8 relative z-10 mb-10">
+                    <div className="p-5 bg-white/10 rounded-3xl backdrop-blur-xl border border-white/10">
+                        <Brain className="w-10 h-10 text-brand-300" />
+                    </div>
                     <div>
-                        <h3 className="text-xl font-black text-slate-900 tracking-tight uppercase">Corrélations Directes</h3>
-                        <p className="text-sm text-slate-400 font-bold tracking-tight">Liens statistiques identifiés avec d'autres thématiques.</p>
+                        <h3 className="text-3xl font-black text-white tracking-tighter">
+                            Observatoire Intuitif Sentinelle
+                        </h3>
+                        <p className="text-[10px] font-black text-brand-400 uppercase tracking-[5px] mt-2">Intelligence Artificielle & Synthèse Statistique</p>
                     </div>
-                    <Zap className="text-amber-500" size={32} />
                 </div>
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {data.correlations && data.correlations.length > 0 ? data.correlations.map((c, i) => (
-                        <div key={i} className="group flex items-center justify-between p-6 bg-slate-50 hover:bg-slate-950 rounded-[30px] border border-slate-100 transition-all hover:scale-[1.02] cursor-pointer">
-                            <div className="flex items-center gap-5">
-                                <div className="w-12 h-12 bg-white group-hover:bg-slate-800 rounded-2xl flex items-center justify-center font-black text-brand-600 transition-colors shadow-sm">
-                                    {c.section_id}
-                                </div>
-                                <div className="max-w-[150px]">
-                                    <p className="text-[9px] font-black text-brand-600 uppercase tracking-widest opacity-60">{c.tag}</p>
-                                    <p className="text-xs font-black text-slate-800 group-hover:text-white transition-colors">{c.desc}</p>
-                                </div>
-                            </div>
-                            <div className="bg-white/50 group-hover:bg-slate-800 px-4 py-2 rounded-xl transition-colors">
-                                <Plus size={14} className="group-hover:text-white" />
-                            </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 relative z-10">
+                    {/* LEFT: AI INTERPRETATION */}
+                    <div className="p-8 bg-white/5 rounded-[45px] border border-white/10 flex flex-col justify-between">
+                        <div>
+                            <h4 className="text-[11px] font-black text-brand-300 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
+                                <div className="w-1.5 h-1.5 rounded-full bg-brand-400"></div>
+                                Synthèse Analytique
+                            </h4>
+                            <p className="text-xl leading-relaxed text-slate-100 font-medium italic opacity-90">
+                                "{data?.interpretation || "Analyse multicritère en cours..."}"
+                            </p>
                         </div>
-                    )) : (
-                        <div className="col-span-2 py-10 text-center">
-                            <p className="text-sm font-medium text-slate-400 italic">Analyse de corrélation en attente de données complémentaires.</p>
+                        <div className="mt-10 flex items-center gap-4 pt-6 border-t border-white/5">
+                             <ShieldCheck className="text-brand-500" size={18} />
+                             <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none">Vérifié par Observatoire National</span>
                         </div>
-                    )}
-                </div>
-                
-                <div className="mt-10 pt-10 border-t border-slate-50">
-                    <p className="text-[10px] font-medium text-slate-400 italic leading-relaxed">
-                        <AlertCircle size={10} className="inline-block mr-2" />
-                        Note technique: Ces corrélations sont basées sur le profilage des habitudes de vie et ne constituent pas des preuves de causalité directe.
-                    </p>
+                    </div>
+
+                    {/* RIGHT: DIRECT CORRELATIONS */}
+                    <div className="space-y-6">
+                        <h4 className="text-[11px] font-black text-brand-300 uppercase tracking-[0.3em] pl-2 flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
+                            Corrélations Directes (Inter-Sections)
+                        </h4>
+                        
+                        <div className="grid grid-cols-1 gap-4">
+                            {data?.correlations?.map((c, i) => (
+                                <div key={i} className="p-6 bg-white/5 hover:bg-white/10 rounded-[35px] border border-white/5 transition-all group/item flex items-center justify-between gap-6">
+                                    <div className="flex flex-col gap-1">
+                                        <span className="text-[9px] font-black text-brand-400 uppercase tracking-[3px]">{c?.tag}</span>
+                                        <p className="text-xs font-bold text-slate-300">{c?.label || "Lien Statistique"}</p>
+                                    </div>
+                                    <div className="flex items-center gap-4 flex-1 max-w-[150px]">
+                                        <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden shadow-inner">
+                                            <motion.div 
+                                                initial={{ width: 0 }}
+                                                animate={{ width: `${c?.value || 0}%` }}
+                                                transition={{ duration: 1, delay: i * 0.1 }}
+                                                className="h-full bg-gradient-to-r from-brand-600 to-brand-400" 
+                                            />
+                                        </div>
+                                        <span className="text-sm font-black text-white tabular-nums">{c?.value}%</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
-        </motion.div>
+        </div>
     );
 };
 
