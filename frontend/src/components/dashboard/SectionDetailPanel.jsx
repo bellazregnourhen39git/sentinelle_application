@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import TunisiaSVGMap from './TunisiaSVGMap';
 
-const SectionDetailPanel = ({ sectionId, onBack, data }) => {
+const SectionDetailPanel = ({ sectionId, onBack, data, initialScope }) => {
     // Helper to normalize prevalence for map intensity
     const getIntensity = (val) => {
         if (!val) return 1.0;
@@ -195,23 +195,111 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
                 </div>
             </div>
 
-            {/* BLOCK 3 — SPATIAL ANALYSIS (Tunisia Map) */}
-            <div className="bg-white p-2 rounded-[60px] shadow-2xl shadow-slate-100 border border-slate-50 overflow-hidden relative">
-                <div className="absolute top-10 left-12 z-20">
-                    <div className="flex items-center gap-3 mb-2">
-                        <Globe className="w-6 h-6 text-brand-600" />
-                        <h3 className="text-xl font-black text-slate-900 tracking-tighter">INTELLIGENCE TERRITORIALE</h3>
+            {/* BLOCK 3 — SPATIAL ANALYSIS (Tunisia Map) — ONLY FOR SUPERADMIN (National) */}
+            {initialScope === 'national' && (
+                <div className="bg-white p-2 rounded-[60px] shadow-2xl shadow-slate-100 border border-slate-50 overflow-hidden relative">
+                    <div className="absolute top-10 left-12 z-20">
+                        <div className="flex items-center gap-3 mb-2">
+                            <Globe className="w-6 h-6 text-brand-600" />
+                            <h3 className="text-xl font-black text-slate-900 tracking-tighter">INTELLIGENCE TERRITORIALE</h3>
+                        </div>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[5px] ml-9">Gouvernorats de Tunisie</p>
                     </div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[5px] ml-9">Gouvernorats de Tunisie</p>
+                    
+                    <div className="min-h-[550px] bg-slate-50/50 flex items-center justify-center rounded-[55px] overflow-visible">
+                        <TunisiaSVGMap 
+                            sectionId={data?.title} 
+                            intensity={getIntensity(data?.prevalence)} 
+                        />
+                    </div>
                 </div>
-                
-                <div className="min-h-[550px] bg-slate-50/50 flex items-center justify-center rounded-[55px] overflow-visible">
-                    <TunisiaSVGMap 
-                        sectionId={data?.title} 
-                        intensity={getIntensity(data?.prevalence)} 
-                    />
+            )}
+
+            {/* BLOCK 3 — GENDER DISTRIBUTION — ONLY FOR ADMIN & USER */}
+            {initialScope !== 'national' && (
+                <div className="bg-white p-12 rounded-[60px] shadow-2xl shadow-slate-100 border border-slate-50 overflow-hidden relative mb-10">
+                    <div className="flex items-center gap-4 mb-12">
+                        <div className="p-3 bg-brand-50 rounded-2xl">
+                            <Users className="w-6 h-6 text-brand-600" />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Répartition par Genre</h3>
+                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[5px] mt-1">Analyse de la cohorte locale</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
+                        {/* Boys Card */}
+                        <div className="bg-slate-50 rounded-[40px] p-8 border border-slate-100 relative overflow-hidden group">
+                            <div className="flex items-center justify-between mb-6">
+                                <span className="text-sm font-black text-slate-900 uppercase tracking-widest text-blue-600">Garçons</span>
+                                <span className="text-3xl font-black text-slate-900">{data?.genderDistribution?.male || 50}%</span>
+                            </div>
+                            <div className="h-4 bg-white rounded-full overflow-hidden border border-slate-200 shadow-inner">
+                                <motion.div 
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${data?.genderDistribution?.male || 50}%` }}
+                                    transition={{ duration: 1.5, ease: "circOut" }}
+                                    className="h-full bg-blue-500 rounded-full"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Girls Card */}
+                        <div className="bg-slate-50 rounded-[40px] p-8 border border-slate-100 relative overflow-hidden group">
+                            <div className="flex items-center justify-between mb-6">
+                                <span className="text-sm font-black text-slate-900 uppercase tracking-widest text-pink-500">Filles</span>
+                                <span className="text-3xl font-black text-slate-900">{data?.genderDistribution?.female || 50}%</span>
+                            </div>
+                            <div className="h-4 bg-white rounded-full overflow-hidden border border-slate-200 shadow-inner">
+                                <motion.div 
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${data?.genderDistribution?.female || 50}%` }}
+                                    transition={{ duration: 1.5, ease: "circOut" }}
+                                    className="h-full bg-pink-500 rounded-full"
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            )}
+
+            {/* BLOCK 3.5 — ACADEMIC PERFORMANCE — ONLY FOR ADMIN & USER */}
+            {initialScope !== 'national' && (
+                <div className="bg-white p-12 rounded-[60px] shadow-2xl shadow-slate-100 border border-slate-50 overflow-hidden relative">
+                    <div className="flex items-center gap-4 mb-12">
+                        <div className="p-3 bg-amber-50 rounded-2xl">
+                            <Activity className="w-6 h-6 text-amber-600" />
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Rendement Scolaire</h3>
+                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[5px] mt-1">Impact sur la réussite académique (Question C.A05)</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                        {[
+                            { label: 'Excellents', val: data?.academicPerformance?.excellent, color: 'bg-emerald-500' },
+                            { label: 'Bons', val: data?.academicPerformance?.good, color: 'bg-blue-500' },
+                            { label: 'Moyens', val: data?.academicPerformance?.average, color: 'bg-amber-500' },
+                            { label: 'Faibles', val: data?.academicPerformance?.low, color: 'bg-red-500' }
+                        ].map((item, i) => (
+                            <div key={i} className="bg-slate-50 p-6 rounded-[35px] border border-slate-100 flex flex-col items-center text-center">
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">{item.label}</span>
+                                <span className="text-2xl font-black text-slate-900 mb-4">{item.val}%</span>
+                                <div className="w-full h-1.5 bg-white rounded-full overflow-hidden border border-slate-200 shadow-inner">
+                                    <motion.div 
+                                        initial={{ width: 0 }}
+                                        animate={{ width: `${item.val}%` }}
+                                        transition={{ duration: 1, delay: i * 0.1 }}
+                                        className={`h-full ${item.color} rounded-full`}
+                                    />
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* BLOCK 4 — INTERPRETATION IA & CORRÉLATIONS */}
             <div className="bg-slate-900 p-12 rounded-[60px] shadow-2xl relative overflow-hidden group">

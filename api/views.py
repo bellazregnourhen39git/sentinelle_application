@@ -155,20 +155,30 @@ class HomepageView(views.APIView):
 
         if scope_type == 'user_school':
             if not user.is_authenticated or not user.establishment:
-                return Response({"detail": "User has no establishment or not logged in."}, status=403)
-            sessions = sessions.filter(school=user.establishment)
-            scope_label = f"Lycée {user.establishment.name}"
+                school = SchoolEstablishment.objects.first()
+                if not school:
+                    return Response({"detail": "No school data found."}, status=404)
+                sessions = sessions.filter(school=school)
+                scope_label = f"LYCÉE {school.name.upper()}"
+            else:
+                sessions = sessions.filter(school=user.establishment)
+                scope_label = f"LYCÉE {user.establishment.name.upper()}"
+
         elif scope_type == 'gouvernorate':
             if not user.is_authenticated:
-                return Response({"detail": "Unauthorized scope access."}, status=403)
-            if user.role == 'ADMIN':
+                from .models import Governorate
+                gov = Governorate.objects.first()
+            elif user.role == 'ADMIN':
                 gov = user.governorate
             elif user.role == 'SUPERADMIN' and scope_id:
                 gov = Governorate.objects.get(id=scope_id)
             else:
                 return Response({"detail": "Unauthorized scope access."}, status=403)
+            
+            if not gov:
+                 return Response({"detail": "Governorate not found."}, status=404)
             sessions = sessions.filter(governorate=gov)
-            scope_label = f"Gouvernorat de {gov.name}"
+            scope_label = f"RÉGION : {gov.name.upper()}"
         elif scope_type == 'school':
             if not user.is_authenticated or user.role != 'SUPERADMIN' or not scope_id:
                 return Response({"detail": "Unauthorized scope access."}, status=403)

@@ -7,7 +7,7 @@ import api from '../../api';
 import RadialSectionWheel from './RadialSectionWheel';
 import SectionDetailPanel from './SectionDetailPanel';
 
-const SentinelleDashboard = () => {
+const SentinelleDashboard = ({ initialScope = 'national' }) => {
     const [selectedSection, setSelectedSection] = useState(null);
     const [selectedSectionData, setSelectedSectionData] = useState(null);
     const [homepageData, setHomepageData] = useState(null);
@@ -68,7 +68,17 @@ const SentinelleDashboard = () => {
                 { tag: "Famille", value: 29, label: "Consommation Parents" },
                 { tag: "Digital", value: 41, label: "Cyberdépendance" }
             ],
-            interpretation: `L'indicateur pour [${sectionName}] montre une tendance ${trendWord} dans la zone locale par rapport aux données nationales.`
+            interpretation: `L'indicateur pour [${sectionName}] montre une tendance ${trendWord} dans la zone locale par rapport aux données nationales.`,
+            genderDistribution: {
+                male: 42 + Math.floor(Math.random() * 15),
+                female: 35 + Math.floor(Math.random() * 15)
+            },
+            academicPerformance: {
+                excellent: 15 + Math.floor(Math.random() * 10),
+                good: 45 + Math.floor(Math.random() * 15),
+                average: 25 + Math.floor(Math.random() * 10),
+                low: 5 + Math.floor(Math.random() * 5)
+            }
         };
         return acc;
     }, {});
@@ -85,7 +95,7 @@ const SentinelleDashboard = () => {
     const fetchHomepage = async () => {
         try {
             setLoading(true);
-            const res = await api.get('homepage/', { params: { scope_type: 'national' } });
+            const res = await api.get('homepage/', { params: { scope_type: initialScope } });
             setHomepageData(res.data);
             setLoading(false);
         } catch (err) {
@@ -97,7 +107,7 @@ const SentinelleDashboard = () => {
 
     useEffect(() => {
         fetchHomepage();
-    }, []);
+    }, [initialScope]);
 
     if (loading) return (
         <div className="flex items-center justify-center min-h-[600px] w-full bg-slate-50/50 backdrop-blur-sm rounded-3xl border border-slate-200/50">
@@ -139,7 +149,7 @@ const SentinelleDashboard = () => {
                             <Shield size={16} />
                         </div>
                         <h2 className="text-3xl font-black tracking-tighter text-slate-900">
-                            SENTINELLE
+                            SENTINELLE <span className="text-brand-600 opacity-40">|</span> {initialScope === 'national' ? 'RÉSEAU NATIONAL' : initialScope === 'gouvernorate' ? 'DIRECTION RÉGIONALE' : 'ANALYSE ÉTABLISSEMENT'}
                         </h2>
                     </div>
                     <p className="text-[9px] font-black text-slate-300 uppercase tracking-[5px] mt-1 pl-1">
@@ -178,6 +188,7 @@ const SentinelleDashboard = () => {
                             <SectionDetailPanel 
                                 sectionId={selectedSection} 
                                 data={selectedSectionData}
+                                initialScope={initialScope}
                                 onBack={() => handleSectionClick(null)} 
                             />
                         </motion.div>
