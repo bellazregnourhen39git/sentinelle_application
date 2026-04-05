@@ -1,372 +1,253 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { 
-    X, 
-    TrendingUp, 
-    AlertTriangle, 
-    Users, 
-    ArrowLeft, 
-    Globe, 
-    BarChart, 
-    Zap,
-    Brain,
-    Activity,
-    ShieldCheck
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+    ArrowLeft, Users, AlertTriangle, BarChart2, PieChart,
+    Layers, TrendingUp, Info
 } from 'lucide-react';
-import TunisiaSVGMap from './TunisiaSVGMap';
+import {
+    BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
+    PieChart as RechartsPie, Pie, Legend
+} from 'recharts';
 
-const SectionDetailPanel = ({ sectionId, onBack, data, initialScope }) => {
-    // Helper to normalize prevalence for map intensity
-    const getIntensity = (val) => {
-        if (!val) return 1.0;
-        const num = parseFloat(val);
-        if (isNaN(num)) return 1.0;
-        // Scale 0-100 to 0.5-2.5 range for map colors
-        return 0.5 + (num / 100) * 2.0;
-    };
+// ─── Color palette — Clinical Crystal Design System ───────────────────────────
 
-    if (!data) return null;
+const PALETTES = [
+    ['#0EA5E9', '#38BDF8', '#7DD3FC', '#BAE6FD'], // Brand Blue
+    ['#6366F1', '#818CF8', '#A5B4FC', '#C7D2FE'], // Indigo
+    ['#64748B', '#94A3B8', '#CBD5E1', '#E2E8F0'], // Slate
+    ['#F43F5E', '#FB7185', '#FDA4AF', '#FECDD3'], // Rose (Contrast)
+];
+
+const DIVERSE_PALETTE = ['#0EA5E9', '#6366F1', '#64748B', '#F43F5E', '#38BDF8', '#818CF8', '#94A3B8'];
+
+const SECTION_NAMES = {
+    A: 'Profil Démographique', B: 'Contexte Socio-Économique',
+    C: 'Consommation Tabagique', D: 'Cigarettes Électroniques', E: 'Usage du Narguilé',
+    G: 'Substances Alcoolisées', H: 'Produits Psychotropes', I: 'Cannabis / Substances', 
+    J: 'Cocaïne / Stimulants', K: 'Ecstasy / MDMA', L: 'Opiacés / Héroïne', 
+    M: 'Inhalants Chimiques', N: 'Substances NPS', P: 'Drogues de Synthèse', 
+    Q: 'Perception du Risque', R: 'Empreinte Réseaux Sociaux',
+    S: 'Industrie Jeux Vidéo', T: "Jeux d'Argent / Hasard", U: 'Violence & Incidents',
+    V: 'État de Santé Mentale', Z: 'Intégrité du Protocole',
+};
+
+const GROUP_COLORS = {
+    A: '#0EA5E9', B: '#0EA5E9',
+    C: '#0EA5E9', D: '#0EA5E9', E: '#0EA5E9', G: '#0EA5E9', H: '#0EA5E9',
+    I: '#0EA5E9', J: '#0EA5E9', K: '#0EA5E9', L: '#0EA5E9', M: '#0EA5E9',
+    N: '#0EA5E9', P: '#0EA5E9',
+    Q: '#6366F1', Z: '#6366F1',
+    R: '#64748B', S: '#64748B', T: '#64748B',
+    U: '#F43F5E', V: '#F43F5E',
+};
+
+// ─── Chart Components (Refined) ──────────────────────────────────────────
+
+const BarQuestionItem = ({ code, label, distribution, index }) => {
+    const palette = PALETTES[index % PALETTES.length];
+    const hasData = distribution.some(d => d.count > 0);
+    const data = distribution.map(d => ({ name: d.label, value: d.pct }));
 
     return (
-        <div className="flex flex-col gap-10 pb-24 animate-in fade-in slide-in-from-right-10 duration-700">
-            {/* Context Navigation */}
+        <div className="flex flex-col gap-6 p-8 rounded-[40px] bg-white border border-slate-100 shadow-xl shadow-slate-200/20 hover:scale-[1.02] transition-all duration-500 group min-h-[250px]">
+            <div className="flex items-center gap-4">
+                <span className="w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-black uppercase text-white shadow-lg italic"
+                    style={{ backgroundColor: palette[0] }}>
+                    {code}
+                </span>
+                <p className="text-[13px] font-black text-slate-800 italic tracking-tight uppercase leading-tight flex-1">{label}</p>
+            </div>
+            <div className="h-44 mt-2 flex items-center justify-center relative">
+                {hasData ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 25 }}>
+                            <XAxis dataKey="name" tick={{ fontSize: 8, fill: '#64748b', fontWeight: 700 }} axisLine={false} tickLine={false} interval={0} angle={-35} textAnchor="end" />
+                            <YAxis tick={{ fontSize: 8, fill: '#64748b', fontWeight: 700 }} axisLine={false} tickLine={false} unit="%" dx={-5} />
+                            <Tooltip
+                                cursor={{ fill: '#f1f5f9', radius: 4 }}
+                                formatter={(v) => [`${v}%`, 'Prévalence']}
+                                contentStyle={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', fontSize: '10px', fontWeight: 900, color: '#0f172a', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                            />
+                            <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={20}>
+                                {data.map((_, i) => (
+                                    <Cell key={i} fill={palette[0]} fillOpacity={1 - (i * 0.15)} />
+                                ))}
+                            </Bar>
+                        </BarChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <div className="flex flex-col items-center gap-3 opacity-20 hover:opacity-40 transition-opacity">
+                        <BarChart2 size={32} className="text-slate-400" />
+                        <p className="text-[9px] font-black uppercase tracking-[4px] text-slate-400 italic">No Dataset Detected</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+const DonutQuestionItem = ({ code, label, distribution, index }) => {
+    const palette = PALETTES[index % PALETTES.length];
+    const hasData = distribution.some(d => d.count > 0);
+    const data = distribution.filter(d => d.count > 0).map(d => ({ name: d.label, value: d.count }));
+
+    return (
+        <div className="flex flex-col gap-6 p-8 rounded-[40px] bg-white border border-slate-100 shadow-xl shadow-slate-200/20 hover:scale-[1.02] transition-all duration-500 group min-h-[250px]">
+            <div className="flex items-center gap-4">
+                <span className="w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-black uppercase text-white shadow-lg italic"
+                    style={{ backgroundColor: palette[0] }}>
+                    {code}
+                </span>
+                <p className="text-[13px] font-black text-slate-800 italic tracking-tight uppercase leading-tight flex-1">{label}</p>
+            </div>
+            <div className="h-44 mt-2 flex items-center justify-center">
+                {hasData ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                        <RechartsPie>
+                            <Pie data={data} cx="45%" cy="50%" innerRadius={42} outerRadius={58}
+                            paddingAngle={5} dataKey="value" stroke="white" strokeWidth={3}>
+                            {data.map((_, i) => (
+                                <Cell key={i} fill={DIVERSE_PALETTE[i % DIVERSE_PALETTE.length]} />
+                            ))}
+                        </Pie>
+                            <Tooltip contentStyle={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', fontSize: '10px', fontWeight: 900, color: '#0f172a', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
+                            <Legend iconType="circle" iconSize={8} layout="vertical" verticalAlign="middle" align="right" 
+                               formatter={(v) => <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest pl-2 truncate max-w-[80px]">{v}</span>} />
+                        </RechartsPie>
+                    </ResponsiveContainer>
+                ) : (
+                    <div className="flex flex-col items-center gap-3 opacity-20 hover:opacity-40 transition-opacity">
+                        <PieChart size={32} className="text-slate-400" />
+                        <p className="text-[9px] font-black uppercase tracking-[4px] text-slate-400 italic">Participation Aléatoire</p>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+// ─── Main panel — Clinical Crystal ───────────────────────────────────────────
+
+const SectionDetailPanel = ({ sectionId, onBack, data }) => {
+    if (!data) return null;
+
+    const sectionColor = GROUP_COLORS[sectionId] || '#0EA5E9';
+    const sectionName = SECTION_NAMES[sectionId] || `Vecteur ${sectionId}`;
+    const questions = data.questions || [];
+    const n = data.n_submissions || 0;
+    const correlations = data.correlations || [];
+
+    return (
+        <motion.div
+            className="flex flex-col gap-10 pb-32"
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        >
+            {/* Nav Headers */}
             <div className="flex items-center justify-between">
-                <button 
+                <button
                     onClick={onBack}
-                    className="flex items-center gap-3 text-slate-400 hover:text-brand-600 font-black text-[11px] uppercase tracking-[0.2em] transition-all bg-white/80 px-6 py-3 rounded-2xl border border-slate-100 hover:shadow-lg active:scale-95"
+                    className="flex items-center gap-4 text-slate-500 hover:text-brand-600 font-black text-[11px] uppercase tracking-[5px] transition-all bg-white shadow-xl shadow-slate-200/40 px-10 py-5 rounded-[24px] border border-slate-100 hover:scale-[1.05] active:scale-95 group italic"
                 >
-                    <ArrowLeft size={16} /> Dashboard Principal
+                    <ArrowLeft size={18} className="group-hover:-translate-x-2 transition-transform" strokeWidth={3} /> Retour Dashboard
                 </button>
-                <div className="flex items-center gap-3 bg-brand-600 text-white px-5 py-2.5 rounded-2xl shadow-xl shadow-brand-100">
-                    <ShieldCheck size={14} className="animate-pulse" />
-                    <span className="text-[10px] font-black uppercase tracking-widest">Périmètre Analysé</span>
+                <div className="flex items-center gap-4 px-10 py-5 rounded-[24px] bg-slate-900 shadow-2xl shadow-slate-900/20">
+                   <div className="w-2.5 h-2.5 rounded-full bg-brand-500 shadow-2xl shadow-brand-500 animate-pulse" />
+                   <span className="text-[11px] font-black text-white uppercase tracking-[5px] italic">Vecteur Analytique {sectionId}</span>
                 </div>
             </div>
 
-            {/* PRIMARY KPIs GRID */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {/* PREVALENCE */}
-                <div className="bg-white p-8 rounded-[45px] shadow-2xl shadow-slate-100 border border-slate-50 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <TrendingUp size={80} className="text-brand-600" />
-                    </div>
-                    <div className="relative z-10">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Prévalence</p>
-                        <div className="flex items-baseline gap-1">
-                            <h2 className="text-6xl font-black text-slate-900 tracking-tighter tabular-nums">
-                                {data?.prevalence || "0"}
-                            </h2>
-                            <span className="text-xl font-bold text-slate-300">%</span>
-                        </div>
-                        <div className="mt-6 flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase">
-                            <div className="w-1.5 h-1.5 rounded-full bg-green-500" /> Population Locale
-                        </div>
-                    </div>
-                </div>
-
-                {/* ECHANTILLON */}
-                <div className="bg-white p-8 rounded-[45px] shadow-2xl shadow-slate-100 border border-slate-50 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <Users size={80} className="text-brand-600" />
-                    </div>
-                    <div className="relative z-10">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-4">Échantillon</p>
-                        <div className="flex items-baseline gap-1">
-                            <h2 className="text-6xl font-black text-slate-900 tracking-tighter tabular-nums">
-                                {data?.echantillon || "0"}
-                            </h2>
-                            <span className="text-xs font-black text-slate-300 uppercase ml-2">Sujets</span>
-                        </div>
-                        <div className="mt-6 flex items-center gap-2 text-[10px] font-bold text-slate-500 uppercase">
-                            <div className="w-1.5 h-1.5 rounded-full bg-brand-500" /> Taille de l'Étude
-                        </div>
-                    </div>
-                </div>
-
-                {/* INDICE ALERTE */}
-                <div className="bg-slate-900 p-8 rounded-[45px] shadow-2xl shadow-slate-900/20 relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-                        <AlertTriangle size={100} className="text-brand-400" />
-                    </div>
-                    <div className="relative z-10 h-full flex flex-col justify-between">
-                        <div>
-                            <p className="text-[10px] font-black text-brand-400 uppercase tracking-[0.3em] mb-4">Niveau de Risque</p>
-                            <h2 className="text-4xl font-black text-white tracking-tighter uppercase mb-6">
-                                {data?.indiceAlerte || "Normal"}
-                            </h2>
-                        </div>
-                        <div className="bg-white/10 px-4 py-2 rounded-2xl border border-white/10 inline-flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
-                            <span className="text-[10px] font-black text-brand-200 uppercase tracking-widest">Surveillance Active</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* BLOCK 2 — INDICATEURS SPÉCIFIQUES & DISTRIBUTION */}
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-10">
-                {/* INDICATEURS TABLE */}
-                <div className="bg-white p-10 rounded-[50px] shadow-2xl shadow-slate-100 border border-slate-50">
-                    <div className="flex items-center gap-4 mb-10">
-                        <div className="p-3 bg-brand-50 rounded-2xl">
-                            <Zap className="w-6 h-6 text-brand-600" />
-                        </div>
-                        <div>
-                            <h3 className="text-base font-black text-slate-900 uppercase tracking-wider">Dimensions de Vigilance</h3>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Impact comportemental direct</p>
-                        </div>
-                    </div>
-
-                    <div className="space-y-6">
-                        {data?.specificInsights?.map((insight, idx) => (
-                            <div key={idx} className="group p-5 bg-slate-50/50 hover:bg-white hover:shadow-xl hover:shadow-slate-100 rounded-[30px] transition-all border border-transparent hover:border-slate-100">
-                                <div className="flex justify-between items-center mb-4">
-                                    <span className="text-[11px] font-black text-slate-600 uppercase tracking-tight">{insight?.label}</span>
-                                    <span className="text-base font-black text-slate-900">{insight?.value}</span>
-                                </div>
-                                <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner">
-                                    <motion.div 
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${parseFloat(insight?.value) || 0}%` }}
-                                        transition={{ duration: 1.5, ease: "circOut" }}
-                                        className="h-full bg-brand-600 rounded-full"
-                                    />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                {/* COMPARATIVE DISTRIBUTION (Enhanced visibility) */}
-                <div className="bg-white p-10 rounded-[50px] shadow-2xl shadow-slate-100 border border-slate-50">
-                    <div className="flex items-center justify-between mb-12">
-                        <div>
-                            <h3 className="text-base font-black text-slate-900 uppercase tracking-wider">Analyse Inter-Groupes</h3>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest mt-1">Distribution comparative %</p>
-                        </div>
-                        <div className="p-3 bg-brand-600 rounded-2xl shadow-lg shadow-brand-100 text-white">
-                            <BarChart size={20} />
-                        </div>
-                    </div>
-                    
-                    <div className="h-[280px] flex items-end justify-between gap-6 px-4 bg-slate-50/50 rounded-[40px] border border-slate-100 border-dashed p-8">
-                        {data?.distributionComparative?.labels?.map((label, idx) => {
-                            const localVal = data?.distributionComparative?.local?.[idx] || 0;
-                            const nationalVal = data?.distributionComparative?.national?.[idx] || 0;
-                            
-                            return (
-                                <div key={idx} className="flex-1 flex flex-col items-center gap-4 h-full justify-end group">
-                                    <div className="w-full flex items-end justify-center gap-2 h-full relative">
-                                        {/* NATIONAL BAR (Background Benchmark) */}
-                                        <div className="w-4 flex flex-col items-center justify-end h-full relative group/nat">
-                                            <motion.div 
-                                                initial={{ height: 0 }}
-                                                animate={{ height: `${Math.max(5, nationalVal)}%` }}
-                                                transition={{ duration: 1, delay: idx * 0.1 + 0.2 }}
-                                                className="w-full bg-slate-200 rounded-t-lg shadow-sm relative"
-                                            >
-                                                <span className="absolute -top-6 text-[8px] font-black text-slate-400 opacity-0 group-hover/nat:opacity-100 transition-opacity">
-                                                    {nationalVal}% NAT
-                                                </span>
-                                            </motion.div>
-                                        </div>
-
-                                        {/* LOCAL BAR (Primary Data) */}
-                                        <div className="w-6 flex flex-col items-center justify-end h-full relative group/loc">
-                                            <motion.div 
-                                                initial={{ height: 0 }}
-                                                animate={{ height: `${Math.max(5, localVal)}%` }}
-                                                transition={{ duration: 1, delay: idx * 0.1 }}
-                                                className="w-full bg-gradient-to-t from-brand-600 to-brand-400 rounded-t-xl shadow-xl shadow-brand-100 relative"
-                                            >
-                                                <span className="absolute -top-8 text-[10px] font-black text-brand-600 opacity-0 group-hover/loc:opacity-100 transition-all group-hover/loc:-translate-y-1">
-                                                    {localVal}% LOC
-                                                </span>
-                                            </motion.div>
-                                        </div>
-                                    </div>
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">
-                                        {label}
-                                    </span>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </div>
-            </div>
-
-            {/* BLOCK 3 — SPATIAL ANALYSIS (Tunisia Map) — ONLY FOR SUPERADMIN (National) */}
-            {initialScope === 'national' && (
-                <div className="bg-white p-2 rounded-[60px] shadow-2xl shadow-slate-100 border border-slate-50 overflow-hidden relative">
-                    <div className="absolute top-10 left-12 z-20">
-                        <div className="flex items-center gap-3 mb-2">
-                            <Globe className="w-6 h-6 text-brand-600" />
-                            <h3 className="text-xl font-black text-slate-900 tracking-tighter">INTELLIGENCE TERRITORIALE</h3>
-                        </div>
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[5px] ml-9">Gouvernorats de Tunisie</p>
-                    </div>
-                    
-                    <div className="min-h-[550px] bg-slate-50/50 flex items-center justify-center rounded-[55px] overflow-visible">
-                        <TunisiaSVGMap 
-                            sectionId={data?.title} 
-                            intensity={getIntensity(data?.prevalence)} 
-                        />
-                    </div>
-                </div>
-            )}
-
-            {/* BLOCK 3 — GENDER DISTRIBUTION — ONLY FOR ADMIN & USER */}
-            {initialScope !== 'national' && (
-                <div className="bg-white p-12 rounded-[60px] shadow-2xl shadow-slate-100 border border-slate-50 overflow-hidden relative mb-10">
-                    <div className="flex items-center gap-4 mb-12">
-                        <div className="p-3 bg-brand-50 rounded-2xl">
-                            <Users className="w-6 h-6 text-brand-600" />
-                        </div>
-                        <div>
-                            <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Répartition par Genre</h3>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[5px] mt-1">Analyse de la cohorte locale</p>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        {/* Boys Card */}
-                        <div className="bg-slate-50 rounded-[40px] p-8 border border-slate-100 relative overflow-hidden group">
-                            <div className="flex items-center justify-between mb-6">
-                                <span className="text-sm font-black text-slate-900 uppercase tracking-widest text-blue-600">Garçons</span>
-                                <span className="text-3xl font-black text-slate-900">{data?.genderDistribution?.male || 50}%</span>
-                            </div>
-                            <div className="h-4 bg-white rounded-full overflow-hidden border border-slate-200 shadow-inner">
-                                <motion.div 
-                                    initial={{ width: 0 }}
-                                    animate={{ width: `${data?.genderDistribution?.male || 50}%` }}
-                                    transition={{ duration: 1.5, ease: "circOut" }}
-                                    className="h-full bg-blue-500 rounded-full"
-                                />
-                            </div>
-                        </div>
-
-                        {/* Girls Card */}
-                        <div className="bg-slate-50 rounded-[40px] p-8 border border-slate-100 relative overflow-hidden group">
-                            <div className="flex items-center justify-between mb-6">
-                                <span className="text-sm font-black text-slate-900 uppercase tracking-widest text-pink-500">Filles</span>
-                                <span className="text-3xl font-black text-slate-900">{data?.genderDistribution?.female || 50}%</span>
-                            </div>
-                            <div className="h-4 bg-white rounded-full overflow-hidden border border-slate-200 shadow-inner">
-                                <motion.div 
-                                    initial={{ width: 0 }}
-                                    animate={{ width: `${data?.genderDistribution?.female || 50}%` }}
-                                    transition={{ duration: 1.5, ease: "circOut" }}
-                                    className="h-full bg-pink-500 rounded-full"
-                                />
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* BLOCK 3.5 — ACADEMIC PERFORMANCE — ONLY FOR ADMIN & USER */}
-            {initialScope !== 'national' && (
-                <div className="bg-white p-12 rounded-[60px] shadow-2xl shadow-slate-100 border border-slate-50 overflow-hidden relative">
-                    <div className="flex items-center gap-4 mb-12">
-                        <div className="p-3 bg-amber-50 rounded-2xl">
-                            <Activity className="w-6 h-6 text-amber-600" />
-                        </div>
-                        <div>
-                            <h3 className="text-xl font-black text-slate-900 tracking-tighter uppercase">Rendement Scolaire</h3>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-[5px] mt-1">Impact sur la réussite académique (Question C.A05)</p>
-                        </div>
-                    </div>
-
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
-                        {[
-                            { label: 'Excellents', val: data?.academicPerformance?.excellent, color: 'bg-emerald-500' },
-                            { label: 'Bons', val: data?.academicPerformance?.good, color: 'bg-blue-500' },
-                            { label: 'Moyens', val: data?.academicPerformance?.average, color: 'bg-amber-500' },
-                            { label: 'Faibles', val: data?.academicPerformance?.low, color: 'bg-red-500' }
-                        ].map((item, i) => (
-                            <div key={i} className="bg-slate-50 p-6 rounded-[35px] border border-slate-100 flex flex-col items-center text-center">
-                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-3">{item.label}</span>
-                                <span className="text-2xl font-black text-slate-900 mb-4">{item.val}%</span>
-                                <div className="w-full h-1.5 bg-white rounded-full overflow-hidden border border-slate-200 shadow-inner">
-                                    <motion.div 
-                                        initial={{ width: 0 }}
-                                        animate={{ width: `${item.val}%` }}
-                                        transition={{ duration: 1, delay: i * 0.1 }}
-                                        className={`h-full ${item.color} rounded-full`}
-                                    />
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            )}
-
-            {/* BLOCK 4 — INTERPRETATION IA & CORRÉLATIONS */}
-            <div className="bg-slate-900 p-12 rounded-[60px] shadow-2xl relative overflow-hidden group">
-                <div className="absolute -top-10 -left-10 w-64 h-64 bg-brand-500/10 rounded-full blur-3xl" />
+            {/* Consolidated Statistical Anchor */}
+            <div className="pro-card p-12 rounded-[64px] border-l-[16px] shadow-2xl shadow-slate-200/50 bg-white/80 backdrop-blur-xl relative overflow-hidden"
+                 style={{ borderLeftColor: sectionColor }}>
                 
-                <div className="flex items-start gap-8 relative z-10 mb-10">
-                    <div className="p-5 bg-white/10 rounded-3xl backdrop-blur-xl border border-white/10">
-                        <Brain className="w-10 h-10 text-brand-300" />
+                <div className="absolute top-0 right-0 p-12 opacity-[0.03] pointer-events-none group-hover:opacity-10 transition-opacity">
+                    <Info size={250} strokeWidth={1} />
+                </div>
+
+                {/* Header Metrics */}
+                <div className="relative z-10 flex flex-col lg:flex-row justify-between gap-12 border-b border-slate-100 pb-12 mb-12">
+                    <div className="flex items-center gap-10">
+                        <div className="w-24 h-24 rounded-[36px] flex items-center justify-center text-white text-5xl font-black shadow-2xl shadow-brand-500/30 italic"
+                            style={{ backgroundColor: sectionColor }}>
+                            {sectionId}
+                        </div>
+                        <div>
+                            <h2 className="text-5xl font-black text-slate-900 tracking-tighter uppercase italic leading-none mb-4">{sectionName}</h2>
+                            <p className="text-[11px] font-black text-brand-600 uppercase tracking-[6px] italic opacity-60">Consolidation Intelligence Vague 2026.Alpha</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 className="text-3xl font-black text-white tracking-tighter">
-                            Observatoire Intuitif Sentinelle
-                        </h3>
-                        <p className="text-[10px] font-black text-brand-400 uppercase tracking-[5px] mt-2">Intelligence Artificielle & Synthèse Statistique</p>
+
+                    <div className="flex flex-wrap items-center gap-6">
+                        {[
+                            { icon: Users, label: 'Biospecifications', value: n === 0 ? '—' : n.toLocaleString(), color: 'text-brand-600' },
+                            { icon: Layers, label: 'Variables', value: questions.length, color: 'text-slate-900' },
+                            { icon: TrendingUp, label: 'Connexions', value: correlations.length, color: 'text-indigo-600' },
+                        ].map(({ icon: Icon, label, value, color }, i) => (
+                            <div key={i} className="flex flex-col items-center px-8 py-5 rounded-[32px] bg-slate-50 border border-slate-100 min-w-[140px] shadow-sm hover:bg-white hover:border-brand-500/20 transition-all cursor-default">
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-[4px] mb-2 italic">{label}</span>
+                                <p className={`text-3xl font-black italic tracking-tighter ${color}`}>{value}</p>
+                            </div>
+                        ))}
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 relative z-10">
-                    {/* LEFT: AI INTERPRETATION */}
-                    <div className="p-8 bg-white/5 rounded-[45px] border border-white/10 flex flex-col justify-between">
-                        <div>
-                            <h4 className="text-[11px] font-black text-brand-300 uppercase tracking-[0.3em] mb-6 flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full bg-brand-400"></div>
-                                Synthèse Analytique
-                            </h4>
-                            <p className="text-xl leading-relaxed text-slate-100 font-medium italic opacity-90">
-                                "{data?.interpretation || "Analyse multicritère en cours..."}"
-                            </p>
+                {/* 🧪 THE "BIG CARD" FIELD — Consolidated Grid */}
+                <div className="relative z-10">
+                    {questions.length > 0 ? (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <AnimatePresence>
+                                {questions.map((q, idx) => (
+                                    <motion.div
+                                        key={q.code}
+                                        initial={{ opacity: 0, y: 30 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: idx * 0.08 }}
+                                    >
+                                        {q.type === 'donut'
+                                            ? <DonutQuestionItem code={q.code} label={q.label} distribution={q.distribution} index={idx} />
+                                            : <BarQuestionItem code={q.code} label={q.label} distribution={q.distribution} index={idx} />
+                                        }
+                                    </motion.div>
+                                ))}
+                            </AnimatePresence>
                         </div>
-                        <div className="mt-10 flex items-center gap-4 pt-6 border-t border-white/5">
-                             <ShieldCheck className="text-brand-500" size={18} />
-                             <span className="text-[9px] font-black text-slate-500 uppercase tracking-widest leading-none">Vérifié par Observatoire National</span>
+                    ) : (
+                        <div className="h-80 flex flex-col items-center justify-center gap-6 bg-slate-50 rounded-[56px] border-4 border-dashed border-slate-100 group hover:bg-white hover:border-rose-500/20 transition-all duration-700">
+                            <AlertTriangle size={64} className="text-slate-100 group-hover:text-rose-500 transition-colors" />
+                            <p className="text-[13px] font-black text-slate-400 uppercase tracking-[10px] italic">No Analytic Vector Found</p>
                         </div>
-                    </div>
+                    )}
+                </div>
 
-                    {/* RIGHT: DIRECT CORRELATIONS */}
-                    <div className="space-y-6">
-                        <h4 className="text-[11px] font-black text-brand-300 uppercase tracking-[0.3em] pl-2 flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-amber-400"></div>
-                            Corrélations Directes (Inter-Sections)
-                        </h4>
-                        
-                        <div className="grid grid-cols-1 gap-4">
-                            {data?.correlations?.map((c, i) => (
-                                <div key={i} className="p-6 bg-white/5 hover:bg-white/10 rounded-[35px] border border-white/5 transition-all group/item flex items-center justify-between gap-6">
-                                    <div className="flex flex-col gap-1">
-                                        <span className="text-[9px] font-black text-brand-400 uppercase tracking-[3px]">{c?.tag}</span>
-                                        <p className="text-xs font-bold text-slate-300">{c?.label || "Lien Statistique"}</p>
-                                    </div>
-                                    <div className="flex items-center gap-4 flex-1 max-w-[150px]">
-                                        <div className="flex-1 h-1.5 bg-white/10 rounded-full overflow-hidden shadow-inner">
-                                            <motion.div 
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${c?.value || 0}%` }}
-                                                transition={{ duration: 1, delay: i * 0.1 }}
-                                                className="h-full bg-gradient-to-r from-brand-600 to-brand-400" 
-                                            />
-                                        </div>
-                                        <span className="text-sm font-black text-white tabular-nums">{c?.value}%</span>
-                                    </div>
-                                </div>
+                {/* Footer Matrix Linkage */}
+                {correlations.length > 0 && (
+                    <div className="mt-16 pt-12 border-t border-slate-100 relative z-10">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-ping" />
+                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-[6px] italic">Interactions Transversales Détectées</p>
+                        </div>
+                        <div className="flex flex-wrap gap-4">
+                            {correlations.map((c, i) => (
+                                <motion.div 
+                                    key={i} 
+                                    whileHover={{ y: -4, scale: 1.02 }}
+                                    className="px-6 py-3 bg-white rounded-[24px] border border-slate-100 shadow-xl shadow-slate-200/20 flex items-center gap-4 hover:border-brand-500/30 transition-all cursor-pointer group/item"
+                                >
+                                    <span className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-[11px] font-black shadow-lg italic"
+                                        style={{ backgroundColor: GROUP_COLORS[c.section_id] || '#0EA5E9' }}>
+                                        {c.section_id}
+                                    </span>
+                                    <span className="text-[11px] font-black text-slate-500 uppercase tracking-[3px] italic group-hover/item:text-brand-600 transition-colors">{SECTION_NAMES[c.section_id] || c.section_id}</span>
+                                </motion.div>
                             ))}
                         </div>
                     </div>
-                </div>
+                )}
             </div>
-        </div>
+        </motion.div>
     );
 };
 

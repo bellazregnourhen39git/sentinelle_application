@@ -15,9 +15,12 @@ User = get_user_model()
 # ─── Auth Serializers ────────────────────────────────────────────────────────────
 
 class UserSerializer(serializers.ModelSerializer):
+    governorate_name = serializers.CharField(source='governorate.name', read_only=True, default=None)
+
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'role', 'establishment', 'governorate')
+        fields = ('id', 'username', 'email', 'role', 'establishment', 'governorate', 'governorate_name')
+
 
 
 class RegisterSerializer(serializers.ModelSerializer):

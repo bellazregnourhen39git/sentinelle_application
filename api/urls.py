@@ -1,9 +1,9 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import (
-    RegisterView, ProfileView, QuestionnaireSubmitView,
     SchoolStatsView, GovernorateStatsView, NationalStatsView,
-    SidraDataExportView, HomepageView, SectionStatsView
+    SidraDataExportView, HomepageView, SectionStatsView, LabStatsView,
+    RegisterView, ProfileView, QuestionnaireSubmitView
 )
 
 urlpatterns = [
@@ -27,4 +27,5 @@ urlpatterns = [
     # Sentinelle Dashboards (New)
     path('homepage/', HomepageView.as_view(), name='homepage'),
     path('section-stats/<str:section_id>/', SectionStatsView.as_view(), name='section_stats'),
+    path('lab-stats/', LabStatsView.as_view(), name='lab_stats'),
 ]

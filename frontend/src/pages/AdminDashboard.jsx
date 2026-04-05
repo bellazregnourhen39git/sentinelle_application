@@ -1,8 +1,10 @@
 import React from 'react';
 import SentinelleDashboard from '../components/dashboard/SentinelleDashboard';
+import { useParams } from 'react-router-dom';
 
 const AdminDashboard = () => {
-    return <SentinelleDashboard initialScope="gouvernorate" />;
+    const { regionName } = useParams();
+    return <SentinelleDashboard initialScope="gouvernorate" initialScopeId={regionName} />;
 };
 
 export default AdminDashboard;

@@ -43,21 +43,21 @@ const Register = () => {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-md w-full"
       >
-        <div className="pro-card p-10 bg-white shadow-2xl shadow-slate-200/50">
-          <div className="flex flex-col items-center mb-10 text-center">
-            <div className="w-16 h-16 bg-brand-600 rounded-2xl flex items-center justify-center text-white shadow-xl shadow-brand-100 mb-4">
-              <ShieldPlus size={32} />
+        <div className="pro-card p-12 bg-white/80 backdrop-blur-xl border border-white shadow-2xl shadow-brand-100/20 rounded-[40px]">
+          <div className="flex flex-col items-center mb-12 text-center">
+            <div className="w-20 h-20 bg-brand-500 rounded-3xl flex items-center justify-center text-white shadow-2xl shadow-brand-500/30 mb-6 group hover:scale-110 transition-transform duration-500">
+              <ShieldPlus size={40} className="glow-brand" />
             </div>
-            <h2 className="text-3xl font-black text-slate-900 tracking-tight">
-              Create Account
+            <h2 className="text-4xl font-black text-slate-900 tracking-tight italic uppercase">
+              Recrutement
             </h2>
-            <p className="text-slate-500 mt-2 font-medium italic">Sentinelle MedSPAD Platform</p>
+            <p className="text-slate-400 mt-2 font-black text-[10px] uppercase tracking-[4px] italic">Accès Sentinelle MedSPAD</p>
           </div>
 
           <form onSubmit={handleRegister} className="space-y-6">
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                <User size={14} /> Username
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] flex items-center gap-2 italic">
+                <User size={14} className="text-brand-500" /> Identifiant
               </label>
               <input
                 type="text"
@@ -65,14 +65,14 @@ const Register = () => {
                 required
                 value={formData.username}
                 onChange={handleChange}
-                placeholder="doctor_name"
-                className="pro-input h-14 bg-slate-50 border-none shadow-inner"
+                placeholder="nom_utilisateur"
+                className="w-full h-14 px-6 rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/5 transition-all outline-none font-bold text-slate-700"
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                <Mail size={14} /> Email
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] flex items-center gap-2 italic">
+                <Mail size={14} className="text-brand-500" /> Email Professionnel
               </label>
               <input
                 type="email"
@@ -80,14 +80,14 @@ const Register = () => {
                 required
                 value={formData.email}
                 onChange={handleChange}
-                placeholder="name@example.com"
-                className="pro-input h-14 bg-slate-50 border-none shadow-inner"
+                placeholder="dr.nom@hopital.tn"
+                className="w-full h-14 px-6 rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/5 transition-all outline-none font-bold text-slate-700"
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                <Lock size={14} /> Password
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] flex items-center gap-2 italic">
+                <Lock size={14} className="text-brand-500" /> Mot de Passe
               </label>
               <input
                 type="password"
@@ -96,33 +96,33 @@ const Register = () => {
                 value={formData.password}
                 onChange={handleChange}
                 placeholder="••••••••"
-                className="pro-input h-14 bg-slate-50 border-none shadow-inner"
+                className="w-full h-14 px-6 rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/5 transition-all outline-none font-bold text-slate-700"
               />
             </div>
 
-            <div className="space-y-2">
-              <label className="text-xs font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2">
-                <UserCog size={14} /> Role
+            <div className="space-y-3">
+              <label className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] flex items-center gap-2 italic">
+                <UserCog size={14} className="text-brand-500" /> Prérogatives
               </label>
               <select
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className="pro-input h-14 bg-slate-50 border-none shadow-inner font-bold text-slate-600"
+                className="w-full h-14 px-6 rounded-2xl bg-slate-50 border border-slate-100 focus:bg-white focus:border-brand-500 focus:ring-4 focus:ring-brand-500/5 transition-all outline-none font-bold text-slate-600 cursor-pointer"
               >
-                <option value="USER">Doctor (User)</option>
-                <option value="ADMIN">Governorate Admin</option>
-                <option value="SUPERADMIN">National Admin</option>
+                <option value="USER">Médecin (Utilisateur)</option>
+                <option value="ADMIN">Administrateur Gouvernorat</option>
+                <option value="SUPERADMIN">Administrateur National</option>
               </select>
             </div>
 
             {error && (
               <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-lg border border-red-100 text-sm font-medium"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center gap-3 text-rose-600 bg-rose-50 p-4 rounded-2xl border border-rose-100 text-xs font-black uppercase tracking-wider"
               >
-                <AlertCircle size={16} />
+                <AlertCircle size={18} />
                 <span>{error}</span>
               </motion.div>
             )}
@@ -130,24 +130,24 @@ const Register = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full pro-btn-primary h-14 flex items-center justify-center gap-2 text-lg shadow-xl shadow-brand-100"
+              className="w-full pro-btn-primary h-16 flex items-center justify-center gap-3 text-lg shadow-2xl shadow-brand-500/20 active:scale-95 group"
             >
               {loading ? (
                 <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
               ) : (
                 <>
-                  <span>Sign Up Now</span>
-                  <ArrowRight size={20} />
+                  <span className="italic">Initialiser l'Accès</span>
+                  <ArrowRight size={22} className="group-hover:translate-x-1 transition-transform" />
                 </>
               )}
             </button>
           </form>
 
-          <footer className="mt-10 pt-8 border-t border-slate-100 flex flex-col items-center gap-4">
-            <p className="text-sm text-slate-400 font-medium text-center">
-              Existing authority member?{' '}
-              <Link to="/login" className="text-brand-600 font-bold hover:underline">
-                Login here
+          <footer className="mt-12 pt-10 border-t border-slate-50 flex flex-col items-center gap-4">
+            <p className="text-[11px] font-black text-slate-400 uppercase tracking-widest text-center italic">
+              Déjà membre de l'autorité ?{' '}
+              <Link to="/login" className="text-brand-600 hover:text-brand-700 transition-colors">
+                Se connecter
               </Link>
             </p>
           </footer>

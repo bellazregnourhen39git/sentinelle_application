@@ -1,0 +1,1 @@
+['Ben Arous', 'Zaghouan', 'Mannouba', 'Sousse', 'Zaghouan', 'Mannouba', 'Sousse', 'Beja', 'Zaghouan', 'Tataouine', 'Tataouine', 'Mednine', 'Tataouine', 'Gafsa', 'Gabes', 'Mahdia', 'Mahdia', 'Mahdia', 'Mahdia', 'Mahdia', 'Le kef', 'Kairouan', 'Jandouba', 'Zaghouan']

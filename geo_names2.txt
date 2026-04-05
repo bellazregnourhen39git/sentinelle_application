@@ -1,0 +1,24 @@
+None | tn-4431
+Sfax | tn-sf
+Médenine | tn-me
+Tozeur | tn-to
+Manubah | tn-mn
+Béja | tn-bj
+Ben Arous (Tunis Sud) | tn-ba
+Bizerte | tn-bz
+Jendouba | tn-je
+Nabeul | tn-nb
+Tunis | tn-tu
+Le Kef | tn-kf
+Kassérine | tn-ks
+Gabès | tn-gb
+Gafsa | tn-gf
+Sidi Bou Zid | tn-sz
+Siliana | tn-sl
+Mahdia | tn-mh
+Monastir | tn-ms
+Kairouan | tn-kr
+Sousse | tn-ss
+Zaghouan | tn-za
+Kebili | tn-kb
+Tataouine | tn-ta

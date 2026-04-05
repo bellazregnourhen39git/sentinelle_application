@@ -1,0 +1,1 @@
+['Tunis', 'Sfax', 'Sousse', 'Kairouan', 'Bizerte', 'Ariana', 'Ben Arous', 'Mannouba', 'Nabeul', 'Zaghouan', 'Beja', 'Jandouba', 'Le kef', 'Siliana', 'Monastir', 'Mahdia', 'Kasserine', 'Sidi Bouzid', 'Gabes', 'Mednine', 'Tataouine', 'Gafsa', 'Tozeur', 'Kebili']
