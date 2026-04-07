@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Activity, Zap, ArrowRight, Info, AlertTriangle, ShieldCheck,
-    Layers, Search, LogOut, User
+    Layers, Search, LogOut, User, Smartphone, Scan
 } from 'lucide-react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
 import RadialSectionWheel from './RadialSectionWheel';
 import SectionDetailPanel from './SectionDetailPanel';
@@ -195,6 +195,7 @@ const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin 
 
 // Sentinelle Analytical Engine — Multi-Scope Environment
 const SentinelleDashboard = ({ initialScope = 'user_school', initialScopeId = null, forcedUser = null, onLogout = null }) => {
+    const navigate = useNavigate();
     const [selectedSection, setSelectedSection] = useState(null);
     const [selectedSectionData, setSelectedSectionData] = useState(null);
     const [sectionLoading, setSectionLoading] = useState(false);
@@ -324,6 +325,25 @@ const SentinelleDashboard = ({ initialScope = 'user_school', initialScopeId = nu
                             </div>
                         </div>
                     )}
+                    
+                    <button
+                        onClick={() => navigate('/scan')}
+                        title="OCR Scanner"
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-50 border border-brand-100 text-brand-600 hover:bg-brand-500 hover:text-white transition-all duration-300 text-[10px] font-black uppercase tracking-widest italic group"
+                    >
+                        <Scan size={14} className="group-hover:scale-110 transition-transform" />
+                        <span className="hidden lg:inline">SCANNER</span>
+                    </button>
+
+                    <button
+                        onClick={() => navigate('/qr')}
+                        title="QR Code Access"
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-50 border border-brand-100 text-brand-600 hover:bg-brand-500 hover:text-white transition-all duration-300 text-[10px] font-black uppercase tracking-widest italic group"
+                    >
+                        <Smartphone size={14} className="group-hover:scale-110 transition-transform" />
+                        <span className="hidden lg:inline">MOBILE QR</span>
+                    </button>
+
                     {onLogout && (
                         <button
                             onClick={onLogout}
