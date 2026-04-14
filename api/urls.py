@@ -3,7 +3,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from .views import (
     SchoolStatsView, GovernorateStatsView, NationalStatsView,
     SidraDataExportView, HomepageView, SectionStatsView, LabStatsView,
-    RegisterView, ProfileView, QuestionnaireSubmitView
+    RegisterView, ProfileView, QuestionnaireSubmitView, QuestionnaireExportView
 )
 
 urlpatterns = [
@@ -15,6 +15,7 @@ urlpatterns = [
 
     # Questionnaire
     path('questionnaire/submit/', QuestionnaireSubmitView.as_view(), name='questionnaire_submit'),
+    path('questionnaire/export/', QuestionnaireExportView.as_view(), name='questionnaire_export'),
 
     # Dashboards
     path('stats/school/', SchoolStatsView.as_view(), name='stats_school'),

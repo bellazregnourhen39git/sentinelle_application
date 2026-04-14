@@ -74,10 +74,10 @@ const CheckboxGroup = ({ name, values = {}, onChange, options, isRTL }) => (
   </div>
 );
 
-const GridQuestion = ({ title, code, options, items, values, onChange, isRTL }) => (
+const GridQuestion = ({ title, titleAr, code, options, items, values, onChange, isRTL }) => (
   <div className="overflow-x-auto -mx-1 px-1 mt-8">
     <div className="mb-4">
-      <FieldLabel code={code} fr={title} ar={title} isRTL={isRTL} />
+      <FieldLabel code={code} fr={title} ar={titleAr || title} isRTL={isRTL} />
     </div>
     <table className="w-full text-sm border-separate border-spacing-y-2 min-w-[600px]">
       <thead>
@@ -412,6 +412,7 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_a',
       letter: 'A',
       title: 'Informations Générales',
+      titleAr: 'معلومات عامة',
       color: 'bg-slate-900',
       content: (
         <div className="space-y-12">
@@ -439,7 +440,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.A03 */}
-          <GridQuestion title="À Quelle fréquence pratiquez-vous chacune des activités suivantes ?" code="C.A03" isRTL={isRTL}
+          <GridQuestion title="À Quelle fréquence pratiquez-vous chacune des activités suivantes ?" titleAr="ما مدى تكرار ممارستك لكل من الأنشطة التالية؟" code="C.A03" isRTL={isRTL}
             options={FREQ_ACTIVITIES} values={data.section_a.activities_frequency}
             onChange={(key, val) => updateCheck('section_a', 'activities_frequency', key, val)}
             items={[
@@ -453,7 +454,7 @@ const QuestionnaireForm = ({ onClose }) => {
             ]} />
 
           {/* C.A04 */}
-          <GridQuestion title="Au cours du dernier mois, combien de jours avez-vous manqué le lycée pour l'une des raisons suivantes ?" code="C.A04" isRTL={isRTL}
+          <GridQuestion title="Au cours du dernier mois, combien de jours avez-vous manqué le lycée pour l'une des raisons suivantes ?" titleAr="خلال الشهر الماضي، كم يوماً تغيبت عن المدرسة بسبب أحد الأسباب التالية؟" code="C.A04" isRTL={isRTL}
             options={[['never', 'Jamais'], ['1', '1 jour'], ['2', '2 jours'], ['3_4', '3-4 jours'], ['5_6', '5-6 jours'], ['7_plus', '7 jours+']]}
             values={data.section_a.school_absences}
             onChange={(key, val) => updateCheck('section_a', 'school_absences', key, val)}
@@ -506,7 +507,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.A09 */}
-          <GridQuestion title="D’une manière générale, quel est votre degré de satisfaction de votre relation avec :" code="C.A09" isRTL={isRTL}
+          <GridQuestion title="D’une manière générale, quel est votre degré de satisfaction de votre relation avec :" titleAr="بشكل عام، ما مدى رضاك عن علاقتك بـ:" code="C.A09" isRTL={isRTL}
             options={SATISFACTION_SCALE} values={data.section_a.family_relationship_satisfaction}
             onChange={(key, val) => updateCheck('section_a', 'family_relationship_satisfaction', key, val)}
             items={[
@@ -523,6 +524,7 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_b',
       letter: 'B',
       title: 'Famille & Situation Socio-Économique',
+      titleAr: 'العائلة والوضع الاجتماعي - الاقتصادي',
       color: 'bg-blue-900',
       content: (
         <div className="space-y-12">
@@ -564,7 +566,9 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_c',
       letter: 'C',
       title: 'Consommation de Tabac',
+      titleAr: 'استهلاك التبغ',
       subtitle: 'Section C',
+      subtitleAr: 'القسم C',
       color: 'bg-amber-600',
       content: (
         <div className="space-y-12">
@@ -575,13 +579,13 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.C02 */}
-          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume des cigarettes?" code="C.C02" isRTL={isRTL}
+          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume des cigarettes?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يدخن السجائر؟" code="C.C02" isRTL={isRTL}
             options={SOCIAL_CIRCLE_OPTIONS} values={data.section_c.social_circle}
             onChange={(key, val) => updateCheck('section_c', 'social_circle', key, val)}
             items={[['father', 'Père', 'الأب'], ['mother', 'Mère', 'الأم'], ['siblings', 'Fratrie', 'الإخوة'], ['best_friend', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['other_friends', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
 
           {/* C.C03 */}
-          <GridQuestion title="Combien de fois avez-vous fumé des cigarettes (sans compter les cigarettes électroniques)?" code="C.C03" isRTL={isRTL}
+          <GridQuestion title="Combien de fois avez-vous fumé des cigarettes (sans compter les cigarettes électroniques)?" titleAr="كم مرة دخنت السجائر (بدون احتساب السجائر الإلكترونية)؟" code="C.C03" isRTL={isRTL}
             options={FREQ_LIFETIME_12M} values={data.section_c}
             onChange={(key, val) => update('section_c', key, val)}
             items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
@@ -593,7 +597,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.C05 */}
-          <GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit?" code="C.C05" isRTL={isRTL}
+          <GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit?" titleAr="في أي عمر بدأت تفعل ما يلي؟" code="C.C05" isRTL={isRTL}
             options={AGE_FIRST_USE} values={data.section_c}
             onChange={(key, val) => update('section_c', key, val)}
             items={[['age_first_use', 'Fumé votre première cigarette', 'دخنت أول سيجارة'], ['age_daily_use', 'Fumé quotidiennement', 'دخنت يومياً']]} />
@@ -604,7 +608,9 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_d',
       letter: 'D',
       title: 'Cigarettes Électroniques',
+      titleAr: 'السجائر الإلكترونية',
       subtitle: 'Section D',
+      subtitleAr: 'القسم D',
       color: 'bg-emerald-600',
       content: (
         <div className="space-y-12">
@@ -615,13 +621,13 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.D02 */}
-          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume des cigarettes électroniques?" code="C.D02" isRTL={isRTL}
+          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume des cigarettes électroniques?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يدخن السجائر الإلكترونية؟" code="C.D02" isRTL={isRTL}
             options={SOCIAL_CIRCLE_OPTIONS} values={data.section_d.social_circle}
             onChange={(key, val) => updateCheck('section_d', 'social_circle', key, val)}
             items={[['father', 'Père', 'الأب'], ['mother', 'Mère', 'الأم'], ['siblings', 'Fratrie', 'الإخوة'], ['best_friend', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['other_friends', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
 
           {/* C.D03 */}
-          <GridQuestion title="Combien de fois avez-vous fumé des cigarettes électroniques?" code="C.D03" isRTL={isRTL}
+          <GridQuestion title="Combien de fois avez-vous fumé des cigarettes électroniques?" titleAr="كم مرة دخنت السجائر الإلكترونية؟" code="C.D03" isRTL={isRTL}
             options={FREQ_LIFETIME_12M} values={data.section_d}
             onChange={(key, val) => update('section_d', key, val)}
             items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
@@ -633,7 +639,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.D05 */}
-          <GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit ?" code="C.D05" isRTL={isRTL}
+          <GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit ?" titleAr="في أي عمر بدأت تفعل ما يلي؟" code="C.D05" isRTL={isRTL}
             options={AGE_FIRST_USE} values={data.section_d}
             onChange={(key, val) => update('section_d', key, val)}
             items={[['age_first_use', 'Utilisé pour la première fois une cigarette électronique', 'استخدمت السيجارة الإلكترونية لأول مرة'], ['age_daily_use', 'Utilisé quotidiennement', 'استخدمتها يومياً']]} />
@@ -644,7 +650,9 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_e',
       letter: 'E',
       title: 'Consommation de Narguilé (Chicha)',
+      titleAr: 'استهلاك النرجيلة (شيشة)',
       subtitle: 'Section E',
+      subtitleAr: 'القسم E',
       color: 'bg-orange-600',
       content: (
         <div className="space-y-12">
@@ -655,13 +663,13 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.E02 */}
-          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume le narguilé?" code="C.E02" isRTL={isRTL}
+          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume le narguilé?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يدخن الشيشة؟" code="C.E02" isRTL={isRTL}
             options={SOCIAL_CIRCLE_OPTIONS} values={data.section_e.social_circle}
             onChange={(key, val) => updateCheck('section_e', 'social_circle', key, val)}
             items={[['father', 'Père', 'الأب'], ['mother', 'Mère', 'الأم'], ['siblings', 'Fratrie', 'الإخوة'], ['best_friend', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['other_friends', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
 
           {/* C.E03 */}
-          <GridQuestion title="Combien de fois avez-vous fumé narguilé?" code="C.E03" isRTL={isRTL}
+          <GridQuestion title="Combien de fois avez-vous fumé narguilé?" titleAr="كم مرة دخنت الشيشة؟" code="C.E03" isRTL={isRTL}
             options={FREQ_LIFETIME_12M} values={data.section_e}
             onChange={(key, val) => update('section_e', key, val)}
             items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
@@ -673,7 +681,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.E05 */}
-          <GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit?" code="C.E05" isRTL={isRTL}
+          <GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit?" titleAr="في أي عمر بدأت تفعل ما يلي؟" code="C.E05" isRTL={isRTL}
             options={AGE_FIRST_USE} values={data.section_e}
             onChange={(key, val) => update('section_e', key, val)}
             items={[['age_first_use', 'Fumé pour la première fois le narguilé', 'دخنت الشيشة لأول مرة'], ['age_daily_use', 'Fumé quotidiennement le narguilé', 'دخنتها يومياً']]} />
@@ -684,29 +692,30 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_g',
       letter: 'G',
       title: 'Boissons Alcoolisées',
+      titleAr: 'المشروبات الكحولية',
       color: 'bg-amber-800',
       content: (
         <div className="space-y-12">
           {/* C.G01 */}
-          <GridQuestion title="À quel point pensez-vous qu'il serait difficile de vous procurer les boissons suivantes si vous le vouliez ?" code="C.G01" isRTL={isRTL}
+          <GridQuestion title="À quel point pensez-vous qu'il serait difficile de vous procurer les boissons suivantes si vous le vouliez ?" titleAr="ما مدى صعوبة حصولك على المشروبات التالية إذا أردت؟" code="C.G01" isRTL={isRTL}
             options={DIFFICULTY_LEVELS} values={data.section_g.access_difficulty}
             onChange={(key, val) => updateCheck('section_g', 'access_difficulty', key, val)}
             items={[['beer', 'Bière', 'بيرة'], ['wine', 'Vin', 'نبيذ'], ['spirits', 'Alcools forts', 'خمور قوية']]} />
 
           {/* C.G02 */}
-          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme les boissons alcoolisées?" code="C.G02" isRTL={isRTL}
+          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme les boissons alcoolisées?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك المشروبات الكحولية؟" code="C.G02" isRTL={isRTL}
             options={SOCIAL_CIRCLE_OPTIONS} values={data.section_g.social_circle}
             onChange={(key, val) => updateCheck('section_g', 'social_circle', key, val)}
             items={[['father', 'Père', 'الأب'], ['mother', 'Mère', 'الأم'], ['siblings', 'Fratrie', 'الإخوة'], ['best_friend', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['other_friends', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
 
           {/* C.G03 */}
-          <GridQuestion title="Combien de fois avez-vous consommé des boissons alcoolisées?" code="C.G03" isRTL={isRTL}
+          <GridQuestion title="Combien de fois avez-vous consommé des boissons alcoolisées?" titleAr="كم مرة تناولت المشروبات الكحولية؟" code="C.G03" isRTL={isRTL}
             options={FREQ_LIFETIME_12M} values={data.section_g}
             onChange={(key, val) => update('section_g', key, val)}
             items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
 
           {/* C.G04 */}
-          <GridQuestion title="Combien de fois avez-vous consommé les boissons alcoolisées suivantes au cours des 30 DERNIERS JOURS?" code="C.G04" isRTL={isRTL}
+          <GridQuestion title="Combien de fois avez-vous consommé les boissons alcoolisées suivantes au cours des 30 DERNIERS JOURS?" titleAr="كم مرة تناولت المشروبات الكحولية التالية خلال آخر 30 يوماً؟" code="C.G04" isRTL={isRTL}
             options={FREQ_30DAYS} values={data.section_g.days_30_by_type}
             onChange={(key, val) => updateCheck('section_g', 'days_30_by_type', key, val)}
             items={[['beer', 'Bière', 'بيرة'], ['wine', 'Vin', 'نبيذ'], ['spirits', 'Alcools forts', 'خمور قوية']]} />
@@ -718,13 +727,13 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.G06 */}
-          <GridQuestion title="Combien de fois (éventuellement) avez-vous été intoxiqué par la consommation des boissons alcoolisées?" code="C.G06" isRTL={isRTL}
+          <GridQuestion title="Combien de fois (éventuellement) avez-vous été intoxiqué par la consommation des boissons alcoolisées?" titleAr="كم مرة (إن وجدت) كنت في حالة سكر بسبب تناول المشروبات الكحولية؟" code="C.G06" isRTL={isRTL}
             options={FREQ_LIFETIME_12M_30D} values={data.section_g}
             onChange={(key, val) => update('section_g', key, val)}
             items={[['intoxication_lifetime', 'Au cours de votre vie', 'طوال حياتك'], ['intoxication_12months', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['intoxication_30days', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
 
           {/* C.G07 */}
-          <GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit pour la première fois ?" code="C.G07" isRTL={isRTL}
+          <GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit pour la première fois ?" titleAr="في أي عمر بدأت تفعل ما يلي لأول مرة؟" code="C.G07" isRTL={isRTL}
             options={AGE_FIRST_USE} values={data.section_g}
             onChange={(key, val) => update('section_g', key, val)}
             items={[['age_first_drink', 'Boire de l’alcool', 'شرب الكحول'], ['age_first_intoxication', 'Être intoxiqué (soûl)', 'الوقوع في السكر']]} />
@@ -735,7 +744,9 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_h',
       letter: 'H',
       title: 'Tranquillisants ou Sédatifs (sans ordonnance)',
+      titleAr: 'المهدئات أو المهدئات (بدون وصفة طبية)',
       subtitle: 'Section H',
+      subtitleAr: 'القسم H',
       color: 'bg-purple-900',
       content: (
         <div className="space-y-12">
@@ -746,13 +757,13 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.H02 */}
-          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme des tranquillisants ou sédatifs (sans ordonnance) ?" code="C.H02" isRTL={isRTL}
+          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme des tranquillisants ou sédatifs (sans ordonnance) ?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك المهدئات أو المهدئات بدون وصفة طبية؟" code="C.H02" isRTL={isRTL}
             options={SOCIAL_CIRCLE_OPTIONS} values={data.section_h.social_circle}
             onChange={(key, val) => updateCheck('section_h', 'social_circle', key, val)}
             items={[['father', 'Père', 'الأب'], ['mother', 'Mère', 'الأم'], ['siblings', 'Fratrie', 'الإخوة'], ['best_friend', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['other_friends', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
 
           {/* C.H03 */}
-          <GridQuestion title="Combien de fois avez-vous consommé des tranquillisants ou sédatifs (sans ordonnance) ?" code="C.H03" isRTL={isRTL}
+          <GridQuestion title="Combien de fois avez-vous consommé des tranquillisants ou sédatifs (sans ordonnance) ?" titleAr="كم مرة تناولت المهدئات أو المهدئات (بدون وصفة طبية)؟" code="C.H03" isRTL={isRTL}
             options={FREQ_LIFETIME_12M_30D} values={data.section_h}
             onChange={(key, val) => update('section_h', key, val)}
             items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
@@ -769,7 +780,9 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_i',
       letter: 'I',
       title: 'Cannabis (Zatla, Marihuana...)',
+      titleAr: 'القنب الهندي (زطلة، ماريجوانا...)',
       subtitle: 'Section I',
+      subtitleAr: 'القسم I',
       color: 'bg-green-900',
       content: (
         <div className="space-y-12">
@@ -780,7 +793,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.I02 */}
-          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme du cannabis?" code="C.I02" isRTL={isRTL}
+          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme du cannabis?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك القنب الهندي؟" code="C.I02" isRTL={isRTL}
             options={SOCIAL_CIRCLE_OPTIONS} values={data.section_i.social_circle}
             onChange={(key, val) => updateCheck('section_i', 'social_circle', key, val)}
             items={[['father', 'Père', 'الأب'], ['mother', 'Mère', 'الأم'], ['siblings', 'Fratrie', 'الإخوة'], ['best_friend', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['other_friends', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
@@ -792,7 +805,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.I04 */}
-          <GridQuestion title="Combien de fois avez-vous consommé du cannabis?" code="C.I04" isRTL={isRTL}
+          <GridQuestion title="Combien de fois avez-vous consommé du cannabis?" titleAr="كم مرة استهلكت القنب الهندي؟" code="C.I04" isRTL={isRTL}
             options={FREQ_LIFETIME_12M_30D} values={data.section_i}
             onChange={(key, val) => update('section_i', key, val)}
             items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['days_30_freq', 'Au cours des 30 DERNIERS JOURS', 'خلال الـ 30 يومًا الأخيرة']]} />
@@ -850,7 +863,9 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_j',
       letter: 'J',
       title: 'Cocaïne',
+      titleAr: 'الكوكايين',
       subtitle: 'Section J',
+      subtitleAr: 'القسم J',
       color: 'bg-red-900',
       content: (
         <div className="space-y-12">
@@ -861,7 +876,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.J02 */}
-          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de la cocaïne?" code="C.J02" isRTL={isRTL}
+          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de la cocaïne?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك الكوكايين؟" code="C.J02" isRTL={isRTL}
             options={SOCIAL_CIRCLE_OPTIONS} values={data.section_j.social_circle}
             onChange={(key, val) => updateCheck('section_j', 'social_circle', key, val)}
             items={[['father', 'Père', 'الأب'], ['mother', 'Mère', 'الأم'], ['siblings', 'Fratrie', 'الإخوة'], ['best_friend', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['other_friends', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
@@ -873,7 +888,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.J04 */}
-          <GridQuestion title="Combien de fois avez-vous consommé de la cocaïne?" code="C.J04" isRTL={isRTL}
+          <GridQuestion title="Combien de fois avez-vous consommé de la cocaïne?" titleAr="كم مرة استهلكت الكوكايين؟" code="C.J04" isRTL={isRTL}
             options={FREQ_LIFETIME_30D} values={data.section_j}
             onChange={(key, val) => update('section_j', key, val)}
             items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['days_30_freq', 'Au cours des 30 DERNIERS JOURS', 'خلال الـ 30 يومًا الأخيرة']]} />
@@ -890,7 +905,9 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_k',
       letter: 'K',
       title: 'Ecstasy',
+      titleAr: 'الإكستازي',
       subtitle: 'Section K',
+      subtitleAr: 'القسم K',
       color: 'bg-pink-700',
       content: (
         <div className="space-y-12">
@@ -901,7 +918,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.K02 */}
-          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de l'ecstasy?" code="C.K02" isRTL={isRTL}
+          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de l'ecstasy?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك الإكستازي؟" code="C.K02" isRTL={isRTL}
             options={SOCIAL_CIRCLE_OPTIONS} values={data.section_k.social_circle}
             onChange={(key, val) => updateCheck('section_k', 'social_circle', key, val)}
             items={[['father', 'Père', 'الأب'], ['mother', 'Mère', 'الأم'], ['siblings', 'Fratrie', 'الإخوة'], ['best_friend', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['other_friends', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
@@ -913,7 +930,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.K04 */}
-          <GridQuestion title="Combien de fois avez-vous consommé de l'ecstasy?" code="C.K04" isRTL={isRTL}
+          <GridQuestion title="Combien de fois avez-vous consommé de l'ecstasy?" titleAr="كم مرة استهلكت الإكستازي؟" code="C.K04" isRTL={isRTL}
             options={FREQ_LIFETIME_30D} values={data.section_k}
             onChange={(key, val) => update('section_k', key, val)}
             items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['days_30_freq', 'Au cours des 30 DERNIERS JOURS', 'خلال الـ 30 يومًا الأخيرة']]} />
@@ -930,7 +947,9 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_l',
       letter: 'L',
       title: 'Héroïne',
+      titleAr: 'الهيروين',
       subtitle: 'Section L',
+      subtitleAr: 'القسم L',
       color: 'bg-stone-900',
       content: (
         <div className="space-y-12">
@@ -941,7 +960,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.L02 */}
-          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de l'héroïne?" code="C.L02" isRTL={isRTL}
+          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de l'héroïne?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك الهيروين؟" code="C.L02" isRTL={isRTL}
             options={SOCIAL_CIRCLE_OPTIONS} values={data.section_l.social_circle}
             onChange={(key, val) => updateCheck('section_l', 'social_circle', key, val)}
             items={[['father', 'Père', 'الأب'], ['mother', 'Mère', 'الأم'], ['siblings', 'Fratrie', 'الإخوة'], ['best_friend', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['other_friends', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
@@ -953,7 +972,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.L04 */}
-          <GridQuestion title="Combien de fois avez-vous consommé de l'héroïne?" code="C.L04" isRTL={isRTL}
+          <GridQuestion title="Combien de fois avez-vous consommé de l'héroïne?" titleAr="كم مرة استهلكت الهيروين؟" code="C.L04" isRTL={isRTL}
             options={FREQ_LIFETIME_30D} values={data.section_l}
             onChange={(key, val) => update('section_l', key, val)}
             items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['days_30_freq', 'Au cours des 30 DERNIERS JOURS', 'خلال الـ 30 يومًا الأخيرة']]} />
@@ -970,7 +989,9 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_m',
       letter: 'M',
       title: 'Solvants et Inhalants',
+      titleAr: 'المذيبات والاستنشاق',
       subtitle: 'Section M',
+      subtitleAr: 'القسم M',
       color: 'bg-zinc-800',
       content: (
         <div className="space-y-12">
@@ -981,7 +1002,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.M02 */}
-          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme des solvants ou des inhalants (Colle, Diluant, Essence...)?" code="C.M02" isRTL={isRTL}
+          <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme des solvants ou des inhalants (Colle, Diluant, Essence...)?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك المذيبات أو الاستنشاقات (غراء، مخفف، بنزين...)؟" code="C.M02" isRTL={isRTL}
             options={SOCIAL_CIRCLE_OPTIONS} values={data.section_m.social_circle}
             onChange={(key, val) => updateCheck('section_m', 'social_circle', key, val)}
             items={[['father', 'Père', 'الأب'], ['mother', 'Mère', 'الأم'], ['siblings', 'Fratrie', 'الإخوة'], ['best_friend', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['other_friends', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
@@ -993,7 +1014,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.M04 */}
-          <GridQuestion title="Combien de fois avez-vous consommé des solvants ou des inhalants (Colle, Diluant, Essence...)?" code="C.M04" isRTL={isRTL}
+          <GridQuestion title="Combien de fois avez-vous consommé des solvants ou des inhalants (Colle, Diluant, Essence...)?" titleAr="كم مرة استهلكت المذيبات أو الاستنشاقات (غراء، مخفف، بنزين...)؟" code="C.M04" isRTL={isRTL}
             options={FREQ_LIFETIME_30D} values={data.section_m}
             onChange={(key, val) => update('section_m', key, val)}
             items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['days_30_freq', 'Au cours des 30 DERNIERS JOURS', 'خلال الـ 30 يومًا الأخيرة']]} />
@@ -1010,12 +1031,14 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_n',
       letter: 'N',
       title: 'Nouvelles Substances (NSP)',
+      titleAr: 'المواد الجديدة (NSP)',
       subtitle: 'Section N',
+      subtitleAr: 'القسم N',
       color: 'bg-yellow-800',
       content: (
         <div className="space-y-12">
           {/* C.N01 */}
-          <GridQuestion title="Combien de fois avez-vous consommé des nouvelles substances psychoactives (NSP) ?" code="C.N01" isRTL={isRTL}
+          <GridQuestion title="Combien de fois avez-vous consommé des nouvelles substances psychoactives (NSP) ?" titleAr="كم مرة استهلكت مواد نفسية جديدة (NSP)؟" code="C.N01" isRTL={isRTL}
             options={FREQ_LIFETIME_12M_30D} values={data.section_n}
             onChange={(key, val) => update('section_n', key, val)}
             items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 DERNIERS JOURS', 'خلال الـ 30 يومًا الأخيرة']]} />
@@ -1052,18 +1075,20 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_p',
       letter: 'P',
       title: 'Autres Substances & Nouvelles Formes',
+      titleAr: 'مواد أخرى وأشكال جديدة',
       subtitle: 'Section P',
+      subtitleAr: 'القسم P',
       color: 'bg-rose-900',
       content: (
         <div className="space-y-12">
           {/* C.P01 */}
-          <GridQuestion title="Combien de fois avez-vous consommé l’une de ces substances (LSD, stéroïdes, GHB, crack...) ?" code="C.P01" isRTL={isRTL}
+          <GridQuestion title="Combien de fois avez-vous consommé l’une de ces substances (LSD, stéroïdes, GHB, crack...) ?" titleAr="كم مرة استهلكت إحدى هذه المواد (LSD، ستيرويد، GHB، كراك...)؟" code="C.P01" isRTL={isRTL}
             options={FREQ_LIFETIME_12M_30D} values={data.section_p.frequencies}
             onChange={(key, val) => updateCheck('section_p', 'frequencies', key, val)}
             items={[['lifetime', 'Au cours de votre vie', 'طوال حياتك'], ['last_12months', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['last_30days', 'Au cours des 30 DERNIERS JOURS', 'خلال الـ 30 يومًا الأخيرة']]} />
 
           {/* C.P03 */}
-          <GridQuestion title="Combien de fois DANS VOTRE VIE avez-vous consommé l'une des substances suivantes :" code="C.P03" isRTL={isRTL}
+          <GridQuestion title="Combien de fois DANS VOTRE VIE avez-vous consommé l'une des substances suivantes :" titleAr="كم مرة في حياتك استهلكت إحدى المواد التالية:" code="C.P03" isRTL={isRTL}
             options={FREQ_LIFETIME} values={data.section_p.substances_lifetime}
             onChange={(key, val) => updateCheck('section_p', 'substances_lifetime', key, val)}
             items={[
@@ -1080,12 +1105,14 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_q',
       letter: 'Q',
       title: 'Perception des Risques et Aide',
+      titleAr: 'إدراك المخاطر والمساعدة',
       subtitle: 'Section Q',
+      subtitleAr: 'القسم Q',
       color: 'bg-emerald-800',
       content: (
         <div className="space-y-12">
           {/* C.Q01-Q02 */}
-          <GridQuestion title="À votre avis, quel risque les gens courent-ils de se nuire s'ils font ce qui suit :" code="C.Q01-02" isRTL={isRTL}
+          <GridQuestion title="À votre avis, quel risque les gens courent-ils de se nuire s'ils font ce qui suit :" titleAr="برأيك، ما المخاطر التي يتعرض لها الناس إذا فعلوا ما يلي:" code="C.Q01-02" isRTL={isRTL}
             options={RISK_LEVELS} values={data.section_q.risk_perceptions}
             onChange={(key, val) => updateCheck('section_q', 'risk_perceptions', key, val)}
             items={[
@@ -1096,7 +1123,7 @@ const QuestionnaireForm = ({ onClose }) => {
             ]} />
 
           {/* C.Q03 */}
-          <GridQuestion title="Si vous aviez un problème lié à l’alcool ou aux drogues, vers qui vous tourneriez-vous pour obtenir de l’aide ?" code="C.Q03" isRTL={isRTL}
+          <GridQuestion title="Si vous aviez un problème lié à l’alcool ou aux drogues, vers qui vous tourneriez-vous pour obtenir de l’aide ?" titleAr="إذا كانت لديك مشكلة متعلقة بالكحول أو المخدرات، إلى من ستتوجه للحصول على مساعدة؟" code="C.Q03" isRTL={isRTL}
             options={YES_NO_DK} values={data.section_q.help_sources}
             onChange={(key, val) => updateCheck('section_q', 'help_sources', key, val)}
             items={[
@@ -1114,7 +1141,9 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_r',
       letter: 'R',
       title: 'Réseaux Sociaux',
+      titleAr: 'وسائل التواصل الاجتماعي',
       subtitle: 'Section R',
+      subtitleAr: 'القسم R',
       color: 'bg-indigo-800',
       content: (
         <div className="space-y-12">
@@ -1125,7 +1154,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.R02 */}
-          <GridQuestion title="Dans quelle mesure êtes-vous d’accord ou en désaccord avec les avis suivants concernant l’utilisation des réseaux sociaux :" code="C.R02" isRTL={isRTL}
+          <GridQuestion title="Dans quelle mesure êtes-vous d’accord ou en désaccord avec les avis suivants concernant l’utilisation des réseaux sociaux :" titleAr="إلى أي مدى توافق أو تختلف مع الآراء التالية بخصوص استخدام وسائل التواصل الاجتماعي:" code="C.R02" isRTL={isRTL}
             options={AGREEMENT_SCALE_SIMPLE} values={data.section_r.agreement}
             onChange={(key, val) => updateCheck('section_r', 'agreement', key, val)}
             items={[
@@ -1140,7 +1169,9 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_s',
       letter: 'S',
       title: 'Jeux Vidéo',
+      titleAr: 'ألعاب الفيديو',
       subtitle: 'Section S',
+      subtitleAr: 'القسم S',
       color: 'bg-sky-900',
       content: (
         <div className="space-y-12">
@@ -1158,7 +1189,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.S03 */}
-          <GridQuestion title="Dans quelle mesure êtes-vous d’accord ou en désaccord avec les avis suivants concernant les jeux vidéo :" code="C.S03" isRTL={isRTL}
+          <GridQuestion title="Dans quelle mesure êtes-vous d’accord ou en désaccord avec les avis suivants concernant les jeux vidéo :" titleAr="إلى أي مدى توافق أو تختلف مع الآراء التالية بخصوص ألعاب الفيديو:" code="C.S03" isRTL={isRTL}
             options={AGREEMENT_SCALE_SIMPLE} values={data.section_s.agreement}
             onChange={(key, val) => updateCheck('section_s', 'agreement', key, val)}
             items={[
@@ -1173,6 +1204,7 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'T',
       title: "Jeux d'Argent",
       subtitle: 'Section T',
+      subtitleAr: 'القسم T',
       color: 'bg-orange-900',
       content: (
         <div className="space-y-12">
@@ -1235,7 +1267,7 @@ const QuestionnaireForm = ({ onClose }) => {
           </div>
 
           {/* C.T06 */}
-          <GridQuestion title="Au cours des 12 derniers mois, avez-vous vécu l'un des problèmes suivants à cause du jeu :" code="C.T06" isRTL={isRTL}
+          <GridQuestion title="Au cours des 12 derniers mois, avez-vous vécu l'un des problèmes suivants à cause du jeu :" titleAr="خلال الـ 12 شهراً الماضية، هل واجهت أي من المشاكل التالية بسبب القمار:" code="C.T06" isRTL={isRTL}
             options={YES_NO} values={data.section_t.gambling_problems}
             onChange={(key, val) => updateCheck('section_t', 'gambling_problems', key, val)}
             items={[
@@ -1249,7 +1281,9 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_u',
       letter: 'U',
       title: 'Violence & Sécurité',
+      titleAr: 'العنف والأمن',
       subtitle: 'Section U',
+      subtitleAr: 'القسم U',
       color: 'bg-red-800',
       content: (
         <div className="space-y-12">
@@ -1311,12 +1345,14 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_v',
       letter: 'V',
       title: 'Santé Mentale',
+      titleAr: 'الصحة النفسية',
       subtitle: 'Section V',
+      subtitleAr: 'القسم V',
       color: 'bg-violet-800',
       content: (
         <div className="space-y-12">
           {/* C.V01 */}
-          <GridQuestion title="Au cours du DERNIER MOIS, à quelle fréquence avez-vous :" code="C.V01" isRTL={isRTL}
+          <GridQuestion title="Au cours du DERNIER MOIS, à quelle fréquence avez-vous :" titleAr="خلال الشهر الماضي، كم مرة:" code="C.V01" isRTL={isRTL}
             options={STRESS_FREQ} values={data.section_v}
             onChange={(key, val) => update('section_v', key, val)}
             items={[
@@ -1332,7 +1368,9 @@ const QuestionnaireForm = ({ onClose }) => {
       id: 'section_z',
       letter: 'Z',
       title: 'Validation (Honnêteté)',
+      titleAr: 'التحقق (الصدق)',
       subtitle: 'Section Z',
+      subtitleAr: 'القسم Z',
       color: 'bg-slate-900',
       content: (
         <div className="space-y-12">
@@ -1355,6 +1393,8 @@ const QuestionnaireForm = ({ onClose }) => {
   ];
 
 const currentSection = SECTIONS[step];
+const currentSectionTitle = isRTL ? currentSection.titleAr || currentSection.title : currentSection.title;
+const currentSectionSubtitle = isRTL ? currentSection.subtitleAr || currentSection.subtitle : currentSection.subtitle;
 const progress = ((step + 1) / SECTIONS.length) * 100;
 
 if (status === 'success') return (
@@ -1400,7 +1440,7 @@ return (
 
     {/* Content */}
     <div className="max-w-3xl mx-auto px-6 py-10">
-      <SectionHeader letter={currentSection.letter} title={currentSection.title} color={currentSection.color} />
+      <SectionHeader letter={currentSection.letter} title={currentSectionTitle} subtitle={currentSectionSubtitle} color={currentSection.color} />
       <div className="animate-fade-in">
         {currentSection.content}
       </div>

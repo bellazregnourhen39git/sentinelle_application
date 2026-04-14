@@ -2,9 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Activity, Zap, ArrowRight, Info, AlertTriangle, ShieldCheck,
-    Layers, Search, LogOut, User
+    Layers, Search, LogOut, User, FileSpreadsheet
 } from 'lucide-react';
-import { useParams } from 'react-router-dom';
 import api from '../../api';
 import RadialSectionWheel from './RadialSectionWheel';
 import SectionDetailPanel from './SectionDetailPanel';
@@ -273,6 +272,38 @@ const SentinelleDashboard = ({ initialScope = 'user_school', initialScopeId = nu
         fetchHomepage();
     }, [activeScope, activeScopeId, fetchHomepage]);
 
+    const exportSuperAdminCSV = async () => {
+        try {
+            const accessToken = localStorage.getItem('access');
+            const response = await api.get('questionnaire/export/', {
+                params: accessToken ? {} : { mock: 'true' },
+                responseType: 'blob',
+            });
+
+            if (response.status !== 200) {
+                throw new Error(`Unexpected status ${response.status}`);
+            }
+
+            const contentType = response.headers['content-type'] || response.headers['Content-Type'];
+            if (!contentType?.includes('csv')) {
+                const text = await response.data.text();
+                throw new Error(`Expected CSV, got: ${text}`);
+            }
+
+            const filename = `questionnaire_answers_${new Date().toISOString().split('T')[0]}.csv`;
+            const blob = new Blob([response.data], { type: contentType });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', filename);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch (err) {
+            console.error('Super admin export failed:', err);
+            alert(`Export failed: ${err.message}`);
+        }
+    };
+
     const intensityData = homepageData?.top_sections?.reduce((acc, s) => {
         acc[s.section_id] = 1.0;
         return acc;
@@ -338,6 +369,18 @@ const SentinelleDashboard = ({ initialScope = 'user_school', initialScopeId = nu
             </nav>
 
             <div className="max-w-[1600px] mx-auto p-12 pb-24 relative">
+                {currentUser?.role?.toUpperCase() === 'SUPERADMIN' && (activeScope === 'national' || activeScope === 'gouvernorate') && (
+                    <div className="mb-10 flex justify-end">
+                        <button
+                            type="button"
+                            onClick={exportSuperAdminCSV}
+                            className="pro-btn-secondary inline-flex items-center gap-2 rounded-full bg-slate-900 text-white px-5 py-3 text-xs font-black uppercase tracking-[2px] transition-colors hover:bg-slate-800"
+                        >
+                            <FileSpreadsheet size={16} />
+                            Exporter réponses CSV
+                        </button>
+                    </div>
+                )}
                 <AnimatePresence mode="wait">
                     {loading ? (
                         <motion.div 

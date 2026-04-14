@@ -1,9 +1,20 @@
+import csv
+import json
+from datetime import date
+
 from rest_framework import generics, permissions, status, views
 from rest_framework.response import Response
+from django.conf import settings
 from django.db.models import Count, Q, Avg
 from django.contrib.auth import get_user_model
 from django.db import models
-from .models import Governorate, SchoolEstablishment, SchoolClass, QuestionnaireSession, SectionV
+from django.http import HttpResponse, StreamingHttpResponse
+from .models import (
+    Governorate, SchoolEstablishment, SchoolClass, QuestionnaireSession,
+    SectionA, SectionB, SectionC, SectionD, SectionE, SectionG, SectionH,
+    SectionI, SectionJ, SectionK, SectionL, SectionM, SectionN, SectionP,
+    SectionQ, SectionR, SectionS, SectionT, SectionU, SectionV, SectionZ,
+)
 from .analytics import SentinelleAnalytics
 from .serializers import (
     RegisterSerializer, UserSerializer, GovernorateSerializer,
@@ -57,6 +68,113 @@ class QuestionnaireSubmitView(generics.CreateAPIView):
             status=status.HTTP_201_CREATED,
         )
 
+class QuestionnaireExportView(views.APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request):
+        can_export = False
+        if request.user and getattr(request.user, 'role', None) == 'SUPERADMIN':
+            can_export = True
+        elif request.query_params.get('mock') == 'true' and (
+            settings.DEBUG or
+            request.get_host().startswith('localhost') or
+            request.get_host().startswith('127.0.0.1')
+        ):
+            can_export = True
+
+        if not can_export:
+            return Response({"detail": "Not authorized."}, status=status.HTTP_403_FORBIDDEN)
+
+        section_models = {
+            'section_a': SectionA,
+            'section_b': SectionB,
+            'section_c': SectionC,
+            'section_d': SectionD,
+            'section_e': SectionE,
+            'section_g': SectionG,
+            'section_h': SectionH,
+            'section_i': SectionI,
+            'section_j': SectionJ,
+            'section_k': SectionK,
+            'section_l': SectionL,
+            'section_m': SectionM,
+            'section_n': SectionN,
+            'section_p': SectionP,
+            'section_q': SectionQ,
+            'section_r': SectionR,
+            'section_s': SectionS,
+            'section_t': SectionT,
+            'section_u': SectionU,
+            'section_v': SectionV,
+            'section_z': SectionZ,
+        }
+
+        section_keys = list(section_models.keys())
+        related_fields = ['school', 'governorate', 'school_class'] + section_keys
+        sessions = QuestionnaireSession.objects.select_related(*related_fields).all()
+
+        base_fields = [
+            'session_id', 'created_at', 'language_used',
+            'school_class', 'school', 'governorate',
+            'tobacco_user', 'ecig_user', 'hookah_user', 'alcohol_user',
+            'tranquilizer_user', 'cannabis_user', 'cocaine_user',
+            'ecstasy_user', 'heroin_user', 'inhalant_user', 'has_risk_behavior',
+        ]
+
+        section_fieldnames = []
+        for section_key, model in section_models.items():
+            for field in model._meta.concrete_fields:
+                if field.name in ('id', 'session'):
+                    continue
+                section_fieldnames.append(f"{section_key}_{field.name}")
+
+        fieldnames = base_fields + section_fieldnames
+
+        class Echo:
+            def write(self, value):
+                return value
+
+        def csv_stream():
+            writer = csv.DictWriter(Echo(), fieldnames=fieldnames)
+            yield writer.writeheader()
+            for session in sessions:
+                row = {
+                    'session_id': session.id,
+                    'created_at': session.created_at.isoformat(),
+                    'language_used': session.language_used,
+                    'school_class': getattr(session.school_class, 'name', ''),
+                    'school': getattr(session.school, 'name', ''),
+                    'governorate': getattr(session.governorate, 'name', ''),
+                    'tobacco_user': session.tobacco_user,
+                    'ecig_user': session.ecig_user,
+                    'hookah_user': session.hookah_user,
+                    'alcohol_user': session.alcohol_user,
+                    'tranquilizer_user': session.tranquilizer_user,
+                    'cannabis_user': session.cannabis_user,
+                    'cocaine_user': session.cocaine_user,
+                    'ecstasy_user': session.ecstasy_user,
+                    'heroin_user': session.heroin_user,
+                    'inhalant_user': session.inhalant_user,
+                    'has_risk_behavior': session.has_risk_behavior,
+                }
+
+                for section_key, model in section_models.items():
+                    section = getattr(session, section_key, None)
+                    if not section:
+                        continue
+                    for field in model._meta.concrete_fields:
+                        if field.name in ('id', 'session'):
+                            continue
+                        value = getattr(section, field.name)
+                        if isinstance(value, (dict, list)):
+                            value = json.dumps(value, ensure_ascii=False)
+                        row[f"{section_key}_{field.name}"] = value
+
+                yield writer.writerow(row)
+
+        response = StreamingHttpResponse(csv_stream(), content_type='text/csv; charset=utf-8')
+        response['Content-Disposition'] = f'attachment; filename="questionnaire_answers_{date.today().isoformat()}.csv"'
+        return response
 
 # ─── Dashboard Stats ──────────────────────────────────────────────────────────────
 
