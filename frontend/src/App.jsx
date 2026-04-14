@@ -10,7 +10,8 @@ import SocialLab from './pages/SocialLab';
 import IntegrityLab from './pages/IntegrityLab';
 import ComorbidityLab from './pages/ComorbidityLab';
 import RankingsLab from './pages/RankingsLab';
-// ... (rest of imports)
+import QRCodePage from './pages/QRCodePage';
+import ScanPage from './pages/ScanPage';
 
 // Mock profile objects — swap with real API data when integrating auth
 const MOCK_USER = { username: 'Dr. Ben Ali', role: 'USER', governorate: 1 };
@@ -62,6 +63,8 @@ function App() {
         {/* Other pages */}
         <Route path="/questionnaire" element={<QuestionnaireForm />} />
         <Route path="/map" element={<Map3D />} />
+        <Route path="/qr" element={<QRCodePage />} />
+        <Route path="/scan" element={<ScanPage />} />
 
         <Route path="*" element={<Navigate to="/user" replace />} />
       </Routes>
