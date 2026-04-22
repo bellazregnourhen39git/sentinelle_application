@@ -674,163 +674,228 @@ class SentinelleAnalytics:
     @staticmethod
     def get_lab_stats(user=None):
         """
-        Specialized engine for Lab-level deep-dives. 
-        Focuses on PSS-4 (Perceived Stress) and Data Reliability across all 24 regions.
+        Specialized engine for Lab-level deep-dives.
+        Implements a 3-layer lying detector:
+          1. Init-Prev Consistency  (substance denied but frequency reported)
+          2. Sequential Temporality (impossible age sequences)
+          3. Frequency Aberrations  (recent > lifetime use)
         """
         from .models import Governorate, QuestionnaireSession, SectionV, SectionU, SectionZ
-        
-        # Determine accessible regions based on user role
+
         NATIONAL_REGIONS = [
-            "Tunis", "Ariana", "Ben Arous", "Mannouba", "Bizerte", "Beja", "Jandouba", 
-            "Le kef", "Siliana", "Zaghouan", "Nabeul", "Sousse", "Monastir", "Mahdia", 
-            "Kairouan", "Kasserine", "Sidi Bouzid", "Sfax", "Gafsa", "Tozeur", "Kebili", 
+            "Tunis", "Ariana", "Ben Arous", "Mannouba", "Bizerte", "Beja", "Jandouba",
+            "Le kef", "Siliana", "Zaghouan", "Nabeul", "Sousse", "Monastir", "Mahdia",
+            "Kairouan", "Kasserine", "Sidi Bouzid", "Sfax", "Gafsa", "Tozeur", "Kebili",
             "Gabes", "Mednine", "Tataouine"
         ]
 
-        # Scope filter: ADMIs see only their region, SUPERADMINS see all.
-        if user and user.role == 'ADMIN' and user.governorate:
+        if user and user.role == "ADMIN" and user.governorate:
             REGIONS = [user.governorate.name]
         else:
             REGIONS = NATIONAL_REGIONS
-        
-        # PSS-4 / Section V Weights: never:0, almost_never:1, sometimes:2, fairly_often:3, very_often:4
-        # Reverse Scoring: PSS-4 items 2 and 3 are reverse scored in the clinical standard.
-        # Here: control (1), confidence (2:rev), success (3:rev), difficulties (4)
-        WEIGHTS = {'never': 0, 'almost_never': 1, 'sometimes': 2, 'fairly_often': 3, 'very_often': 4}
-        REV_WEIGHTS = {'never': 4, 'almost_never': 3, 'sometimes': 2, 'fairly_often': 1, 'very_often': 0}
-        
-        social_stats = []
-        integrity_stats = []
+
+        WEIGHTS     = {"never": 0, "almost_never": 1, "sometimes": 2, "fairly_often": 3, "very_often": 4}
+        REV_WEIGHTS = {"never": 4, "almost_never": 3, "sometimes": 2, "fairly_often": 1, "very_often": 0}
+
+        # Ordinal scales for forensic checks
+        FREQ_ORDER = {"never": 0, "1_2": 1, "3_5": 2, "6_9": 3, "10_19": 4, "20_39": 5, "40_plus": 6}
+        AGE_ORDER  = {"never": 0, "le9": 1, "10": 2, "11": 3, "12": 4, "13": 5, "14": 6, "15": 7, "ge16": 8}
+
+        # (ever_flag, section_attr, lifetime_field, months_12_field, days_30_field, age_first_field, age_daily_field)
+        FORENSIC_CONFIG_FULL = [
+            ("tobacco_user",  "section_c", "lifetime_freq", "months_12_freq", "days_30_freq", "age_first_use",   "age_daily_use"),
+            ("ecig_user",     "section_d", "lifetime_freq", "months_12_freq", "days_30_freq", "age_first_use",   "age_daily_use"),
+            ("hookah_user",   "section_e", "lifetime_freq", "months_12_freq", "days_30_freq", "age_first_use",   "age_daily_use"),
+            ("cannabis_user", "section_i", "lifetime_freq", "months_12_freq", "days_30_freq", "age_first_use",   None),
+            ("alcohol_user",  "section_g", "lifetime_freq", "months_12_freq", "days_30_freq", "age_first_drink", None),
+        ]
+
+        social_stats      = []
+        integrity_stats   = []
         comorbidity_stats = []
-        
-        # Comprehensive list of risk fields for comorbidity logic
+
         RISK_FIELDS = [
-            'tobacco_user', 'ecig_user', 'hookah_user', 'alcohol_user', 
-            'tranquilizer_user', 'cannabis_user', 'cocaine_user', 
-            'ecstasy_user', 'heroin_user', 'inhalant_user'
+            "tobacco_user", "ecig_user", "hookah_user", "alcohol_user",
+            "tranquilizer_user", "cannabis_user", "cocaine_user",
+            "ecstasy_user", "heroin_user", "inhalant_user"
         ]
 
-        # Forensic Checking: Model mapping
-        FORENSIC_CONFIG = [
-            ('tobacco_user', 'section_c', 'days_30_freq'),
-            ('alcohol_user', 'section_g', 'days_30_freq'),
-            ('cannabis_user', 'section_i', 'days_30_freq'),
-        ]
-
-        # Global combination tracking
-        global_pairs = {}
+        global_pairs   = {}
         global_triples = {}
 
+        national_init_prev = 0
+        national_temporal  = 0
+        national_freq_aber = 0
+        national_total     = 0
+
         for g_name in REGIONS:
-            # Using select_related for OneToOne sections to avoid 500 error & N+1
-            gov_sessions = QuestionnaireSession.objects.filter(governorate__name__iexact=g_name).select_related(
-                'section_c', 'section_g', 'section_i', 'section_z', 'section_v', 'section_u'
+            gov_sessions = QuestionnaireSession.objects.filter(
+                governorate__name__iexact=g_name
+            ).select_related(
+                "section_c", "section_d", "section_e",
+                "section_g", "section_i",
+                "section_z", "section_v", "section_u"
             )
             total = gov_sessions.count()
-            
-            # --- Social Metrics ---
+
+            # Social Metrics (PSS-4)
             pss_total = 0
             v_recs = SectionV.objects.filter(session__in=gov_sessions)
             u_recs = SectionU.objects.filter(session__in=gov_sessions)
-            
             for v in v_recs:
-                score = WEIGHTS.get(v.control, 0) + REV_WEIGHTS.get(v.confidence, 0) + \
-                        REV_WEIGHTS.get(v.success, 0) + WEIGHTS.get(v.difficulties, 0)
+                score = (
+                    WEIGHTS.get(v.control, 0) +
+                    REV_WEIGHTS.get(v.confidence, 0) +
+                    REV_WEIGHTS.get(v.success, 0) +
+                    WEIGHTS.get(v.difficulties, 0)
+                )
                 pss_total += score
-            
-            stress_avg = round((pss_total / (total * 16) * 100), 1) if total > 0 else 0
-            violence_count = u_recs.filter(fights_12months__gt='0').count()
-            conflict_rate = round((violence_count / total * 100), 1) if total > 0 else 0
-            
+            stress_avg     = round((pss_total / (total * 16) * 100), 1) if total > 0 else 0
+            violence_count = u_recs.filter(fights_12months__gt="0").count()
+            conflict_rate  = round((violence_count / total * 100), 1) if total > 0 else 0
             social_stats.append({
-                "gov_name": g_name,
-                "stress_index": stress_avg,
-                "conflict_rate": conflict_rate,
-                "submissions": total
+                "gov_name": g_name, "stress_index": stress_avg,
+                "conflict_rate": conflict_rate, "submissions": total
             })
-            
-            # --- Integrity Metrics ---
-            HONESTY_MAP = {'completely': 100, 'mostly': 75, 'partially': 50, 'not_at_all': 0}
-            z_recs = SectionZ.objects.filter(session__in=gov_sessions)
-            h_total = sum(HONESTY_MAP.get(z.honesty_level, 0) for z in z_recs)
+
+            # Integrity Metrics (Section Z honesty score)
+            HONESTY_MAP = {"completely": 100, "mostly": 75, "partially": 50, "not_at_all": 0}
+            z_recs      = SectionZ.objects.filter(session__in=gov_sessions)
+            h_total     = sum(HONESTY_MAP.get(z.honesty_level, 0) for z in z_recs)
             honesty_avg = round(h_total / total, 1) if total > 0 else 100
-            
-            self_anomalies = z_recs.filter(honesty_level__in=['partially', 'not_at_all']).count()
-            logical_anomalies = 0
-            
-            for s in gov_sessions:
-                for ever_attr, section_attr, freq_attr in FORENSIC_CONFIG:
-                    try:
-                        section = getattr(s, section_attr)
-                        ever_val = getattr(s, ever_attr)
-                        freq_val = getattr(section, freq_attr)
-                        if not ever_val and freq_val and freq_val != 'never':
-                            logical_anomalies += 1
-                            break
-                    except: continue
+            self_anomalies = z_recs.filter(honesty_level__in=["partially", "not_at_all"]).count()
 
+            # 3-Layer Forensic Detection — counts ALL contradictions, no early break
+            region_init_prev  = 0
+            region_temporal   = 0
+            region_freq_aber  = 0
+            logical_anomalies = 0
+
+            for s in gov_sessions:
+                for (ever_attr, section_attr, life_f, m12_f, d30_f, age_first_f, age_daily_f) in FORENSIC_CONFIG_FULL:
+                    try:
+                        section = getattr(s, section_attr, None)
+                        if not section:
+                            continue
+                        ever_val  = getattr(s, ever_attr, None)
+                        life_val  = getattr(section, life_f, None) or "never"
+                        m12_val   = getattr(section, m12_f,  None) or "never"
+                        d30_val   = getattr(section, d30_f,  None) or "never"
+                        life_rank = FREQ_ORDER.get(life_val, 0)
+                        m12_rank  = FREQ_ORDER.get(m12_val,  0)
+                        d30_rank  = FREQ_ORDER.get(d30_val,  0)
+
+                        # Layer 1: Denied substance but reported non-zero frequency
+                        if not ever_val and (life_rank > 0 or m12_rank > 0 or d30_rank > 0):
+                            region_init_prev  += 1
+                            logical_anomalies += 1
+
+                        # Layer 3: Recent frequency exceeds lifetime frequency (impossible)
+                        if m12_rank > life_rank or d30_rank > m12_rank:
+                            region_freq_aber  += 1
+                            logical_anomalies += 1
+
+                        # Layer 2: Daily-use age precedes first-use age (impossible)
+                        if age_first_f and age_daily_f:
+                            age_first_val = getattr(section, age_first_f, None) or "never"
+                            age_daily_val = getattr(section, age_daily_f, None) or "never"
+                            if age_first_val != "never" and age_daily_val != "never":
+                                first_rank = AGE_ORDER.get(age_first_val, 0)
+                                daily_rank = AGE_ORDER.get(age_daily_val, 0)
+                                if daily_rank < first_rank:
+                                    region_temporal   += 1
+                                    logical_anomalies += 1
+                    except Exception:
+                        continue
+
+            national_init_prev += region_init_prev
+            national_temporal  += region_temporal
+            national_freq_aber += region_freq_aber
+            national_total     += total
+
+            anomaly_rate = round((logical_anomalies / total * 100), 1) if total > 0 else 0
             status = "Optimal"
-            if honesty_avg < 80 or (logical_anomalies / total * 100 > 15 if total > 0 else False): 
+            if honesty_avg < 80 or anomaly_rate > 15:
                 status = "Audit Pending"
-            if honesty_avg < 65: status = "At Risk"
-            
+            if honesty_avg < 65 or anomaly_rate > 30:
+                status = "At Risk"
+
             integrity_stats.append({
-                "gov_name": g_name,
-                "trust_index": honesty_avg,
-                "self_anomalies": self_anomalies,
-                "logical_anomalies": logical_anomalies,
-                "status": status,
-                "submissions": total
+                "gov_name": g_name, "trust_index": honesty_avg,
+                "self_anomalies": self_anomalies, "logical_anomalies": logical_anomalies,
+                "init_prev_count": region_init_prev, "temporal_count": region_temporal,
+                "freq_aber_count": region_freq_aber, "anomaly_rate": anomaly_rate,
+                "status": status, "submissions": total
             })
 
-            # --- Comorbidity Metrics (Pairs & Triples) ---
+            # Comorbidity Metrics
             poly_2plus = 0
             poly_3plus = 0
             for s in gov_sessions:
-                active = [f.replace('_user', '').capitalize() for f in RISK_FIELDS if getattr(s, f)]
+                active   = [f.replace("_user", "").capitalize() for f in RISK_FIELDS if getattr(s, f)]
                 n_active = len(active)
-                
-                # Detect and count ALL possible pair combinations
                 if n_active >= 2:
                     poly_2plus += 1
                     for pair in itertools.combinations(sorted(active), 2):
-                        label = " + ".join(pair)
-                        global_pairs[label] = global_pairs.get(label, 0) + 1
-                
-                # Detect and count ALL possible triple combinations
+                        lbl = " + ".join(pair)
+                        global_pairs[lbl] = global_pairs.get(lbl, 0) + 1
                 if n_active >= 3:
                     poly_3plus += 1
                     for triple in itertools.combinations(sorted(active), 3):
-                        label = " + ".join(triple)
-                        global_triples[label] = global_triples.get(label, 0) + 1
-            
+                        lbl = " + ".join(triple)
+                        global_triples[lbl] = global_triples.get(lbl, 0) + 1
             comorbidity_stats.append({
                 "gov_name": g_name,
                 "poly_2plus": round(poly_2plus / total * 100, 1) if total > 0 else 0,
                 "poly_3plus": round(poly_3plus / total * 100, 1) if total > 0 else 0,
                 "submissions": total
             })
-            
+
+        def _rate(n): return round(n / national_total * 100, 1) if national_total > 0 else 0
+        def _sev(r, hi, med): return "high" if r > hi else "medium" if r > med else "low"
+
+        init_prev_rate = _rate(national_init_prev)
+        temporal_rate  = _rate(national_temporal)
+        freq_aber_rate = _rate(national_freq_aber)
+
         return {
-            "social": sorted(social_stats, key=lambda x: x['stress_index'], reverse=True),
-            "integrity": sorted(integrity_stats, key=lambda x: x['trust_index'], reverse=True),
+            "social":    sorted(social_stats,    key=lambda x: x["stress_index"], reverse=True),
+            "integrity": sorted(integrity_stats, key=lambda x: x["trust_index"],  reverse=True),
             "comorbidity": {
-                "rankings": sorted(comorbidity_stats, key=lambda x: x['poly_2plus'], reverse=True),
-                "top_combinations": [{"label": k, "count": v} for k, v in sorted(global_pairs.items(), key=lambda x: x[1], reverse=True)[:3]],
-                "top_triples": [{"label": k, "count": v} for k, v in sorted(global_triples.items(), key=lambda x: x[1], reverse=True)[:3]]
+                "rankings":         sorted(comorbidity_stats, key=lambda x: x["poly_2plus"], reverse=True),
+                "top_combinations": [{"label": k, "count": v} for k, v in sorted(global_pairs.items(),   key=lambda x: x[1], reverse=True)[:3]],
+                "top_triples":      [{"label": k, "count": v} for k, v in sorted(global_triples.items(), key=lambda x: x[1], reverse=True)[:3]]
             },
             "forensic_checkpoints": [
-                {"label": "Consistance Init-Prév", "desc": "Audit de concordance entre l'usage à vie et l'usage récents.", "weight": "Primaire"},
-                {"label": "Temporalité Séquentielle", "desc": "Validation des chronologies d'initiation (Section C/G/I).", "weight": "Secondaire"},
-                {"label": "Aberrations de Fréquence", "desc": "Détection des patterns de réponse biologiquement impossibles.", "weight": "Critique"}
+                {
+                    "label": "Consistance Init-Prev",
+                    "desc":  str(national_init_prev) + " contradiction(s) : repondant niant une substance mais declarant une frequence d usage non nulle (tabac, alcool, cannabis, e-cigarette, narguile).",
+                    "weight": "Primaire",
+                    "count": national_init_prev,
+                    "rate":  init_prev_rate,
+                    "severity": _sev(init_prev_rate, 10, 5),
+                },
+                {
+                    "label": "Temporalite Sequentielle",
+                    "desc":  str(national_temporal) + " incoherence(s) chronologique(s) : l age de l usage quotidien precede l age de la premiere consommation, biologiquement impossible.",
+                    "weight": "Secondaire",
+                    "count": national_temporal,
+                    "rate":  temporal_rate,
+                    "severity": _sev(temporal_rate, 5, 2),
+                },
+                {
+                    "label": "Aberrations de Frequence",
+                    "desc":  str(national_freq_aber) + " aberration(s) statistique(s) : frequence recente (30j ou 12m) superieure a la frequence cumulee vie entiere, mathematiquement impossible.",
+                    "weight": "Critique",
+                    "count": national_freq_aber,
+                    "rate":  freq_aber_rate,
+                    "severity": _sev(freq_aber_rate, 5, 2),
+                },
             ],
             "integrity_protocol": {
-                "weights": {"completely": 100, "mostly": 75, "partially": 50, "not_at_all": 0},
+                "weights":    {"completely": 100, "mostly": 75, "partially": 50, "not_at_all": 0},
                 "thresholds": {"optimal": 85, "warning": 70}
             },
-            "national_avg": {
-                "stress": 33.5,
-                "trust": 92.4,
-                "poly_usage": 12.6
-            }
+            "national_avg": {"stress": 33.5, "trust": 92.4, "poly_usage": 12.6}
         }
+

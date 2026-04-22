@@ -176,3 +176,8 @@ body {
     border-color: #bae6fd;
     color: #0284c7;
 }
+
+.bg-dot-pattern {
+  background-image: radial-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 0);
+  background-size: 40px 40px;
+}

@@ -88,8 +88,8 @@ const RadialSectionWheel = ({
         <div className="relative flex items-center justify-center select-none animate-clinical-in">
             <svg 
                 ref={svgRef} 
-                width={width} 
-                height={height} 
+                width="100%" 
+                height="100%" 
                 viewBox={`0 0 ${width} ${height}`}
                 className="overflow-visible"
             >

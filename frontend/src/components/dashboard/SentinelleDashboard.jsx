@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     Activity, Zap, ArrowRight, Info, AlertTriangle, ShieldCheck,
     Layers, Search, LogOut, User, Smartphone, Scan, Bell, CheckCircle, XCircle,
-    Mail, Phone, MapPin, FileText, QrCode, Users, Pencil, Database, ClipboardList
+    Mail, Phone, MapPin, FileText, QrCode, Users, Pencil, Database, ClipboardList, FileSpreadsheet
 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
@@ -644,7 +644,7 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                                             </div>
                                         </div>
 
-                                        {['SUPER_ADMIN', 'GLOBAL_ADMIN', 'REGIONAL_ANALYST'].includes(currentUser?.role?.toUpperCase()) ? (
+                                        {['SUPER_ADMIN', 'GLOBAL_ADMIN', 'REGIONAL_ANALYST', 'SUPERADMIN', 'ADMIN', 'NATIONAL'].includes(currentUser?.role?.toUpperCase()) ? (
                                             <div className="mt-4">
                                                 <TunisiaMap
                                                     data={homepageData?.map_data}
@@ -703,11 +703,11 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                                                         data={homepageData}
                                                         globalInsights={homepageData?.global_insights}
                                                         activeSection={selectedSection}
-                                                        isSuperAdmin={['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(currentUser?.role?.toUpperCase())}
+                                                        isSuperAdmin={['SUPER_ADMIN', 'GLOBAL_ADMIN', 'SUPERADMIN'].includes(currentUser?.role?.toUpperCase())}
                                                     />
 
                                                     {/* Points de Vigilance Grid & Rankings Lab */}
-                                                    {['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(currentUser?.role?.toUpperCase()) && (activeScope === 'national' || activeScope === 'gouvernorate') && (
+                                                    {['SUPER_ADMIN', 'GLOBAL_ADMIN', 'SUPERADMIN'].includes(currentUser?.role?.toUpperCase()) && (activeScope === 'national' || activeScope === 'gouvernorate') && (
                                                         <div className="space-y-6">
                                                             <NationalVigilancePanel
                                                                 metrics={homepageData?.regional_metrics}
