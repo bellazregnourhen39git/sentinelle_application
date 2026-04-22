@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, TrendingUp, Activity, LucideArrowLeft, Info, HelpCircle, Target, Layers, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import EditableLabel from '../components/dashboard/EditableLabel';
 import api from '../api';
 
 const SocialLab = () => {
@@ -16,7 +17,7 @@ const SocialLab = () => {
                 setLabData(res.data);
                 setLoading(false);
             } catch (err) {
-                console.error("Lab Sync Failure:", err);
+                console.error("Échec de synchronisation du Lab :", err);
                 setLoading(false);
             }
         };
@@ -28,7 +29,7 @@ const SocialLab = () => {
 
     return (
         <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans p-12">
-            {/* 🔬 Navigation Header */}
+            {/* 🔬 En-tête de Navigation */}
             <div className="max-w-[1400px] mx-auto mb-12 flex items-center justify-between">
                 <button 
                     onClick={() => navigate(-1)}
@@ -40,12 +41,12 @@ const SocialLab = () => {
                 <div className="flex items-center gap-4">
                     <div className="px-5 py-2.5 bg-brand-500/10 border border-brand-500/20 rounded-full text-[10px] font-black text-brand-600 uppercase tracking-[3px] italic flex items-center gap-2 shadow-sm">
                         <Activity size={14} className="animate-pulse" />
-                        Laboratoire de Phénoménologie Sociale
+                        <EditableLabel termKey="lab_social_header_badge" defaultValue="Laboratoire de Phénoménologie Sociale" />
                     </div>
                 </div>
             </div>
 
-            {/* 🌌 Hero Section */}
+            {/* 🌌 Section Héro */}
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -56,10 +57,10 @@ const SocialLab = () => {
                 </div>
                 <div className="relative z-10 max-w-3xl">
                     <h1 className="text-7xl font-black text-slate-900 tracking-tighter uppercase italic leading-none mb-8">
-                        Vecteurs <span className="text-brand-600">Sociaux</span>
+                        <EditableLabel termKey="lab_social_hero_title_1" defaultValue="Vecteurs" /> <span className="text-brand-600"><EditableLabel termKey="lab_social_hero_title_2" defaultValue="Sociaux" /></span>
                     </h1>
                     <p className="text-xl text-slate-500 font-bold italic leading-relaxed opacity-80 mb-10">
-                        Dissection algorithmique des contraintes psychologiques et des indices de conflictualité structurels au sein de la cohorte MedSPAD.
+                        <EditableLabel termKey="lab_social_hero_desc" defaultValue="Dissection algorithmique des contraintes psychologiques et des indices de conflictualité structurels au sein de la cohorte MedSPAD." />
                     </p>
                     <div className="flex items-center gap-6">
                         <div className="flex -space-x-3">
@@ -74,7 +75,7 @@ const SocialLab = () => {
                 </div>
             </motion.div>
 
-            {/* 📊 Science Grid */}
+            {/* 📊 Grille Scientifique */}
             <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
                 
                 {/* Methodology Breakdown */}
@@ -120,7 +121,7 @@ const SocialLab = () => {
                     </div>
                 </motion.div>
 
-                {/* 📊 National Stress Ranking (The "Regional Covering" requested) */}
+                {/* 📊 Classement National du Stress */}
                 <motion.div 
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -134,7 +135,7 @@ const SocialLab = () => {
                                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] italic mt-2">Répartition des 24 Gouvernorats (Vague 2026)</p>
                             </div>
                             <div className="flex items-center gap-4">
-                                <div className="px-5 py-2 bg-slate-900 text-white rounded-full text-[9px] font-black uppercase tracking-[2px] italic">National Avg: {nationalAvg}%</div>
+                                <div className="px-5 py-2 bg-slate-900 text-white rounded-full text-[9px] font-black uppercase tracking-[2px] italic">Moyenne Nationale : {nationalAvg}%</div>
                             </div>
                         </div>
                         
@@ -167,7 +168,7 @@ const SocialLab = () => {
                     </div>
                 </motion.div>
 
-                {/* 🔬 The Science: PSS-4 Equation */}
+                {/* 🔬 La Science : Équation PSS-4 */}
                 <motion.div 
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}

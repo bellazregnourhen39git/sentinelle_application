@@ -46,7 +46,7 @@ const TunisiaMap = ({ data, activeSection, currentUser, onRegionSelect }) => {
     const [status, setStatus] = useState('loading'); // 'loading' | 'ok' | 'error'
     const [hoveredId, setHoveredId] = useState(null);
 
-    const isSuperAdmin = ['SUPERADMIN', 'NATIONAL'].includes(
+    const isSuperAdmin = ['SUPER_ADMIN', 'NATIONAL'].includes(
         (currentUser?.role ?? '').toUpperCase()
     );
     const adminGov = currentUser?.gouvernorat;
@@ -128,7 +128,7 @@ const TunisiaMap = ({ data, activeSection, currentUser, onRegionSelect }) => {
           </div>
           <div>
             <p className="text-[12px] font-black text-slate-900 uppercase italic tracking-[2px] leading-none">
-                Vecteur Géospatial
+                Vecteur Géospatial {window.location.search.includes('gouvernorat=') ? `- ${new URLSearchParams(window.location.search).get('gouvernorat')}` : ''}
             </p>
             <p className="text-[9px] font-black text-indigo-600 uppercase tracking-[3px] opacity-60">
               24 Gouvernorats · Cohorte 2026
@@ -157,7 +157,7 @@ const TunisiaMap = ({ data, activeSection, currentUser, onRegionSelect }) => {
             transition={{ duration: 0.2 }}
             className="absolute top-2 right-2 z-30 bg-white/95 backdrop-blur-2xl rounded-[28px] border border-slate-100 shadow-2xl p-5 min-w-[200px]"
           >
-            <p className="text-[9px] font-black text-indigo-500 uppercase tracking-[4px] italic mb-2">ANALYTICS</p>
+            <p className="text-[9px] font-black text-indigo-500 uppercase tracking-[4px] italic mb-2">STATISTIQUES</p>
             <p className="text-xl font-black text-slate-900 uppercase italic leading-tight mb-4 tracking-tighter">
               {hoveredRegion.displayName}
             </p>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Target, Award, ArrowLeft, Trophy, ChevronRight, Activity, TrendingDown } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import EditableLabel from '../components/dashboard/EditableLabel';
 import api from '../api';
 
 const RankingsLab = () => {
@@ -16,7 +17,7 @@ const RankingsLab = () => {
                 const res = await api.get('homepage/', { params: { scope_type: 'national' } });
                 setRankings(res.data.rankings);
             } catch (err) {
-                console.error("Failed to load rankings", err);
+                console.error("Échec du chargement des classements", err);
             } finally {
                 setLoading(false);
             }
@@ -36,7 +37,7 @@ const RankingsLab = () => {
 
     return (
         <div className="min-h-screen bg-slate-950 text-white font-sans selection:bg-brand-500/30 selection:text-brand-200">
-            {/* Ambient Background */}
+            {/* Arrière-plan Ambiant */}
             <div className="fixed inset-0 pointer-events-none z-0">
                 <div className="absolute inset-0 bg-[url('/noise.png')] opacity-[0.03] mix-blend-overlay" />
                 <div className="absolute top-[-20%] right-[-10%] w-[800px] h-[800px] bg-brand-600/10 rounded-full blur-[150px]" />
@@ -44,7 +45,7 @@ const RankingsLab = () => {
 
             <div className="relative z-10 max-w-[1400px] mx-auto p-12">
                 
-                {/* Header */}
+                {/* En-tête */}
                 <div className="flex items-center justify-between mb-16">
                     <button 
                         onClick={() => navigate('/dashboard')}
@@ -55,7 +56,9 @@ const RankingsLab = () => {
                     </button>
                     <div className="flex items-center gap-4 bg-slate-900 px-6 py-3 rounded-full border border-slate-800">
                         <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse glow-brand" />
-                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">Classement National Alpha</span>
+                     <span className="text-[10px] font-black text-slate-300 uppercase tracking-widest italic">
+                        <EditableLabel termKey="lab_rankings_header_badge" defaultValue="Classement National Alpha" />
+                     </span>
                     </div>
                 </div>
 
@@ -64,13 +67,16 @@ const RankingsLab = () => {
                       <Target size={40} className="text-white" />
                       <div className="absolute -inset-2 rounded-[32px] border border-brand-500/30" />
                    </div>
-                   <h1 className="text-7xl font-black uppercase tracking-tighter italic mb-4">Classement<br/><span className="text-brand-500">Compétitif</span></h1>
+                   <h1 className="text-7xl font-black uppercase tracking-tighter italic mb-4">
+                        <EditableLabel termKey="lab_rankings_hero_title_1" defaultValue="Classement" /><br/>
+                        <span className="text-brand-500"><EditableLabel termKey="lab_rankings_hero_title_2" defaultValue="Compétitif" /></span>
+                   </h1>
                    <p className="text-slate-400 font-bold max-w-2xl leading-relaxed italic text-lg opacity-80">
-                       Analyse comparative de la prévalence des conduites addictives sur l'ensemble du territoire national.
+                       <EditableLabel termKey="lab_rankings_hero_desc" defaultValue="Analyse comparative de la prévalence des conduites addictives sur l'ensemble du territoire national." />
                    </p>
                 </div>
 
-                {/* Comprehensive Data Table */}
+                {/* Tableau de Données Complet */}
                 <div className="overflow-x-auto rounded-[40px] border border-slate-800/80 bg-slate-900/40 backdrop-blur-xl custom-scrollbar shadow-2xl shadow-slate-900/50 pb-4">
                     <table className="w-full text-left border-collapse min-w-max">
                         <thead>

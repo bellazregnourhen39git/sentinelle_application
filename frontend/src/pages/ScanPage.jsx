@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Upload, FileText, CheckCircle, AlertTriangle, Eye, Save, RefreshCw, X } from 'lucide-react';
+import { Upload, FileText, CheckCircle, AlertTriangle, Eye, Save, RefreshCw, X, LogOut, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../api';
 
@@ -13,6 +13,13 @@ const ScanPage = () => {
     const [isSaving, setIsSaving] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
+
+    const handleLogout = () => {
+        localStorage.removeItem('user');
+        localStorage.removeItem('access');
+        localStorage.removeItem('refresh');
+        window.location.href = '/';
+    };
 
     // Simple drag and drop handlers
     const onDrop = useCallback((e) => {
@@ -128,12 +135,21 @@ const ScanPage = () => {
                 
                 {/* Header */}
                 <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <h1 className="text-3xl font-black text-slate-900 italic uppercase">Scanner OCR</h1>
-                        <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[2px]">
-                            Extraction automatique de questionnaires papier
-                        </p>
+                    <div className="flex items-center gap-4">
+                        <button onClick={() => navigate(-1)} className="w-10 h-10 flex items-center justify-center rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 transition-colors">
+                            <ArrowLeft size={18} />
+                        </button>
+                        <div>
+                            <h1 className="text-3xl font-black text-slate-900 italic uppercase">Scanner OCR</h1>
+                            <p className="text-[11px] font-bold text-slate-400 uppercase tracking-[2px]">
+                                Extraction automatique de questionnaires papier
+                            </p>
+                        </div>
                     </div>
+                    <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-500 rounded-lg text-xs font-bold uppercase tracking-widest transition-colors">
+                        <LogOut size={14} />
+                        Déconnexion
+                    </button>
                 </div>
 
                 {error && (

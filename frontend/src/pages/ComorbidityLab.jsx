@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Layers, Activity, LucideArrowLeft, Info, HelpCircle, Target, TrendingUp, AlertTriangle, Zap, FlaskConical, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import EditableLabel from '../components/dashboard/EditableLabel';
 import api from '../api';
 
 const ComorbidityLab = ({ profile }) => {
@@ -18,7 +19,7 @@ const ComorbidityLab = ({ profile }) => {
                 setLabData(res.data);
                 setLoading(false);
             } catch (err) {
-                console.error("Comorbidity Sync Failure:", err);
+                console.error("Échec de synchronisation de la Comorbidité :", err);
                 setLoading(false);
             }
         };
@@ -32,7 +33,7 @@ const ComorbidityLab = ({ profile }) => {
 
     return (
         <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans p-12">
-            {/* 🔬 Navigation Header */}
+            {/* 🔬 En-tête de Navigation */}
             <div className="max-w-[1400px] mx-auto mb-12 flex items-center justify-between">
                 <button 
                     onClick={() => navigate(-1)}
@@ -44,12 +45,12 @@ const ComorbidityLab = ({ profile }) => {
                 <div className="flex items-center gap-4">
                     <div className="px-5 py-2.5 bg-rose-500/10 border border-rose-500/20 rounded-full text-[10px] font-black text-rose-600 uppercase tracking-[3px] italic flex items-center gap-2 shadow-sm">
                         <Layers size={14} className="animate-pulse" />
-                        Laboratoire de Phénoménologie Comorbide
+                        <EditableLabel termKey="lab_comorbidity_header_badge" defaultValue="Laboratoire de Phénoménologie Comorbide" />
                     </div>
                 </div>
             </div>
 
-            {/* 🌌 Hero Section */}
+            {/* 🌌 Section Héro */}
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -60,10 +61,10 @@ const ComorbidityLab = ({ profile }) => {
                 </div>
                 <div className="relative z-10 max-w-3xl">
                     <h1 className="text-7xl font-black text-slate-900 tracking-tighter uppercase italic leading-none mb-8">
-                        Spectre <span className="text-rose-600">Comorbidité</span>
+                        <EditableLabel termKey="lab_comorbidity_hero_title_1" defaultValue="Spectre" /> <span className="text-rose-600"><EditableLabel termKey="lab_comorbidity_hero_title_2" defaultValue="Comorbidité" /></span>
                     </h1>
                     <p className="text-xl text-slate-500 font-bold italic leading-relaxed opacity-80 mb-10">
-                        Analyse multidimensionnelle de la poly-consommation. Identification des profils à risque psychiatrique majeur et des synergies de substances.
+                        <EditableLabel termKey="lab_comorbidity_hero_desc" defaultValue="Analyse multidimensionnelle de la poly-consommation. Identification des profils à risque psychiatrique majeur et des synergies de substances." />
                     </p>
                     <div className="flex items-center gap-6">
                         <div className="px-8 py-3 bg-rose-900 text-white rounded-full text-[11px] font-black uppercase tracking-[4px] italic shadow-2xl shadow-rose-900/20">
@@ -73,10 +74,10 @@ const ComorbidityLab = ({ profile }) => {
                 </div>
             </motion.div>
 
-            {/* 📊 Matrix & Rankings */}
+            {/* 📊 Matrice & Classements */}
             <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
                 
-                {/* 🧪 Substance Correlation Matrix (Pairs) */}
+                {/* 🧪 Matrice de Corrélation des Substances (Paires) */}
                 <motion.div 
                     initial={{ opacity: 0, x: -24 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -112,7 +113,7 @@ const ComorbidityLab = ({ profile }) => {
                     </div>
                 </motion.div>
 
-                {/* 🔴 Triple Threat Pathologies */}
+                {/* 🔴 Pathologies à Triple Menace */}
                 <motion.div 
                     initial={{ opacity: 0, x: 24 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -134,7 +135,7 @@ const ComorbidityLab = ({ profile }) => {
                     <div className="grid md:grid-cols-3 gap-8 relative z-10">
                         {topTriplesData && topTriplesData.length > 0 ? topTriplesData.map((combo, idx) => (
                             <div key={idx} className="p-10 rounded-[48px] bg-white/5 border border-white/10 text-white relative overflow-hidden group hover:bg-white/10 transition-all">
-                                <span className="text-[10px] font-black text-rose-500 uppercase tracking-[4px] italic mb-4 block underline">Triple Threat #{idx + 1}</span>
+                                <span className="text-[10px] font-black text-rose-500 uppercase tracking-[4px] italic mb-4 block underline">Triple Menace #{idx + 1}</span>
                                 <h4 className="text-xl font-extrabold italic uppercase tracking-tighter mb-4 pr-12 text-white leading-tight">
                                     {combo.label}
                                 </h4>
@@ -151,7 +152,7 @@ const ComorbidityLab = ({ profile }) => {
                     </div>
                 </motion.div>
 
-                {/* 🏢 National Poly-Usage Ranking (Admin/Superadmin Only) */}
+                {/* 🏢 Classement National Poly-Usage (Admin/SuperAdmin uniquement) */}
                 {!isUser ? (
                     <motion.div 
                         initial={{ opacity: 0, y: 24 }}
@@ -217,7 +218,7 @@ const ComorbidityLab = ({ profile }) => {
                     </motion.div>
                 )}
 
-                {/* 📋 Clinical Diagnostics Documentation */}
+                {/* 📋 Documentation de Diagnostic Clinique */}
                 <motion.div 
                     initial={{ opacity: 0, x: 24 }}
                     animate={{ opacity: 1, x: 0 }}

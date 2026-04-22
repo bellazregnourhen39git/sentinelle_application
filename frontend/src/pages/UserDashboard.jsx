@@ -1,8 +1,8 @@
 import React from 'react';
 import SentinelleDashboard from '../components/dashboard/SentinelleDashboard';
 
-const UserDashboard = () => {
-    return <SentinelleDashboard initialScope="user_school" />;
+const UserDashboard = ({ profile }) => {
+    return <SentinelleDashboard initialScope="user_school" profile={profile} />;
 };
 
 export default UserDashboard;

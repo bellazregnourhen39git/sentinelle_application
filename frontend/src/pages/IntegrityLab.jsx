@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Target, Activity, LucideArrowLeft, Info, HelpCircle, AlertOctagon, Fingerprint, Award, CheckCircle2, FlaskConical } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import EditableLabel from '../components/dashboard/EditableLabel';
 import api from '../api';
 
 const IntegrityLab = ({ profile }) => {
@@ -9,7 +10,7 @@ const IntegrityLab = ({ profile }) => {
     const [labData, setLabData] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const isSuperAdmin = profile?.role === 'SUPERADMIN';
+    const isSuperAdmin = profile?.role === 'SUPER_ADMIN';
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -18,7 +19,7 @@ const IntegrityLab = ({ profile }) => {
                 setLabData(res.data);
                 setLoading(false);
             } catch (err) {
-                console.error("Integrity Sync Failure:", err);
+                console.error("Échec de synchronisation de l'Intégrité :", err);
                 setLoading(false);
             }
         };
@@ -30,7 +31,7 @@ const IntegrityLab = ({ profile }) => {
 
     return (
         <div className="min-h-screen bg-[#f8fafc] text-slate-900 font-sans p-12">
-            {/* 🔬 Navigation Header */}
+            {/* 🔬 En-tête de Navigation */}
             <div className="max-w-[1400px] mx-auto mb-12 flex items-center justify-between">
                 <button 
                     onClick={() => navigate(-1)}
@@ -42,12 +43,12 @@ const IntegrityLab = ({ profile }) => {
                 <div className="flex items-center gap-4">
                     <div className="px-5 py-2.5 bg-brand-500/10 border border-brand-500/20 rounded-full text-[10px] font-black text-brand-600 uppercase tracking-[3px] italic flex items-center gap-2 shadow-sm">
                         <Fingerprint size={14} className="animate-pulse text-brand-500" />
-                        Laboratoire de Validation & Intégrité
+                        <EditableLabel termKey="lab_integrity_header_badge" defaultValue="Laboratoire de Validation & Intégrité" />
                     </div>
                 </div>
             </div>
 
-            {/* 🌌 Hero Section */}
+            {/* 🌌 Section Héro */}
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -58,14 +59,14 @@ const IntegrityLab = ({ profile }) => {
                 </div>
                 <div className="relative z-10 max-w-3xl">
                     <h1 className="text-7xl font-black text-slate-900 tracking-tighter uppercase italic leading-none mb-8">
-                        Audit <span className="text-brand-600">d'Intégrité</span>
+                        <EditableLabel termKey="lab_integrity_hero_title_1" defaultValue="Audit" /> <span className="text-brand-600"><EditableLabel termKey="lab_integrity_hero_title_2" defaultValue="d'Intégrité" /></span>
                     </h1>
                     <p className="text-xl text-slate-500 font-bold italic leading-relaxed opacity-80 mb-10">
-                        Protocoles de surveillance cognitive et détection des anomalies statistiques pour garantir la véracité médicale de chaque dossier MedSPAD.
+                        <EditableLabel termKey="lab_integrity_hero_desc" defaultValue="Protocoles de surveillance cognitive et détection des anomalies statistiques pour garantir la véracité médicale de chaque dossier MedSPAD." />
                     </p>
                     <div className="flex items-center gap-6">
                         <div className="px-6 py-2.5 bg-brand-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-[3px] italic shadow-xl shadow-brand-500/20">
-                            Protocol Alpha-2026 Active
+                            Protocole Alpha-2026 Actif
                         </div>
                         <span className="text-[10px] font-black text-brand-600 uppercase tracking-[4px] italic opacity-60">Validation Algorithmique Niveau 4</span>
                     </div>
@@ -75,7 +76,7 @@ const IntegrityLab = ({ profile }) => {
             {/* 📈 Methodology View */}
             <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12">
                 
-                {/* 📋 Audit Methodology (Calculation Logic) */}
+                {/* 📋 Méthodologie d'Audit (Logique de Calcul) */}
                 <motion.div 
                     initial={{ opacity: 0, x: -24 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -111,7 +112,7 @@ const IntegrityLab = ({ profile }) => {
                     </div>
                 </motion.div>
 
-                {/* 🛡️ National Trust Leaderboard (Logically-Validated Registry) */}
+                {/* 🛡️ Classement National de Confiance (Registre Validé Logiquement) */}
                 <motion.div 
                     initial={{ opacity: 0, x: 24 }}
                     animate={{ opacity: 1, x: 0 }}
@@ -146,7 +147,7 @@ const IntegrityLab = ({ profile }) => {
                                                 reg.status === 'Audit Pending' ? 'bg-amber-500' : 'bg-rose-500'
                                             }`} />
                                             <span className={`text-[9px] font-black uppercase italic ${reg.logical_anomalies > 0 ? 'text-rose-600' : 'text-slate-400'}`}>
-                                                {reg.logical_anomalies > 0 ? 'Forensic Alert' : reg.status}
+                                                {reg.logical_anomalies > 0 ? 'Alerte Forensique' : (reg.status === 'Audit Pending' ? 'Audit en Attente' : reg.status)}
                                             </span>
                                         </div>
                                     </div>
@@ -168,7 +169,7 @@ const IntegrityLab = ({ profile }) => {
                                         {reg.logical_anomalies === 0 && reg.trust_index > 90 ? (
                                             <div className="flex flex-col items-end">
                                                 <Award size={14} className="text-emerald-500 mb-1" />
-                                                <span className="text-[7px] font-black text-emerald-600 uppercase italic">Certified</span>
+                                                <span className="text-[7px] font-black text-emerald-600 uppercase italic">Certifié</span>
                                             </div>
                                         ) : (
                                             <span className="text-[9px] font-bold text-slate-300 italic">N={reg.submissions}</span>
@@ -180,7 +181,7 @@ const IntegrityLab = ({ profile }) => {
                     </div>
                 </motion.div>
 
-                {/* 🧪 Forensic Checkpoints Card (Superadmin Only) */}
+                {/* 🧪 Carte des Points de Contrôle Forensique (SuperAdmin uniquement) */}
                 {isSuperAdmin ? (
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.98 }}
@@ -193,7 +194,7 @@ const IntegrityLab = ({ profile }) => {
                             <div className="flex items-center justify-between mb-16">
                                 <div className="flex items-center gap-6 text-brand-500">
                                     <ShieldCheck size={40} className="glow-brand" />
-                                    <h3 className="text-4xl font-black italic uppercase tracking-tighter text-white">Prévue de Validation Algorithmique</h3>
+                                    <h3 className="text-4xl font-black italic uppercase tracking-tighter text-white">Preuve de Validation Algorithmique</h3>
                                 </div>
                                 <div className="px-6 py-2 bg-brand-500 text-white rounded-full text-[10px] font-black uppercase tracking-[3px] italic">
                                     Forensic Suite v2.0

@@ -3,25 +3,25 @@ import * as d3 from 'd3';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const SECTION_GROUPS = {
-    'Profile': { color: '#0ea5e9', sections: ['A', 'B'] }, // Medical Blue
+    'Profil': { color: '#0ea5e9', sections: ['A', 'B'] }, // Medical Blue
     'Addiction': { color: '#ef4444', sections: ['C', 'D', 'E', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P'] }, // Signal Red
-    'Lifestyle': { color: '#f59e0b', sections: ['R', 'S', 'T'] }, // Alert Amber
+    'Style de Vie': { color: '#f59e0b', sections: ['R', 'S', 'T'] }, // Alert Amber
     'Social': { color: '#6366f1', sections: ['U', 'V'] }, // Indigo Insight
-    'Awareness': { color: '#10b981', sections: ['Q', 'Z'] } // Emerald Health
+    'Sensibilisation': { color: '#10b981', sections: ['Q', 'Z'] } // Emerald Health
 };
 
 const ALL_SECTIONS = [
-    { id: 'A', name: 'Demographics' }, { id: 'B', name: 'Famille' },
+    { id: 'A', name: 'Profil' }, { id: 'B', name: 'Famille' },
     { id: 'C', name: 'Cigarettes' }, { id: 'D', name: 'E-cigarettes' },
     { id: 'E', name: 'Narguilé' }, { id: 'G', name: 'Alcool' },
     { id: 'H', name: 'Tranquillisants' }, { id: 'I', name: 'Cannabis' },
     { id: 'J', name: 'Cocaïne' }, { id: 'K', name: 'Extasy' },
     { id: 'L', name: 'Héroïne' }, { id: 'M', name: 'Inhalants' },
     { id: 'N', name: 'Substances' }, { id: 'P', name: 'NPS' },
-    { id: 'Q', name: 'Perception' }, { id: 'R', name: 'Social Media' },
-    { id: 'S', name: 'Jeux Vidéo' }, { id: 'T', name: 'Gambling' },
+    { id: 'Q', name: 'Perception' }, { id: 'R', name: 'Réseaux Sociaux' },
+    { id: 'S', name: 'Jeux Vidéo' }, { id: 'T', name: 'Jeux de Hasard' },
     { id: 'U', name: 'Violence' }, { id: 'V', name: 'Stress' },
-    { id: 'Z', name: 'Honnêteté' }
+    { id: 'Z', name: 'Intégrité' }
 ];
 
 const RadialSectionWheel = ({ 
@@ -33,16 +33,17 @@ const RadialSectionWheel = ({
     const svgRef = useRef();
     const [hovered, setHovered] = useState(null);
     
-    const width = 600;
-    const height = 600;
-    const outerRadius = 250;
-    const innerRadius = 110;
-    const cornerRadius = 6;
-    const padAngle = 0.035;
+    const width = 650;
+    const height = 650;
+    const outerRadius = 220;
+    const innerRadius = 90;
+    const cornerRadius = 8;
+    const padAngle = 0.045;
 
     const segments = useMemo(() => {
         const arcCount = ALL_SECTIONS.length;
         const angleStep = (2 * Math.PI) / arcCount;
+        const rotationOffset = -Math.PI / (arcCount * 2); // Shift slightly so segment splits don't align with vertical axis
 
         return ALL_SECTIONS.map((sec, i) => {
             const groupKey = Object.keys(SECTION_GROUPS).find(key => 
@@ -58,8 +59,8 @@ const RadialSectionWheel = ({
                 index: i + 1,
                 group: groupKey,
                 color: group.color,
-                startAngle: i * angleStep,
-                endAngle: (i + 1) * angleStep,
+                startAngle: (i * angleStep) + rotationOffset,
+                endAngle: ((i + 1) * angleStep) + rotationOffset,
                 innerRadius,
                 outerRadius: dynamicOuterRadius,
                 maxOuterRadius: outerRadius
@@ -80,8 +81,8 @@ const RadialSectionWheel = ({
         .padAngle(padAngle);
 
     const labelArcGenerator = d3.arc()
-        .innerRadius(outerRadius + 22)
-        .outerRadius(outerRadius + 22);
+        .innerRadius(outerRadius + 35)
+        .outerRadius(outerRadius + 35);
 
     return (
         <div className="relative flex items-center justify-center select-none animate-clinical-in">
@@ -158,21 +159,29 @@ const RadialSectionWheel = ({
                                 />
 
                                 {/* Frequency Indexer */}
-                                <text
-                                    transform={`translate(${labelArcGenerator.centroid(d)})`}
-                                    dy=".35em"
-                                    textAnchor="middle"
-                                    className={`text-[10px] font-black transition-all duration-300 ${isActive ? 'fill-slate-900 scale-125' : isHovered ? 'fill-slate-900 scale-110' : 'fill-slate-400 opacity-50'}`}
-                                >
-                                    {d.index}
-                                </text>
+                                <g transform={`translate(${labelArcGenerator.centroid(d)})`}>
+                                    <text
+                                        transform={(() => {
+                                            const midAngle = (d.startAngle + d.endAngle) / 2;
+                                            const rotate = (midAngle * 180 / Math.PI);
+                                            // Flip the text if it's on the left side to keep it upright
+                                            const finalRotate = (rotate > 90 && rotate < 270) ? rotate + 180 : rotate;
+                                            return `rotate(${finalRotate})`;
+                                        })()}
+                                        dy=".35em"
+                                        textAnchor="middle"
+                                        className={`text-[9px] font-black uppercase transition-all duration-300 ${isActive ? 'fill-slate-900 scale-110' : isHovered ? 'fill-slate-900 scale-105' : 'fill-slate-500 opacity-80'}`}
+                                    >
+                                        {d.id} - {d.name}
+                                    </text>
+                                </g>
                             </g>
                         );
                     })}
 
                     {/* 💠 HUD Content — High Contrast Crystal */}
-                    <foreignObject x="-90" y="-90" width="180" height="180" onClick={() => onSectionClick(null)}>
-                        <div className="w-full h-full flex flex-col items-center justify-center text-center p-6 cursor-pointer overflow-visible">
+                    <foreignObject x="-75" y="-75" width="150" height="150" onClick={() => onSectionClick(null)}>
+                        <div className="w-full h-full flex flex-col items-center justify-center text-center p-4 cursor-pointer overflow-visible">
                             <AnimatePresence mode="wait">
                                 {hovered ? (
                                     <motion.div

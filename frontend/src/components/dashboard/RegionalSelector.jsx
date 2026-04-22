@@ -8,13 +8,13 @@ const RegionalSelector = ({ regions = [] }) => {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center p-8 selection:bg-brand-500/10 overflow-hidden relative">
-            {/* ❄️ Clinical Crystal Background Enhancements */}
+            {/* ❄️ Améliorations d'Arrière-plan Cristal Clinique */}
             <div className="fixed inset-0 pointer-events-none">
                 <div className="absolute top-[-5%] left-[-5%] w-[35%] h-[35%] bg-brand-500/5 blur-[100px] rounded-full" />
                 <div className="absolute bottom-[-5%] right-[-5%] w-[35%] h-[35%] bg-blue-500/3 blur-[100px] rounded-full" />
             </div>
 
-            {/* 🛡️ Clinical Brand Header */}
+            {/* 🛡️ En-tête de Marque Clinique */}
             <motion.div 
                 initial={{ opacity: 0, y: -24 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -31,7 +31,7 @@ const RegionalSelector = ({ regions = [] }) => {
                 </p>
             </motion.div>
 
-            {/* 🗺️ High-Density Choice Hub */}
+            {/* 🗺️ Hub de Choix Haute Densité */}
             <div className="max-w-7xl w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 relative z-10">
                 {regions && regions.length > 0 ? regions.map((reg, idx) => (
                     <motion.div
@@ -86,7 +86,7 @@ const RegionalSelector = ({ regions = [] }) => {
                 )}
             </div>
 
-            {/* 🔬 System Footer */}
+            {/* 🔬 Pied de page Système */}
             <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

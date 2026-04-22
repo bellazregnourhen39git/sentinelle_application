@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
 import {
-  ChevronRight, ChevronLeft, CheckCircle2, AlertCircle, Send, X
+  ChevronRight, ChevronLeft, CheckCircle2, AlertCircle, Send, X, LogOut, ArrowLeft
 } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 import api from '../api';
 
 // ─── Shared UI Components ───────────────────────────────────────────────────────
@@ -82,7 +83,7 @@ const GridQuestion = ({ title, titleAr, code, options, items, values, onChange, 
     <table className="w-full text-sm border-separate border-spacing-y-2 min-w-[600px]">
       <thead>
         <tr className="text-slate-400 font-black uppercase tracking-widest text-[10px]">
-          <th className="text-left py-2 px-4">Item</th>
+          <th className="text-left py-2 px-4">{isRTL ? 'العنصر' : 'Élément'}</th>
           {options.map(([val, fr, ar]) => (
             <th key={val} className="text-center py-2 px-2">{isRTL ? ar : fr}</th>
           ))}
@@ -356,6 +357,51 @@ const QuestionnaireForm = ({ onClose }) => {
   const [lang, setLang] = useState('fr');
   const isRTL = lang === 'ar';
 
+  const getExclusionWarnings = () => {
+    const warnings = [];
+    const currentYear = 2026; // Reference year
+
+    // Gender exclusion
+    if (data.section_a.gender && !['M', 'F'].includes(data.section_a.gender)) {
+      warnings.push(isRTL ? "جنس غير صالح" : "Genre non valide");
+    }
+
+    // Age exclusion
+    if (data.section_a.birth_year && data.section_a.birth_year.length === 4) {
+      const age = currentYear - parseInt(data.section_a.birth_year);
+      if (age < 15 || age > 18) {
+        warnings.push(isRTL ? `العمر خارج النطاق المقبول (15-18). العمر الحالي المحسوب: ${age}` : `Âge hors limites (15-18 ans). Âge calculé : ${age}`);
+      }
+    }
+
+    // Fictive substance
+    if (data.section_p && data.section_p.fictive_substance_consumption === 'yes') {
+      warnings.push(isRTL ? "تم رصد إجابات غير متسقة." : "Réponses incohérentes identifiées.");
+    }
+
+    // Missing values exclusion (only warn if near the end)
+    if (step >= SECTIONS.length - 2) {
+      let total = 0;
+      let missing = 0;
+      Object.values(data).forEach(section => {
+        Object.keys(section).forEach(key => {
+          const val = section[key];
+          if (typeof val === 'string') {
+            total++;
+            if (!val.trim()) missing++;
+          }
+        });
+      });
+      if (total > 0 && (missing / total) > 0.5) {
+        warnings.push(isRTL ? "أكثر من 50٪ من الإجابات مفقودة" : "Plus de 50% de valeurs manquantes");
+      }
+    }
+
+    return warnings;
+  };
+
+  const exclusionWarnings = getExclusionWarnings();
+
   const update = (section, field, value) => {
     setData(prev => ({ ...prev, [section]: { ...prev[section], [field]: value } }));
   };
@@ -396,6 +442,7 @@ const QuestionnaireForm = ({ onClose }) => {
         school_class: 1, // Placeholder
         language_used: lang.toUpperCase(),
         ...data,
+        extra_answers: extraAnswers
       });
       setStatus('success');
     } catch (err) {
@@ -1098,6 +1145,12 @@ const QuestionnaireForm = ({ onClose }) => {
               ['crack', 'Crack', 'كراك'],
               ['other', 'Autres substances', 'مواد أخرى']
             ]} />
+
+          {/* C.P04 (Trick Question) */}
+          <div className="p-6 bg-rose-50 rounded-3xl border-2 border-rose-100">
+            <FieldLabel code="C.P04" fr="Au cours de votre vie, avez-vous déjà consommé du 'Relevon' (Nouvelle drogue de synthèse) ?" ar="طوال حياتك، هل سبق لك أن استهلكت الـ 'Relevon' (مخدر صناعي جديد)؟" isRTL={isRTL} />
+            <RadioGroup name="fictive_substance_consumption" value={data.section_p.fictive_substance_consumption || ''} onChange={handleChange('section_p')} options={YES_NO} isRTL={isRTL} />
+          </div>
         </div>
       )
     },
@@ -1185,7 +1238,7 @@ const QuestionnaireForm = ({ onClose }) => {
           <div>
             <FieldLabel code="C.S02" fr="Au cours des 7 DERNIERS JOURS, combien de jours avez-vous passé sur les jeux vidéo ?" ar="خلال الـ 7 أيام الماضية، كم يوماً لعبت فيها ألعاب الفيديو؟" isRTL={isRTL} />
             <SelectField name="days_per_week" value={data.section_s.days_per_week} onChange={handleChange('section_s')}
-              options={[['0','0'],['1','1'],['2','2'],['3','3'],['4','4'],['5','5'],['6','6'],['7','7']]} isRTL={isRTL} />
+              options={[['0', '0'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5'], ['6', '6'], ['7', '7']]} isRTL={isRTL} />
           </div>
 
           {/* C.S03 */}
@@ -1392,143 +1445,211 @@ const QuestionnaireForm = ({ onClose }) => {
     }
   ];
 
-const currentSection = SECTIONS[step];
-const currentSectionTitle = isRTL ? currentSection.titleAr || currentSection.title : currentSection.title;
-const currentSectionSubtitle = isRTL ? currentSection.subtitleAr || currentSection.subtitle : currentSection.subtitle;
-const progress = ((step + 1) / SECTIONS.length) * 100;
+  const [dynamicConfigs, setDynamicConfigs] = useState([]);
+  const [extraAnswers, setExtraAnswers] = useState({});
 
-if (status === 'success') return (
-  <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 text-center px-8">
-    <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-8">
-      <CheckCircle2 size={48} className="text-green-500" />
-    </div>
-    <h1 className="text-4xl font-extrabold text-slate-900 mb-4">Questionnaire soumis !</h1>
-    <p className="text-slate-500 text-xl mb-10 max-w-md">
-      {isRTL ? 'شكراً على مشاركتك. بياناتك محمية بالكامل.' : 'Merci pour votre participation. Vos données sont entièrement protégées.'}
-    </p>
-    <button onClick={() => { setStatus(null); setStep(0); setData(INITIAL_DATA); }}
-      className="px-10 py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-700 transition-all">
-      Nouveau questionnaire
-    </button>
-  </div>
-);
+  useEffect(() => {
+    const loadConfig = async () => {
+      try {
+        const res = await api.get('dynamic-questions/');
+        setDynamicConfigs(res.data);
+      } catch (err) {
+        console.error("Failed to load questionnaire config", err);
+      }
+    };
+    loadConfig();
+  }, []);
 
-return (
-  <div className={`min-h-screen bg-slate-50 ${isRTL ? 'rtl' : 'ltr'}`}>
-    {/* Top Bar */}
-    <div className="sticky top-0 z-40 bg-white border-b border-slate-100 shadow-sm">
-      <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          {onClose && <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg"><X size={20} /></button>}
-          <div>
-            <span className="text-xs font-black text-slate-400 uppercase tracking-widest block">MedSPAD 2026</span>
-            <span className="font-bold text-slate-700 text-sm">{step + 1} / {SECTIONS.length} — {currentSection.title}</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-3">
-          <button onClick={() => setLang(lang === 'fr' ? 'ar' : 'fr')}
-            className="px-4 py-2 text-sm font-bold border-2 border-slate-200 rounded-xl hover:bg-slate-100 transition-all">
-            {lang === 'fr' ? 'العربية' : 'Français'}
-          </button>
-        </div>
-      </div>
-      {/* Progress Bar */}
-      <div className="h-1 bg-slate-100 w-full">
-        <div className="h-full bg-blue-600 transition-all duration-500" style={{ width: `${progress}%` }}></div>
-      </div>
-    </div>
+  const isHidden = (code) => {
+    return dynamicConfigs.find(q => q.code === code && q.is_hidden);
+  };
 
-    {/* Content */}
-    <div className="max-w-3xl mx-auto px-6 py-10">
-      <SectionHeader letter={currentSection.letter} title={currentSectionTitle} subtitle={currentSectionSubtitle} color={currentSection.color} />
-      <div className="animate-fade-in">
-        {currentSection.content}
-      </div>
-    </div>
+  const filteredSections = SECTIONS.filter(s => !isHidden(s.id));
 
-    {/* Navigation Footer */}
-    <div className="sticky bottom-0 bg-white border-t border-slate-100 shadow-lg">
-      <div className="max-w-3xl mx-auto px-6 py-5 flex items-center justify-between gap-4">
-        <button
-          onClick={() => setStep(s => Math.max(0, s - 1))}
-          disabled={step === 0}
-          className="flex items-center gap-2 px-6 py-3 border-2 border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-        >
-          <ChevronLeft size={20} />
-          {isRTL ? 'السابق' : 'Précédent'}
-        </button>
-
-        {/* Step dots */}
-        <div className="flex gap-1.5">
-          {SECTIONS.map((_, i) => (
-            <div key={i} onClick={() => setStep(i)} className={`h-2 rounded-full cursor-pointer transition-all ${i === step ? 'w-6 bg-blue-600' : i < step ? 'w-2 bg-blue-200' : 'w-2 bg-slate-200'}`}></div>
+  // Handle dynamic question addition at the end
+  const dynamicQuestions = dynamicConfigs.filter(q => q.is_dynamic && !q.is_hidden);
+  if (dynamicQuestions.length > 0) {
+    filteredSections.push({
+      id: 'section_extra',
+      letter: '+',
+      title: isRTL ? 'أسئلة إضافية' : 'Questions Supplémentaires',
+      subtitle: isRTL ? 'معلومات تكميلية' : 'Informations complémentaires',
+      color: 'bg-emerald-700',
+      content: (
+        <div className="space-y-10">
+          {dynamicQuestions.map(q => (
+            <div key={q.code} className="p-6 bg-slate-50 rounded-3xl border-2 border-slate-100">
+              <FieldLabel code={q.code} fr={q.label_fr} ar={q.label_ar} isRTL={isRTL} />
+              {q.question_type === 'RADIO' ? (
+                <RadioGroup
+                  name={q.code}
+                  value={extraAnswers[q.code] || ''}
+                  onChange={(e) => setExtraAnswers({ ...extraAnswers, [q.code]: e.target.value })}
+                  options={q.options_json}
+                  isRTL={isRTL}
+                />
+              ) : (
+                <input
+                  type={q.question_type === 'NUMBER' ? 'number' : 'text'}
+                  value={extraAnswers[q.code] || ''}
+                  onChange={(e) => setExtraAnswers({ ...extraAnswers, [q.code]: e.target.value })}
+                  className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 bg-white focus:border-emerald-500 outline-none transition-all"
+                  placeholder={isRTL ? 'إجابتك...' : 'Votre réponse...'}
+                />
+              )}
+            </div>
           ))}
         </div>
+      )
+    });
+  }
 
-        {step === SECTIONS.length - 1 ? (
-          <button
-            onClick={handleSubmit}
-            disabled={status === 'submitting'}
-            className="flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-xl shadow-blue-100 transition-all disabled:opacity-70"
-          >
-            {status === 'submitting' ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <><Send size={18} />{isRTL ? 'إرسال' : 'Soumettre'}</>}
-          </button>
-        ) : (
-          <button
-            onClick={() => setStep(s => Math.min(SECTIONS.length - 1, s + 1))}
-            className="flex items-center gap-2 px-8 py-3 bg-slate-900 hover:bg-slate-700 text-white font-bold rounded-xl transition-all"
-          >
-            {isRTL ? 'التالي' : 'Suivant'}
-            <ChevronRight size={20} />
-          </button>
-        )}
+  const currentSection = filteredSections[step] || filteredSections[0];
+  const progress = ((step + 1) / filteredSections.length) * 100;
+
+  if (status === 'success') return (
+    <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 text-center px-8">
+      <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-8">
+        <CheckCircle2 size={48} className="text-green-500" />
       </div>
+      <h1 className="text-4xl font-extrabold text-slate-900 mb-4">Questionnaire soumis !</h1>
+      <p className="text-slate-500 text-xl mb-10 max-w-md">
+        {isRTL ? 'شكراً على مشاركتك. بياناتك محمية بالكامل.' : 'Merci pour votre participation. Vos données sont entièrement protégées.'}
+      </p>
+      <button onClick={() => { setStatus(null); setStep(0); setData(INITIAL_DATA); }}
+        className="px-10 py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-700 transition-all">
+        Nouveau questionnaire
+      </button>
+    </div>
+  );
 
-      {status === 'error' && (
-        <div className="max-w-3xl mx-auto px-6 pb-4">
-          <div className="bg-red-50 border-2 border-red-100 rounded-2xl p-6">
-            <div className="flex items-center gap-3 text-red-700 mb-4 font-black uppercase tracking-tighter text-sm">
-              <AlertCircle size={20} />
-              {isRTL ? 'حدث خطأ أثناء الإرسال' : 'Erreurs de validation'}
+  return (
+    <div className={`min-h-screen bg-slate-50 ${isRTL ? 'rtl' : 'ltr'}`}>
+      {/* Top Bar */}
+      <div className="sticky top-0 z-40 bg-white border-b border-slate-100 shadow-sm">
+        <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            {onClose && <button onClick={onClose} className="p-2 hover:bg-slate-100 rounded-lg"><X size={20} /></button>}
+            <div>
+              <span className="text-xs font-black text-slate-400 uppercase tracking-widest block">MedSPAD 2026</span>
+              <span className="font-bold text-slate-700 text-sm">{step + 1} / {SECTIONS.length} — {currentSection.title}</span>
             </div>
-            <ul className="space-y-3">
-              {errors ? (
-                Object.entries(errors).map(([key, value]) => {
-                  const renderErrorValue = (val) => {
-                    if (Array.isArray(val)) {
-                      return val.map(v => typeof v === 'object' ? renderErrorValue(v) : String(v)).join(', ');
-                    }
-                    if (typeof val === 'object' && val !== null) {
-                      return Object.entries(val)
-                        .map(([k, v]) => `${k}: ${typeof v === 'object' ? renderErrorValue(v) : String(v)}`)
-                        .join(' | ');
-                    }
-                    return String(val);
-                  };
-
-                  return (
-                    <li key={key} className="flex flex-col gap-1">
-                      <span className="text-[10px] font-black text-red-400 uppercase tracking-widest">
-                        {key.replace('_', ' ')}
-                      </span>
-                      <span className="text-sm font-bold text-red-600">
-                        {renderErrorValue(value)}
-                      </span>
-                    </li>
-                  );
-                })
-              ) : (
-                <li className="text-sm font-bold text-red-600">
-                  {isRTL ? 'يرجى التحقق من الاتصال والمحاولة مرة أخرى.' : 'Veuillez vérifier votre connexion et réessayer.'}
-                </li>
-              )}
-            </ul>
+          </div>
+          <div className="flex items-center gap-3">
+            <button onClick={() => setLang(lang === 'fr' ? 'ar' : 'fr')}
+              className="px-4 py-2 text-sm font-bold border-2 border-slate-200 rounded-xl hover:bg-slate-100 transition-all">
+              {lang === 'fr' ? 'العربية' : 'Français'}
+            </button>
           </div>
         </div>
-      )}
+        {/* Progress Bar */}
+        <div className="h-1 bg-slate-100 w-full">
+          <div className="h-full bg-blue-600 transition-all duration-500" style={{ width: `${progress}%` }}></div>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="max-w-3xl mx-auto px-6 py-10">
+        {exclusionWarnings.length > 0 && (
+          <div className="mb-6 animate-fade-in p-5 bg-orange-50 border-2 border-orange-200 rounded-2xl flex flex-col gap-3 shadow-sm">
+            <div className="flex items-center gap-3 text-orange-700 font-extrabold text-sm uppercase tracking-wide">
+              <AlertCircle size={22} className="text-orange-500" />
+              <span>{isRTL ? "تنبيه: سيتم استبعاد هذا الاستبيان من الإحصائيات لعدم استيفائه معايير الإدراج:" : "Avertissement : Ce questionnaire ne sera pas comptabilisé dans les statistiques (Critères d'exclusion) :"}</span>
+            </div>
+            <ul className="list-disc list-inside text-sm text-orange-800 font-medium ml-2 space-y-1">
+              {exclusionWarnings.map((w, i) => <li key={i}>{w}</li>)}
+            </ul>
+          </div>
+        )}
+        <SectionHeader letter={currentSection.letter} title={currentSection.title} color={currentSection.color} />
+        <div className="animate-fade-in">
+          {currentSection.content}
+        </div>
+      </div>
+
+      {/* Navigation Footer */}
+      <div className="sticky bottom-0 bg-white border-t border-slate-100 shadow-lg">
+        <div className="max-w-3xl mx-auto px-6 py-5 flex items-center justify-between gap-4">
+          <button
+            onClick={() => setStep(s => Math.max(0, s - 1))}
+            disabled={step === 0}
+            className="flex items-center gap-2 px-6 py-3 border-2 border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+          >
+            <ChevronLeft size={20} />
+            {isRTL ? 'السابق' : 'Précédent'}
+          </button>
+
+          {/* Step dots */}
+          <div className="flex gap-1.5">
+            {filteredSections.map((_, i) => (
+              <div key={i} onClick={() => setStep(i)} className={`h-2 rounded-full cursor-pointer transition-all ${i === step ? 'w-6 bg-blue-600' : i < step ? 'w-2 bg-blue-200' : 'w-2 bg-slate-200'}`}></div>
+            ))}
+          </div>
+
+          {step === filteredSections.length - 1 ? (
+            <button
+              onClick={handleSubmit}
+              disabled={status === 'submitting'}
+              className="flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-xl shadow-blue-100 transition-all disabled:opacity-70"
+            >
+              {status === 'submitting' ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> : <><Send size={18} />{isRTL ? 'إرسال' : 'Soumettre'}</>}
+            </button>
+          ) : (
+            <button
+              onClick={() => setStep(s => Math.min(filteredSections.length - 1, s + 1))}
+              className="flex items-center gap-2 px-8 py-3 bg-slate-900 hover:bg-slate-700 text-white font-bold rounded-xl transition-all"
+            >
+              {isRTL ? 'التالي' : 'Suivant'}
+              <ChevronRight size={20} />
+            </button>
+          )}
+        </div>
+
+        {status === 'error' && (
+          <div className="max-w-3xl mx-auto px-6 pb-4">
+            <div className="bg-red-50 border-2 border-red-100 rounded-2xl p-6">
+              <div className="flex items-center gap-3 text-red-700 mb-4 font-black uppercase tracking-tighter text-sm">
+                <AlertCircle size={20} />
+                {isRTL ? 'حدث خطأ أثناء الإرسال' : 'Erreurs de validation'}
+              </div>
+              <ul className="space-y-3">
+                {errors ? (
+                  Object.entries(errors).map(([key, value]) => {
+                    const renderErrorValue = (val) => {
+                      if (Array.isArray(val)) {
+                        return val.map(v => typeof v === 'object' ? renderErrorValue(v) : String(v)).join(', ');
+                      }
+                      if (typeof val === 'object' && val !== null) {
+                        return Object.entries(val)
+                          .map(([k, v]) => `${k}: ${typeof v === 'object' ? renderErrorValue(v) : String(v)}`)
+                          .join(' | ');
+                      }
+                      return String(val);
+                    };
+
+                    return (
+                      <li key={key} className="flex flex-col gap-1">
+                        <span className="text-[10px] font-black text-red-400 uppercase tracking-widest">
+                          {key.replace('_', ' ')}
+                        </span>
+                        <span className="text-sm font-bold text-red-600">
+                          {renderErrorValue(value)}
+                        </span>
+                      </li>
+                    );
+                  })
+                ) : (
+                  <li className="text-sm font-bold text-red-600">
+                    {isRTL ? 'يرجى التحقق من الاتصال والمحاولة مرة أخرى.' : 'Veuillez vérifier votre connexion et réessayer.'}
+                  </li>
+                )}
+              </ul>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
 };
 
 export default QuestionnaireForm;

@@ -1,31 +1,80 @@
+import os
 import csv
 import json
-from datetime import date
+import secrets
+from datetime import date, timedelta
 
-from rest_framework import generics, permissions, status, views
-from rest_framework.response import Response
 from django.conf import settings
-from django.db.models import Count, Q, Avg
-from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import Count, Q, Avg
 from django.http import HttpResponse, StreamingHttpResponse
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+from django.core.mail import send_mail
+
+from rest_framework import generics, permissions, status, views, exceptions
+from rest_framework.response import Response
+from rest_framework_simplejwt.views import TokenObtainPairView
+
 from .models import (
     Governorate, SchoolEstablishment, SchoolClass, QuestionnaireSession,
     SectionA, SectionB, SectionC, SectionD, SectionE, SectionG, SectionH,
     SectionI, SectionJ, SectionK, SectionL, SectionM, SectionN, SectionP,
     SectionQ, SectionR, SectionS, SectionT, SectionU, SectionV, SectionZ,
+    AuditLog, PlatformTerminology, DynamicQuestion
 )
 from .analytics import SentinelleAnalytics
+from .permissions import IsSuperAdmin, IsGlobalAdmin, ScopePermission
 from .serializers import (
     RegisterSerializer, UserSerializer, GovernorateSerializer,
     SchoolEstablishmentSerializer, SchoolClassSerializer,
-    QuestionnaireSessionSerializer,
+    QuestionnaireSessionSerializer, PlatformTerminologySerializer
 )
+from . import serializers
 
 User = get_user_model()
 
 
 # ─── Auth Views ──────────────────────────────────────────────────────────────────
+
+class SecureTokenObtainPairView(TokenObtainPairView):
+    serializer_class = serializers.SecureTokenObtainPairSerializer
+    throttle_scope = 'login'
+
+    def post(self, request, *args, **kwargs):
+        response = super().post(request, *args, **kwargs)
+        client_ip = request.META.get('REMOTE_ADDR')
+        
+        if response.status_code == 200:
+            user = User.objects.get(email=request.data.get('email', request.data.get('username')))
+            AuditLog.objects.create(
+                user=user,
+                action="LOGIN_SUCCESS",
+                ip_address=client_ip
+            )
+        else:
+            # Note: The serializer handled the failed_attempts count
+            AuditLog.objects.create(
+                action=f"LOGIN_FAILURE: {request.data.get('email', 'unknown')}",
+                ip_address=client_ip
+            )
+        return response
+
+class GovernorateListView(generics.ListAPIView):
+    queryset = Governorate.objects.all().order_by('name')
+    serializer_class = GovernorateSerializer
+    permission_classes = (permissions.AllowAny,)
+
+class SchoolEstablishmentListView(generics.ListAPIView):
+    serializer_class = SchoolEstablishmentSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def get_queryset(self):
+        qs = SchoolEstablishment.objects.all().select_related('governorate').order_by('name')
+        gov_id = self.request.query_params.get('governorate_id')
+        if gov_id:
+            qs = qs.filter(governorate_id=gov_id)
+        return qs
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -39,6 +88,176 @@ class ProfileView(generics.RetrieveAPIView):
 
     def get_object(self):
         return self.request.user
+
+
+class PendingApprovalsView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        if request.user.role != 'SUPER_ADMIN':
+            return Response({"detail": "Not authorized"}, status=403)
+        pending = User.objects.filter(Q(status='DISABLED') | Q(is_active=False)).exclude(status='PENDING')
+        serializer = UserSerializer(pending, many=True)
+        return Response(serializer.data)
+
+
+class ApproveUserView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, user_id):
+        if request.user.role != 'SUPER_ADMIN':
+            return Response({"detail": "Not authorized"}, status=403)
+        user = User.objects.filter(id=user_id).first()
+        if user:
+            user.is_active = True
+            user.approval_status = 'APPROVED'
+            user.status = 'ACTIVE' # Ensure it's active even if it was DISABLED/LOCKED
+            user.failed_attempts = 0 # Reset lock
+            user.save()
+            return Response({"status": "approved"})
+        return Response({"detail": "Not found"}, status=404)
+
+
+class RejectUserView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, user_id):
+        if request.user.role != 'SUPER_ADMIN':
+            return Response({"detail": "Not authorized"}, status=403)
+        user = User.objects.filter(id=user_id).first()
+        if user:
+            user.is_active = False
+            user.approval_status = 'REJECTED'
+            user.save()
+            return Response({"status": "rejected"})
+        return Response({"detail": "Not found"}, status=404)
+
+
+class UserListView(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        if self.request.user.role != 'SUPER_ADMIN':
+            return User.objects.none()
+        return User.objects.all().order_by('-date_joined')
+
+
+class UserDeleteView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def delete(self, request, pk):
+        if request.user.role != 'SUPER_ADMIN':
+            return Response({"detail": "Non autorisé."}, status=403)
+        user = User.objects.filter(pk=pk).first()
+        if not user:
+            return Response({"detail": "Utilisateur introuvable."}, status=404)
+        
+        email = user.email
+        user.delete()
+        
+        AuditLog.objects.create(
+            user=request.user,
+            action=f"DELETED_USER: {email}",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+        return Response({"status": "deleted"}, status=200)
+
+class UserExportCSVView(views.APIView):
+    permission_classes = (IsSuperAdmin,)
+
+    def get(self, request):
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="utilisateurs_sentinelle.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'id', 'email', 'password', 'role', 'governorate_id', 
+            'establishment_id', 'status', 'invite_token', 'token_expiration', 'created_by_id'
+        ])
+        
+        users = User.objects.all().values_list(
+            'id', 'email', 'password', 'role', 'governorate_id', 
+            'establishment_id', 'status', 'invite_token', 'token_expiration', 'created_by_id'
+        )
+        for user in users:
+            writer.writerow(user)
+            
+        return response
+        return response
+
+class RawDataExportView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        if request.user.role not in ['GLOBAL_ADMIN', 'SUPER_ADMIN']:
+            return Response({"detail": "Not authorized."}, status=status.HTTP_403_FORBIDDEN)
+            
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="donnees_brutes_sentinelle.csv"'
+        
+        writer = csv.writer(response)
+        writer.writerow([
+            'session_id', 'ecole', 'gouvernorat', 'langue', 'date_creation',
+            'tabac', 'vape', 'narguile', 'alcool', 'tranquillisants', 
+            'cannabis', 'cocaine', 'ecstasy', 'heroine', 'inhalants', 'est_valide'
+        ])
+        
+        sessions = QuestionnaireSession.objects.all().select_related('school', 'governorate')
+        
+        for s in sessions:
+            writer.writerow([
+                s.id,
+                s.school.name if s.school else 'N/A',
+                s.governorate.name if s.governorate else 'N/A',
+                s.language_used,
+                s.created_at.strftime('%Y-%m-%d %H:%M') if s.created_at else 'N/A',
+                s.tobacco_user,
+                s.ecig_user,
+                s.hookah_user,
+                s.alcohol_user,
+                s.tranquilizer_user,
+                s.cannabis_user,
+                s.cocaine_user,
+                s.ecstasy_user,
+                s.heroin_user,
+                s.inhalant_user,
+                s.is_valid
+            ])
+            
+        return response
+
+class PlatformTerminologyView(generics.ListCreateAPIView):
+    queryset = PlatformTerminology.objects.all()
+    serializer_class = PlatformTerminologySerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+
+    def get_serializer_context(self):
+        return {'request': self.request}
+
+
+class PlatformTerminologyUpdateView(generics.UpdateAPIView):
+    queryset = PlatformTerminology.objects.all()
+    serializer_class = PlatformTerminologySerializer
+    permission_classes = (permissions.IsAuthenticated,)
+    lookup_field = 'key'
+
+    def perform_update(self, serializer):
+        if self.request.user.role != 'SUPER_ADMIN':
+            raise exceptions.PermissionDenied("Seuls les SuperAdmins peuvent modifier la terminologie.")
+        
+        instance = self.get_object()
+        old_val = instance.value_fr
+        new_val = serializer.validated_data.get('value_fr')
+        
+        serializer.save()
+        
+        # Log the change
+        AuditLog.objects.create(
+            user=self.request.user,
+            action=f"TERMINOLOGY_CHANGE: {instance.key} | '{old_val}' -> '{new_val}'",
+            ip_address=self.request.META.get('REMOTE_ADDR')
+        )
 
 
 # ─── Questionnaire Submission ─────────────────────────────────────────────────────
@@ -183,10 +402,10 @@ class SchoolStatsView(views.APIView):
 
     def get(self, request):
         user = request.user
-        if user.role != 'USER' or not user.establishment:
+        if user.role != 'PRACTITIONER' or not user.establishment:
             return Response({"detail": "Not authorized or missing establishment."}, status=403)
 
-        sessions = QuestionnaireSession.objects.filter(school=user.establishment)
+        sessions = QuestionnaireSession.objects.filter(school=user.establishment, is_valid=True)
         total = sessions.count()
         stats = {
             "total_responses": total,
@@ -210,14 +429,14 @@ class GovernorateStatsView(views.APIView):
 
     def get(self, request):
         user = request.user
-        if user.role not in ['ADMIN', 'SUPERADMIN']:
+        if user.role not in ['REGIONAL_ANALYST', 'GLOBAL_ADMIN', 'SUPER_ADMIN']:
             return Response({"detail": "Not authorized."}, status=403)
 
-        gov_id = user.governorate.id if user.role == 'ADMIN' else request.query_params.get('governorate_id')
+        gov_id = user.governorate.id if user.role == 'REGIONAL_ANALYST' else request.query_params.get('governorate_id')
         if not gov_id:
             return Response({"detail": "Governorate not specified."}, status=400)
 
-        sessions = QuestionnaireSession.objects.filter(governorate_id=gov_id)
+        sessions = QuestionnaireSession.objects.filter(governorate_id=gov_id, is_valid=True)
         by_school = sessions.values('school__name').annotate(
             total=Count('id'),
             tobacco=Count('id', filter=Q(tobacco_user=True)),
@@ -237,10 +456,10 @@ class NationalStatsView(views.APIView):
 
     def get(self, request):
         user = request.user
-        if user.role != 'SUPERADMIN':
+        if user.role not in ['GLOBAL_ADMIN', 'SUPER_ADMIN']:
             return Response({"detail": "Not authorized."}, status=403)
 
-        sessions = QuestionnaireSession.objects.all()
+        sessions = QuestionnaireSession.objects.filter(is_valid=True)
         by_gov = sessions.values('governorate__name').annotate(
             total=Count('id'),
             tobacco=Count('id', filter=Q(tobacco_user=True)),
@@ -271,15 +490,18 @@ class HomepageView(views.APIView):
         # 🎯 HARD AUTHORITY LIMITS
         # Override requested scope based on the user's secure server-side role
         if user.is_authenticated:
-            if user.role == 'ADMIN' and getattr(user, 'governorate', None):
+            if user.role == 'REGIONAL_ANALYST' and getattr(user, 'governorate', None):
                 scope_type = 'gouvernorate'
                 scope_id = user.governorate.id
-            elif user.role == 'USER' and getattr(user, 'establishment', None):
+            elif user.role == 'PRACTITIONER' and getattr(user, 'establishment', None):
                 scope_type = 'user_school'
                 scope_id = user.establishment.id
 
-        # 1. Base Query — National Baseline
-        sessions = QuestionnaireSession.objects.all()
+        # --- Advanced Authority Filter (Secure Scoping) ---
+        sessions_qs = SentinelleAnalytics.get_scoped_sessions(user).filter(is_valid=True)
+        
+        # 1. Scope Determination (URL vs Auth context)
+        sessions = sessions_qs
         scope_label = "Secteur National"
 
         # 2. Advanced Scope Resolution — Prioritizing Parameters
@@ -318,14 +540,14 @@ class HomepageView(views.APIView):
                                 break
             
             # 🎯 Priority 1: Auth Role Fallback
-            if not gov and user.is_authenticated and user.role == 'ADMIN':
+            if not gov and user.is_authenticated and user.role == 'REGIONAL_ANALYST':
                 gov = user.governorate
             
             # 🎯 Priority 2: No Fallback to Tunis (Phase 6 Explicit Choice)
             if not gov:
                 # If no governorate was found, stay in national scope to show the selector
                 scope_type = 'national'
-                sessions = QuestionnaireSession.objects.all()
+                sessions = QuestionnaireSession.objects.filter(is_valid=True)
                 scope_label = "Secteur National"
             else:
                 sessions = sessions.filter(governorate=gov)
@@ -348,14 +570,14 @@ class HomepageView(views.APIView):
                 }
                 substance_field = CAT_MAP.get(active_section)
 
-            # Secure Region Collection: Limit iteration for ADMINs to stop data leakage
+            # Secure Region Collection: Limit iteration for Regional Analysts to stop data leakage
             govs_to_process = Governorate.objects.all()
-            if user.is_authenticated and user.role == 'ADMIN' and getattr(user, 'governorate', None):
+            if user.is_authenticated and user.role == 'REGIONAL_ANALYST' and getattr(user, 'governorate', None):
                 govs_to_process = Governorate.objects.filter(id=user.governorate.id)
 
             for g in govs_to_process:
                 s_count = SchoolEstablishment.objects.filter(governorate=g).count()
-                gov_sessions = QuestionnaireSession.objects.filter(governorate=g)
+                gov_sessions = QuestionnaireSession.objects.filter(governorate=g, is_valid=True)
                 d_count = gov_sessions.count()
                 
                 # Prevalence Calculation
@@ -385,8 +607,8 @@ class HomepageView(views.APIView):
                 
             heat_data = SentinelleAnalytics.get_national_heat_data(substance_id)
             
-            # SECURE: Strip map data for unauthorized regions if ADMIN
-            if user.is_authenticated and user.role == 'ADMIN' and getattr(user, 'governorate', None):
+            # SECURE: Strip map data for unauthorized regions if REGIONAL_ANALYST
+            if user.is_authenticated and user.role == 'REGIONAL_ANALYST' and getattr(user, 'governorate', None):
                 gov_name = user.governorate.name
                 for region in heat_data.keys():
                     if region.lower() != gov_name.lower():
@@ -394,13 +616,12 @@ class HomepageView(views.APIView):
 
             data['map_data'] = heat_data
             
-        if not data:
-            return Response({"headline": {"scope_label": scope_label, "n_submissions": 0}, "kpis": []}, status=200)
-
-        # 🏙️ 4. Comparative Ranking Logic (Phase 5 Competitive Intel)
-        if scope_type in ['gouvernorate', 'national']:
-            data['rankings'] = SentinelleAnalytics.get_regional_rankings()
-
+        # Log Data Access
+        AuditLog.objects.create(
+            user=user,
+            action=f"DATA_ACCESS: {scope_label} (Homepage)",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
         return Response(data)
 
 
@@ -414,10 +635,10 @@ class SidraDataExportView(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
-        if request.user.role != 'SUPERADMIN':
+        if request.user.role not in ['GLOBAL_ADMIN', 'SUPER_ADMIN']:
             return Response({"detail": "Not authorized."}, status=status.HTTP_403_FORBIDDEN)
 
-        sessions = QuestionnaireSession.objects.all()
+        sessions = QuestionnaireSession.objects.filter(is_valid=True)
         data = {
             "survey_source": "MedSPAD_Sentinelle",
             "total_entries": sessions.count(),
@@ -438,7 +659,7 @@ class SidraDataExportView(views.APIView):
 
 
 class SectionStatsView(views.APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request, section_id):
         user = request.user
@@ -448,15 +669,15 @@ class SectionStatsView(views.APIView):
         # 🎯 HARD AUTHORITY LIMITS
         # Override requested scope based on the user's secure server-side role
         if user.is_authenticated:
-            if user.role == 'ADMIN' and getattr(user, 'governorate', None):
+            if user.role == 'REGIONAL_ANALYST' and getattr(user, 'governorate', None):
                 scope_type = 'gouvernorate'
                 scope_id = user.governorate.id
-            elif user.role == 'USER' and getattr(user, 'establishment', None):
+            elif user.role == 'PRACTITIONER' and getattr(user, 'establishment', None):
                 scope_type = 'user_school'
                 scope_id = user.establishment.id
 
-        # 1. Base Query — Symmetric with HomepageView
-        sessions = QuestionnaireSession.objects.all()
+        # 1. Base Query — Symmetric with HomepageView (SCOPED)
+        sessions = SentinelleAnalytics.get_scoped_sessions(user).filter(is_valid=True)
 
         # 2. Advanced Scope Resolution (Phase 6 Param-First Path)
         if scope_type == 'user_school':
@@ -490,7 +711,7 @@ class SectionStatsView(views.APIView):
                                 break
             
             # Auth Role Fallback
-            if not gov and user.is_authenticated and user.role == 'ADMIN':
+            if not gov and user.is_authenticated and user.role == 'REGIONAL_ANALYST':
                 gov = user.governorate
             
             # Default Fallback (Tunis)
@@ -504,12 +725,171 @@ class SectionStatsView(views.APIView):
 
         data = SentinelleAnalytics.get_section_questions_stats(section_id, sessions)
         data['correlations'] = SentinelleAnalytics.get_section_correlations(section_id, sessions)
+        data['insights'] = SentinelleAnalytics.get_section_insights(section_id, sessions)
+
+        # Log Data Access
+        AuditLog.objects.create(
+            user=user,
+            action=f"DATA_ACCESS: Section {section_id} (Scoped)",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
         return Response(data)
 class LabStatsView(views.APIView):
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
         # Pass the authenticated user to scope data based on role/governorate
         user = request.user if request.user.is_authenticated else None
         data = SentinelleAnalytics.get_lab_stats(user=user)
         return Response(data)
+
+class InsightsView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        if request.user.role not in ['GLOBAL_ADMIN', 'SUPER_ADMIN']:
+            return Response({"detail": "Not authorized"}, status=403)
+        data = SentinelleAnalytics.get_advanced_insights()
+        return Response(data)
+
+
+# ─── Invitation & Activation Views ──────────────────────────────────────────────
+
+class InviteUserView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        # Only Super Admins can invite
+        if request.user.role != 'SUPER_ADMIN':
+            return Response({"detail": "Only Super Admins can invite users."}, status=403)
+
+        serializer = serializers.InviteUserSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            username = serializer.validated_data.get('username')
+            
+            if not username:
+                # Default username is the part before @
+                username = email.split('@')[0]
+                # Avoid duplicates
+                idx = 1
+                base_username = username
+                while User.objects.filter(username=username).exists():
+                    username = f"{base_username}_{idx}"
+                    idx += 1
+
+            token = secrets.token_urlsafe(32)
+            expiration = timezone.now() + timedelta(hours=24)
+            
+            user = serializer.save(
+                username=username,
+                status='PENDING',
+                invite_token=token,
+                token_expiration=expiration,
+                created_by=request.user,
+                is_active=False
+            )
+
+            # Build invitation link pointing to the Frontend page
+            frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
+            invitation_link = f"{frontend_url}/set-password?token={token}"
+            
+            email_subject = "Invitation à rejoindre la plateforme MedSPAD Tunisie 2026"
+            email_body = (
+                f"Cher(e) {username},\n\n"
+                "Vous avez été officiellement invité(e) à rejoindre la plateforme Sentinelle (MedSPAD Tunisie 2026).\n"
+                "Ce portail sécurisé vous permet de contribuer à la veille sanitaire nationale.\n\n"
+                f"Veuillez cliquer sur le lien suivant pour configurer votre mot de passe et activer votre compte :\n"
+                f"{invitation_link}\n\n"
+                "Ce lien est personnel et expirera dans 24 heures.\n\n"
+                "Cordialement,\n"
+                "L'équipe d'administration Sentinelle"
+            )
+            
+            try:
+                send_mail(
+                    subject=email_subject,
+                    message=email_body,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[email],
+                    fail_silently=False,
+                )
+            except Exception as e:
+                print(f"Erreur d'envoi d'email : {e}")
+
+            # Log the invitation
+            client_ip = request.META.get('REMOTE_ADDR')
+            AuditLog.objects.create(
+                user=request.user,
+                action=f"INVITED_USER: {user.email} (Role: {user.role})",
+                ip_address=client_ip
+            )
+
+            # In a real app, send email here. For now, return the link.
+            invitation_link = f"/set-password?token={token}"
+            
+            return Response({
+                "detail": "User invited successfully.",
+                "invitation_link": invitation_link,
+                "token": token
+            }, status=201)
+        
+        return Response(serializer.errors, status=400)
+
+
+class ActivateUserView(views.APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def post(self, request):
+        serializer = serializers.ActivateUserSerializer(data=request.data)
+        if serializer.is_valid():
+            token = serializer.validated_data['token']
+            password = serializer.validated_data['password']
+
+            user = User.objects.filter(invite_token=token).first()
+            
+            if not user:
+                return Response({"detail": "Invalid or used token."}, status=400)
+            
+            if user.token_expiration < timezone.now():
+                return Response({"detail": "Token has expired."}, status=400)
+
+            # Activate user
+            user.set_password(password)
+            user.status = 'ACTIVE'
+            user.is_active = True
+            user.invite_token = None # Invalidate token
+            user.token_expiration = None
+            user.save()
+
+            # Log the activation
+            client_ip = request.META.get('REMOTE_ADDR')
+            AuditLog.objects.create(
+                user=user,
+                action="ACCOUNT_ACTIVATED",
+                ip_address=client_ip
+            )
+
+            return Response({"detail": "Account activated successfully. You can now log in."}, status=200)
+        
+        return Response(serializer.errors, status=400)
+
+
+# ─── Dynamic Questionnaire Editing ──────────────────────────────────────────────
+
+class DynamicQuestionListView(generics.ListCreateAPIView):
+    queryset = DynamicQuestion.objects.all()
+    serializer_class = serializers.DynamicQuestionSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsSuperAdmin()]
+        return super().get_permissions()
+
+class DynamicQuestionDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = DynamicQuestion.objects.all()
+    serializer_class = serializers.DynamicQuestionSerializer
+    permission_classes = (IsSuperAdmin,)
+    lookup_field = 'code'
+
