@@ -15,6 +15,14 @@ const resources = {
       "Submit": "Soumettre",
       "Logout": "Déconnexion",
       "Questionnaire": "Questionnaire MedSPAD",
+      "Scanner": "Scanner",
+      "QR Access": "Accès QR",
+      "Invite": "Inviter",
+      "Authorized": "Autorisé",
+      "Synchronized": "Synchronisé",
+      "Profile": "Profil",
+      "Role": "Rôle",
+      "Status": "Statut",
     }
   },
   ar: {

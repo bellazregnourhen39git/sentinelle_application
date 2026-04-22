@@ -9,14 +9,11 @@ const QRCodePage = () => {
     const qrRef = useRef();
     
     // Detection logic for local IP
-    // Default to the current window location if not localhost, 
-    // otherwise fallback to the detected machine IP 172.20.10.3
-    const initialHost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' 
-        ? '172.20.10.3' 
-        : window.location.hostname;
+    const initialHost = window.location.hostname;
+    const initialPort = window.location.port || (window.location.hostname === 'localhost' ? '5173' : '');
     
     const [ipAddress, setIpAddress] = useState(initialHost);
-    const [port, setPort] = useState(window.location.port || '5173');
+    const [port, setPort] = useState(initialPort);
     const [path, setPath] = useState('/questionnaire');
     
     const fullUrl = `http://${ipAddress}${port ? `:${port}` : ''}${path}`;
@@ -157,7 +154,7 @@ const QRCodePage = () => {
                                 className="flex items-center gap-2 text-slate-400 hover:text-brand-600 text-[9px] font-black uppercase tracking-widest italic transition-colors"
                             >
                                 <RefreshCw size={12} />
-                                Reset IP
+                                Réinitialiser l'IP
                             </button>
                         </div>
                     </div>
@@ -170,6 +167,13 @@ const QRCodePage = () => {
                         >
                             <Download size={18} />
                             Télécharger PNG
+                        </button>
+                        <button 
+                            onClick={() => window.location.href = fullUrl}
+                            className="pro-btn-secondary flex items-center gap-3 px-8 py-4 text-[10px] italic border-brand-200 text-brand-700 bg-brand-50"
+                        >
+                            <ArrowLeft size={18} className="rotate-180" />
+                            Accéder Directement
                         </button>
                         <button 
                             onClick={handlePrint}

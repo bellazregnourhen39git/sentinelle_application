@@ -28,20 +28,71 @@ class SchoolClass(models.Model):
         return f"{self.name} - {self.establishment.name}"
 
 
+
+
 # ─── Custom User ────────────────────────────────────────────────────────────────
 
 class User(AbstractUser):
     class Role(models.TextChoices):
-        USER = "USER", _("User (Doctor)")
-        ADMIN = "ADMIN", _("Admin (Governorate)")
-        SUPERADMIN = "SUPERADMIN", _("Super Admin (National)")
+        SUPER_ADMIN = "SUPER_ADMIN", _("Super Admin")
+        GLOBAL_ADMIN = "GLOBAL_ADMIN", _("Global Admin")
+        OPERATOR = "OPERATOR", _("Operator")
+        REGIONAL_ANALYST = "REGIONAL_ANALYST", _("Regional Analyst")
+        PRACTITIONER = "PRACTITIONER", _("Practitioner")
 
-    role = models.CharField(max_length=20, choices=Role.choices, default=Role.USER)
+    class Status(models.TextChoices):
+        PENDING = "PENDING", _("Pending")
+        ACTIVE = "ACTIVE", _("Active")
+        DISABLED = "DISABLED", _("Disabled")
+
+    class OrgType(models.TextChoices):
+        NATIONAL = "NATIONAL", _("National")
+        REGIONAL = "REGIONAL", _("Regional")
+        LOCAL = "LOCAL", _("Local")
+
+    email = models.EmailField(_("email address"), unique=True)
+    role = models.CharField(max_length=20, choices=Role.choices, default=Role.PRACTITIONER)
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    organization_type = models.CharField(max_length=20, choices=OrgType.choices, default=OrgType.LOCAL)
+    
     establishment = models.ForeignKey(SchoolEstablishment, on_delete=models.SET_NULL, null=True, blank=True)
     governorate = models.ForeignKey(Governorate, on_delete=models.SET_NULL, null=True, blank=True)
+    phone_number = models.CharField(max_length=20, blank=True, null=True)
+
+    # Invitation fields
+    invite_token = models.CharField(max_length=100, blank=True, null=True)
+    token_expiration = models.DateTimeField(blank=True, null=True)
+    created_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name="invited_users")
+
+    # Security fields
+    failed_attempts = models.IntegerField(default=0)
+    last_login_attempt = models.DateTimeField(null=True, blank=True)
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username']
 
     def __str__(self):
-        return f"{self.username} ({self.role})"
+        return f"{self.username} ({self.role}) - {self.status}"
+
+
+class AuditLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    action = models.CharField(max_length=255)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.timestamp} | {self.user} | {self.action}"
+
+
+class PlatformTerminology(models.Model):
+    key = models.CharField(max_length=255, unique=True)
+    value_fr = models.TextField()
+    value_ar = models.TextField(blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.key} -> {self.value_fr[:30]}..."
 
 
 # ─── Central Anchor ─────────────────────────────────────────────────────────────
@@ -69,6 +120,13 @@ class QuestionnaireSession(models.Model):
     heroin_user = models.BooleanField(default=False)
     inhalant_user = models.BooleanField(default=False)
     has_risk_behavior = models.BooleanField(default=False)
+    
+    # Validation / Exclusion flags
+    is_valid = models.BooleanField(default=True)
+    exclusion_reason = models.TextField(blank=True, null=True)
+
+    # Dynamic Data Storage
+    extra_answers = models.JSONField(default=dict, blank=True, help_text="Stores answers for dynamically added questions")
 
     def __str__(self):
         return f"Session {self.id} | {self.school} | {self.created_at.date()}"
@@ -523,6 +581,9 @@ class SectionP(models.Model):
     days_30_freq = models.CharField(max_length=15, blank=True, choices=FREQUENCY_30DAYS_STANDARD)
     age_first_use = models.CharField(max_length=20, blank=True, choices=AGE_FIRST_USE_SCALE)
     substances = models.JSONField(default=dict, blank=True)
+    
+    # Trick question
+    fictive_substance_consumption = models.CharField(max_length=10, blank=True, choices=YES_NO)
 
     def __str__(self):
         return f"SectionP | Session {self.session_id}"
@@ -656,3 +717,31 @@ class SectionZ(models.Model):
 
     def __str__(self):
         return f"SectionZ | Session {self.session_id}"
+
+
+# ─── Dynamic Questionnaire Engine ─────────────────────────────────────────────
+
+class DynamicQuestion(models.Model):
+    class QuestionType(models.TextChoices):
+        TEXT = "TEXT", _("Text Input")
+        RADIO = "RADIO", _("Single Choice")
+        NUMBER = "NUMBER", _("Number Input")
+
+    code = models.CharField(max_length=50, unique=True, help_text="Unique identifier (e.g., Z.01 or custom)")
+    section = models.CharField(max_length=10, default="Z", help_text="Section letter where this question belongs")
+    label_fr = models.TextField()
+    label_ar = models.TextField(blank=True, null=True)
+    question_type = models.CharField(max_length=10, choices=QuestionType.choices, default=QuestionType.TEXT)
+    options_json = models.JSONField(default=list, blank=True, help_text="List of choices for RADIO type: [['val', 'fr', 'ar'], ...]")
+    
+    is_hidden = models.BooleanField(default=False, help_text="If True, this question (even core ones) will be hidden from the UI")
+    is_dynamic = models.BooleanField(default=True, help_text="True if added by admin, False if it's an override of a core question")
+    order = models.IntegerField(default=100)
+    
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['section', 'order']
+
+    def __str__(self):
+        return f"[{self.section}] {self.code}: {self.label_fr[:30]}"

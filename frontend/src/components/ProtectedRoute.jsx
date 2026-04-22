@@ -8,7 +8,7 @@ import { Navigate } from 'react-router-dom';
  */
 const ProtectedRoute = ({ children, profile, allowedRoles }) => {
     // If no profile, redirect to login (placeholder)
-    if (!profile) return <Navigate to="/user" replace />;
+    if (!profile) return <Navigate to="/" replace />;
 
     // Check if user's role is in the allowed list
     const isAuthorized = allowedRoles.includes(profile.role);

@@ -1,9 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import EditableLabel from './EditableLabel';
 import { Users, ShieldAlert, Award, TrendingUp, UserCheck, Flag, GraduationCap, Home, Activity, CheckCircle2, AlertTriangle, Layers, Target, Thermometer, FlaskConical, ArrowUpRight } from 'lucide-react';
 
-// 🛡️ Expert Audit — Data Reliability & Integrity Index
+// 🛡️ Audit Expert — Indice de Fiabilité et d'Intégrité des Données
 export const ExpertAudit = ({ integrity, locked = false }) => {
     const navigate = useNavigate();
     const { honesty_score = 0, is_reliable = true } = integrity || {};
@@ -12,9 +13,9 @@ export const ExpertAudit = ({ integrity, locked = false }) => {
         <motion.div 
             whileHover={!locked ? { scale: 1.01, translateY: -4 } : {}}
             onClick={() => !locked && navigate('/lab/integrity')}
-            className={`pro-card p-8 h-full rounded-[40px] border border-slate-100 shadow-xl transition-all relative overflow-hidden
-                ${locked ? 'cursor-not-allowed opacity-70 grayscale-[30%]' : 'cursor-pointer'}
-                ${!is_reliable ? 'bg-rose-50/30' : 'bg-white'}`}
+            className={`pro-card p-8 h-full rounded-[40px] border border-white shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] transition-all duration-500 relative overflow-hidden group
+                ${locked ? 'cursor-not-allowed opacity-70 grayscale-[30%]' : 'cursor-pointer hover:shadow-[0_40px_100px_-20px_rgba(15,23,42,0.12)]'}
+                ${!is_reliable ? 'bg-rose-50/50 backdrop-blur-3xl' : 'bg-white/70 backdrop-blur-3xl'}`}
         >
             {/* Lock Badge */}
             {locked && (
@@ -33,8 +34,12 @@ export const ExpertAudit = ({ integrity, locked = false }) => {
                         {is_reliable ? <CheckCircle2 size={24} /> : <AlertTriangle size={24} />}
                     </div>
                     <div>
-                        <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[3px] italic">Audit d'Intégrité</h4>
-                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-[1px] italic">Validation Vague 2026</p>
+                        <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[3px] italic">
+                            <EditableLabel termKey="lab_integrity_title" defaultValue="Audit d'Intégrité" />
+                        </h4>
+                        <p className="text-[9px] font-black text-slate-400 uppercase tracking-[1px] italic">
+                            <EditableLabel termKey="lab_integrity_subtitle" defaultValue="Validation Vague 2026" />
+                        </p>
                     </div>
                 </div>
                 {!is_reliable && (
@@ -45,7 +50,7 @@ export const ExpertAudit = ({ integrity, locked = false }) => {
             <div className="space-y-8">
                 <div>
                     <div className="flex items-center justify-between mb-3 px-1">
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] italic">Indice d'Honnêteté</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] italic"><EditableLabel termKey="lab_integrity_honesty_idx" defaultValue="Indice d'Honnêteté" /></span>
                         <span className={`text-[12px] font-black tabular-nums italic ${!is_reliable ? 'text-rose-600' : 'text-brand-600'}`}>{honesty_score}%</span>
                     </div>
                     <div className="h-4 rounded-full bg-slate-50 overflow-hidden p-0.5 border border-slate-100 shadow-inner">
@@ -60,21 +65,21 @@ export const ExpertAudit = ({ integrity, locked = false }) => {
                 <div className="flex items-center justify-between p-5 rounded-3xl bg-slate-50 border border-slate-100 group-hover:bg-brand-50 shadow-sm transition-all duration-300">
                     <div className="flex items-center gap-3">
                         <div className={`w-2 h-2 rounded-full ${!is_reliable ? 'bg-rose-500' : 'bg-brand-500'} animate-pulse`} />
-                        <span className="text-[10px] font-black text-slate-600 uppercase italic tracking-wide">Marge d'Anomalie</span>
+                        <span className="text-[10px] font-black text-slate-600 uppercase italic tracking-wide"><EditableLabel termKey="lab_integrity_anomaly_margin" defaultValue="Marge d'Anomalie" /></span>
                     </div>
                     <span className={`text-[15px] font-black tabular-nums italic ${!is_reliable ? 'text-rose-600' : 'text-slate-900'}`}>{(100 - honesty_score).toFixed(1)}%</span>
                 </div>
 
                 <div className="flex items-center justify-center gap-2 pt-2 text-[8px] font-black text-brand-500 uppercase tracking-[3px] italic opacity-0 group-hover:opacity-100 transition-opacity">
                     <FlaskConical size={10} />
-                    Entrer dans le Lab
+                    <EditableLabel termKey="lab_enter" defaultValue="Entrer dans le Lab" />
                 </div>
             </div>
         </motion.div>
     );
 };
 
-// 📈 Comorbidity Spectrum — Intensity of Poly-Drug Use
+// 📈 Spectre de Comorbidité — Intensité du Poly-Usage de Drogues
 export const ComorbiditySpectrum = ({ metrics, locked = false }) => {
     const { poly_2plus_pct = 0, poly_3plus_pct = 0 } = metrics || {};
     const navigate = useNavigate();
@@ -82,8 +87,8 @@ export const ComorbiditySpectrum = ({ metrics, locked = false }) => {
     return (
         <div 
             onClick={() => !locked && navigate('/lab/comorbidity')}
-            className={`pro-card p-8 h-full rounded-[40px] bg-white border border-slate-100 shadow-xl overflow-hidden group transition-all relative
-                ${locked ? 'cursor-not-allowed opacity-70 grayscale-[30%]' : 'cursor-pointer hover:border-rose-500/30 active:scale-95'}
+            className={`pro-card p-8 h-full rounded-[40px] bg-white/70 backdrop-blur-3xl border border-white shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] overflow-hidden group transition-all duration-500 relative
+                ${locked ? 'cursor-not-allowed opacity-70 grayscale-[30%]' : 'cursor-pointer hover:border-rose-300 hover:shadow-[0_40px_100px_-20px_rgba(244,63,94,0.12)] active:scale-95'}
             `}
         >
             {/* Lock Badge */}
@@ -98,15 +103,19 @@ export const ComorbiditySpectrum = ({ metrics, locked = false }) => {
                     <Layers size={24} />
                 </div>
                 <div>
-                    <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[3px] italic">Spectre Comorbidité</h4>
-                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-[1px] italic">Intensité Poly-Usage</p>
+                    <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[3px] italic">
+                        <EditableLabel termKey="lab_comorbidity_title" defaultValue="Spectre Comorbidité" />
+                    </h4>
+                    <p className="text-[9px] font-black text-slate-400 uppercase tracking-[1px] italic">
+                        <EditableLabel termKey="lab_comorbidity_subtitle" defaultValue="Intensité Poly-Usage" />
+                    </p>
                 </div>
             </div>
 
             <div className="space-y-10">
                 <div>
                     <div className="flex items-center justify-between mb-4 px-1">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[2px] italic">Usage Multi-Substances (2+)</span>
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[2px] italic"><EditableLabel termKey="lab_como_multi_2" defaultValue="Usage Multi-Substances (2+)" /></span>
                         <span className="text-3xl font-black text-rose-600 italic tracking-tighter tabular-nums">{poly_2plus_pct}%</span>
                     </div>
                     <div className="h-4 rounded-full bg-slate-50 border border-slate-100 overflow-hidden shadow-inner p-1">
@@ -114,20 +123,54 @@ export const ComorbiditySpectrum = ({ metrics, locked = false }) => {
                     </div>
                 </div>
 
-                <div className="p-6 rounded-[32px] bg-slate-900 text-white shadow-2xl shadow-slate-900/30 relative overflow-hidden">
+                {/* 🔗 Major Correlations - General View */}
+                {metrics?.top_pairs?.length > 0 && (
+                    <div className="mt-8 pt-8 border-t border-slate-100">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3.5px] mb-6 italic flex items-center gap-2">
+                            <Activity size={12} className="text-brand-500 animate-pulse" />
+                            <EditableLabel termKey="lab_como_correlations" defaultValue="Corrélations Majeures" />
+                        </p>
+                        <div className="grid grid-cols-1 gap-3">
+                            {metrics.top_pairs.map((pair, idx) => (
+                                <div key={idx} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-100 shadow-sm group/pair hover:border-brand-500/30 transition-all">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-brand-500" />
+                                        <span className="text-[10px] font-black text-slate-600 uppercase italic tracking-wider group-hover/pair:text-brand-600 transition-colors">
+                                            {pair.label}
+                                        </span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-24 h-1.5 bg-slate-50 rounded-full overflow-hidden border border-slate-100/50">
+                                            <motion.div 
+                                                initial={{ width: 0 }} 
+                                                animate={{ width: `${pair.pct}%` }} 
+                                                className="h-full bg-brand-500" 
+                                            />
+                                        </div>
+                                        <span className="text-[11px] font-black text-brand-600 italic tabular-nums min-w-[35px] text-right">
+                                            {pair.pct}%
+                                        </span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                <div className="p-6 rounded-[32px] bg-slate-900 text-white shadow-2xl shadow-slate-900/30 relative overflow-hidden mt-8">
                     <div className="absolute top-[-10%] right-[-10%] opacity-10 group-hover:rotate-12 transition-transform duration-700">
                         <Thermometer size={100} />
                     </div>
                     <div className="relative z-10">
                         <div className="flex items-center justify-between mb-3">
-                            <span className="text-[10px] font-black uppercase tracking-[3px] italic text-rose-400">Zone Critique (3+)</span>
+                            <span className="text-[10px] font-black uppercase tracking-[3px] italic text-rose-400"><EditableLabel termKey="lab_como_zone" defaultValue="Zone Critique (3+)" /></span>
                             <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
                                 <span className="text-[16px] font-black italic tabular-nums">{poly_3plus_pct}%</span>
                             </div>
                         </div>
                         <p className="text-[9px] font-black uppercase tracking-[1.5px] leading-relaxed opacity-50 italic">
-                            Priorité d'intervention psychiatrique absolue pour les cas identifiés.
+                            <EditableLabel termKey="lab_como_priority" defaultValue="Priorité d'intervention psychiatrique absolue pour les cas identifiés." />
                         </p>
                     </div>
                 </div>
@@ -136,19 +179,19 @@ export const ComorbiditySpectrum = ({ metrics, locked = false }) => {
     );
 };
 
-// 👤 Cohort Pulse — 360-Degree Demographic Oversight
+// 👤 Pouls de la Cohorte — Surveillance Démographique à 360 Degrés
 export const CohortPulse = ({ insights }) => {
     const { demographics = {}, academic = {}, stability = {} } = insights || {};
     
     return (
-        <div className="pro-card p-8 h-full rounded-[40px] bg-white border border-slate-100 shadow-xl transition-all hover:shadow-brand-500/10">
+        <div className="pro-card p-8 h-full rounded-[40px] bg-white/70 backdrop-blur-3xl border border-white shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] transition-all duration-500 hover:shadow-[0_40px_100px_-20px_rgba(15,23,42,0.12)] hover:-translate-y-1 relative group">
             <div className="flex items-center gap-4 mb-10">
                 <div className="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-500 border border-brand-100 group-hover:bg-brand-500 group-hover:text-white transition-all duration-300">
                     <Users size={24} />
                 </div>
                 <div>
-                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[3px] italic">Dynamique Cohorte</h4>
-                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-[1px] italic">Statut Social-Académique</p>
+                  <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[3px] italic"><EditableLabel termKey="lab_cohort_title" defaultValue="Dynamique Cohorte" /></h4>
+                  <p className="text-[9px] font-black text-slate-400 uppercase tracking-[1px] italic"><EditableLabel termKey="lab_cohort_subtitle" defaultValue="Statut Social-Académique" /></p>
                 </div>
             </div>
 
@@ -156,7 +199,7 @@ export const CohortPulse = ({ insights }) => {
                 {/* 1. Gender split */}
                 <div>
                     <div className="flex items-center justify-between mb-4 px-1">
-                       <span className="text-[10px] font-black text-slate-500 uppercase tracking-[2px] italic">Répartition Biologique</span>
+                       <span className="text-[10px] font-black text-slate-500 uppercase tracking-[2px] italic"><EditableLabel termKey="lab_cohort_biology" defaultValue="Répartition Biologique" /></span>
                        <span className="text-[10px] font-black text-slate-900 italic tabular-nums">N = {demographics.total?.toLocaleString()}</span>
                     </div>
                     <div className="flex items-center gap-1.5 h-3.5 rounded-full overflow-hidden bg-slate-50 p-1 border border-slate-100 shadow-inner">
@@ -164,8 +207,8 @@ export const CohortPulse = ({ insights }) => {
                         <motion.div initial={{ width: 0 }} animate={{ width: `${demographics.female_pct}%` }} className="h-full bg-rose-500 rounded-full" />
                     </div>
                    <div className="flex justify-between mt-3 px-1 text-[9px] font-black uppercase text-slate-400 tracking-tighter italic">
-                       <span className="flex items-center gap-1.5 text-brand-600"><span className="w-2 h-2 rounded-full bg-brand-500" />{demographics.male_pct}% Masculin</span>
-                       <span className="flex items-center gap-1.5 text-rose-600"><span className="w-2 h-2 rounded-full bg-rose-500" />{demographics.female_pct}% Féminin</span>
+                       <span className="flex items-center gap-1.5 text-brand-600"><span className="w-2 h-2 rounded-full bg-brand-500" />{demographics.male_pct}% <EditableLabel termKey="lab_cohort_male" defaultValue="Masculin" /></span>
+                       <span className="flex items-center gap-1.5 text-rose-600"><span className="w-2 h-2 rounded-full bg-rose-500" />{demographics.female_pct}% <EditableLabel termKey="lab_cohort_female" defaultValue="Féminin" /></span>
                    </div>
                 </div>
 
@@ -175,7 +218,7 @@ export const CohortPulse = ({ insights }) => {
                       <div className="w-8 h-8 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400">
                         <GraduationCap size={16} />
                       </div>
-                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-[2px] italic">Trajectoire Académique</span>
+                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-[2px] italic"><EditableLabel termKey="lab_cohort_academic" defaultValue="Trajectoire Académique" /></span>
                    </div>
                    <div className="flex items-center gap-1 h-3 p-1 bg-white rounded-full border border-slate-100 shadow-inner">
                         <motion.div initial={{ width: 0 }} animate={{ width: `${academic.above_12_pct}%` }} className="h-full bg-brand-400 rounded-full" />
@@ -183,9 +226,9 @@ export const CohortPulse = ({ insights }) => {
                         <motion.div initial={{ width: 0 }} animate={{ width: `${academic.below_10_pct}%` }} className="h-full bg-rose-400 rounded-full" />
                    </div>
                    <div className="mt-3 flex justify-between px-1 text-[8px] font-black uppercase text-slate-400 italic letter-spacing-tight">
-                       <span className="text-brand-500">Haut ({academic.above_12_pct}%)</span>
-                       <span className="text-amber-500">Médian ({academic.mid_10_12_pct}%)</span>
-                       <span className="text-rose-500">Vulnérable ({academic.below_10_pct}%)</span>
+                       <span className="text-brand-500"><EditableLabel termKey="lab_cohort_high" defaultValue="Haut" /> ({academic.above_12_pct}%)</span>
+                       <span className="text-amber-500"><EditableLabel termKey="lab_cohort_mid" defaultValue="Médian" /> ({academic.mid_10_12_pct}%)</span>
+                       <span className="text-rose-500"><EditableLabel termKey="lab_cohort_low" defaultValue="Vulnérable" /> ({academic.below_10_pct}%)</span>
                    </div>
                 </div>
 
@@ -193,7 +236,7 @@ export const CohortPulse = ({ insights }) => {
                 <div className="px-1">
                    <div className="flex items-center gap-3 mb-4">
                       <Home size={16} className="text-brand-500" />
-                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-[2px] italic">Stabilité Résidentielle</span>
+                      <span className="text-[10px] font-black text-slate-500 uppercase tracking-[2px] italic"><EditableLabel termKey="lab_cohort_stability" defaultValue="Stabilité Résidentielle" /></span>
                    </div>
                     <div className="h-3.5 rounded-full bg-slate-50 overflow-hidden p-1 border border-slate-100 shadow-inner">
                         <motion.div initial={{ width: 0 }} animate={{ width: `${stability.stable_pct}%` }} className="h-full bg-brand-500 rounded-full shadow-lg" />
@@ -208,7 +251,7 @@ export const CohortPulse = ({ insights }) => {
     );
 };
 
-// 🤝 Social Context Inlet — Stress & Incidents
+// 🤝 Vecteurs de Contexte Social — Stress & Incidents
 export const SocialInlet = ({ stressIndex = 0, violenceIndex = 0, locked = false }) => {
     const navigate = useNavigate();
 
@@ -216,8 +259,8 @@ export const SocialInlet = ({ stressIndex = 0, violenceIndex = 0, locked = false
         <motion.div 
             whileHover={!locked ? { scale: 1.01, translateY: -4 } : {}}
             onClick={() => !locked && navigate('/lab/social')}
-            className={`pro-card p-8 h-full rounded-[40px] bg-white border border-slate-100 shadow-xl relative overflow-hidden
-                ${locked ? 'cursor-not-allowed opacity-70 grayscale-[30%]' : 'cursor-pointer group'}`}
+            className={`pro-card p-8 h-full rounded-[40px] bg-white/70 backdrop-blur-3xl border border-white shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] transition-all duration-500 relative overflow-hidden
+                ${locked ? 'cursor-not-allowed opacity-70 grayscale-[30%]' : 'cursor-pointer hover:shadow-[0_40px_100px_-20px_rgba(15,23,42,0.12)] group'}`}
         >
             {/* Lock Badge */}
             {locked && (
@@ -234,13 +277,13 @@ export const SocialInlet = ({ stressIndex = 0, violenceIndex = 0, locked = false
                 <div className="w-12 h-12 rounded-2xl bg-brand-50 flex items-center justify-center text-brand-500 border border-brand-100 group-hover:bg-brand-500 group-hover:text-white transition-all duration-500">
                     <ShieldAlert size={24} />
                 </div>
-                <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[4px] italic">Vecteurs Sociaux</h4>
+                <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[4px] italic"><EditableLabel termKey="lab_social_title" defaultValue="Vecteurs Sociaux" /></h4>
             </div>
 
             <div className="space-y-8">
                 <div className="flex items-center justify-between p-6 rounded-[32px] bg-slate-50/50 border border-slate-100 group-hover:bg-white group-hover:border-brand-500/20 transition-all duration-300">
                 <div>
-                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[2.5px] mb-2 italic">Contrainte Psychologique</p>
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-[2.5px] mb-2 italic"><EditableLabel termKey="lab_social_stress" defaultValue="Contrainte Psychologique" /></p>
                     <div className="flex items-baseline gap-3">
                         <span className="text-4xl font-black text-slate-900 italic tabular-nums group-hover:text-brand-600 transition-colors">{stressIndex}%</span>
                         <span className="text-[10px] font-black text-brand-500 uppercase italic opacity-60 tracking-widest">Normal</span>
@@ -253,7 +296,7 @@ export const SocialInlet = ({ stressIndex = 0, violenceIndex = 0, locked = false
 
                 <div className="flex items-center justify-between p-6 rounded-[32px] bg-rose-50/30 border border-rose-100/50 group-hover:bg-rose-50 transition-all duration-300">
                 <div className="flex flex-col">
-                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-[2.5px] mb-2 italic">Index de Conflictualité</p>
+                    <p className="text-[10px] font-black text-rose-400 uppercase tracking-[2.5px] mb-2 italic"><EditableLabel termKey="lab_social_conflict" defaultValue="Index de Conflictualité" /></p>
                     <div className="flex items-baseline gap-3">
                         <span className="text-4xl font-black text-slate-900 italic tabular-nums">{violenceIndex}%</span>
                         <span className="px-3 py-1 bg-rose-500 text-white rounded-lg text-[8px] font-black uppercase tracking-[1.5px] shadow-lg shadow-rose-500/20">Risque</span>
@@ -271,7 +314,7 @@ export const SocialInlet = ({ stressIndex = 0, violenceIndex = 0, locked = false
     );
 };
 
-// 🏙️ Competitive Matrix — High Density Ranking Grid for Admins
+// 🏙️ Matrice Competitive — Grille de Classement Haute Densité pour les Admins
 export const CompetitiveMatrix = ({ rankings, govName }) => {
     if (!rankings) return null;
     
@@ -282,7 +325,7 @@ export const CompetitiveMatrix = ({ rankings, govName }) => {
     }));
 
     return (
-        <div className="pro-card p-10 h-full rounded-[48px] border border-slate-100 bg-white shadow-2xl shadow-slate-200/40 relative overflow-hidden group">
+        <div className="pro-card p-10 h-full rounded-[48px] border border-white bg-white/70 backdrop-blur-3xl shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] transition-all duration-500 hover:shadow-[0_40px_100px_-20px_rgba(15,23,42,0.12)] hover:-translate-y-1 relative overflow-hidden group">
             <div className="absolute top-0 right-0 p-8 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity pointer-events-none">
                 <Target size={120} className="text-brand-500" />
             </div>
@@ -291,7 +334,7 @@ export const CompetitiveMatrix = ({ rankings, govName }) => {
                     <Award size={32} strokeWidth={3} className="glow-brand" />
                 </div>
                 <div>
-                   <h4 className="text-[11px] font-black text-brand-600 uppercase tracking-[5px] italic mb-1.5 opacity-60">Benchmark Régional</h4>
+                   <h4 className="text-[11px] font-black text-brand-600 uppercase tracking-[5px] italic mb-1.5 opacity-60"><EditableLabel termKey="lab_competing_bench" defaultValue="Benchmark Régional" /></h4>
                    <p className="text-3xl font-black text-slate-900 uppercase italic tracking-tighter leading-none">{govName}</p>
                 </div>
             </div>
@@ -311,7 +354,7 @@ export const CompetitiveMatrix = ({ rankings, govName }) => {
     );
 };
 
-// 🌍 National Heat List — For SuperAdmin Level
+// 🌍 Liste de Vigilance Nationale — Pour le Niveau SuperAdmin
 export const NationalHeatList = ({ rankings }) => {
     if (!rankings) return null;
     
@@ -332,8 +375,8 @@ export const NationalHeatList = ({ rankings }) => {
                     <Flag size={28} className="glow-brand" />
                 </div>
                 <div>
-                    <h4 className="text-2xl font-black text-white uppercase italic tracking-tighter leading-none mb-2">Points de Vigilance</h4>
-                    <p className="text-[10px] font-black text-brand-400 uppercase tracking-[4px] italic">Monitoring National Actif</p>
+                    <h4 className="text-2xl font-black text-white uppercase italic tracking-tighter leading-none mb-2"><EditableLabel termKey="lab_national_points" defaultValue="Points de Vigilance" /></h4>
+                    <p className="text-[10px] font-black text-brand-400 uppercase tracking-[4px] italic"><EditableLabel termKey="lab_national_monitor" defaultValue="Monitoring National Actif" /></p>
                 </div>
             </div>
 
@@ -350,7 +393,7 @@ export const NationalHeatList = ({ rankings }) => {
     );
 };
 
-// 🏆 Rankings Lab Inlet — National Competition
+// 🏆 Accès Lab des Classements — Compétition Nationale
 export const RankingsLabInlet = () => {
     const navigate = useNavigate();
 
@@ -371,21 +414,21 @@ export const RankingsLabInlet = () => {
                     <Award size={32} />
                 </div>
                 <div className="flex items-center gap-1.5 text-brand-400 opacity-0 group-hover:opacity-100 transition-opacity bg-brand-500/10 px-3 py-1.5 rounded-full border border-brand-500/20">
-                     <span className="text-[9px] font-black uppercase tracking-[2px] italic">Ouvrir Hub</span>
+                     <span className="text-[9px] font-black uppercase tracking-[2px] italic"><EditableLabel termKey="lab_open_hub" defaultValue="Ouvrir le Hub" /></span>
                      <ArrowUpRight size={12} />
                 </div>
             </div>
 
             <div className="relative z-10">
                 <h4 className="text-4xl font-black text-white uppercase tracking-tighter italic leading-none mb-3 group-hover:text-brand-400 transition-colors">
-                    Laboratoire de <br/>Classement
+                    <EditableLabel termKey="lab_rankings_title" defaultValue="Laboratoire de Classement" />
                 </h4>
                 <p className="text-[12px] font-bold text-slate-400 leading-relaxed max-w-[85%] italic">
-                    Accédez au tableau structurel compétitif évaluant l'intégralité des 24 gouvernorats à travers toutes les dimensions de prévalence et vecteurs d'addiction.
+                    <EditableLabel termKey="lab_rankings_desc" defaultValue="Accédez au tableau structurel compétitif évaluant l'intégralité des 24 gouvernorats à travers toutes les dimensions de prévalence et vecteurs d'addiction." />
                 </p>
                 <div className="mt-6 flex items-center gap-3">
                      <div className="w-full h-[1px] bg-slate-800" />
-                     <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic shrink-0">National Scope Only</div>
+                     <div className="text-[10px] font-black text-slate-500 uppercase tracking-widest italic shrink-0"><EditableLabel termKey="lab_rankings_limit" defaultValue="Périmètre National Uniquement" /></div>
                 </div>
             </div>
         </motion.div>

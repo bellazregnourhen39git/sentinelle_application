@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft, Users, AlertTriangle, BarChart2, PieChart,
-    Layers, TrendingUp, Info
+    Layers, TrendingUp, Info, Activity, Zap, Smartphone, ShieldCheck
 } from 'lucide-react';
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
@@ -78,7 +78,7 @@ const BarQuestionItem = ({ code, label, distribution, index }) => {
                 ) : (
                     <div className="flex flex-col items-center gap-3 opacity-20 hover:opacity-40 transition-opacity">
                         <BarChart2 size={32} className="text-slate-400" />
-                        <p className="text-[9px] font-black uppercase tracking-[4px] text-slate-400 italic">No Dataset Detected</p>
+                        <p className="text-[9px] font-black uppercase tracking-[4px] text-slate-400 italic">Aucun Jeu de Données Détecté</p>
                     </div>
                 )}
             </div>
@@ -136,6 +136,16 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
     const questions = data.questions || [];
     const n = data.n_submissions || 0;
     const correlations = data.correlations || [];
+    const insights = data.insights || [];
+    
+    const ICONS = { AlertTriangle, Smartphone, Activity, Zap, ShieldCheck };
+    const colorMap = {
+        rose: { bg: 'bg-rose-50', text: 'text-rose-600', glow: 'bg-rose-500/5' },
+        orange: { bg: 'bg-orange-50', text: 'text-orange-600', glow: 'bg-orange-500/5' },
+        amber: { bg: 'bg-amber-50', text: 'text-amber-600', glow: 'bg-amber-500/5' },
+        blue: { bg: 'bg-blue-50', text: 'text-blue-600', glow: 'bg-blue-500/5' },
+        brand: { bg: 'bg-brand-50', text: 'text-brand-600', glow: 'bg-brand-500/5' }
+    };
 
     return (
         <motion.div
@@ -151,7 +161,7 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
                     onClick={onBack}
                     className="flex items-center gap-4 text-slate-500 hover:text-brand-600 font-black text-[11px] uppercase tracking-[5px] transition-all bg-white shadow-xl shadow-slate-200/40 px-10 py-5 rounded-[24px] border border-slate-100 hover:scale-[1.05] active:scale-95 group italic"
                 >
-                    <ArrowLeft size={18} className="group-hover:-translate-x-2 transition-transform" strokeWidth={3} /> Retour Dashboard
+                    <ArrowLeft size={18} className="group-hover:-translate-x-2 transition-transform" strokeWidth={3} /> Retour au Tableau de Bord
                 </button>
                 <div className="flex items-center gap-4 px-10 py-5 rounded-[24px] bg-slate-900 shadow-2xl shadow-slate-900/20">
                    <div className="w-2.5 h-2.5 rounded-full bg-brand-500 shadow-2xl shadow-brand-500 animate-pulse" />
@@ -182,7 +192,7 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
 
                     <div className="flex flex-wrap items-center gap-6">
                         {[
-                            { icon: Users, label: 'Biospecifications', value: n === 0 ? '—' : n.toLocaleString(), color: 'text-brand-600' },
+                            { icon: Users, label: 'Dossiers', value: n === 0 ? '—' : n.toLocaleString(), color: 'text-brand-600' },
                             { icon: Layers, label: 'Variables', value: questions.length, color: 'text-slate-900' },
                             { icon: TrendingUp, label: 'Connexions', value: correlations.length, color: 'text-indigo-600' },
                         ].map(({ icon: Icon, label, value, color }, i) => (
@@ -217,7 +227,7 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
                     ) : (
                         <div className="h-80 flex flex-col items-center justify-center gap-6 bg-slate-50 rounded-[56px] border-4 border-dashed border-slate-100 group hover:bg-white hover:border-rose-500/20 transition-all duration-700">
                             <AlertTriangle size={64} className="text-slate-100 group-hover:text-rose-500 transition-colors" />
-                            <p className="text-[13px] font-black text-slate-400 uppercase tracking-[10px] italic">No Analytic Vector Found</p>
+                            <p className="text-[13px] font-black text-slate-400 uppercase tracking-[10px] italic">Aucun Vecteur Analytique Trouvé</p>
                         </div>
                     )}
                 </div>
@@ -243,6 +253,45 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
                                     <span className="text-[11px] font-black text-slate-500 uppercase tracking-[3px] italic group-hover/item:text-brand-600 transition-colors">{SECTION_NAMES[c.section_id] || c.section_id}</span>
                                 </motion.div>
                             ))}
+                        </div>
+                    </div>
+                )}
+                
+                {/* Dynamically Computed Section Insights */}
+                {insights.length > 0 && (
+                    <div className="mt-16 pt-12 border-t border-slate-100 relative z-10">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.6)]" />
+                            <p className="text-[11px] font-black text-rose-500 uppercase tracking-[6px] italic">Interprétations Comportementales Déduites</p>
+                        </div>
+                        
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {insights.map((insight) => {
+                                const Icon = ICONS[insight.icon] || Info;
+                                const colors = colorMap[insight.color] || colorMap.brand;
+                                return (
+                                    <div 
+                                        key={insight.id}
+                                        className="bg-slate-50 border border-slate-100 p-8 rounded-[32px] group hover:bg-white hover:border-slate-200 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 relative overflow-hidden"
+                                    >
+                                        <div className={`absolute top-0 right-0 w-32 h-32 ${colors.glow} -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700`} />
+                                        
+                                        <div className="flex items-start justify-between relative z-10">
+                                            <div className={`w-12 h-12 rounded-2xl ${colors.bg} ${colors.text} flex items-center justify-center mb-6`}>
+                                                <Icon size={20} />
+                                            </div>
+                                            <div className={`px-4 py-2 ${colors.bg} ${colors.text} rounded-full font-black text-[10px] uppercase tracking-widest`}>
+                                                {insight.stat}
+                                            </div>
+                                        </div>
+                                        
+                                        <h4 className="text-lg font-black text-slate-900 mb-2 relative z-10 italic">{insight.title}</h4>
+                                        <p className="text-slate-500 text-sm font-bold leading-relaxed relative z-10">
+                                            {insight.description}
+                                        </p>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 )}

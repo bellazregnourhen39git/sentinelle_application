@@ -176,6 +176,27 @@ SECTION_QUESTIONS = {
 
 
 class SentinelleAnalytics:
+    @staticmethod
+    def get_scoped_sessions(user=None):
+        """
+        Returns a filtered QuestionnaireSession queryset based on user role and scope.
+        """
+        from .models import QuestionnaireSession
+        qs = QuestionnaireSession.objects.all()
+        
+        if not user or not user.is_authenticated:
+            return qs.none() 
+            
+        if user.role in ['SUPER_ADMIN', 'GLOBAL_ADMIN']:
+            return qs
+            
+        if user.role == 'REGIONAL_ANALYST':
+            return qs.filter(governorate=user.governorate)
+            
+        if user.role == 'PRACTITIONER':
+            return qs.filter(establishment=user.establishment)
+            
+        return qs.none()
 
     @staticmethod
     def _char_dist(sessions_qs, related, field, choices):
@@ -276,22 +297,31 @@ class SentinelleAnalytics:
         # We need a custom filter to count how many risk flags are True across all sessions
         poly_2plus = 0
         poly_3plus = 0
+        global_pairs = {}
         for s in sessions_qs:
             # Count active risk flags
-            flags = [
-                s.tobacco_user, s.ecig_user, s.hookah_user, s.alcohol_user, 
-                s.tranquilizer_user, s.cannabis_user, s.cocaine_user, 
-                s.ecstasy_user, s.heroin_user, s.inhalant_user
-            ]
-            active_count = sum(1 for f in flags if f)
+            flags = {
+                'Tabac': s.tobacco_user, 'E-cig': s.ecig_user, 'Narguilé': s.hookah_user, 
+                'Alcool': s.alcohol_user, 'Tranquill.': s.tranquilizer_user, 
+                'Cannabis': s.cannabis_user, 'Cocaïne': s.cocaine_user, 
+                'Ecstasy': s.ecstasy_user, 'Héroïne': s.heroin_user, 'Inhal.': s.inhalant_user
+            }
+            active = [name for name, is_active in flags.items() if is_active]
+            active_count = len(active)
             if active_count >= 3:
                 poly_3plus += 1
                 poly_2plus += 1 # Also counts for 2+
             elif active_count >= 2:
                 poly_2plus += 1
+                
+            if active_count >= 2:
+                for pair in itertools.combinations(sorted(active), 2):
+                    label = " + ".join(pair)
+                    global_pairs[label] = global_pairs.get(label, 0) + 1
         
         poly_2plus_pct = round(poly_2plus / n_submissions * 100, 1) if n_submissions > 0 else 0
         poly_3plus_pct = round(poly_3plus / n_submissions * 100, 1) if n_submissions > 0 else 0
+        top_pairs = [{"label": k, "count": v, "pct": round(v / n_submissions * 100, 1) if n_submissions > 0 else 0} for k, v in sorted(global_pairs.items(), key=lambda x: x[1], reverse=True)[:4]]
 
         # Dynamic Top Sections Calculation
         active_sections = []
@@ -374,7 +404,8 @@ class SentinelleAnalytics:
                 },
                 "comorbidity": {
                     "poly_2plus_pct": poly_2plus_pct,
-                    "poly_3plus_pct": poly_3plus_pct
+                    "poly_3plus_pct": poly_3plus_pct,
+                    "top_pairs": top_pairs
                 }
             }
         }
@@ -430,17 +461,167 @@ class SentinelleAnalytics:
 
     @staticmethod
     def get_section_correlations(section_id, sessions_qs):
-        SECTION_CORRELATIONS = {
-            'A': ['B', 'V', 'I'], 'B': ['A', 'C', 'H'], 'C': ['D', 'E', 'J'],
-            'D': ['C', 'E', 'R'], 'E': ['C', 'D', 'G'], 'G': ['E', 'I', 'M'],
-            'H': ['I', 'K', 'V'], 'I': ['G', 'H', 'U'], 'J': ['I', 'K', 'M'],
-            'K': ['I', 'J', 'L'], 'L': ['J', 'K', 'M'], 'M': ['L', 'N', 'J'],
-            'N': ['I', 'J', 'P'], 'P': ['I', 'N', 'Q'], 'Q': ['I', 'J', 'Z'],
-            'R': ['S', 'V', 'A'], 'S': ['R', 'T', 'V'], 'T': ['G', 'S', 'U'],
-            'U': ['I', 'G', 'V'], 'V': ['U', 'R', 'H'], 'Z': ['A', 'I', 'Q'],
+        SECTION_FIELD_MAP = {
+            'C': 'tobacco_user', 'D': 'ecig_user', 'E': 'hookah_user',
+            'G': 'alcohol_user', 'H': 'tranquilizer_user', 'I': 'cannabis_user',
+            'J': 'cocaine_user', 'K': 'ecstasy_user', 'L': 'heroin_user',
+            'M': 'inhalant_user'
         }
-        related_ids = SECTION_CORRELATIONS.get(section_id, [])
-        return [{"section_id": rid, "tag": "Corrélation", "desc": f"Lien statistique avec Section {rid}"} for rid in related_ids]
+        
+        target_field = SECTION_FIELD_MAP.get(section_id)
+        if not target_field:
+            SECTION_CORRELATIONS = {
+                'A': ['B', 'V', 'I'], 'B': ['A', 'C', 'H'],
+                'N': ['I', 'J', 'P'], 'P': ['I', 'N', 'Q'], 'Q': ['I', 'J', 'Z'],
+                'R': ['S', 'V', 'A'], 'S': ['R', 'T', 'V'], 'T': ['G', 'S', 'U'],
+                'U': ['I', 'G', 'V'], 'V': ['U', 'R', 'H'], 'Z': ['A', 'I', 'Q'],
+            }
+            related_ids = SECTION_CORRELATIONS.get(section_id, [])
+            return [{"section_id": rid, "tag": "Corrélation", "desc": f"Lien statistique avec Section {rid}"} for rid in related_ids]
+
+        base_qs = sessions_qs.filter(**{target_field: True})
+        total_target = base_qs.count()
+        if total_target == 0:
+            return []
+
+        NAMES_MAP = {
+            'C': 'tabac', 'D': 'e-cigs', 'E': 'narguilé', 'G': 'alcool',
+            'H': 'tranquillisants', 'I': 'cannabis', 'J': 'cocaïne',
+            'K': 'ecstasy', 'L': 'héroïne', 'M': 'inhalants'
+        }
+
+        correlations = []
+        for sid, field in SECTION_FIELD_MAP.items():
+            if sid == section_id:
+                continue
+            
+            overlap = base_qs.filter(**{field: True}).count()
+            if overlap > 0:
+                pct = round(overlap / total_target * 100, 1)
+                correlations.append({
+                    "section_id": sid,
+                    "tag": "Co-consommation",
+                    "desc": f"{pct}% consomment aussi {NAMES_MAP.get(sid, '')}",
+                    "overlap_pct": pct
+                })
+
+        correlations.sort(key=lambda x: x['overlap_pct'], reverse=True)
+        return correlations[:4]
+
+    @staticmethod
+    def get_section_insights(section_id, sessions_qs):
+        SECTION_FIELD_MAP = {
+            'C': 'tobacco_user', 'D': 'ecig_user', 'E': 'hookah_user',
+            'G': 'alcohol_user', 'H': 'tranquilizer_user', 'I': 'cannabis_user',
+            'J': 'cocaine_user', 'K': 'ecstasy_user', 'L': 'heroin_user',
+            'M': 'inhalant_user'
+        }
+        
+        target_field = SECTION_FIELD_MAP.get(section_id)
+        if not target_field:
+            if section_id == 'U':
+                from .models import SectionU
+                u_sessions = SectionU.objects.filter(session__in=sessions_qs).exclude(fights_12months__in=['', '0']).values_list('session_id', flat=True)
+                base_qs = sessions_qs.filter(id__in=u_sessions)
+            elif section_id == 'V':
+                from .models import SectionV
+                v_sessions = SectionV.objects.filter(session__in=sessions_qs, control__in=['fairly_often', 'very_often']).values_list('session_id', flat=True)
+                base_qs = sessions_qs.filter(id__in=v_sessions)
+            elif section_id == 'R' or section_id == 'S':
+                from .models import SectionR, SectionS
+                if section_id == 'R':
+                    r_sessions = SectionR.objects.filter(session__in=sessions_qs, hours_per_day__in=['4_5h', '6h_plus']).values_list('session_id', flat=True)
+                    base_qs = sessions_qs.filter(id__in=r_sessions)
+                else:
+                    s_sessions = SectionS.objects.filter(session__in=sessions_qs, hours_per_day__in=['4_5h', '6h_plus']).values_list('session_id', flat=True)
+                    base_qs = sessions_qs.filter(id__in=s_sessions)
+            else:
+                base_qs = sessions_qs.filter(has_risk_behavior=True)
+        else:
+            base_qs = sessions_qs.filter(**{target_field: True})
+            
+        total_target = base_qs.count()
+        if total_target == 0:
+            return []
+
+        insights = []
+        CROSS_TARGETS = [
+            ('I', 'Cannabis', 'cannabis_user', 'Zap', 'rose'),
+            ('G', 'Alcool', 'alcohol_user', 'Activity', 'amber'),
+            ('C', 'Tabac', 'tobacco_user', 'AlertTriangle', 'orange'),
+            ('H', 'Tranquillisants', 'tranquilizer_user', 'Smartphone', 'blue')
+        ]
+        
+        insight_id = 1
+        NAMES_MAP = {
+            'A': 'concernés par ce profil', 'C': 'consommant du tabac', 'G': 'consommant de l\'alcool', 
+            'I': 'consommant du cannabis', 'U': 'impliqués dans des violences',
+            'V': 'éprouvant un stress intense', 'H': 'prenant des tranquillisants',
+            'R': 'surexposés aux réseaux', 'S': 'jouant excessivement',
+            'D': 'utilisant des e-cigs', 'E': 'fumant le narguilé'
+        }
+        target_label = NAMES_MAP.get(section_id, "qui font partie de ce vecteur")
+
+        for c_id, c_name, c_field, c_icon, c_color in CROSS_TARGETS:
+            if c_id == section_id: continue
+            overlap = base_qs.filter(**{c_field: True}).count()
+            if overlap > 0:
+                pct = round((overlap / total_target) * 100, 1)
+                if pct > 5:
+                    insights.append({
+                        "id": f"insight_{insight_id}",
+                        "title": f"Usage de {c_name}",
+                        "description": f"Parmi les élèves {target_label}, {pct}% consomment également du {c_name}.",
+                        "severity": "high" if pct > 50 else "medium",
+                        "icon": c_icon,
+                        "stat": f"{pct}%",
+                        "color": c_color
+                    })
+                    insight_id += 1
+                    
+        return sorted(insights, key=lambda x: float(x['stat'].replace('%', '')), reverse=True)[:4]
+
+    @staticmethod
+    def get_advanced_insights() -> list:
+        # User requested mock data for complex interpretations to demonstrate UI capabilities
+        return [
+            {
+                "id": "insight_1",
+                "title": "Cannabis et Violence",
+                "description": "Les élèves consommant du cannabis (Section I) sont 2.5x plus susceptibles d'être impliqués dans des actes de violence et bagarres (Section Q).",
+                "severity": "critical",
+                "icon": "AlertTriangle",
+                "stat": "x2.5",
+                "color": "rose"
+            },
+            {
+                "id": "insight_2",
+                "title": "Réseaux Sociaux et Santé Mentale",
+                "description": "Corrélation forte entre utilisation d'Internet > 4h/j (Section S) et l'augmentation des risques de dépression / pensées suicidaires (Section Z).",
+                "severity": "high",
+                "icon": "Smartphone",
+                "stat": "Forte",
+                "color": "orange"
+            },
+            {
+                "id": "insight_3",
+                "title": "Alcool et Conflits Familiaux",
+                "description": "La consommation précoce d'alcool (Section G) est associée dans 64% des cas avec une communication parentale conflictuelle ou absente (Section U).",
+                "severity": "medium",
+                "icon": "Activity",
+                "stat": "64%",
+                "color": "amber"
+            },
+            {
+                "id": "insight_4",
+                "title": "Tranquillisants et Absentéisme",
+                "description": "L'usage de MDMA/Tranquillisants (Section H, K) multiplie significativement les retards scolaires et l'absentéisme (Section A).",
+                "severity": "medium",
+                "icon": "Zap",
+                "stat": "+80%",
+                "color": "blue"
+            }
+        ]
 
     @staticmethod
     def get_regional_rankings():
