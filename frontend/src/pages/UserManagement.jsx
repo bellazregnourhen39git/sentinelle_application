@@ -22,7 +22,6 @@ const UserManagement = () => {
     };
 
     const fetchUsers = async () => {
-        setLoading(true);
         try {
             const res = await api.get('auth/users/');
             setUsers(res.data);
@@ -32,6 +31,10 @@ const UserManagement = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
 
     const handleExportCSV = async () => {
         try {
@@ -124,13 +127,10 @@ const UserManagement = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {loading ? (
+                                {users.length === 0 ? (
                                     <tr>
-                                        <td colSpan="4" className="p-20 text-center">
-                                            <div className="flex flex-col items-center gap-4 text-slate-300">
-                                                <RefreshCw size={40} className="animate-spin" />
-                                                <span className="text-[10px] font-black uppercase tracking-[4px] italic">Chargement du Registre...</span>
-                                            </div>
+                                        <td colSpan="5" className="p-20 text-center text-slate-400 italic text-sm">
+                                            {loading ? "Chargement des praticiens..." : "Aucun praticien trouvé."}
                                         </td>
                                     </tr>
                                 ) : users.map((user) => (

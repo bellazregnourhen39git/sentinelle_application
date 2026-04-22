@@ -609,26 +609,17 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                     </div>
                 )}
                 <AnimatePresence mode="wait">
-                    {loading ? (
-                        <motion.div
-                            key="loading"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            exit={{ opacity: 0 }}
-                            className="h-[60vh] flex flex-col items-center justify-center gap-12"
-                        >
-                            <div className="relative">
-                                <div className="w-24 h-24 border-4 border-slate-50 rounded-full animate-spin border-t-brand-500 shadow-2xl" />
-                                <ShieldCheck className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-brand-500/20" size={36} />
+                    <div className="space-y-12">
+                        {loading && (
+                            <div className="flex items-center justify-center py-10">
+                                <div className="flex flex-col items-center gap-4 text-slate-300">
+                                    <Activity size={40} className="animate-spin text-brand-500" />
+                                    <span className="text-[10px] font-black uppercase tracking-[4px] italic">Synchronisation...</span>
+                                </div>
                             </div>
-                            <div className="text-center">
-                                <h3 className="text-xl font-black text-slate-900 tracking-[6px] mb-3 uppercase italic"><EditableLabel termKey="dash_init" defaultValue="Initialisation..." /></h3>
-                                <p className="text-slate-400 font-black uppercase tracking-[8px] text-[10px] animate-pulse"><EditableLabel termKey="dash_extract" defaultValue="Extraction Multidimensionnelle" /></p>
-                            </div>
-                        </motion.div>
-                    ) : (
-                        <div className="space-y-12">
-                            {(!activeScopeId && activeScope === 'gouvernorate') ? (
+                        )}
+                        
+                        {(!activeScopeId && activeScope === 'gouvernorate') ? (
                                 <RegionalSelector regions={homepageData?.regional_metrics} />
                             ) : (
                                 <div className="grid lg:grid-cols-12 gap-12 items-start">
@@ -739,10 +730,8 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                                             )}
                                         </AnimatePresence>
                                     </div>
-                                </div>
-                            )}
                         </div>
-                    )}
+                    </div>
                 </AnimatePresence>
             </div>
 
