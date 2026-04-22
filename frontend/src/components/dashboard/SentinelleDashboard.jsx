@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Activity, Zap, ArrowRight, Info, AlertTriangle, ShieldCheck,
-    Layers, Search, LogOut, User, Smartphone, Scan
+    Layers, Search, LogOut, User, Smartphone, Scan, FileSpreadsheet
 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
@@ -425,113 +425,115 @@ const SentinelleDashboard = ({ initialScope = 'user_school', initialScopeId = nu
                             {(!activeScopeId && activeScope === 'gouvernorate') ? (
                                 <RegionalSelector regions={homepageData?.regional_metrics} />
                             ) : (
-                                <div className="grid lg:grid-cols-12 gap-12 items-start">
-                                    {/* Left Column: Visual Hub */}
-                                    <motion.div 
-                                        initial={{ opacity: 0, x: -24 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        className="lg:col-span-5 flex flex-col gap-10 sticky top-36"
-                                    >
-                                        <div className="pro-card p-12 rounded-[56px] border border-slate-100 relative overflow-hidden bg-white/80 backdrop-blur-xl shadow-2xl shadow-slate-200/40 group">
-                                            <RadialSectionWheel 
-                                                intensityData={intensityData}
-                                                activeSection={selectedSection}
-                                                onSectionClick={handleSectionClick}
-                                                totalSubmissions={homepageData?.headline?.n_submissions || 0}
-                                            />
-                                            <div className="mt-10 flex justify-center">
-                                                <div className="px-8 py-3.5 rounded-full bg-slate-50 border border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[5px] flex items-center gap-4 italic group-hover:bg-brand-50 group-hover:text-brand-600 group-hover:border-brand-200 transition-all duration-500">
-                                                    <div className="w-2 h-2 rounded-full bg-brand-500 shadow-lg glow-brand" />
-                                                    Vecteur Cohorte Consolidé
-                                                </div>
-                                            </div>
-                                        </div>
+                                <div className="space-y-12">
 
-                                        {(currentUser?.role?.toUpperCase() === 'SUPERADMIN' || currentUser?.role?.toUpperCase() === 'ADMIN' || currentUser?.role === 'national') ? (
-                                            <div className="mt-4">
-                                                <TunisiaMap 
-                                                    data={homepageData?.map_data}
+                                    <div className="grid lg:grid-cols-12 gap-12 items-start">
+                                        {/* Left Column: Visual Context (Tunisia Map) */}
+                                        <motion.div 
+                                            initial={{ opacity: 0, x: -24 }}
+                                            animate={{ opacity: 1, x: 0 }}
+                                            className="lg:col-span-5 flex flex-col gap-10 sticky top-36"
+                                        >
+                                            <motion.div 
+                                                initial={{ opacity: 0, x: -20 }}
+                                                animate={{ opacity: 1, x: 0 }}
+                                                className="pro-card p-4 h-[500px] rounded-[56px] border border-slate-100 relative overflow-hidden bg-white/50 backdrop-blur-xl shadow-2xl shadow-slate-200/50"
+                                            >
+                                                <RadialSectionWheel
+                                                    intensityData={intensityData}
                                                     activeSection={selectedSection}
-                                                    currentUser={currentUser}
-                                                    onRegionSelect={(name) => {
-                                                        const params = new URLSearchParams(window.location.search);
-                                                        params.set('gouvernorat', name);
-                                                        params.set('scope', 'gouvernorate');
-                                                        window.location.search = params.toString();
-                                                    }}
+                                                    onSectionClick={handleSectionClick}
+                                                    totalSubmissions={homepageData?.headline?.n_submissions || 0}
                                                 />
-                                            </div>
-                                        ) : (
-                                            <div className="mt-4 pro-card p-14 rounded-[56px] border-dashed border-slate-100 flex flex-col items-center justify-center gap-6 min-h-[350px] bg-white/50">
-                                                <div className="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center text-slate-200">
-                                                    <ShieldCheck size={40} />
-                                                </div>
-                                                <div className="text-center">
-                                                    <p className="text-[12px] font-black text-slate-400 uppercase tracking-[6px] italic">Hub Géospatial Restreint</p>
-                                                    <p className="text-[9px] font-black text-slate-300 uppercase tracking-[2px] mt-3">Auth Level : {currentUser?.role || 'UNDEF'}</p>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </motion.div>
+                                            </motion.div>
 
-                                    {/* Right Column: Analytic Workflow */}
-                                    <div className="lg:col-span-7 space-y-12 min-h-[900px]">
-                                        <AnimatePresence mode="wait">
-                                            {selectedSection ? (
-                                                <motion.div 
-                                                    key="section"
-                                                    initial={{ opacity: 0, x: 24 }}
-                                                    animate={{ opacity: 1, x: 0 }}
-                                                    exit={{ opacity: 0, x: 24 }}
-                                                    transition={{ duration: 0.4, ease: [0.2, 1, 0.3, 1] }}
-                                                >
-                                                    {sectionLoading ? (
-                                                        <div className="h-[500px] flex items-center justify-center">
-                                                            <div className="w-12 h-12 border-4 border-slate-50 border-t-brand-500 rounded-full animate-spin shadow-xl" />
-                                                        </div>
-                                                    ) : (
-                                                        <SectionDetailPanel 
-                                                            sectionId={selectedSection} 
-                                                            data={selectedSectionData}
-                                                            onBack={() => handleSectionClick(null)} 
-                                                        />
-                                                    )}
-                                                </motion.div>
-                                            ) : (
-                                                <div className="space-y-12">
-                                                    <RegionalSummaryHub 
-                                                        data={homepageData} 
-                                                        globalInsights={homepageData?.global_insights}
+                                            {(currentUser?.role?.toUpperCase() === 'SUPERADMIN' || currentUser?.role?.toUpperCase() === 'ADMIN' || currentUser?.role === 'national') ? (
+                                                <div className="mt-4">
+                                                    <TunisiaMap 
+                                                        data={homepageData?.map_data}
                                                         activeSection={selectedSection}
-                                                        isSuperAdmin={currentUser?.role?.toUpperCase() === 'SUPERADMIN'}
+                                                        currentUser={currentUser}
+                                                        onRegionSelect={(name) => {
+                                                            const params = new URLSearchParams(window.location.search);
+                                                            params.set('gouvernorat', name);
+                                                            params.set('scope', 'gouvernorate');
+                                                            window.location.search = params.toString();
+                                                        }}
                                                     />
-                                                    
-                                                    {/* Points de Vigilance Grid & Rankings Lab */}
-                                                    {currentUser?.role?.toUpperCase() === 'SUPERADMIN' && (activeScope === 'national' || activeScope === 'gouvernorate') && (
-                                                        <div className="space-y-6">
-                                                            <NationalVigilancePanel 
-                                                                metrics={homepageData?.regional_metrics} 
-                                                                activeSection={selectedSection}
-                                                            />
-                                                            <div className="h-64">
-                                                                <RankingsLabInlet />
-                                                            </div>
-                                                        </div>
-                                                    )}
-
-                                                    {/* Competitive Matrix (if in gov scope) */}
-                                                    {activeScope === 'gouvernorate' && activeScopeId && (
-                                                        <CompetitiveMatrix 
-                                                            rankings={homepageData?.rankings} 
-                                                            govName={homepageData?.headline?.scope_label?.replace('Gouvernorat de ', '')} 
-                                                        />
-                                                    )}
+                                                </div>
+                                            ) : (
+                                                <div className="mt-4 pro-card p-14 rounded-[56px] border-dashed border-slate-100 flex flex-col items-center justify-center gap-6 min-h-[350px] bg-white/50">
+                                                    <div className="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center text-slate-200">
+                                                        <ShieldCheck size={40} />
+                                                    </div>
+                                                    <div className="text-center">
+                                                        <p className="text-[12px] font-black text-slate-400 uppercase tracking-[6px] italic">Hub Géospatial Restreint</p>
+                                                        <p className="text-[9px] font-black text-slate-300 uppercase tracking-[2px] mt-3">Auth Level : {currentUser?.role || 'UNDEF'}</p>
+                                                    </div>
                                                 </div>
                                             )}
-                                        </AnimatePresence>
+                                        </motion.div>
+                                        
+                                        {/* Right Column: Analytic Workflow */}
+                                        <div className="lg:col-span-7 space-y-12 min-h-[900px]">
+                                            <AnimatePresence mode="wait">
+                                                {selectedSection ? (
+                                                    <motion.div 
+                                                        key="section"
+                                                        initial={{ opacity: 0, x: 24 }}
+                                                        animate={{ opacity: 1, x: 0 }}
+                                                        exit={{ opacity: 0, x: 24 }}
+                                                        transition={{ duration: 0.4, ease: [0.2, 1, 0.3, 1] }}
+                                                    >
+                                                        {sectionLoading ? (
+                                                            <div className="h-[500px] flex items-center justify-center">
+                                                                <div className="w-12 h-12 border-4 border-slate-50 border-t-brand-500 rounded-full animate-spin shadow-xl" />
+                                                            </div>
+                                                        ) : (
+                                                            <SectionDetailPanel 
+                                                                sectionId={selectedSection} 
+                                                                data={selectedSectionData}
+                                                                onBack={() => handleSectionClick(null)} 
+                                                            />
+                                                        )}
+                                                    </motion.div>
+                                                ) : (
+                                                    <div className="space-y-12">
+                                                        <RegionalSummaryHub 
+                                                            data={homepageData} 
+                                                            globalInsights={homepageData?.global_insights}
+                                                            activeSection={selectedSection}
+                                                            isSuperAdmin={currentUser?.role?.toUpperCase() === 'SUPERADMIN'}
+                                                        />
+                                                        
+                                                        {/* Points de Vigilance Grid & Rankings Lab */}
+                                                        {currentUser?.role?.toUpperCase() === 'SUPERADMIN' && (activeScope === 'national' || activeScope === 'gouvernorate') && (
+                                                            <div className="space-y-6">
+                                                                <NationalVigilancePanel 
+                                                                    metrics={homepageData?.regional_metrics} 
+                                                                    activeSection={selectedSection}
+                                                                />
+                                                                <div className="h-64">
+                                                                    <RankingsLabInlet />
+                                                                </div>
+                                                            </div>
+                                                        )}
+
+                                                        {/* Competitive Matrix (if in gov scope) */}
+                                                        {activeScope === 'gouvernorate' && activeScopeId && (
+                                                            <CompetitiveMatrix 
+                                                                rankings={homepageData?.rankings} 
+                                                                govName={homepageData?.headline?.scope_label?.replace('Gouvernorat de ', '')} 
+                                                            />
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </AnimatePresence>
+                                        </div>
                                     </div>
                                 </div>
                             )}
+
                         </div>
                     )}
                 </AnimatePresence>

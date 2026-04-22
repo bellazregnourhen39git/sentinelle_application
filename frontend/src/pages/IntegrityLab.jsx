@@ -201,20 +201,53 @@ const IntegrityLab = ({ profile }) => {
                             </div>
 
                             <div className="grid md:grid-cols-3 gap-12 relative">
-                                {(labData?.forensic_checkpoints || []).map((cp, i) => (
-                                    <div key={i} className="p-8 rounded-[40px] bg-white/5 border border-white/10 group hover:bg-brand-500/10 transition-all duration-500">
-                                        <div className="flex items-center gap-4 mb-6">
-                                            <div className="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center text-brand-500">
-                                                <Target size={20} />
+                                {(labData?.forensic_checkpoints || []).map((cp, i) => {
+                                    const sevColor = cp.severity === 'high'
+                                        ? 'bg-rose-500 text-white'
+                                        : cp.severity === 'medium'
+                                        ? 'bg-amber-400 text-slate-900'
+                                        : 'bg-emerald-500 text-white';
+                                    return (
+                                        <div key={i} className="p-8 rounded-[40px] bg-white/5 border border-white/10 group hover:bg-brand-500/10 transition-all duration-500 flex flex-col gap-5">
+                                            {/* Header */}
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="w-10 h-10 rounded-xl bg-brand-500/20 flex items-center justify-center text-brand-500">
+                                                        <Target size={20} />
+                                                    </div>
+                                                    <span className="text-[10px] font-black text-brand-500 uppercase tracking-[3px] italic">{cp.weight}</span>
+                                                </div>
+                                                <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-[2px] italic ${sevColor}`}>
+                                                    {cp.severity === 'high' ? 'ALERTE' : cp.severity === 'medium' ? 'AVERT.' : 'OK'}
+                                                </span>
                                             </div>
-                                            <span className="text-[10px] font-black text-brand-500 uppercase tracking-[3px] italic">{cp.weight}</span>
+                                            <h4 className="text-xl font-black italic uppercase tracking-tighter">{cp.label}</h4>
+                                            {/* Real metrics */}
+                                            <div className="flex items-center gap-6">
+                                                <div className="flex flex-col">
+                                                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-[2px]">Détections</span>
+                                                    <span className={`text-3xl font-black italic tabular-nums ${cp.count > 0 ? 'text-rose-400' : 'text-emerald-400'}`}>
+                                                        {cp.count ?? '—'}
+                                                    </span>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-[8px] font-black text-slate-500 uppercase tracking-[2px]">Taux</span>
+                                                    <span className={`text-3xl font-black italic tabular-nums ${cp.rate > 5 ? 'text-rose-400' : cp.rate > 2 ? 'text-amber-400' : 'text-emerald-400'}`}>
+                                                        {cp.rate ?? '—'}%
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            {/* Progress bar */}
+                                            <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                                                <div
+                                                    className={`h-full rounded-full transition-all duration-1000 ${cp.severity === 'high' ? 'bg-rose-500' : cp.severity === 'medium' ? 'bg-amber-400' : 'bg-emerald-500'}`}
+                                                    style={{ width: `${Math.min(cp.rate * 5, 100)}%` }}
+                                                />
+                                            </div>
+                                            <p className="text-[11px] font-bold text-slate-400 italic leading-relaxed">{cp.desc}</p>
                                         </div>
-                                        <h4 className="text-xl font-black italic uppercase mb-4 tracking-tighter">{cp.label}</h4>
-                                        <p className="text-[11px] font-bold text-slate-400 italic leading-relaxed">
-                                            {cp.desc}
-                                        </p>
-                                    </div>
-                                ))}
+                                    );
+                                })}
                             </div>
                         </div>
                     </motion.div>
