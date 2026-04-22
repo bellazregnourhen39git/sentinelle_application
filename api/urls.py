@@ -3,13 +3,16 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
     SchoolStatsView, GovernorateStatsView, NationalStatsView,
     SidraDataExportView, HomepageView, SectionStatsView, LabStatsView,
-    PendingApprovalsView, ApproveUserView, RejectUserView, InsightsView,
+    RegisterView, ProfileView, QuestionnaireSubmitView, QuestionnaireExportView,
+    InviteUserView, ActivateUserView, SecureTokenObtainPairView,
+    PendingApprovalsView, ApproveUserView, RejectUserView,
+    UserListView, UserExportCSVView, UserDeleteView,
+    PlatformTerminologyView, PlatformTerminologyUpdateView,
     GovernorateListView, SchoolEstablishmentListView,
-    ProfileView, QuestionnaireSubmitView, InviteUserView, ActivateUserView,
-    UserListView, UserDeleteView, PlatformTerminologyView, PlatformTerminologyUpdateView,
-    SecureTokenObtainPairView, UserExportCSVView, RawDataExportView,
+    InsightsView, RawDataExportView,
     DynamicQuestionListView, DynamicQuestionDetailView
 )
+
 
 urlpatterns = [
     # Auth
@@ -31,6 +34,7 @@ urlpatterns = [
 
     # Questionnaire
     path('questionnaire/submit/', QuestionnaireSubmitView.as_view(), name='questionnaire_submit'),
+    path('questionnaire/export/', QuestionnaireExportView.as_view(), name='questionnaire_export'),
 
     # Dashboards
     path('stats/school/', SchoolStatsView.as_view(), name='stats_school'),
