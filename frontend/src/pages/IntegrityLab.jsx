@@ -38,7 +38,7 @@ const IntegrityLab = ({ profile }) => {
                     className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white border border-slate-100 text-slate-500 font-black uppercase tracking-[2px] text-[10px] italic hover:bg-slate-50 transition-all shadow-sm group"
                 >
                     <LucideArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                    Retour au Hub
+                    <EditableLabel termKey="lab_btn_back" defaultValue="Retour au Hub" />
                 </button>
                 <div className="flex items-center gap-4">
                     <div className="px-5 py-2.5 bg-brand-500/10 border border-brand-500/20 rounded-full text-[10px] font-black text-brand-600 uppercase tracking-[3px] italic flex items-center gap-2 shadow-sm">
@@ -66,9 +66,9 @@ const IntegrityLab = ({ profile }) => {
                     </p>
                     <div className="flex items-center gap-6">
                         <div className="px-6 py-2.5 bg-brand-500 text-white rounded-2xl text-[10px] font-black uppercase tracking-[3px] italic shadow-xl shadow-brand-500/20">
-                            Protocole Alpha-2026 Actif
+                            <EditableLabel termKey="lab_integrity_hero_protocol" defaultValue="Protocole Alpha-2026 Actif" />
                         </div>
-                        <span className="text-[10px] font-black text-brand-600 uppercase tracking-[4px] italic opacity-60">Validation Algorithmique Niveau 4</span>
+                        <span className="text-[10px] font-black text-brand-600 uppercase tracking-[4px] italic opacity-60"><EditableLabel termKey="lab_integrity_hero_val_level" defaultValue="Validation Algorithmique Niveau 4" /></span>
                     </div>
                 </div>
             </motion.div>
@@ -84,16 +84,16 @@ const IntegrityLab = ({ profile }) => {
                     className="lg:col-span-4 p-10 rounded-[48px] border border-slate-900 bg-slate-900 text-white shadow-xl flex flex-col justify-between"
                 >
                     <div className="relative z-10">
-                        <h4 className="text-[10px] font-black text-brand-500 uppercase tracking-[4px] mb-10 italic">Protocole d'Audit Z</h4>
+                        <h4 className="text-[10px] font-black text-brand-500 uppercase tracking-[4px] mb-10 italic"><EditableLabel termKey="lab_integrity_proto_title" defaultValue="Protocole d'Audit Z" /></h4>
                         <div className="space-y-8">
                             <div className="p-6 rounded-[32px] bg-white/5 border border-white/10 group hover:border-brand-500/40 transition-all">
-                                <h5 className="text-[11px] font-black text-brand-500 uppercase italic mb-4">Algorithme de Pondération</h5>
+                                <h5 className="text-[11px] font-black text-brand-500 uppercase italic mb-4"><EditableLabel termKey="lab_integrity_algo_title" defaultValue="Algorithme de Pondération" /></h5>
                                 <div className="grid grid-cols-2 gap-4">
                                     {[
-                                        { label: 'Complètement', val: '100%' },
-                                        { label: 'En grande partie', val: '75%' },
-                                        { label: 'Partiellement', val: '50%' },
-                                        { label: 'Pas du tout', val: '0%' }
+                                        { label: <EditableLabel termKey="lab_integrity_w_full" defaultValue="Complètement" />, val: '100%' },
+                                        { label: <EditableLabel termKey="lab_integrity_w_most" defaultValue="En grande partie" />, val: '75%' },
+                                        { label: <EditableLabel termKey="lab_integrity_w_partial" defaultValue="Partiellement" />, val: '50%' },
+                                        { label: <EditableLabel termKey="lab_integrity_w_none" defaultValue="Pas du tout" />, val: '0%' }
                                     ].map((w, i) => (
                                         <div key={i} className="flex flex-col">
                                             <span className="text-[8px] font-black uppercase text-slate-500 italic mb-1">{w.label}</span>
@@ -103,12 +103,12 @@ const IntegrityLab = ({ profile }) => {
                                 </div>
                             </div>
                             <p className="text-[11px] font-bold text-slate-400 italic leading-relaxed px-2">
-                                L'indice de confiance régional est calculé par la moyenne pondérée des déclarations d'honnêteté (Section Z). Un score inférieur à 65% déclenche automatiquement un audit manuel approfondi de la cohorte.
+                                <EditableLabel termKey="lab_integrity_index_desc" defaultValue="L'indice de confiance régional est calculé par la moyenne pondérée des déclarations d'honnêteté (Section Z). Un score inférieur à 65% déclenche automatiquement un audit manuel approfondi de la cohorte." />
                             </p>
                         </div>
                     </div>
                     <div className="mt-10 p-6 rounded-[24px] bg-brand-500 text-white text-[10px] font-black uppercase tracking-[3px] italic text-center shadow-2xl shadow-brand-500/20">
-                        Consulter la documentation
+                        <EditableLabel termKey="lab_integrity_btn_doc" defaultValue="Consulter la documentation" />
                     </div>
                 </motion.div>
 
@@ -121,11 +121,11 @@ const IntegrityLab = ({ profile }) => {
                 >
                     <div className="flex items-center justify-between mb-10 px-2">
                         <div>
-                            <h3 className="text-2xl font-black text-slate-900 italic uppercase tracking-tighter">Régistre d'Audit Logique</h3>
-                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[3px] italic mt-2">Validation Algorithmique par Gouvernorat (N=24)</p>
+                            <h3 className="text-2xl font-black text-slate-900 italic uppercase tracking-tighter"><EditableLabel termKey="lab_integrity_registry_title" defaultValue="Régistre d'Audit Logique" /></h3>
+                            <p className="text-[9px] font-black text-slate-400 uppercase tracking-[3px] italic mt-2"><EditableLabel termKey="lab_integrity_registry_subtitle" defaultValue="Validation Algorithmique par Gouvernorat (N=24)" /></p>
                         </div>
                         <div className="text-right">
-                            <span className="text-[10px] font-black text-brand-600 uppercase italic tracking-[2px]">Moyenne Nationale : {nationalTrust}%</span>
+                            <span className="text-[10px] font-black text-brand-600 uppercase italic tracking-[2px]"><EditableLabel termKey="lab_integrity_nat_avg" defaultValue="Moyenne Nationale" /> : {nationalTrust}%</span>
                         </div>
                     </div>
 
@@ -147,21 +147,21 @@ const IntegrityLab = ({ profile }) => {
                                                 reg.status === 'Audit Pending' ? 'bg-amber-500' : 'bg-rose-500'
                                             }`} />
                                             <span className={`text-[9px] font-black uppercase italic ${reg.logical_anomalies > 0 ? 'text-rose-600' : 'text-slate-400'}`}>
-                                                {reg.logical_anomalies > 0 ? 'Alerte Forensique' : (reg.status === 'Audit Pending' ? 'Audit en Attente' : reg.status)}
+                                                {reg.logical_anomalies > 0 ? <EditableLabel termKey="lab_integrity_status_alert" defaultValue="Alerte Forensique" /> : (reg.status === 'Audit Pending' ? <EditableLabel termKey="lab_integrity_status_pending" defaultValue="Audit en Attente" /> : (reg.status === 'Optimal' ? <EditableLabel termKey="lab_integrity_status_optimal" defaultValue="Optimal" /> : reg.status))}
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="col-span-4 flex items-center gap-6 justify-end">
+                                    <div className="col-span-4 flex items-center justify-end gap-6">
                                         <div className="text-right">
-                                            <span className="text-[8px] font-bold text-slate-400 uppercase block mb-0.5">Self-Flg.</span>
+                                            <span className="text-[8px] font-bold text-slate-400 uppercase block mb-0.5"><EditableLabel termKey="lab_integrity_label_self" defaultValue="Self-Flg." /></span>
                                             <span className={`text-[11px] font-black italic ${reg.self_anomalies > 0 ? 'text-amber-500' : 'text-slate-300'}`}>{reg.self_anomalies}</span>
                                         </div>
                                         <div className="text-right">
-                                            <span className="text-[8px] font-bold text-slate-400 uppercase block mb-0.5">Log-Err.</span>
+                                            <span className="text-[8px] font-bold text-slate-400 uppercase block mb-0.5"><EditableLabel termKey="lab_integrity_label_log" defaultValue="Log-Err." /></span>
                                             <span className={`text-[11px] font-black italic ${reg.logical_anomalies > 0 ? 'text-rose-500' : 'text-slate-300'}`}>{reg.logical_anomalies}</span>
                                         </div>
                                         <div className="text-right">
-                                            <span className="text-[8px] font-bold text-slate-400 uppercase block mb-0.5">Trust</span>
+                                            <span className="text-[8px] font-bold text-slate-400 uppercase block mb-0.5"><EditableLabel termKey="lab_integrity_label_trust" defaultValue="Trust" /></span>
                                             <span className="text-[11px] font-black text-brand-600 italic">{reg.trust_index}%</span>
                                         </div>
                                     </div>
@@ -169,7 +169,7 @@ const IntegrityLab = ({ profile }) => {
                                         {reg.logical_anomalies === 0 && reg.trust_index > 90 ? (
                                             <div className="flex flex-col items-end">
                                                 <Award size={14} className="text-emerald-500 mb-1" />
-                                                <span className="text-[7px] font-black text-emerald-600 uppercase italic">Certifié</span>
+                                                <span className="text-[7px] font-black text-emerald-600 uppercase italic"><EditableLabel termKey="lab_integrity_certified" defaultValue="Certifié" /></span>
                                             </div>
                                         ) : (
                                             <span className="text-[9px] font-bold text-slate-300 italic">N={reg.submissions}</span>
@@ -194,10 +194,10 @@ const IntegrityLab = ({ profile }) => {
                             <div className="flex items-center justify-between mb-16">
                                 <div className="flex items-center gap-6 text-brand-500">
                                     <ShieldCheck size={40} className="glow-brand" />
-                                    <h3 className="text-4xl font-black italic uppercase tracking-tighter text-white">Preuve de Validation Algorithmique</h3>
+                                    <h3 className="text-4xl font-black italic uppercase tracking-tighter text-white"><EditableLabel termKey="lab_integrity_forensic_title" defaultValue="Preuve de Validation Algorithmique" /></h3>
                                 </div>
                                 <div className="px-6 py-2 bg-brand-500 text-white rounded-full text-[10px] font-black uppercase tracking-[3px] italic">
-                                    Forensic Suite v2.0
+                                    <EditableLabel termKey="lab_integrity_forensic_badge" defaultValue="Forensic Suite v2.0" />
                                 </div>
                             </div>
 
@@ -255,7 +255,7 @@ const IntegrityLab = ({ profile }) => {
                 ) : (
                     <div className="lg:col-span-12 p-8 rounded-[40px] bg-brand-500/5 border border-brand-500/20 text-center mb-12">
                         <p className="text-sm font-black text-brand-500 uppercase tracking-[2px] italic">
-                            🛡️ Diagnostic Régional Sécurisé : Les poids algorithmiques sont réservés à la supervision nationale.
+                            <EditableLabel termKey="lab_integrity_regional_restricted" defaultValue="🛡️ Diagnostic Régional Sécurisé : Les poids algorithmiques sont réservés à la supervision nationale." />
                         </p>
                     </div>
                 )}

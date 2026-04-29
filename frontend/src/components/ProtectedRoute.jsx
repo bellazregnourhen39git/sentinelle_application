@@ -1,5 +1,6 @@
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
+import EditableLabel from './dashboard/EditableLabel';
 
 /**
  * Higher-Order Component for Role-Based Access Control
@@ -7,6 +8,7 @@ import { Navigate } from 'react-router-dom';
  * @param {Array} allowedRoles - List of roles permitted to view this route
  */
 const ProtectedRoute = ({ children, profile, allowedRoles }) => {
+    const navigate = useNavigate();
     // If no profile, redirect to login (placeholder)
     if (!profile) return <Navigate to="/" replace />;
 
@@ -21,16 +23,24 @@ const ProtectedRoute = ({ children, profile, allowedRoles }) => {
                     <div className="w-20 h-20 bg-rose-500/10 rounded-full flex items-center justify-center mx-auto mb-8 border border-rose-500/20">
                         <span className="text-4xl">🚫</span>
                     </div>
-                    <h1 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-4">Accès Restreint</h1>
+                    <h1 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-4"><EditableLabel termKey="restricted_title" defaultValue="Accès Restreint" /></h1>
                     <p className="text-slate-400 text-sm font-bold italic leading-relaxed mb-8">
-                        Votre profil médical ({profile.role}) n'est pas autorisé à accéder aux outils d'audit forensique. Veuillez contacter l'administration nationale.
+                        <EditableLabel 
+                            termKey="restricted_msg" 
+                            defaultValue={`Votre profil médical (${profile.role}) n'est pas autorisé à accéder aux outils d'audit forensique. Veuillez contacter l'administration nationale.`} 
+                        />
                     </p>
-                    <button 
-                        onClick={() => window.history.back()}
-                        className="w-full py-4 bg-rose-500 text-white rounded-2xl font-black uppercase tracking-[2px] text-[10px] italic shadow-xl shadow-rose-500/20 hover:bg-rose-600 transition-all"
-                    >
-                        Retour en Lieu Sûr
-                    </button>
+                    <div className="space-y-4">
+                        <button 
+                            type="button"
+                            onClick={() => {
+                                window.location.href = '/';
+                            }}
+                            className="w-full py-4 bg-rose-500 text-white rounded-2xl font-black uppercase tracking-[2px] text-[10px] italic shadow-xl shadow-rose-500/20 hover:bg-rose-600 transition-all"
+                        >
+                            <EditableLabel termKey="restricted_btn_back" defaultValue="RETOUR EN LIEU SÛR" />
+                        </button>
+                    </div>
                 </div>
             </div>
         );

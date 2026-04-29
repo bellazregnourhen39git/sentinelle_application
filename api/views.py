@@ -21,7 +21,7 @@ from .models import (
     SectionA, SectionB, SectionC, SectionD, SectionE, SectionG, SectionH,
     SectionI, SectionJ, SectionK, SectionL, SectionM, SectionN, SectionP,
     SectionQ, SectionR, SectionS, SectionT, SectionU, SectionV, SectionZ,
-    AuditLog, PlatformTerminology, DynamicQuestion
+    AuditLog, PlatformTerminology, DynamicQuestion, ClassReport
 )
 from .analytics import SentinelleAnalytics
 from .permissions import IsSuperAdmin, IsGlobalAdmin, ScopePermission
@@ -42,6 +42,8 @@ class SecureTokenObtainPairView(TokenObtainPairView):
     throttle_scope = 'login'
 
     def post(self, request, *args, **kwargs):
+        with open("login_debug.log", "a") as f:
+            f.write(f"DEBUG: Login request data: {request.data}\n")
         response = super().post(request, *args, **kwargs)
         client_ip = request.META.get('REMOTE_ADDR')
         
@@ -230,7 +232,7 @@ class RawDataExportView(views.APIView):
 class PlatformTerminologyView(generics.ListCreateAPIView):
     queryset = PlatformTerminology.objects.all()
     serializer_class = PlatformTerminologySerializer
-    permission_classes = (permissions.IsAuthenticatedOrReadOnly,)
+    permission_classes = (permissions.AllowAny,)
 
     def get_serializer_context(self):
         return {'request': self.request}
@@ -262,6 +264,40 @@ class PlatformTerminologyUpdateView(generics.UpdateAPIView):
 
 # ─── Questionnaire Submission ─────────────────────────────────────────────────────
 
+class QuestionnaireSubmissionListView(generics.ListAPIView):
+    serializer_class = serializers.QuestionnaireSessionListSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        qs = QuestionnaireSession.objects.all().select_related('school', 'governorate')
+        
+        # Filter by class_report if provided
+        report_id = self.request.query_params.get('class_report')
+        if report_id:
+            qs = qs.filter(class_report_id=report_id)
+            
+        # Role-based security filtering
+        if user.role not in ['SUPER_ADMIN', 'GLOBAL_ADMIN']:
+            if user.role == 'REGIONAL_ANALYST':
+                qs = qs.filter(governorate=user.governorate)
+            elif user.role in ['PRACTITIONER', 'OPERATOR']:
+                if user.establishment:
+                    qs = qs.filter(school=user.establishment)
+                elif report_id:
+                    # If they are linked to the report, they can see it
+                    # (Fallback if establishment is missing on user profile)
+                    pass
+        
+        return qs.order_by('-created_at')
+
+
+class QuestionnaireSubmissionDetailView(generics.RetrieveUpdateAPIView):
+    queryset = QuestionnaireSession.objects.all()
+    serializer_class = serializers.QuestionnaireSessionSerializer
+    permission_classes = (IsSuperAdmin,)
+
+
 class QuestionnaireSubmitView(generics.CreateAPIView):
     """
     Accepts a full nested JSON payload (session + all section sub-objects).
@@ -271,13 +307,21 @@ class QuestionnaireSubmitView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
 
     def create(self, request, *args, **kwargs):
-        # Default mock school class for testing without auth
+        # Only provide a fallback school_class if neither school_class nor class_report is present
         data = request.data.copy()
-        if not data.get('school_class'):
-            from .models import SchoolClass
-            sc = SchoolClass.objects.first()
-            if sc:
-                data['school_class'] = sc.id
+        if not data.get('school_class') and not data.get('class_report'):
+            from .models import ClassReport
+            # Tether to the last report created BY THIS USER (if authenticated)
+            last_report = None
+            if request.user.is_authenticated:
+                last_report = ClassReport.objects.filter(created_by=request.user).order_by('-id').first()
+            
+            if not last_report:
+                # Absolute fallback to global latest if no user-specific report exists
+                last_report = ClassReport.objects.order_by('-id').first()
+                
+            if last_report:
+                data['class_report'] = last_report.id
 
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
@@ -498,7 +542,7 @@ class HomepageView(views.APIView):
                 scope_id = user.establishment.id
 
         # --- Advanced Authority Filter (Secure Scoping) ---
-        sessions_qs = SentinelleAnalytics.get_scoped_sessions(user).filter(is_valid=True)
+        sessions_qs = SentinelleAnalytics.get_scoped_sessions(user)
         
         # 1. Scope Determination (URL vs Auth context)
         sessions = sessions_qs
@@ -615,6 +659,9 @@ class HomepageView(views.APIView):
                         heat_data[region] = {"submissions": 0, "prevalence": 0, "active": False}
 
             data['map_data'] = heat_data
+            
+            # 🏆 Rankings Lab: Include comparative metrics (Phase 8)
+            data['rankings'] = SentinelleAnalytics.get_regional_rankings()
             
         # Log Data Access
         AuditLog.objects.create(
@@ -750,6 +797,17 @@ class InsightsView(views.APIView):
         if request.user.role not in ['GLOBAL_ADMIN', 'SUPER_ADMIN']:
             return Response({"detail": "Not authorized"}, status=403)
         data = SentinelleAnalytics.get_advanced_insights()
+        return Response(data)
+
+class RegionalProfileView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, gov_name):
+        if request.user.role not in ['GLOBAL_ADMIN', 'SUPER_ADMIN']:
+            return Response({"detail": "Not authorized"}, status=403)
+        data = SentinelleAnalytics.get_regional_profile(gov_name)
+        if not data:
+            return Response({"detail": "Aucune donnée pour cette région"}, status=404)
         return Response(data)
 
 
@@ -892,4 +950,62 @@ class DynamicQuestionDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = serializers.DynamicQuestionSerializer
     permission_classes = (IsSuperAdmin,)
     lookup_field = 'code'
+
+
+# ─── Class Report Views ─────────────────────────────────────────────────────────
+
+class ClassReportCreateView(generics.CreateAPIView):
+    queryset = ClassReport.objects.all()
+    serializer_class = serializers.ClassReportSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def perform_create(self, serializer):
+        if self.request.user.is_authenticated:
+            serializer.save(created_by=self.request.user)
+        else:
+            serializer.save()
+
+class LatestActiveReportView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        # Get the latest NON-FINALIZED report created by the user
+        last_report = ClassReport.objects.filter(created_by=request.user, is_finalized=False).order_by('-created_at').first()
+        if not last_report:
+            return Response(None, status=200)
+        
+        # Check if it has submissions (optional logic, but let's just return the report for now)
+        serializer = serializers.ClassReportSerializer(last_report)
+        return Response(serializer.data)
+
+class ClassReportListView(generics.ListAPIView):
+    queryset = ClassReport.objects.all().order_by('-report_date')
+    serializer_class = serializers.ClassReportSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+class ClassReportDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = ClassReport.objects.all()
+    serializer_class = serializers.ClassReportSerializer
+
+class ClassReportFinalizeView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, pk):
+        report = ClassReport.objects.filter(pk=pk, created_by=request.user).first()
+        if not report:
+            return Response({"detail": "Report not found or not owned by you."}, status=404)
+        
+        report.is_finalized = True
+        report.save()
+        
+        # Log the finalization
+        from .models import AuditLog
+        AuditLog.objects.create(
+            user=request.user,
+            action=f"FINALIZED_CLASS_REPORT: {report.id} ({report.establishment_name})",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+        
+        return Response({"status": "finalized", "id": report.id})
+    permission_classes = (permissions.IsAuthenticated,)
 

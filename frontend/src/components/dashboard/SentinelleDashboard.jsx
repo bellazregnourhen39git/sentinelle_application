@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Activity, Zap, ArrowRight, Info, AlertTriangle, ShieldCheck,
     Layers, Search, LogOut, User, Smartphone, Scan, Bell, CheckCircle, XCircle,
-    Mail, Phone, MapPin, FileText, QrCode, Users, Pencil, Database, ClipboardList, FileSpreadsheet
+    Mail, Phone, MapPin, FileText, QrCode, Users, Pencil, Database, ClipboardList, FileSpreadsheet, Menu, ChevronDown, BookOpen
 } from 'lucide-react';
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../../api';
@@ -12,9 +12,9 @@ import SectionDetailPanel from './SectionDetailPanel';
 import RegionalSelector from './RegionalSelector';
 import TunisiaMap from './TunisiaMap';
 import EditableLabel from './EditableLabel';
-import QuestionnaireManager from './QuestionnaireManager';
 import { useTerminology } from '../../TerminologyContext';
 import { SocialInlet, CompetitiveMatrix, NationalHeatList, ExpertAudit, ComorbiditySpectrum, RankingsLabInlet } from './IntelligenceInlets';
+import RegionalProfilePanel from './RegionalProfilePanel';
 
 const NationalVigilancePanel = ({ metrics, activeSection }) => {
     if (!metrics || metrics.length === 0) return null;
@@ -113,7 +113,7 @@ const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin 
     const { headline, kpis } = data;
 
     const sectionNames = { 'C': 'Tabagisme', 'G': 'Alcoolisme', 'I': 'Cannabis', 'E': 'Narguilé', 'D': 'Vapotage' };
-    const activeLabel = sectionNames[activeSection] || 'Cognitif';
+    const activeLabel = sectionNames[activeSection] || 'Global';
 
     return (
         <motion.div
@@ -137,8 +137,19 @@ const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin 
                         <div className="h-[2px] w-16 bg-slate-200" />
                         <span className="text-[11px] font-black text-slate-400 uppercase tracking-[6px] italic opacity-80"><EditableLabel termKey="dash_medspad" defaultValue="Medspad 2026" /></span>
                     </div>
-                    <h1 className="text-6xl font-black text-slate-800 tracking-tighter uppercase italic leading-none mb-8">
-                        {headline?.scope_label ? <><EditableLabel termKey="dash_synth_gov" defaultValue="Synthèse :" /> {headline.scope_label.replace('Gouvernorat de ', '')}</> : <EditableLabel termKey="dash_synth_glob" defaultValue="Synthèse Globale" />} <span className="text-brand-600">{activeLabel === 'Cognitif' ? '' : activeLabel}</span>
+                    <h1 className="text-6xl font-black text-slate-800 tracking-tighter uppercase italic leading-none mb-10">
+                        {headline?.scope_label ? (
+                            <div className="flex flex-wrap items-center gap-x-4">
+                                <EditableLabel termKey="dash_synth_gov" defaultValue="Synthèse :" /> 
+                                <EditableLabel 
+                                    termKey={`dash_scope_${headline.scope_label}`} 
+                                    defaultValue={headline.scope_label.replace('Gouvernorat de ', '')} 
+                                />
+                            </div>
+                        ) : (
+                            <EditableLabel termKey="dash_synth_glob" defaultValue="Synthèse Globale" />
+                        )} 
+                        <span className="text-brand-600 ml-4">{activeLabel === 'Global' ? '' : activeLabel}</span>
                     </h1>
                     <p className="text-[15px] text-slate-500 font-bold italic max-w-2xl leading-relaxed opacity-90">
                         {activeSection
@@ -209,7 +220,7 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
     const [selectedSection, setSelectedSection] = useState(null);
     const [selectedSectionData, setSelectedSectionData] = useState(null);
     const [sectionLoading, setSectionLoading] = useState(false);
-    const [isQuestionnaireManagerOpen, setIsQuestionnaireManagerOpen] = useState(false);
+    const [isNavMenuOpen, setIsNavMenuOpen] = useState(false);
 
     const handleLogout = onLogout || (() => {
         localStorage.removeItem('user');
@@ -291,6 +302,7 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
     const [homepageData, setHomepageData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const hasInitialData = React.useRef(false);
 
     const urlParams = new URLSearchParams(window.location.search);
     const activeScope = urlParams.get('scope') || initialScope;
@@ -298,7 +310,10 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
 
     const fetchHomepage = useCallback(async (sectionId = null) => {
         try {
-            setLoading(true);
+            // Only show full-screen loader if we haven't successfully loaded data yet
+            if (!hasInitialData.current) {
+                setLoading(true);
+            }
             const res = await api.get('homepage/', {
                 params: {
                     scope_type: activeScope,
@@ -307,6 +322,7 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                 }
             });
             setHomepageData(res.data);
+            hasInitialData.current = true;
             setLoading(false);
         } catch (err) {
             console.error(err);
@@ -380,10 +396,9 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
         }
     };
 
-    const intensityData = homepageData?.top_sections?.reduce((acc, s) => {
-        acc[s.section_id] = 1.0;
-        return acc;
-    }, {}) || {};
+    const intensityData = useMemo(() => {
+        return homepageData?.section_intensity || {};
+    }, [homepageData]);
 
     if (error) return (
         <div className="flex items-center justify-center min-h-screen p-8 bg-transparent">
@@ -393,8 +408,12 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                 </div>
                 <h3 className="text-3xl font-black text-slate-900 mb-4 uppercase tracking-tighter italic">Échec Système</h3>
                 <p className="text-slate-500 mb-10 font-bold leading-relaxed italic">{error}</p>
-                <button onClick={() => fetchHomepage()} className="w-full py-5 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-[4px] text-[11px] hover:bg-brand-600 transition-all shadow-2xl shadow-slate-200 border border-white/10 active:scale-95 italic">
-                    Forcer la Recalibration
+                <button onClick={() => fetchHomepage()} className="w-full py-5 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-[4px] text-[11px] hover:bg-brand-600 transition-all shadow-2xl shadow-slate-200 border border-white/10 active:scale-95 italic mb-4">
+                    <EditableLabel termKey="dash_btn_recalibrate" defaultValue="Forcer la Recalibration" />
+                </button>
+                <button onClick={() => navigate('/guide')} className="w-full py-4 bg-white text-slate-500 rounded-2xl font-black uppercase tracking-[4px] text-[10px] hover:bg-slate-50 transition-all border border-slate-100 active:scale-95 italic">
+                    <BookOpen size={16} className="inline mr-2 opacity-50" />
+                    <EditableLabel termKey="dash_btn_back_guide" defaultValue="Retour au Guide" />
                 </button>
             </div>
         </div>
@@ -432,86 +451,20 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                     </div>
                 </div>
 
-                <div className="relative flex items-center gap-8">
+                <div className="relative flex items-center gap-6">
                     <div className="hidden lg:flex items-center gap-4 px-5 py-2.5 bg-slate-50 rounded-full border border-slate-100">
                         <div className="w-2 h-2 rounded-full bg-brand-500 shadow-lg glow-brand animate-pulse" />
                     </div>
                     {currentUser && (
-                        <div className="hidden md:flex items-center gap-4 border-l-[3px] border-slate-100 pl-8">
+                        <div className="hidden md:flex items-center gap-4 border-l-[3px] border-slate-100 pl-6">
                             <div className="flex flex-col text-right">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] leading-none mb-1 italic">{currentUser.role === 'USER' || currentUser.role === 'PRACTITIONER' ? 'PRATICIEN' : currentUser.role || 'PRATICIEN'}</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] leading-none mb-1 italic">{currentUser.role === 'USER' || currentUser.role === 'PRACTITIONER' ? 'PRATICIEN' : currentUser.role?.replace('_', ' ') || 'PRATICIEN'}</p>
                                 <p className="text-sm font-black text-slate-900 italic tracking-tight">{currentUser.username}</p>
                             </div>
                             <div className="w-10 h-10 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center text-brand-600">
                                 <User size={18} />
                             </div>
                         </div>
-                    )}
-
-                    <button
-                        onClick={() => navigate('/scan')}
-                        title="Scanner OCR"
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-50 border border-brand-100 text-brand-600 hover:bg-brand-500 hover:text-white transition-all duration-300 text-[10px] font-black uppercase tracking-widest italic group"
-                    >
-                        <Scan size={14} className="group-hover:scale-110 transition-transform" />
-                        <span className="hidden lg:inline"><EditableLabel termKey="dash_btn_scan" defaultValue="SCANNER" /></span>
-                    </button>
-
-                    <button
-                        onClick={() => navigate('/qr')}
-                        title="Accès QR Code"
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-brand-50 border border-brand-100 text-brand-600 hover:bg-brand-500 hover:text-white transition-all duration-300 text-[10px] font-black uppercase tracking-widest italic group"
-                    >
-                        <QrCode size={14} className="group-hover:scale-110 transition-transform" />
-                        <span className="hidden lg:inline"><EditableLabel termKey="dash_btn_qr" defaultValue="ACCÈS QR" /></span>
-                    </button>
-
-                    <div className="flex items-center gap-3">
-                        {['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(currentUser?.role?.toUpperCase()) && (
-                            <button
-                                onClick={handleExportRawData}
-                                className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-slate-200 text-slate-800 hover:border-brand-500 hover:text-brand-600 transition-all duration-300 text-[10px] font-black uppercase tracking-widest italic group"
-                            >
-                                <Database size={14} className="group-hover:scale-110 transition-transform text-brand-500" />
-                                <span className="hidden lg:inline"><EditableLabel termKey="dash_btn_export" defaultValue="EXPORT DATA BRUTES" /></span>
-                            </button>
-                        )}
-                        {currentUser?.role?.toUpperCase() === 'SUPER_ADMIN' && (
-                            <>
-                                <button
-                                    onClick={() => setIsQuestionnaireManagerOpen(true)}
-                                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-slate-200 text-slate-800 hover:border-brand-500 hover:text-brand-600 transition-all duration-300 text-[10px] font-black uppercase tracking-widest italic group"
-                                >
-                                    <ClipboardList size={14} className="group-hover:scale-110 transition-transform text-brand-500" />
-                                    <span className="hidden lg:inline"><EditableLabel termKey="dash_btn_questions" defaultValue="CONFIG QUESTIONNAIRE" /></span>
-                                </button>
-                                <button
-                                    onClick={() => navigate('/admin/users')}
-                                    className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white border border-slate-100 text-slate-600 hover:border-brand-500 hover:text-brand-600 transition-all duration-300 text-[10px] font-black uppercase tracking-widest italic group"
-                                >
-                                    <Users size={14} className="group-hover:scale-110 transition-transform text-brand-500" />
-                                    <span className="hidden lg:inline"><EditableLabel termKey="dash_btn_users" defaultValue="GESTION UTILISATEURS" /></span>
-                                </button>
-                                <button
-                                    onClick={() => setIsEditMode(!isEditMode)}
-                                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full transition-all duration-300 text-[10px] font-black uppercase tracking-widest italic group ${isEditMode ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                                        }`}
-                                >
-                                    <Pencil size={14} className={isEditMode ? 'animate-pulse' : ''} />
-                                    <span className="hidden lg:inline">{isEditMode ? <EditableLabel termKey="dash_btn_quit_edit" defaultValue="QUITTER ÉDITION" /> : <EditableLabel termKey="dash_btn_edit" defaultValue="ACTIVER ÉDITION" />}</span>
-                                </button>
-                            </>
-                        )}
-                    </div>
-
-                    {(currentUser?.role?.toUpperCase() === 'PRACTITIONER' || currentUser?.role?.toUpperCase() === 'OPERATOR') && (
-                        <button
-                            onClick={() => navigate('/questionnaire')}
-                            className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-brand-500 text-white hover:bg-brand-600 transition-all duration-300 text-[10px] font-black uppercase tracking-widest italic shadow-lg shadow-brand-500/20 group animate-clinical-in"
-                        >
-                            <FileText size={14} className="group-hover:translate-x-0.5 transition-transform" />
-                            <span><EditableLabel termKey="dash_btn_quest" defaultValue="Questionnaire" /></span>
-                        </button>
                     )}
 
                     {currentUser?.role?.toUpperCase() === 'SUPER_ADMIN' && (
@@ -541,7 +494,7 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                                         <div className="max-h-[300px] overflow-y-auto">
                                             {pendingUsers.length === 0 ? (
                                                 <div className="p-8 text-center text-slate-400 text-[10px] font-black uppercase tracking-widest italic">
-                                                    Aucun compte désactivé
+                                                    Aucun compte en attente
                                                 </div>
                                             ) : (
                                                 <div className="flex flex-col">
@@ -584,27 +537,114 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                             </AnimatePresence>
                         </div>
                     )}
-                    <button
-                        onClick={handleLogout}
-                        title="Déconnexion"
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-slate-50 border border-slate-100 text-slate-400 hover:bg-rose-50 hover:border-rose-200 hover:text-rose-500 transition-all duration-300 text-[10px] font-black uppercase tracking-widest italic group"
-                    >
-                        <LogOut size={14} className="group-hover:-translate-x-0.5 transition-transform" />
-                        <span className="hidden lg:inline"><EditableLabel termKey="dash_btn_logout" defaultValue="Déconnexion" /></span>
-                    </button>
+
+                    {['PRACTITIONER', 'OPERATOR'].includes(currentUser?.role?.toUpperCase()) && (
+                        <button
+                            onClick={() => navigate('/guide')}
+                            className="hidden lg:flex items-center gap-3 px-6 py-2.5 rounded-full bg-brand-50 border border-brand-100 text-brand-700 text-[10px] font-black uppercase tracking-widest italic hover:bg-brand-100 transition-all shadow-sm"
+                        >
+                            <BookOpen size={16} />
+                            <EditableLabel termKey="dash_btn_back_guide" defaultValue="Retour au Guide" />
+                        </button>
+                    )}
+
+                    <div className="relative">
+                        <button
+                            onClick={() => setIsNavMenuOpen(!isNavMenuOpen)}
+                            className={`flex items-center gap-2 px-5 py-2.5 rounded-full border transition-all duration-300 text-[10px] font-black uppercase tracking-widest italic group ${isNavMenuOpen ? 'bg-slate-900 border-slate-900 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300'}`}
+                        >
+                            <Menu size={16} />
+                            <span><EditableLabel termKey="dash_btn_menu" defaultValue="MENU OPÉRATIONS" /></span>
+                            <ChevronDown size={14} className={`transition-transform duration-300 ${isNavMenuOpen ? 'rotate-180' : ''}`} />
+                        </button>
+
+                        <AnimatePresence>
+                            {isNavMenuOpen && (
+                                <>
+                                    <motion.div 
+                                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                                        onClick={() => setIsNavMenuOpen(false)}
+                                        className="fixed inset-0 z-40"
+                                    />
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                                        transition={{ duration: 0.2 }}
+                                        className="absolute right-0 top-14 w-64 bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden z-50 flex flex-col py-2"
+                                    >
+                                        <button onClick={() => { navigate('/scan'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
+                                            <Scan size={14} /> <EditableLabel termKey="dash_btn_scan" defaultValue="SCANNER OCR" />
+                                        </button>
+                                        <button onClick={() => { navigate('/qr'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
+                                            <QrCode size={14} /> <EditableLabel termKey="dash_btn_qr" defaultValue="ACCÈS QR" />
+                                        </button>
+                                        
+                                        {['PRACTITIONER', 'OPERATOR', 'SUPER_ADMIN', 'GLOBAL_ADMIN', 'ADMIN'].includes(currentUser?.role?.toUpperCase()) && (
+                                            <button onClick={() => { navigate('/class-report'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
+                                                <ClipboardList size={14} /> <EditableLabel termKey="dash_btn_rapport" defaultValue="Rapport de Classe" />
+                                            </button>
+                                        )}
+
+                                        {['PRACTITIONER', 'OPERATOR', 'SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(currentUser?.role?.toUpperCase()) && (
+                                            <button onClick={() => { navigate('/questionnaire'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
+                                                <FileText size={14} /> <EditableLabel termKey="dash_btn_quest" defaultValue="Questionnaire" />
+                                            </button>
+                                        )}
+
+                                        {['PRACTITIONER', 'OPERATOR'].includes(currentUser?.role?.toUpperCase()) && (
+                                            <button onClick={() => { navigate('/guide'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
+                                                <BookOpen size={14} /> <EditableLabel termKey="dash_btn_guide" defaultValue="Guide des Procédures" />
+                                            </button>
+                                        )}
+
+                                        {['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(currentUser?.role?.toUpperCase()) && (
+                                            <div className="h-px w-full bg-slate-100 my-1" />
+                                        )}
+
+                                        {['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(currentUser?.role?.toUpperCase()) && (
+                                            <button onClick={() => { handleExportRawData(); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
+                                                <Database size={14} /> <EditableLabel termKey="dash_btn_export" defaultValue="EXPORTER DONNÉES BRUTES" />
+                                            </button>
+                                        )}
+                                        
+                                        {currentUser?.role?.toUpperCase() === 'SUPER_ADMIN' && (
+                                            <>
+                                                <button onClick={() => { navigate('/admin/users'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
+                                                    <Users size={14} /> <EditableLabel termKey="dash_btn_users" defaultValue="GESTION UTILISATEURS" />
+                                                </button>
+                                                <button onClick={() => { navigate('/admin/submissions'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
+                                                    <Activity size={14} /> <EditableLabel termKey="dash_btn_submissions" defaultValue="VOIR LES SOUMISSIONS" />
+                                                </button>
+                                                <button onClick={() => { setIsEditMode(!isEditMode); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
+                                                    <Pencil size={14} /> {isEditMode ? "QUITTER ÉDITION" : <EditableLabel termKey="dash_btn_edit" defaultValue="ACTIVER ÉDITION" />}
+                                                </button>
+                                            </>
+                                        )}
+
+                                        <div className="h-px w-full bg-slate-100 my-1" />
+
+                                        <button onClick={() => { handleLogout(); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-colors w-full text-left">
+                                            <LogOut size={14} /> <EditableLabel termKey="dash_btn_logout" defaultValue="Déconnexion" />
+                                        </button>
+                                    </motion.div>
+                                </>
+                            )}
+                        </AnimatePresence>
+                    </div>
                 </div>
             </nav>
 
             <div className="max-w-[1600px] mx-auto p-12 pb-24 relative">
-                {currentUser?.role?.toUpperCase() === 'SUPERADMIN' && (activeScope === 'national' || activeScope === 'gouvernorate') && (
-                    <div className="mb-10 flex justify-end">
+                {['SUPER_ADMIN', 'GLOBAL_ADMIN', 'SUPERADMIN'].includes(currentUser?.role?.toUpperCase()) && (activeScope === 'national' || activeScope === 'gouvernorate') && (
+                    <div className="mb-10 flex justify-end gap-4">
                         <button
                             type="button"
                             onClick={exportSuperAdminCSV}
                             className="pro-btn-secondary inline-flex items-center gap-2 rounded-full bg-slate-900 text-white px-5 py-3 text-xs font-black uppercase tracking-[2px] transition-colors hover:bg-slate-800"
                         >
                             <FileSpreadsheet size={16} />
-                            Exporter réponses CSV
+                            <EditableLabel termKey="dash_btn_csv" defaultValue="Exporter réponses CSV" />
                         </button>
                     </div>
                 )}
@@ -728,12 +768,18 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                                                         </div>
                                                     )}
 
-                                                    {/* Competitive Matrix (if in gov scope) */}
+                                                    {/* Competitive Matrix & Regional Deep Profile (if in gov scope) */}
                                                     {activeScope === 'gouvernorate' && activeScopeId && (
-                                                        <CompetitiveMatrix
-                                                            rankings={homepageData?.rankings}
-                                                            govName={homepageData?.headline?.scope_label?.replace('Gouvernorat de ', '')}
-                                                        />
+                                                        <>
+                                                            <CompetitiveMatrix
+                                                                rankings={homepageData?.rankings}
+                                                                govName={homepageData?.headline?.scope_label?.replace('Gouvernorat de ', '')}
+                                                            />
+                                                            <RegionalProfilePanel
+                                                                govName={homepageData?.headline?.scope_label?.replace('Gouvernorat de ', '')}
+                                                                isSuperAdmin={['SUPER_ADMIN', 'GLOBAL_ADMIN', 'SUPERADMIN'].includes(currentUser?.role?.toUpperCase())}
+                                                            />
+                                                        </>
                                                     )}
                                                 </div>
                                             )}
@@ -747,11 +793,21 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
             </div>
 
             <AnimatePresence>
-                {isQuestionnaireManagerOpen && (
-                    <QuestionnaireManager 
-                        isOpen={isQuestionnaireManagerOpen} 
-                        onClose={() => setIsQuestionnaireManagerOpen(false)} 
-                    />
+                {isEditMode && (
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.8, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.8, y: 20 }}
+                        className="fixed bottom-12 right-12 z-[100]"
+                    >
+                        <button
+                            onClick={() => setIsEditMode(false)}
+                            className="flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-full font-black uppercase tracking-[3px] text-[11px] italic shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:bg-brand-600 transition-all group border border-white/10"
+                        >
+                            <XCircle size={20} className="text-brand-400 group-hover:text-white transition-colors" />
+                            <EditableLabel termKey="dash_btn_quit_edit" defaultValue="QUITTER LE MODE ÉDITION" />
+                        </button>
+                    </motion.div>
                 )}
             </AnimatePresence>
         </div>

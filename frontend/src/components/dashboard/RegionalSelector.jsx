@@ -1,7 +1,8 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, ArrowRight, Shield, Globe } from 'lucide-react';
+import { MapPin, ArrowRight, Shield, Globe, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import EditableLabel from './EditableLabel';
 
 const RegionalSelector = ({ regions = [] }) => {
     const navigate = useNavigate();
@@ -24,10 +25,10 @@ const RegionalSelector = ({ regions = [] }) => {
                     <Shield className="text-white glow-brand" size={36} />
                 </div>
                 <h1 className="text-5xl font-black text-slate-900 uppercase tracking-tight italic mb-4">
-                    Portail <span className="text-brand-600">Sentinelle</span>
+                    <EditableLabel termKey="selector_title_portal" defaultValue="Portail" /> <span className="text-brand-600"><EditableLabel termKey="selector_title_brand" defaultValue="Sentinelle" /></span>
                 </h1>
                 <p className="text-[11px] font-black text-slate-400 uppercase tracking-[8px] italic leading-none opacity-80">
-                    Architecture de Veille Sanitaire v2.0
+                    <EditableLabel termKey="selector_subtitle" defaultValue="Architecture de Veille Sanitaire v2.0" />
                 </p>
             </motion.div>
 
@@ -51,7 +52,7 @@ const RegionalSelector = ({ regions = [] }) => {
                                     <MapPin size={28} />
                                 </div>
                                 <div className="flex items-center gap-2.5 px-5 py-2.5 bg-brand-50 border border-brand-100 rounded-full text-[10px] font-black text-brand-600 uppercase tracking-widest italic opacity-0 group-hover:opacity-100 transition-all duration-500 transform translate-x-4 group-hover:translate-x-0">
-                                    VECTEUR ACTIF
+                                    <EditableLabel termKey="selector_active_vector" defaultValue="VECTEUR ACTIF" />
                                 </div>
                             </div>
                             
@@ -61,17 +62,17 @@ const RegionalSelector = ({ regions = [] }) => {
                             
                             <div className="space-y-5 mb-12">
                                 <div className="flex items-center justify-between p-1">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Établissements</span>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic"><EditableLabel termKey="selector_schools" defaultValue="Établissements" /></span>
                                     <span className="text-lg font-black text-slate-900 italic tabular-nums">{reg.schools}</span>
                                 </div>
                                 <div className="flex items-center justify-between p-1 border-t border-slate-50 pt-4">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Dossiers Collectés</span>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic"><EditableLabel termKey="selector_dossiers" defaultValue="Dossiers Collectés" /></span>
                                     <span className="text-lg font-black text-slate-900 italic tabular-nums">{reg.dossiers}</span>
                                 </div>
                             </div>
 
                             <div className="w-full py-5 bg-brand-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-[4px] flex items-center justify-center gap-3 group-hover:bg-brand-700 transition-all duration-500 shadow-xl shadow-brand-500/10 group-hover:shadow-brand-500/20 border border-white/20 italic">
-                                Scanner le Secteur <ArrowRight size={16} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
+                                <EditableLabel termKey="selector_btn_scan" defaultValue="Scanner le Secteur" /> <ArrowRight size={16} strokeWidth={3} className="group-hover:translate-x-1 transition-transform" />
                             </div>
                         </div>
                     </motion.div>
@@ -81,7 +82,7 @@ const RegionalSelector = ({ regions = [] }) => {
                         <div className="w-20 h-20 rounded-full border-4 border-dashed border-slate-100 mx-auto mb-8 flex items-center justify-center">
                             <RefreshCw size={28} className="text-brand-500 animate-spin" />
                         </div>
-                        <p className="text-[12px] font-black text-slate-400 uppercase tracking-[8px] italic animate-pulse">Initialisation du Réseau…</p>
+                        <p className="text-[12px] font-black text-slate-400 uppercase tracking-[8px] italic animate-pulse"><EditableLabel termKey="selector_init_msg" defaultValue="Initialisation du Réseau…" /></p>
                     </div>
                 )}
             </div>
@@ -97,7 +98,7 @@ const RegionalSelector = ({ regions = [] }) => {
                     onClick={() => navigate('/superadmin')}
                     className="text-[11px] font-black text-slate-400 hover:text-brand-600 transition-all uppercase tracking-[4px] border-b border-transparent hover:border-brand-600 pb-2 italic"
                 >
-                    Accéder au HUB National (SuperAdmin)
+                    <EditableLabel termKey="selector_btn_hub" defaultValue="Accéder au HUB National (SuperAdmin)" />
                 </button>
             </motion.div>
         </div>

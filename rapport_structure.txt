@@ -1,0 +1,53 @@
+
+--- TABLE START ---
+ | 
+--- TABLE END ---
+
+REPULBIQUE TUNISIENNE
+MINISTERE DE LA SANTE
+INSTITUT NATIOANL DE LA SANTE
+ENQUETE NATIONALE EN MILIEU SCOLAIRE
+MEDSPAD TUNISIE 2021
+
+--- TABLE START ---
+RAPPORT DE CLASSE
+--- TABLE END ---
+
+CR01	Gouvernorat: _______________________________________________
+CR02	Nom de l’établissement: _____________________________________________
+CR02a	Etablissement :                 Public                        Privé 
+CR03  Niveau d’études :                 1ère AS                       2ème AS 
+CR04	Date: Jour______________Mois _____________
+CR05	Nombre d’élèves présents: _______________
+CR06	Nombre d’élèves qui ont refusé de participer: _____________
+CR06a  Nombre d’élèves absents : _______________
+CR07	Ce lycée a-t-il demandé l’autorisation des parents pour que les élèves participent à l’enquête?
+	1   Oui
+	2   Non
+CR08 Si oui, combien d’élèves n’ont pas obtenu l’autorisation de leurs parents? Nombre _____________
+CR09	Quel est le nombre de questionnaires remplis collectés? Nombre ____________________
+CR12	Avez-vous remarqué des perturbations de la part des élèves lors de la réalisation des questionnaires?
+	1    Pas de perturbation
+	2    Oui, de la part de quelques élèves
+             3    Oui, de la part de plusieurs élèves
+CR13	Avez-vous trouvé que les élèves travaillaient sérieusement ?
+	1 Oui, tous
+            2   Presque tous / la majorité d'entre eux
+	3  Environ la moitié voire moins que la moitié
+CR14	Pensez-vous que les élèves ont trouvé facile ou difficile de répondre au questionnaire?
+	1Facile
+	2Ni facile ni difficile
+	3Difficile
+CR15	Combien de temps était prévu pour effectuer l'enquête? Minutes ____________
+CR16  Combien de temps a-t-il fallu :
+au premier élève pour remplir le questionnaire? Minutes ____________
+au dernier élève pour remplir le questionnaire? Minutes ____________
+CR17	Commentaire personnel: ___________________________________________________________________________
+______________________________________________________________________________________________________
+______________________________________________________________________________________________________
+______________________________________________________________________________________________________
+
+--- TABLE START ---
+Merci! Veuillez renvoyer le rapport de classe avec les questionnaires remplis
+--- TABLE END ---
+

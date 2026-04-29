@@ -9,9 +9,8 @@ from .models import (
     SectionA, SectionB, SectionC, SectionD, SectionE,
     SectionG, SectionH, SectionI, SectionJ, SectionK,
     SectionL, SectionM, SectionN, SectionP, SectionQ,
-    SectionL, SectionM, SectionN, SectionP, SectionQ,
     SectionR, SectionS, SectionT, SectionU, SectionV, SectionZ,
-    PlatformTerminology, DynamicQuestion
+    PlatformTerminology, DynamicQuestion, ClassReport
 )
 
 User = get_user_model()
@@ -46,6 +45,11 @@ class InviteUserSerializer(serializers.ModelSerializer):
         return value
 
 
+class ActivateUserSerializer(serializers.Serializer):
+    token = serializers.CharField()
+    password = serializers.CharField(min_length=8)
+
+
 
 class SecureTokenObtainPairSerializer(TokenObtainPairSerializer):
     def validate(self, attrs):
@@ -56,9 +60,8 @@ class SecureTokenObtainPairSerializer(TokenObtainPairSerializer):
             if user.status == 'DISABLED':
                 raise serializers.ValidationError({"detail": "Votre compte est bloqué suite à trop de tentatives. Contactez un administrateur."})
             
-            # SimpleJWT uses username for auth, but we allow email
-            # We must pass the correct username to Super.validate
-            attrs['username'] = user.username
+            # Ensure we pass the actual email to SimpleJWT/authenticate
+            attrs[User.USERNAME_FIELD] = user.email
 
         try:
             data = super().validate(attrs)
@@ -131,6 +134,25 @@ class DynamicQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = DynamicQuestion
         fields = '__all__'
+
+
+class ClassReportSerializer(serializers.ModelSerializer):
+    governorate_name = serializers.CharField(source='governorate.name', read_only=True)
+
+    class Meta:
+        model = ClassReport
+        fields = '__all__'
+
+    def create(self, validated_data):
+        user = self.context['request'].user if 'request' in self.context else None
+        if user and user.is_authenticated and (user.role == 'PRACTITIONER' or user.role == 'OPERATOR'):
+            # Auto-link to user's establishment and governorate if missing
+            if not validated_data.get('establishment') and user.establishment:
+                validated_data['establishment'] = user.establishment
+                validated_data['establishment_name'] = user.establishment.name
+            if not validated_data.get('governorate') and user.governorate:
+                validated_data['governorate'] = user.governorate
+        return super().create(validated_data)
 
 
 # ─── Section Serializers ─────────────────────────────────────────────────────────
@@ -311,6 +333,19 @@ SECTION_MODEL_MAP = {
     'section_z': SectionZ,
 }
 
+class QuestionnaireSessionListSerializer(serializers.ModelSerializer):
+    school_name = serializers.CharField(source='school.name', read_only=True)
+    governorate_name = serializers.CharField(source='governorate.name', read_only=True)
+    section_a = SectionASerializer(read_only=True)
+
+    class Meta:
+        model = QuestionnaireSession
+        fields = [
+            'id', 'school_name', 'governorate_name', 'language_used', 
+            'created_at', 'is_valid', 'exclusion_reason', 'has_risk_behavior',
+            'section_a'
+        ]
+
 
 class QuestionnaireSessionSerializer(serializers.ModelSerializer):
     school = SchoolEstablishmentSerializer(read_only=True)
@@ -343,7 +378,7 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuestionnaireSession
         fields = [
-            'id', 'school_class', 'school', 'governorate', 'language_used', 'created_at',
+            'id', 'school_class', 'class_report', 'school', 'governorate', 'language_used', 'created_at',
             'tobacco_user', 'ecig_user', 'hookah_user', 'alcohol_user', 'tranquilizer_user',
             'cannabis_user', 'cocaine_user', 'ecstasy_user', 'heroin_user', 'inhalant_user',
             'has_risk_behavior', 'is_valid', 'exclusion_reason',
@@ -360,14 +395,117 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
             'has_risk_behavior', 'is_valid', 'exclusion_reason',
         )
 
+    def update(self, instance, validated_data):
+        from django.db import transaction
+        sections_data = {key: validated_data.pop(key, None) for key in SECTION_MAP}
+        
+        with transaction.atomic():
+            # Update main session fields
+            for attr, value in validated_data.items():
+                setattr(instance, attr, value)
+            
+            # Update sections
+            updated_sections_data = {}
+            for section_key, section_data in sections_data.items():
+                section_instance = getattr(instance, section_key, None)
+                if section_data:
+                    if section_instance:
+                        for attr, value in section_data.items():
+                            setattr(section_instance, attr, value)
+                        section_instance.save()
+                        # Get full data for recalculation
+                        from django.forms.models import model_to_dict
+                        updated_sections_data[section_key] = model_to_dict(section_instance)
+                    else:
+                        # If section doesn't exist, create it
+                        new_sec = SECTION_MODEL_MAP[section_key].objects.create(session=instance, **section_data)
+                        updated_sections_data[section_key] = section_data
+                elif section_instance:
+                    from django.forms.models import model_to_dict
+                    updated_sections_data[section_key] = model_to_dict(section_instance)
+
+            # --- Recalculate Logic ---
+            def used(section_data, field='lifetime_freq'):
+                if not section_data: return False
+                val = section_data.get(field, '1')
+                return val is not None and val != '1' and val != ''
+
+            tobacco_user = used(updated_sections_data.get('section_c'))
+            ecig_user = used(updated_sections_data.get('section_d'))
+            hookah_user = used(updated_sections_data.get('section_e'))
+            alcohol_user = used(updated_sections_data.get('section_g'))
+            tranquilizer_user = used(updated_sections_data.get('section_h'))
+            cannabis_user = used(updated_sections_data.get('section_i'))
+            cocaine_user = used(updated_sections_data.get('section_j'))
+            ecstasy_user = used(updated_sections_data.get('section_k'))
+            heroin_user = used(updated_sections_data.get('section_l'))
+            inhalant_user = used(updated_sections_data.get('section_m'))
+            
+            instance.tobacco_user = tobacco_user
+            instance.ecig_user = ecig_user
+            instance.hookah_user = hookah_user
+            instance.alcohol_user = alcohol_user
+            instance.tranquilizer_user = tranquilizer_user
+            instance.cannabis_user = cannabis_user
+            instance.cocaine_user = cocaine_user
+            instance.ecstasy_user = ecstasy_user
+            instance.heroin_user = heroin_user
+            instance.inhalant_user = inhalant_user
+            instance.has_risk_behavior = any([
+                tobacco_user, ecig_user, hookah_user, alcohol_user,
+                tranquilizer_user, cannabis_user, cocaine_user,
+                ecstasy_user, heroin_user, inhalant_user,
+            ])
+            
+            # Simple validation recalculation
+            is_valid = True
+            exclusion_reasons = []
+            section_a_data = updated_sections_data.get('section_a') or {}
+            gender = section_a_data.get('gender')
+            if not gender or gender not in ['M', 'F']:
+                is_valid = False
+                exclusion_reasons.append("Genre non précisé")
+                
+            birth_year = section_a_data.get('birth_year')
+            if birth_year:
+                age = 2026 - birth_year
+                if age < 15 or age > 18:
+                    is_valid = False
+                    exclusion_reasons.append(f"Âge hors limites ({age} ans)")
+            
+            instance.is_valid = is_valid
+            instance.exclusion_reason = " | ".join(exclusion_reasons) if not is_valid else None
+            
+            instance.save()
+            
+        return instance
+
     def create(self, validated_data):
         from django.db import transaction
 
-        # Derive school and governorate from school_class
+        # Derive school and governorate from school_class or class_report
         school_class = validated_data.get('school_class')
+        class_report = validated_data.get('class_report')
+        
         if school_class:
             validated_data['school'] = school_class.establishment
             validated_data['governorate'] = school_class.establishment.governorate
+        elif class_report:
+            if class_report.establishment:
+                validated_data['school'] = class_report.establishment
+            validated_data['governorate'] = class_report.governorate
+        
+        # --- Safety Safety Net: Ensure governorate is NEVER null ---
+        if not validated_data.get('governorate'):
+            from .models import Governorate
+            # Fallback to user's establishment governorate if available
+            user = self.context.get('request').user if self.context.get('request') else None
+            if user and getattr(user, 'establishment', None) and user.establishment.governorate:
+                validated_data['governorate'] = user.establishment.governorate
+            else:
+                gov = Governorate.objects.first()
+                if gov:
+                    validated_data['governorate'] = gov
         
         # Pop all nested section data
         sections_data = {key: validated_data.pop(key, None) for key in SECTION_MAP}
@@ -386,8 +524,8 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
             section_m = sections_data.get('section_m') or {}
 
             def used(section_data, field='lifetime_freq'):
-                val = section_data.get(field, 'never')
-                return val is not None and val != 'never' and val != ''
+                val = section_data.get(field, '1')
+                return val is not None and val != '1' and val != ''
 
             tobacco_user = used(section_c)
             ecig_user = used(section_d)
@@ -442,10 +580,19 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
             # 4. Consommation de substance fictive (Section P / Question piège)
             section_p_data = sections_data.get('section_p') or {}
             fictive_substance = section_p_data.get('fictive_substance_consumption')
-            if fictive_substance == 'yes':
+            if fictive_substance == '1': # '1' is 'Oui' in YES_NO
                 is_valid = False
                 exclusion_reasons.append("Consommation de substance fictive déclarée (Question piège)")
 
+            # Auto-fill school and governorate from class_report if missing
+            if 'class_report' in validated_data and validated_data['class_report']:
+                report = validated_data['class_report']
+                if not validated_data.get('school'):
+                    validated_data['school'] = report.school
+                if not validated_data.get('governorate'):
+                    validated_data['governorate'] = report.governorate
+
+            extra_answers = validated_data.pop('extra_answers', {})
             session = QuestionnaireSession.objects.create(
                 **validated_data,
                 tobacco_user=tobacco_user,
@@ -461,7 +608,7 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
                 has_risk_behavior=has_risk,
                 is_valid=is_valid,
                 exclusion_reason=" | ".join(exclusion_reasons) if not is_valid else None,
-                extra_answers=validated_data.get('extra_answers', {})
+                extra_answers=extra_answers
             )
 
             # Create each section record

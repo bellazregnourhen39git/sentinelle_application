@@ -13,9 +13,13 @@ export const TerminologyProvider = ({ children }) => {
         try {
             const res = await api.get('terminology/');
             const termMap = {};
-            res.data.forEach(t => {
-                termMap[t.key] = t.value_fr;
-            });
+            if (Array.isArray(res.data)) {
+                res.data.forEach(t => {
+                    if (t && t.key) {
+                        termMap[t.key] = t.value_fr;
+                    }
+                });
+            }
             setTerms(termMap);
         } catch (err) {
             console.error("Failed to load terminology", err);
@@ -42,7 +46,7 @@ export const TerminologyProvider = ({ children }) => {
         
         try {
             // First try update
-            await api.patch(`terminology/${key}/`, { value_fr: newVal });
+            await api.patch(`terminology/${encodeURIComponent(key)}/`, { value_fr: newVal });
             setTerms(prev => ({ ...prev, [key]: newVal }));
         } catch (err) {
             // If failed (maybe 404), try create

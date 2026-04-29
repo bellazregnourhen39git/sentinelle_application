@@ -2,6 +2,7 @@ import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import * as d3 from 'd3';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Target, Users, TrendingUp, AlertCircle, RefreshCw } from 'lucide-react';
+import EditableLabel from './EditableLabel';
 
 // Using Highcharts robust Tunisia GeoJSON with 24 governorates
 const GEOJSON_URL = '/tunisia.geojson';
@@ -140,8 +141,8 @@ const TunisiaMap = ({ data, activeSection, currentUser, onRegionSelect }) => {
           <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
           <span className="text-[9px] font-black uppercase text-slate-500 tracking-[1.5px] italic">
             {isSuperAdmin
-              ? 'Surveillance Nationale Active'
-              : `Secteur : ${adminGov || 'Restreint'}`}
+              ? <EditableLabel termKey="map_nat_monitor" defaultValue="Surveillance Nationale Active" />
+              : <><EditableLabel termKey="map_sector" defaultValue="Secteur" /> : {adminGov || <EditableLabel termKey="map_restricted" defaultValue="Restreint" />}</>}
           </span>
         </div>
       </div>
@@ -307,7 +308,7 @@ const TunisiaMap = ({ data, activeSection, currentUser, onRegionSelect }) => {
           <div className="flex items-center gap-3 px-5 py-2.5 bg-indigo-500 rounded-full shadow-xl shadow-indigo-500/20 border border-indigo-400/30">
             <Target size={14} className="text-white" />
             <span className="text-[10px] font-black text-white uppercase tracking-[2px] italic">
-              {activeSection ? `SECTION ${activeSection}` : 'DENSITÉ GLOBALE'}
+              {activeSection ? <><EditableLabel termKey="map_section_prefix" defaultValue="SECTION" /> {activeSection}</> : <EditableLabel termKey="map_global_density" defaultValue="DENSITÉ GLOBALE" />}
             </span>
           </div>
         </div>

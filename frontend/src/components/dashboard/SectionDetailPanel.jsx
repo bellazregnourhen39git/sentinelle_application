@@ -2,8 +2,9 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft, Users, AlertTriangle, BarChart2, PieChart,
-    Layers, TrendingUp, Info, Activity, Zap, Smartphone, ShieldCheck
+    Layers, Info
 } from 'lucide-react';
+import EditableLabel from './EditableLabel';
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell,
     PieChart as RechartsPie, Pie, Legend
@@ -89,7 +90,7 @@ const BarQuestionItem = ({ code, label, distribution, index }) => {
 const DonutQuestionItem = ({ code, label, distribution, index }) => {
     const palette = PALETTES[index % PALETTES.length];
     const hasData = distribution.some(d => d.count > 0);
-    const data = distribution.filter(d => d.count > 0).map(d => ({ name: d.label, value: d.count }));
+    const data = distribution.filter(d => d.count > 0).map(d => ({ name: d.label, value: d.pct }));
 
     return (
         <div className="flex flex-col gap-6 p-8 rounded-[40px] bg-white border border-slate-100 shadow-xl shadow-slate-200/20 hover:scale-[1.02] transition-all duration-500 group min-h-[250px]">
@@ -110,9 +111,22 @@ const DonutQuestionItem = ({ code, label, distribution, index }) => {
                                 <Cell key={i} fill={DIVERSE_PALETTE[i % DIVERSE_PALETTE.length]} />
                             ))}
                         </Pie>
-                            <Tooltip contentStyle={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', fontSize: '10px', fontWeight: 900, color: '#0f172a', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} />
-                            <Legend iconType="circle" iconSize={8} layout="vertical" verticalAlign="middle" align="right" 
-                               formatter={(v) => <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest pl-2 truncate max-w-[80px]">{v}</span>} />
+                            <Tooltip 
+                                formatter={(v) => [`${v}%`, 'Prévalence']}
+                                contentStyle={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', fontSize: '10px', fontWeight: 900, color: '#0f172a', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} 
+                            />
+                            <Legend 
+                                iconType="circle" 
+                                iconSize={8} 
+                                layout="vertical" 
+                                verticalAlign="middle" 
+                                align="right" 
+                                formatter={(v, entry) => (
+                                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest pl-2 truncate max-w-[80px]">
+                                        {v} ({entry.payload.value}%)
+                                    </span>
+                                )} 
+                            />
                         </RechartsPie>
                     </ResponsiveContainer>
                 ) : (
@@ -135,17 +149,6 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
     const sectionName = SECTION_NAMES[sectionId] || `Vecteur ${sectionId}`;
     const questions = data.questions || [];
     const n = data.n_submissions || 0;
-    const correlations = data.correlations || [];
-    const insights = data.insights || [];
-    
-    const ICONS = { AlertTriangle, Smartphone, Activity, Zap, ShieldCheck };
-    const colorMap = {
-        rose: { bg: 'bg-rose-50', text: 'text-rose-600', glow: 'bg-rose-500/5' },
-        orange: { bg: 'bg-orange-50', text: 'text-orange-600', glow: 'bg-orange-500/5' },
-        amber: { bg: 'bg-amber-50', text: 'text-amber-600', glow: 'bg-amber-500/5' },
-        blue: { bg: 'bg-blue-50', text: 'text-blue-600', glow: 'bg-blue-500/5' },
-        brand: { bg: 'bg-brand-50', text: 'text-brand-600', glow: 'bg-brand-500/5' }
-    };
 
     return (
         <motion.div
@@ -161,11 +164,11 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
                     onClick={onBack}
                     className="flex items-center gap-4 text-slate-500 hover:text-brand-600 font-black text-[11px] uppercase tracking-[5px] transition-all bg-white shadow-xl shadow-slate-200/40 px-10 py-5 rounded-[24px] border border-slate-100 hover:scale-[1.05] active:scale-95 group italic"
                 >
-                    <ArrowLeft size={18} className="group-hover:-translate-x-2 transition-transform" strokeWidth={3} /> Retour au Tableau de Bord
+                    <ArrowLeft size={18} className="group-hover:-translate-x-2 transition-transform" strokeWidth={3} /> <EditableLabel termKey="detail_btn_back" defaultValue="Retour au Tableau de Bord" />
                 </button>
                 <div className="flex items-center gap-4 px-10 py-5 rounded-[24px] bg-slate-900 shadow-2xl shadow-slate-900/20">
                    <div className="w-2.5 h-2.5 rounded-full bg-brand-500 shadow-2xl shadow-brand-500 animate-pulse" />
-                   <span className="text-[11px] font-black text-white uppercase tracking-[5px] italic">Vecteur Analytique {sectionId}</span>
+                   <span className="text-[11px] font-black text-white uppercase tracking-[5px] italic"><EditableLabel termKey="detail_vecteur_prefix" defaultValue="Vecteur Analytique" /> {sectionId}</span>
                 </div>
             </div>
 
@@ -186,15 +189,14 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
                         </div>
                         <div>
                             <h2 className="text-5xl font-black text-slate-900 tracking-tighter uppercase italic leading-none mb-4">{sectionName}</h2>
-                            <p className="text-[11px] font-black text-brand-600 uppercase tracking-[6px] italic opacity-60">Consolidation Intelligence Vague 2026.Alpha</p>
+                            <p className="text-[11px] font-black text-brand-600 uppercase tracking-[6px] italic opacity-60"><EditableLabel termKey="detail_consolidation_msg" defaultValue="Consolidation Intelligence Vague 2026.Alpha" /></p>
                         </div>
                     </div>
 
                     <div className="flex flex-wrap items-center gap-6">
                         {[
-                            { icon: Users, label: 'Dossiers', value: n === 0 ? '—' : n.toLocaleString(), color: 'text-brand-600' },
-                            { icon: Layers, label: 'Variables', value: questions.length, color: 'text-slate-900' },
-                            { icon: TrendingUp, label: 'Connexions', value: correlations.length, color: 'text-indigo-600' },
+                            { icon: Users, label: <EditableLabel termKey="detail_stat_dossiers" defaultValue="Dossiers" />, value: n === 0 ? '—' : n.toLocaleString(), color: 'text-brand-600' },
+                            { icon: Layers, label: <EditableLabel termKey="detail_stat_variables" defaultValue="Variables" />, value: questions.length, color: 'text-slate-900' },
                         ].map(({ icon: Icon, label, value, color }, i) => (
                             <div key={i} className="flex flex-col items-center px-8 py-5 rounded-[32px] bg-slate-50 border border-slate-100 min-w-[140px] shadow-sm hover:bg-white hover:border-brand-500/20 transition-all cursor-default">
                                 <span className="text-[9px] font-black text-slate-400 uppercase tracking-[4px] mb-2 italic">{label}</span>
@@ -232,69 +234,6 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
                     )}
                 </div>
 
-                {/* Footer Matrix Linkage */}
-                {correlations.length > 0 && (
-                    <div className="mt-16 pt-12 border-t border-slate-100 relative z-10">
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-ping" />
-                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-[6px] italic">Interactions Transversales Détectées</p>
-                        </div>
-                        <div className="flex flex-wrap gap-4">
-                            {correlations.map((c, i) => (
-                                <motion.div 
-                                    key={i} 
-                                    whileHover={{ y: -4, scale: 1.02 }}
-                                    className="px-6 py-3 bg-white rounded-[24px] border border-slate-100 shadow-xl shadow-slate-200/20 flex items-center gap-4 hover:border-brand-500/30 transition-all cursor-pointer group/item"
-                                >
-                                    <span className="w-9 h-9 rounded-xl flex items-center justify-center text-white text-[11px] font-black shadow-lg italic"
-                                        style={{ backgroundColor: GROUP_COLORS[c.section_id] || '#0EA5E9' }}>
-                                        {c.section_id}
-                                    </span>
-                                    <span className="text-[11px] font-black text-slate-500 uppercase tracking-[3px] italic group-hover/item:text-brand-600 transition-colors">{SECTION_NAMES[c.section_id] || c.section_id}</span>
-                                </motion.div>
-                            ))}
-                        </div>
-                    </div>
-                )}
-                
-                {/* Dynamically Computed Section Insights */}
-                {insights.length > 0 && (
-                    <div className="mt-16 pt-12 border-t border-slate-100 relative z-10">
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse shadow-[0_0_10px_rgba(244,63,94,0.6)]" />
-                            <p className="text-[11px] font-black text-rose-500 uppercase tracking-[6px] italic">Interprétations Comportementales Déduites</p>
-                        </div>
-                        
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            {insights.map((insight) => {
-                                const Icon = ICONS[insight.icon] || Info;
-                                const colors = colorMap[insight.color] || colorMap.brand;
-                                return (
-                                    <div 
-                                        key={insight.id}
-                                        className="bg-slate-50 border border-slate-100 p-8 rounded-[32px] group hover:bg-white hover:border-slate-200 hover:-translate-y-1 hover:shadow-xl transition-all duration-300 relative overflow-hidden"
-                                    >
-                                        <div className={`absolute top-0 right-0 w-32 h-32 ${colors.glow} -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700`} />
-                                        
-                                        <div className="flex items-start justify-between relative z-10">
-                                            <div className={`w-12 h-12 rounded-2xl ${colors.bg} ${colors.text} flex items-center justify-center mb-6`}>
-                                                <Icon size={20} />
-                                            </div>
-                                            <div className={`px-4 py-2 ${colors.bg} ${colors.text} rounded-full font-black text-[10px] uppercase tracking-widest`}>
-                                                {insight.stat}
-                                            </div>
-                                        </div>
-                                        
-                                        <h4 className="text-lg font-black text-slate-900 mb-2 relative z-10 italic">{insight.title}</h4>
-                                        <p className="text-slate-500 text-sm font-bold leading-relaxed relative z-10">
-                                            {insight.description}
-                                        </p>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-                )}
             </div>
         </motion.div>
     );

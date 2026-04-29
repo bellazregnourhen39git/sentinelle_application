@@ -52,7 +52,7 @@ const RankingsLab = () => {
                         className="flex items-center gap-3 px-6 py-3 rounded-full bg-slate-900 border border-slate-800 text-[10px] font-black uppercase tracking-[3px] italic hover:bg-white hover:text-slate-950 transition-colors"
                     >
                         <ArrowLeft size={14} />
-                        Retour Hub Central
+                        <EditableLabel termKey="lab_rankings_btn_back" defaultValue="Retour Hub Central" />
                     </button>
                     <div className="flex items-center gap-4 bg-slate-900 px-6 py-3 rounded-full border border-slate-800">
                         <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse glow-brand" />
@@ -82,11 +82,14 @@ const RankingsLab = () => {
                         <thead>
                             <tr>
                                 <th className="p-8 border-b border-slate-800/80 text-[10px] uppercase font-black tracking-[4px] text-slate-400 italic sticky left-0 bg-slate-950/95 backdrop-blur-md z-20">
-                                    Territoire
+                                    <EditableLabel termKey="lab_rankings_table_territory" defaultValue="Territoire" />
                                 </th>
                                 {Object.keys(rankings).map(key => (
                                     <th key={key} className="p-8 border-b border-slate-800/80 text-[10px] uppercase font-black tracking-[3px] text-slate-300 italic whitespace-nowrap">
-                                        {rankings[key].label}
+                                        <EditableLabel 
+                                            termKey={`substance_${rankings[key].label.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, '_').replace(/-/g, '_')}`} 
+                                            defaultValue={rankings[key].label} 
+                                        />
                                     </th>
                                 ))}
                             </tr>
@@ -115,7 +118,7 @@ const RankingsLab = () => {
                                                             {prevalence}%
                                                         </span>
                                                         <span className={`text-[8px] uppercase font-bold tracking-widest ${isTop3 ? 'text-brand-400' : 'text-slate-600'}`}>
-                                                            Prév.
+                                                            <EditableLabel termKey="lab_rankings_table_prev_label" defaultValue="Prév." />
                                                         </span>
                                                     </div>
                                                 </div>

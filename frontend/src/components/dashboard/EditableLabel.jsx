@@ -50,8 +50,10 @@ const EditableLabel = ({ termKey, defaultValue, className = "" }) => {
             />
             <div className="absolute right-0 flex items-center gap-1">
                 <button 
+                    type="button"
                     onMouseDown={(e) => {
                         e.preventDefault(); // Prevent blur before click
+                        e.stopPropagation();
                         updateTerm(termKey, tempValue);
                     }}
                     className="p-1.5 rounded-lg bg-brand-500 text-white hover:bg-brand-600 transition-all shadow-sm"

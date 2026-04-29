@@ -17,6 +17,8 @@ import {
 } from 'lucide-react';
 import { json2csv } from 'json-2-csv';
 import api from '../api';
+import EditableLabel from '../components/dashboard/EditableLabel';
+import { useTerminology } from '../TerminologyContext';
 
 const COLORS = ['#0ea5e9', '#6366f1', '#f43f5e', '#f59e0b', '#10b981'];
 
@@ -41,6 +43,7 @@ const StatCard = ({ icon: Icon, label, value, trend, colorClass }) => (
 
 const Dashboard = () => {
   const { t } = useTranslation();
+  const { t_dyn } = useTerminology();
   const [profile, setProfile] = useState(null);
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -95,26 +98,26 @@ const Dashboard = () => {
             <Activity className="text-brand-500 animate-pulse" size={20} />
         </div>
       </div>
-      <p className="text-slate-400 text-[10px] font-black uppercase tracking-[5px] animate-pulse">Synchronizing Intelligence</p>
+      <p className="text-slate-400 text-[10px] font-black uppercase tracking-[5px] animate-pulse"><EditableLabel termKey="dash_sync_msg" defaultValue="Synchronisation de l'Intelligence" /></p>
     </div>
   );
 
   if (!profile || !stats) return (
     <div className="pro-card p-20 text-center max-w-2xl mx-auto mt-20 border-rose-100">
       <AlertTriangle className="mx-auto text-rose-500 mb-6" size={48} />
-      <h2 className="text-2xl font-black text-slate-900 italic uppercase tracking-tighter">System Offline</h2>
+      <h2 className="text-2xl font-black text-slate-900 italic uppercase tracking-tighter"><EditableLabel termKey="dash_offline_title" defaultValue="Système Hors Ligne" /></h2>
       <p className="text-slate-500 mt-4 font-medium">L'accès aux données biométriques est temporairement suspendu. Vérifiez vos protocoles réseau.</p>
       <button onClick={() => window.location.reload()} className="mt-8 pro-btn-primary bg-slate-900 hover:bg-slate-800">
-        Re-initialize Session
+        Réinitialiser la Session
       </button>
     </div>
   );
 
   const substanceData = [
-    { name: 'Tobacco', value: stats.tobacco_users || 0 },
-    { name: 'Alcohol', value: stats.alcohol_users || 0 },
-    { name: 'Cannabis', value: stats.cannabis_users || 0 },
-    { name: 'Other', value: (stats.total_responses || 0) - (stats.has_risk_behavior_count || 0) },
+    { name: t_dyn('substance_tabac', 'Tabac'), value: stats.tobacco_users || 0, key: 'substance_tabac' },
+    { name: t_dyn('substance_alcool', 'Alcool'), value: stats.alcohol_users || 0, key: 'substance_alcool' },
+    { name: t_dyn('substance_cannabis', 'Cannabis'), value: stats.cannabis_users || 0, key: 'substance_cannabis' },
+    { name: t_dyn('substance_autres', 'Autres'), value: (stats.total_responses || 0) - (stats.has_risk_behavior_count || 0), key: 'substance_autres' },
   ];
 
   return (
@@ -141,11 +144,11 @@ const Dashboard = () => {
         <div className="flex items-center gap-4">
           <button onClick={exportToCSV} className="pro-btn-secondary flex items-center gap-2 group shadow-sm">
             <FileSpreadsheet size={16} className="group-hover:text-brand-500 transition-colors" />
-            <span>Extraire CSV</span>
+            <span><EditableLabel termKey="dash_btn_csv" defaultValue="Extraire CSV" /></span>
           </button>
           <button className="pro-btn-primary flex items-center gap-2 shadow-xl shadow-brand-500/10 active:scale-95">
             <Filter size={16} />
-            <span>Filtres Avancés</span>
+            <span><EditableLabel termKey="dash_btn_filters" defaultValue="Filtres Avancés" /></span>
           </button>
         </div>
       </header>
@@ -154,29 +157,29 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         <StatCard
           icon={Users}
-          label="Total Cohort"
+          label={<EditableLabel termKey="dash_stat_cohort" defaultValue="Cohorte Totale" />}
           value={stats.total_responses || stats.total_national_responses || 0}
           trend={12}
           colorClass="bg-blue-500"
         />
         <StatCard
           icon={Activity}
-          label="Risk Factor"
+          label={<EditableLabel termKey="dash_stat_risk" defaultValue="Facteur de Risque" />}
           value={`${Math.round(((stats.has_risk_behavior_count || 0) / (stats.total_responses || 1)) * 100)}%`}
           trend={-5}
           colorClass="bg-rose-500"
         />
         <StatCard
           icon={TrendingUp}
-          label="Live Inlets"
+          label={<EditableLabel termKey="dash_stat_inlets" defaultValue="Sessions Actives" />}
           value={stats.active_sessions || 24}
           trend={8}
           colorClass="bg-brand-500"
         />
         <StatCard
           icon={ShieldCheck}
-          label="Data Integrity"
-          value="Validated"
+          label={<EditableLabel termKey="dash_stat_integrity" defaultValue="Intégrité des Données" />}
+          value="Validé"
           colorClass="bg-slate-900"
         />
       </div>
@@ -187,12 +190,12 @@ const Dashboard = () => {
         <div className="lg:col-span-3 pro-card p-10 border-slate-100">
           <div className="flex items-center justify-between mb-10">
             <div>
-                <h3 className="text-xl font-black text-slate-900 uppercase italic tracking-tight">Prevalence Dynamics</h3>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Real-time vector analysis</p>
+                <h3 className="text-xl font-black text-slate-900 uppercase italic tracking-tight"><EditableLabel termKey="dash_prev_dynamics" defaultValue="Dynamique de Prévalence" /></h3>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1"><EditableLabel termKey="dash_realtime_vec" defaultValue="Analyse vectorielle en temps réel" /></p>
             </div>
             <div className="px-4 py-2 bg-slate-50 rounded-xl border border-slate-100">
               <span className="flex items-center gap-2 text-[10px] font-black text-slate-500 uppercase tracking-widest">
-                <span className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse"></span> National Index
+                <span className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse"></span> <EditableLabel termKey="dash_nat_index" defaultValue="Indice National" />
               </span>
             </div>
           </div>
@@ -226,8 +229,8 @@ const Dashboard = () => {
         {/* Global Distribution */}
         <div className="lg:col-span-2 pro-card p-10 border-slate-100 flex flex-col items-center">
             <div className="w-full text-center mb-10">
-                <h3 className="text-xl font-black text-slate-900 uppercase italic tracking-tight">Risk Segmentation</h3>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Weighted Distribution</p>
+                <h3 className="text-xl font-black text-slate-900 uppercase italic tracking-tight"><EditableLabel termKey="dash_risk_seg" defaultValue="Segmentation du Risque" /></h3>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1"><EditableLabel termKey="dash_weighted_dist" defaultValue="Distribution Pondérée" /></p>
             </div>
           <div className="h-64 w-full flex justify-center scale-110">
             <ResponsiveContainer width="100%" height="100%">
@@ -247,6 +250,21 @@ const Dashboard = () => {
               </PieChart>
             </ResponsiveContainer>
           </div>
+          
+          {/* Editable Legend */}
+          <div className="grid grid-cols-2 gap-4 w-full mt-6">
+            {substanceData.map((entry, index) => (
+              <div key={index} className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full" style={{ backgroundColor: COLORS[index % COLORS.length] }}></div>
+                <EditableLabel 
+                  termKey={entry.key} 
+                  defaultValue={entry.name.replace(t_dyn(entry.key, ''), '').trim() || entry.name} 
+                  className="text-[10px] font-bold text-slate-500 uppercase tracking-wider" 
+                />
+              </div>
+            ))}
+          </div>
+          
           <div className="mt-12 w-full space-y-4">
             {substanceData.map((s, i) => (
               <div key={s.name} className="flex items-center justify-between p-3 rounded-2xl bg-slate-50/50 border border-slate-100/50 hover:bg-white transition-all cursor-default group">
@@ -265,19 +283,19 @@ const Dashboard = () => {
       <div className="pro-card overflow-hidden border-slate-100 shadow-2xl shadow-slate-200/20">
         <div className="p-10 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
             <div>
-                <h3 className="text-xl font-black text-slate-900 uppercase italic tracking-tight">Regional Intelligence</h3>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1">Geospatial Distribution Table</p>
+                <h3 className="text-xl font-black text-slate-900 uppercase italic tracking-tight"><EditableLabel termKey="dash_reg_intel" defaultValue="Intelligence Régionale" /></h3>
+                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1"><EditableLabel termKey="dash_geospatial_table" defaultValue="Tableau de Distribution Géospatiale" /></p>
             </div>
-          <span className="text-[10px] font-black text-brand-600 bg-brand-50 border border-brand-100 px-4 py-2 rounded-full uppercase tracking-[2px] italic">Live Stream</span>
+          <span className="text-[10px] font-black text-brand-600 bg-brand-50 border border-brand-100 px-4 py-2 rounded-full uppercase tracking-[2px] italic">Flux en Direct</span>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-white border-b border-slate-100">
-                <th className="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[2px]">Locus Identifier</th>
-                <th className="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[2px] text-center">Volume</th>
-                <th className="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[2px] text-center">Tox Index</th>
-                <th className="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[2px] text-center">Status</th>
+                <th className="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[2px]"><EditableLabel termKey="dash_th_locus" defaultValue="Identifiant Local" /></th>
+                <th className="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[2px] text-center"><EditableLabel termKey="dash_th_volume" defaultValue="Volume" /></th>
+                <th className="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[2px] text-center"><EditableLabel termKey="dash_th_tox" defaultValue="Indice de Toxicité" /></th>
+                <th className="p-8 text-[11px] font-black text-slate-400 uppercase tracking-[2px] text-center"><EditableLabel termKey="dash_th_status" defaultValue="Statut" /></th>
               </tr>
             </thead>
             <tbody>
@@ -298,7 +316,7 @@ const Dashboard = () => {
                     </div>
                   </td>
                   <td className="p-8 text-center">
-                    <span className="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest bg-brand-50 text-brand-600 border border-brand-100 shadow-sm">Secured</span>
+                    <span className="px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest bg-brand-50 text-brand-600 border border-brand-100 shadow-sm">Sécurisé</span>
                   </td>
                 </tr>
               ))}

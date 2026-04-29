@@ -1,0 +1,1105 @@
+____°____
+MINISTERE DE LA SANTE
+____°____
+INSTITUT NATIONAL DE LA SANTE
+ENQUETE NATIONALE EN MILIEU SCOLAIRE 
+Les conduites à risque et facteurs associés en Tunisie
+« MedSPAD »
+Tout d’abord, veuillez lire ce qui suit :
+Ce questionnaire fait partie d’une étude internationale sur les comportements à risque et leurs facteurs chez les élèves des pays méditerranéens, auquel répondront des nombreux élèves de différents pays méditerranéens. Cette étude est appelée MedSPAD.
+L’élève qui va répondre à ce questionnaire demeure totalement anonyme. Vous ne devez ni écrire votre prénom ni mentionner n’importe qu’elle autre information qui puisse vous identifier.
+Une fois vous avez terminé de remplir ce questionnaire, veuillez le mettre dans une enveloppe mise à la disposition des élèves. Une fois tous les élèves ont mis leur questionnaire dans l’enveloppe, le responsable la prendra après l’avoir bien fermée et sans consulter aucun questionnaire.
+Votre classe a été choisie aléatoirement pour participer à cette étude qui est réalisée par l’Institut National de la Santé Publique (INSP). 
+Rappelez-vous bien que votre participation est volontaire, et que si vous avez une question à laquelle vous ne voulez pas répondre, pour une raison ou une autre, veuillez la laisser vide. L’important c’est que votre réponse soit aussi sincère et bien réfléchie que possible.
+Les résultats ne seront pas présentés par classe ou par lycée de façon individuelle. N’oubliez pas que vos réponses sont totalement anonymes.
+Si la réponse ne correspond pas exactement à ce que vous voulez dire, choisissez la réponse la plus proche.
+Indiquez la réponse à chaque question en mettant (x) dans la case correspondante.
+En cas de doute, levez la main et le responsable vous aidera.
+Merci pour votre coopération.
+Vous pouvez maintenant commencer à remplir le questionnaire.
+
+--- TABLE START ---
+A | Les premières questions concernent des informations générales sur vous
+--- TABLE END ---
+
+C.A01	Genre?
+
+--- TABLE START ---
+1 |  | Masculin
+2 |  | Féminin
+--- TABLE END ---
+
+C.A02	Date de naissance :
+	                                          Mois		           année
+C.A03	A Quelle fréquence pratiquez-vous chacune des activités suivantes ?
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Jamais | Quelques fois par  an | 1 ou 2 fois par mois | Au moins une fois par semaine | Tous les jours
+(C.A03a) Activité sportive de tout  type |  |  |  |  | 
+(C.A03b) Lire des livres pour le plaisir (sans compter les livres scolaires) |  |  |  |  | 
+(C.A03c) Sortir le soir (dans une discothèque, un bar, une fête organisée, etc.) |  |  |  |  | 
+(C.A03d) Autres loisirs (jouer un instrument, chanter, peindre, écrire, etc.) |  |  |  |  | 
+(C.A03e) Se retrouver entre amis dans les centres commerciaux (dans la rue, dans un parc) |  |  |  |  | 
+(C.A03f) Utiliser l'internet pour vous amuser (chats, musique, jeux, réseaux sociaux, etc.). |  |  |  |  | 
+(C.A03g Regarder la television |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5
+--- TABLE END ---
+
+C.A04	Au cours du dernier mois, combien de jours avez-vous manqué le lycée pour l'une des raisons suivantes ? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Jamais | 1 jour | 2 jours | 3-4 jours | 5-6 jours | 7 jours ou plus
+(C.A04a) Parce que vous étiez malade |  |  |  |  |  | 
+(C.A04b) Parce que vous n'aviez pas envie d'aller au lycée |  |  |  |  |  | 
+(C.A04c) En raison de problèmes avec l'administration de l’établissement ou les enseignants |  |  |  |  |  | 
+(C.A04d) En raison de problèmes avec les ami(e)s au lycée |  |  |  |  |  | 
+(C.A04e) Parce que vous avez été renvoyé. |  |  |  |  |  | 
+(C.A04f) Pour d’autres raisons. |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6
+--- TABLE END ---
+
+C.A05	Comment évaluez-vous votre rendement scolaire à la fin du dernier trimestre ?
+(Cochez une seule case)
+
+--- TABLE START ---
+1 |  | En dessous de la moyenne (<10/20)
+2 |  | Moyen [10 – 12]
+3 |  | En dessus de la moyenne (>12/20)
+--- TABLE END ---
+
+C.A07 Laquelle/lesquelles des personnes suivantes vit avec vous dans la même maison?
+(Cochez autant de cases que nécessaire)
+
+--- TABLE START ---
+(C.A07b) | 1 |  | Père
+(C.A07d) | 1 |  | Mère
+(C.A07c) | 1 |  | Beau-père
+(C.A07e) | 1 |  | Belle-mère
+(C.A07f) | 1 |  | Frère(s)
+(C.A07g) | 1 |  | Sœur(s)
+(C.A07h) | 1 |  | Grand parent(s)
+(C.A07i) | 1 |  | Autres proches
+(C.A07j) | 1 |  | Je ne vis avec aucun de mes proches (un internat ou équivalent)
+--- TABLE END ---
+
+C .A07/2 Q11.a) : Si vous n’habitez pas avec vos parents ensemble, précisez pourquoi ?
+ Décès de l’un des parents ou bien les deux
+ Divorce
+ Migration
+ Autres causes
+Préciser
+…………………………………………………..
+O.A08	Durant les 30 derniers jours, combien de nuits avez vous passé en dehors de la maison ?
+(Cochez une seule case)
+
+--- TABLE START ---
+ | Aucune nuit | 1 nuit | 2 nuits | 3 nuits | 4 nuits | 5 nuits | 6 nuits | 7 nuits ou plus
+(O.A08) Les nuits passées en dehors de la la maison |  |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+--- TABLE END ---
+
+C.A09	D’une manière générale, quel est votre degré de satisfaction de votre relation avec :
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Très satisfait(e) | Satisfait(e) | Ni satisfait(e) ni insatisfait(e) | Pas tellement satisfait(e) | Non satisfait(e ) | Non applicable*
+(C.A09a) votre mère |  |  |  |  |  | 
+(C.A09b) votre père |  |  |  |  |  | 
+(C.A09h) votre Belle-mère |  |  |  |  |  | 
+(C.A09i)  votre Beau-père |  |  |  |  |  | 
+(C.A09c) votre fratrie |  |  |  |  |  | 
+(C.A09d) vos ami(e)s |  |  |  |  |  | 
+(C.A09e) vos camarades de classe |  |  |  |  |  | 
+(C.A09f) vos enseignants |  |  |  |  |  | 
+(C.A09g) l’administration du lycée |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6
+--- TABLE END ---
+
+Non applicable :* Personne non présente ou décédée
+
+--- TABLE START ---
+B | Les questions suivantes concernent vos parents. Si vous avez été élevé par des parents adoptifs ou autres personnes, ces questions les concernent. Mais si vous avez à la fois un beau-père ou une belle-mère et un père ou une mère biologique, ces questions concernent celui qui est le plus important pour votre éducation
+--- TABLE END ---
+
+C.B01 Quel est le plus haut niveau de scolarité atteint par votre père ? 
+(cochez une seule case)
+
+--- TABLE START ---
+1 |  | Non scolarisé |  |  | 
+2 |  | Niveau primaire |  |  | 
+A |  | At-il  réussi en sixième année ? | Oui | Non | Ne sait pas
+3 |  | Niveau collège |  |  | 
+B |  | At-il  réussi en neuvième année? | Oui | Non | Ne sait pas
+4 |  | Niveau secondaire |  |  | 
+C |  | At-il obtenu le baccalauréat ? | Oui | Non | Ne sait pas
+5 |  | Niveau universitaire ou plus |  |  | 
+6 |  | Ne sait pas |  |  | 
+7 |  | Non applicable |  |  | 
+8 |  | Formation professionnelle |  |  | 
+--- TABLE END ---
+
+C.B02 Quel est le plus haut niveau de scolarité atteint par votre mère ? 
+(cochez une seule case)
+
+--- TABLE START ---
+1 |  | Non scolarisé |  |  | 
+2 |  | Niveau primaire |  |  | 
+A |  | At-elle  réussi en sixième année ? | Oui | Non | Ne sait pas
+3 |  | Niveau collège |  |  | 
+B |  | At-elle  réussi en neuvième année ? | Oui | Non | Ne sait pas
+4 |  | Niveau secondaire |  |  | 
+C |  | At-elle obtenu le baccalauréat ? | Oui | Non | Ne sait pas
+5 |  | Niveau universitaire ou plus |  |  | 
+6 |  | Ne sait pas |  |  | 
+7 |  | Non applicable |  |  | 
+8 |  | Formation professionnelle |  |  | 
+--- TABLE END ---
+
+C.B03 	Votre père a-t-il un emploi ? 
+(Cochez une seule case)
+
+--- TABLE START ---
+1 |  | Oui, à plein temps
+2 |  | Oui, temps partiel
+3 |  | Ne travaille pas
+4 |  | Je ne sais pas
+5 |  | Non applicable
+6 |  | retraité
+--- TABLE END ---
+
+C.B04  Votre mère a-t-elle un emploi ?
+(Cochez une seule case)
+
+--- TABLE START ---
+1 |  | Oui, à plein temps
+2 |  | Oui, temps partiel
+3 |  | Ne travaille pas
+4 |  | Je ne sais pas
+5 |  | Non applicable
+6 |  | retraitée
+--- TABLE END ---
+
+C.B05 	Comment décrivez-vous la situation économique de votre famille par rapport au niveau économique des autres familles en Tunisie ? 
+(Cochez une seule case)
+
+--- TABLE START ---
+1 |  | Supérieure aux autres familles
+2 |  | Identique aux autres familles
+3 |  | Inférieure aux autres familles
+--- TABLE END ---
+
+
+--- TABLE START ---
+C | Les questions suivantes concernent la consommation de CIGARETTES et le TABAC A ROULER, sans compter les cigarettes électroniques
+--- TABLE END ---
+
+C.C01	À quel point pensez-vous qu'il serait difficile de vous procurer des cigarettes si vous le vouliez? 
+(Cochez une seule case)	
+
+--- TABLE START ---
+ | Impossible | Difficile | Facile | Ne sait pas
+(C.C01) Procurer des cigarettes |  |  |  | 
+ | 1 | 2 | 3 | 4
+--- TABLE END ---
+
+C.C02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume des cigarettes? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Oui | Non | Ne sait pas
+(C.C02a) Quelqu’un dans votre entourage familial  qui fume des cigarettes |  |  | 
+(C.C02b) Quelqu‘un parmi vos ami(e)s  qui fume des cigarettes |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+C.C03	Combien de fois avez-vous fumé des cigarettes (sans compter les cigarettes électroniques)?
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Jamais | 1-2 | 3-5 | 6-9 | 10-19 | 20-39 | 40 ou plus
+(C.C03a) Nombre de fois où vous avez fumé durant votre vie |  |  |  |  |  |  | 
+(C.C03b) Nombre de fois où vous avez fumé durant les 12 derniers mois |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7
+--- TABLE END ---
+
+C.C04	Combien de fois avez-vous fumé des cigarettes au cours des 30 DERNIERS JOURS? (sans compter les cigarettes électroniques) 
+(Cochez une seule case)
+
+--- TABLE START ---
+ | Jamais | < 1 cigarette par semaine | < 1 cigarette par jour | 1-5 cigarettes par jour | 6-10 cigarettes par jour | 11-20 cigarettes par jour | > 20 cigarettes par jour
+(C.C04) |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7
+--- TABLE END ---
+
+C.C05	À quel âge avez-vous commencé à faire ce qui suit? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Jamais | ≤ 9 ans | 10 ans | 11 ans | 12 ans | 13 ans | 14 ans | 15 ans | ≥ 16 ans
+(C.C05a)  Votre âge lorsque vous avez fumé la première cigarette (sans compter les cigarettes électroniques) |  |  |  |  |  |  |  |  | 
+(C.C05b)  Votre âge lorsque vous avez commencé à fumer tous les jours (sans compter les cigarettes électroniques) |  |  |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+--- TABLE END ---
+
+
+--- TABLE START ---
+D | Les questions suivantes concernent LES CIGARETTES ELECTRONIQUES (Vape)
+--- TABLE END ---
+
+C.D01 À quel point pensez-vous qu'il serait difficile de vous procurer des cigarettes électroniques si vous le vouliez?  (cochez une seule case)
+
+--- TABLE START ---
+ | Impossible | Difficile | Facile | Ne sait pas
+(C.D01) procurer des cigarettes électroniques |  |  |  | 
+ | 1 | 2 | 3 | 4
+--- TABLE END ---
+
+C.D02  Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume des cigarettes électroniques?(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Oui | Non | Ne sait pas
+(C.D02a) Quelqu’un dans votre entourage familial  qui fume des cigarettes électroniques |  |  | 
+(C.D02b) Quelqu‘un parmi vos ami(e)s  qui fume des cigarettes électroniques |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+C.D03	Combien de fois avez-vous fumé des cigarettes électroniques?
+(Cochez une seule case pour chaque ligne)	
+
+--- TABLE START ---
+ | Jamais | 1-2 | 3-5 | 6-9 | 10-19 | 20-39 | 40 ou plus
+(C.D03a) Nombre de fois où vous avez fumé des cigarettes électroniques durant votre VIE |  |  |  |  |  |  | 
+(C.D03b) Nombre de fois où vous avez fumé des cigarettes électroniques durant les 12 DERNIERS MOIS |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7
+--- TABLE END ---
+
+C.D04	Combien de fois avez-vous fumé des cigarettes électroniques au cours des 30 DERNIERS JOURS? (Cochez une seule case)	
+
+--- TABLE START ---
+ | Jamais | < 1 fois par semaine | Au moins 1 fois par semaine | Tous les jours ou presque tous les jours
+(C.D04) Nombre de fois où vous avez fumé des cigarettes électroniques au cours des 30 DERNIERS JOURS |  |  |  | 
+ | 1 | 2 | 3 | 4
+--- TABLE END ---
+
+C.D05	À quel âge avez-vous commencé à faire ce qui suit ?
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ |  | Jamais | ≤ 9 ans | 10 ans | 11 ans | 12 ans | 13 ans | 14 ans | 15 ans | ≥ 16 ans
+(C.D05a) Votre âge lorsque vous avez fumé la première cigarette électronique | (C.D05a) Votre âge lorsque vous avez fumé la première cigarette électronique |  |  |  |  |  |  |  |  | 
+(C.D05b) Votre âge lorsque vous avez commencé à fumer cigarettes électroniques tous les jours | (C.D05b) Votre âge lorsque vous avez commencé à fumer cigarettes électroniques tous les jours |  |  |  |  |  |  |  |  | 
+ |  | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+E | Les questions suivantes concernent LE NARGUILE | Les questions suivantes concernent LE NARGUILE | Les questions suivantes concernent LE NARGUILE | Les questions suivantes concernent LE NARGUILE | Les questions suivantes concernent LE NARGUILE | Les questions suivantes concernent LE NARGUILE | Les questions suivantes concernent LE NARGUILE | Les questions suivantes concernent LE NARGUILE | Les questions suivantes concernent LE NARGUILE | Les questions suivantes concernent LE NARGUILE
+--- TABLE END ---
+
+C.E01	À quel point pensez-vous qu'il serait difficile de vous procurer un narguilé si vous le vouliez ?
+(Cochez une seule case)
+
+--- TABLE START ---
+ | Impossible | Difficile | Facile | Ne sait pas
+(C.E01) Procurer un narguilé |  |  |  | 
+ | 1 | 2 | 3 | 4
+--- TABLE END ---
+
+C.E02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume le narguilé?
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Oui | Non | Ne sait pas
+(C.E02a) Quelqu’un dans votre entourage familial  qui fume le narguilé |  |  | 
+(C.E02b) Quelqu‘un parmi vos ami(e)s  qui fume le narguilé |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+C.E03	Combien de fois avez-vous fumé narguilé?
+(Cochez une seule case pour chaque ligne)	
+
+--- TABLE START ---
+ | Jamais | 1-2 | 3-5 | 6-9 | 10-19 | 20-39 | 40 ou plus
+(C.E03a) Nombre de fois où vous avez fumé le narguilé  durant votre VIE |  |  |  |  |  |  | 
+(C.E03b) Nombre de fois où vous avez fumé le narguilé durant les 12 DERNIERS MOIS |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7
+--- TABLE END ---
+
+C.E04	Combien de fois avez-vous fumé le narguilé au cours des 30 DERNIERS JOURS ? 
+(Cochez une seule case)
+
+--- TABLE START ---
+ | Jamais | < 1 par semaine | < 1 par jour | 1-5 par jour | 6-10 par jour | 11-20 par jour | > 20 par jour
+(C.E04) Nombre de fois où vous avez fumé le  narguilé durant les 30 DERNIERS JOURS |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7
+--- TABLE END ---
+
+C.E05	À quel âge avez-vous commencé à faire ce qui suit?
+ (Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Jamais | ≤ 9 ans | 10 ans | 11 ans | 12 ans | 13 ans | 14 ans | 15 ans | ≥ 16 ans
+(C.E05a) Votre âge lorsque vous avez fumé le premier narguilé |  |  |  |  |  |  |  |  | 
+(C.E05b) Votre âge lorsque vous avez commencé à fumer le narguilé tous les jours |  |  |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+--- TABLE END ---
+
+
+--- TABLE START ---
+G | Les questions suivantes concernent LES BOISSONS ALCOOLISEES
+--- TABLE END ---
+
+C.G01	À quel point pensez-vous qu'il serait difficile de vous procurer les boissons suivantes si vous le vouliez ? (cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Impossible | Difficile | Facile | Ne sait pas
+(C.G01a) Obtenir la bière |  |  |  | 
+(C.G01b) Obtenir les cocktails |  |  |  | 
+(C.G01c) Obtenir les vins (Une boisson alcoolisée extraite du raisin) |  |  |  | 
+(C.G01d) Obtenir les eaux-de-vie (Whisky, Vodka…) |  |  |  | 
+(O.G01e) Obtenir autres boissons alcoolisées |  |  |  | 
+ | 1 | 2 | 3 | 4
+--- TABLE END ---
+
+C.G02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme les boissons alcoolisées?  (Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Oui | Non | Ne sait pas
+(C.G02a) Quelqu’un dans votre entourage familial qui consomme les boissons alcoolisées |  |  | 
+(C.G02b) Quelqu‘un parmi vos ami(e)s  qui consomme les boissons alcoolisées |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+C.G03	Combien de fois avez-vous consommé des boissons alcoolisées? 
+                   (Cochez une seule case pour chaque ligne)	
+
+--- TABLE START ---
+ | Jamais | 1-2 | 3-5 | 6-9 | 10-19 | 20-39 | 40 ou plus
+(C.G03a) Nombre de fois où vous avez consommé les boissons alcoolisées durant votre VIE |  |  |  |  |  |  | 
+(C.G03b) Nombre de fois où vous avez consommé les boissons alcoolisées durant les 12 DERNIERS MOIS |  |  |  |  |  |  | 
+(C.G03c) Nombre de fois où vous avez consommé les boissons alcoolisées  durant les 30 DERNIERS JOURS |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7
+--- TABLE END ---
+
+C.G04	Combien de fois avez-vous consommé les boissons alcoolisées suivantes au cours des 30 DERNIERS JOURS? (Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Jamais | 1-2 fois | 3-5 fois | 6-9 fois | 10-19 | 20-39 | ≥ 40
+(C.G04a) Nombre de fois où vous avez consommé  la bière durant les 30 derniers jours |  |  |  |  |  |  | 
+(C.G04b) Nombre de fois où vous avez consommé  les cocktails durant les 30 derniers jours |  |  |  |  |  |  | 
+(C.G04c) Nombre de fois où vous avez consommé  les vins durant les 30 derniers jours |  |  |  |  |  |  | 
+(C.G04d) Nombre de fois où vous avez consommé  les eaux-de-vie (Whisky, Vodka…) durant les 30 derniers jours |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7
+--- TABLE END ---
+
+C.G05  Durant les 30 DERNIERS JOURS, combien de fois avez-vous consommé 5 boissons alcoolisées ou plus à la même occasion (par exemple durant un samedi) ? (Notez qu'une seule boisson alcoolisée correspond à un verre de bière de 200 ml, un verre de vin, un demi-verre de cocktails longs (rhum et coca, gin et tonic, etc.)?
+(Cochez une seule case)	
+
+--- TABLE START ---
+ | Aucune fois | 1 | 2 | 3-5 | 6-9 | ≥ 10
+(C.G05) Nombre de fois où vous avez consommé 5 boissons alcoolisées ou plus à la même occasion |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6
+--- TABLE END ---
+
+C.G06	Combien de fois (éventuellement) avez-vous été intoxiqué par la consommation des boissons alcoolisées, par exemple vous avez titubé en marchant, vous ne pouvait pas parler clairement, vous avez perdu la capacité de vous souvenir des événements ou vous avez vomi ? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | jamais | 1-2 | 3-5 | 6-9 | 10-19 | 20-39 | ≥ 40
+(C.G06a)   Nombre de fois d'intoxication durant  votre VIE |  |  |  |  |  |  | 
+(C.G06b)   Nombre de fois d'intoxication durant les 12 DERNIERS MOIS |  |  |  |  |  |  | 
+(C.G06c)   Nombre de fois d'intoxication durant les 30 DERNIERS JOURS |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7
+--- TABLE END ---
+
+C.G07	À quel âge avez-vous commencé à faire ce qui suit pour la première fois ? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Jamais | ≤ 9 ans | 10 ans | 11 ans | 12 ans | 13 ans | 14 ans | 15 ans | ≥ 16 ans
+(C.G07a)   Votre âge lorsque vous avez consommé la  première boisson alcoolisée |  |  |  |  |  |  |  |  | 
+(C.G07b)   Votre âge lorsque vous avez atteint un état d’ivresse pour la première fois |  |  |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+--- TABLE END ---
+
+
+--- TABLE START ---
+H | Certains médicaments comme les tranquillisants ou les sédatifs qui sont utilisés à des fins non médicales. Ces médicaments sont utilisés pour apaiser / relaxer, ce qui aide les gens à dormir, connus par exemple  sous le nom de « comprimés ». Les pharmacies n’ont généralement pas le droit de les vendre sans prescription médicale.
+--- TABLE END ---
+
+C.H01	À quel point pensez-vous qu'il serait difficile de vous procurer des tranquillisants ou sédatifs sans prescription médicale si vous le vouliez? 
+(cochez une seule case)
+
+--- TABLE START ---
+ | Impossible | Difficile | Facile | Ne sait pas
+(C.H01)   Accès aux tranquillisants ou sédatifs sans prescription médicale |  |  |  | 
+ | 1 | 2 | 3 | 4
+--- TABLE END ---
+
+C.H02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme des tranquillisants ou sédatifs, sans prescription médicale? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Oui | Non | Ne sait pas
+(C.H02a) Quelqu’un dans votre entourage familial qui consomme des tranquillisants ou sédatifs, sans prescription médicale |  |  | 
+(C.H02b) Quelqu‘un parmi vos ami(e)s  qui consomme des tranquillisants ou sédatifs, sans prescription médicale |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+C.H03	Combien de fois avez-vous consommé des tranquillisants ou sédatifs sans prescription médicale?
+ (Cochez une seule case pour chaque ligne)	
+
+--- TABLE START ---
+ | jamais | 1-2 | 3-5 | 6-9 | 10-19 | 20-39 | 40 ou plus
+(C.H03a) Nombre de fois de consommation durant votre VIE |  |  |  |  |  |  | 
+(C.H03b) Nombre de fois de consommation durant les 12 DERNIERS MOIS |  |  |  |  |  |  | 
+(C.H03c) Nombre de fois de consommation durant les 30 DERNIERS JOURS |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7
+--- TABLE END ---
+
+C.H04	À quel âge avez-vous consommé pour la première fois des tranquillisants ou sédatifs sans prescription médicale ?
+(Cochez une seule case)
+
+--- TABLE START ---
+ | Jamais | ≤ 9 ans | 10 ans | 11 ans | 12 ans | 13 ans | 14 ans | 15 ans | ≥ 16 ans
+(C.H04) Votre âge à la première consommation de sédatifs / tranquillisants sans prescription médicale |  |  |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+--- TABLE END ---
+
+
+--- TABLE START ---
+I | Les questions suivantes concernent le cannabis (zatla, marijuana, haschich...)
+--- TABLE END ---
+
+C.I01	À quel point pensez-vous qu'il serait difficile de vous procurer du cannabis si vous le vouliez? 
+
+ (Cochez une seule case)
+
+--- TABLE START ---
+ | Impossible | Difficile | Facile | Ne sait pas
+(C.I01) Procurer du cannabis |  |  |  | 
+ | 1 | 2 | 3 | 4
+--- TABLE END ---
+
+C.I02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme le cannabis ?
+ (Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Oui | Non | Ne sait pas
+(C.I02a) Quelqu’un dans votre entourage familial qui consomme du Cannabis |  |  | 
+(C.I02b) Quelqu‘un parmi vos ami(e)s  qui consomme du Cannabis |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+C.I03	Combien de fois avez-vous consommé du cannabis? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Jamais | 1-2 | 3-5 | 6-9 | 10-19 | 20-39 | 40 ou plus
+(C.I03a)  Nombre de fois de consommation durant votre VIE |  |  |  |  |  |  | 
+(C.I03b)  Nombre de fois de consommation durant les 12 DERNIERS MOIS |  |  |  |  |  |  | 
+(C.I03c)  Nombre de fois de consommation durant les 30 DERNIERS JOURS |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7
+--- TABLE END ---
+
+C.I04	À quel âge avez-vous consommé du cannabis pour la première fois ? 
+(Cochez une seule case)
+
+--- TABLE START ---
+ | Jamais | ≤ 9 ans | 10 ans | 11 ans | 12 ans | 13 ans | 14 ans | 15 ans | ≥ 16 ans
+(C.I04) Votre âge quand vous avez consommé du cannabis pour la première fois |  |  |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+--- TABLE END ---
+
+C.I05	Durant les DERNIERS 12 MOIS, avez-vous pris l'un des types de cannabis suivants? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Jamais | Rarement | De temps en temps | Assez souvent | Très souvent
+(C.I05a) Résine de Zatla |  |  |  |  | 
+(C.I05b) Feuilles du Zatla (marijuana) |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5
+--- TABLE END ---
+
+C.I06	Avez-vous consommé du cannabis durant les 12 DERNIERS MOIS ?
+(Cochez une seule case) 
+
+--- TABLE START ---
+1 |  | Non
+2 |  | Oui  Si la réponse est oui, l'une des choses suivantes vous est-elle arrivée au cours des 12 derniers mois?
+--- TABLE END ---
+
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | jamais | Rarement | De temps en temps | Assez souvent | Très souvent
+(C.I06a)  Avez-vous fumé du cannabis avant midi ? |  |  |  |  | 
+(C.I06b)  Avez-vous déjà fumé du cannabis seul (sans compagnie) ? |  |  |  |  | 
+(C.I06c)  Avez-vous été exposé à des troubles de la mémoire suite à la consommation du cannabis ? |  |  |  |  | 
+(C.I06d)  Un membre de la famille ou un ami vous a-t-il conseillé de réduire ou d’arrêter de consommer du cannabis ? |  |  |  |  | 
+(C.I06e)  Avez-vous essayé de réduire ou d’arrêter votre consommation du cannabis sans succès ? |  |  |  |  | 
+(C.I06f)   Avez-vous été exposé à des problèmes dus à la consommation de cannabis (disputes, désaccords, conflits, accident, détérioration des résultats scolaires ...) ? |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5
+--- TABLE END ---
+
+
+--- TABLE START ---
+J | Les questions suivantes concernent  la COCAÏNE
+--- TABLE END ---
+
+C.J01	À quel point pensez-vous qu'il serait difficile de vous procurer de la cocaïne si vous le vouliez? 
+(Cochez une seule case)
+
+--- TABLE START ---
+ | Impossible | Difficile | Facile | Ne sait pas
+(C.J01) Procurer de la cocaïne |  |  |  | 
+ | 1 | 2 | 3 | 4
+--- TABLE END ---
+
+C.J02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de la cocaïne? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Oui | Non | Ne sait pas
+(C.J02a) Quelqu’un dans votre entourage familial qui consomme de la cocaïne |  |  | 
+(C.J02b) Quelqu‘un parmi vos ami(e)s  qui consomme de  la cocaïne |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+C.J03	Combien de fois avez vous consommé la cocaïne? 
+ (Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Jamais | 1-2 | 3 ou plus
+(C.J03a) Nombre de fois de consommation de la cocaïne durant votre VIE |  |  | 
+(C.J03b) Nombre de fois de consommation de la cocaïne durant les 12 DERNIERS MOIS |  |  | 
+(C.J03c) Nombre de fois de consommation de la cocaïne durant les 30 DERNIERS JOURS |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+C.J04	À quel âge avez-vous consommé de la cocaïne pour la première fois ? 
+(Cochez une seule case)
+
+--- TABLE START ---
+ | Jamais | ≤ 9 ans | 10 ans | 11 ans | 12 ans | 13 ans | 14 ans | 15 ans | >=16 ans
+(C.J04) Votre âge quand vous avez consommé de la cocaïne pour la première fois |  |  |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+--- TABLE END ---
+
+
+--- TABLE START ---
+K | Les questions suivantes concernent l’ECSTASY (EXTA)
+--- TABLE END ---
+
+C.K01	À quel point pensez-vous qu'il serait difficile de vous procurer de l’Ecstasy si vous le vouliez? 
+(Cochez une seule case)
+
+--- TABLE START ---
+ | Impossible | Difficile | Facile | Ne sait pas
+(C.K01) Procurer de l’Ecstasy |  |  |  | 
+ | 1 | 2 | 3 | 4
+--- TABLE END ---
+
+C.K02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de l’Ecstasy? (Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Oui | Non | Ne sait pas
+(C.K02a) Quelqu’un dans votre entourage familial qui consomme de l’Ecstasy |  |  | 
+(C.K02b) Quelqu‘un parmi vos ami(e)s  qui consomme de l’Ecstasy |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+C.K03	Combien de fois avez-vous consommé de l’Ecstasy? 
+(Cochez une seule case pour chaque ligne)	
+
+--- TABLE START ---
+ | Jamais | 1-2 | 3 ou plus
+(C.K03a) Nombre de fois de consommation de l’Ecstasy durant votre VIE |  |  | 
+(C.K03b) Nombre de fois de consommation de l’Ecstasy durant les 12 DERNIERS MOIS |  |  | 
+(C.K03c) Nombre de fois de consommation de l’Ecstasy durant les 30 DERNIERS JOURS |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+C.K04	À quel âge avez-vous consommé de l’Ecstasy pour la première fois? 
+ (Cochez une seule case)
+
+--- TABLE START ---
+ | Jamais | ≤ 9 ans | 10 ans | 11 ans | 12 ans | 13 ans | 14 ans | 15 ans | ≥ 16 ans
+(C.K04)   Votre âge quand vous avez consommé de l’Ecstasy pour la première fois |  |  |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+--- TABLE END ---
+
+
+--- TABLE START ---
+L | Les questions suivantes concernent l’HEROINE
+--- TABLE END ---
+
+C.L01	À quel point pensez-vous qu'il serait difficile de vous procurer de l’Héroïne si vous le vouliez? 
+(Cochez une seule case)
+
+--- TABLE START ---
+ | Impossible | Difficile | Facile | Ne sait pas
+(C.L01) Procurer de l’Héroïne |  |  |  | 
+ | 1 | 2 | 3 | 4
+--- TABLE END ---
+
+C.L02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de l’Héroïne? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Oui | Non | Ne sait pas
+(C.L02a) Quelqu’un dans  votre entourage familial qui consomme de l’Héroïne |  |  | 
+(C.L02b) Quelqu‘un parmi vos ami(e)s  qui consomme de l’Héroïne |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+C.L03	 Combien de fois avez-vous consommé de l’Héroïne? 
+          (Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | jamais | 1-2 | 3 ou plus
+(C.L03a) Nombre de fois de consommation de l’héroïne durant votre VIE |  |  | 
+(C.L03b) Nombre de fois de consommation de l’héroïne  durant les 12 DERNIERS MOIS |  |  | 
+(C.L03c) Nombre de fois de consommation de l’héroïne durant les 30 DERNIERS JOURS |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+C.L04	À quel âge avez-vous consommé pour la première fois de l’Héroïne? 
+(Cochez une seule case)
+
+--- TABLE START ---
+ | jamais | ≤ 9 ans | 10 ans | 11 ans | 12 ans | 13 ans | 14 ans | 15 ans | ≥ 16 ans
+(C.L04) Votre âge quand vous avez consommé de l’Héroïne pour la première fois |  |  |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+--- TABLE END ---
+
+
+--- TABLE START ---
+M | Les questions suivantes concernent les INHALANTS narcotiques (colle, gaz, essence, etc.)
+--- TABLE END ---
+
+O.M01	À quel point pensez-vous qu'il serait difficile de vous procurer des inhalants narcotiques si vous le vouliez? 
+(Cochez une seule case)
+
+--- TABLE START ---
+ | Impossible | Difficile | Facile | Ne sait pas
+(O.M01) procurer des inhalants narcotiques |  |  |  | 
+ | 1 | 2 | 3 | 4
+--- TABLE END ---
+
+O.M02	Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme des inhalants narcotiques? 
+  ( Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Oui | Non | Ne sait pas
+(O.M02a) Quelqu’un dans votre entourage familial qui consomme des inhalants narcotiques |  |  | 
+(O.M02b) Quelqu‘un parmi vos ami(e)s  qui consomme des inhalants narcotiques |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+O.M03	Combien de fois avez-vous consommé des inhalants narcotiques? 
+(Cochez une seule case pour chaque ligne)	
+
+--- TABLE START ---
+ | jamais | 1-2 | 3 ou plus
+(O.M03a)   Nombre de fois de consommation des inhalants narcotiques durant votre VIE |  |  | 
+(O.M03b)   Nombre de fois de consommation des inhalants narcotiques durant les 12 DERNIERS MOIS |  |  | 
+(O.M03c)   Nombre de fois de consommation des inhalants narcotiques durant les 30 DERNIERS JOURS |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+O.M04	À quel âge avez-vous consommé des inhalants narcotiques pour la première fois? 
+(Cochez une seule case)	
+
+--- TABLE START ---
+ | Jamais | ≤ 9 ans | 10 ans | 11 ans | 12 ans | 13 ans | 14 ans | 15 ans | ≥ 16 ans
+(O.M04) Votre âge quand vous avez consommé des inhalants narcotiques pour la première fois |  |  |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+--- TABLE END ---
+
+
+--- TABLE START ---
+N | Les questions suivantes concernent autres substances narcotiques
+--- TABLE END ---
+
+C.N01	À quel point pensez-vous qu'il serait difficile de vous procurer les substances suivantes si vous le vouliez? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Impossible | Difficile | Facile | Ne sait pas
+(O.N01a) Obtenir des Amphétamines |  |  |  | 
+(C.N01d) Obtenir du dipaje |  |  |  | 
+(O.N01f)  Obtenir des hallucinogènes (LSD, champignons hallucinogènes, etc.) |  |  |  | 
+(C.N01g) Obtenir  des methamphétamines |  |  |  | 
+(O.N01h)  Obtenir des antalgiques (Tramadol, Tramadis,  Codéine.) |  |  |  | 
+(O.N01j)  Obtenir  du subutex |  |  |  | 
+(O.N01k) Obtenir du  speed |  |  |  | 
+ | 1 | 2 | 3 | 4
+--- TABLE END ---
+
+C.N02	Combien de fois dans VOTRE VIE avez-vous utilisé chacune des substances suivantes ?
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | jamais | 1-2 | 3 ou plus
+(O.N02a) Amphétamines dans votre vie |  |  | 
+(O.N02d) Dipaje dans votre vie |  |  | 
+(O.N02f ) Hallucinogènes (LSD, champignons hallucinogènes…) dans votre vie |  |  | 
+(C.N02g) Methamphetamines dans votre vie |  |  | 
+(O.N02h) Antalgiques (Tramadol, Tramadis, Codéine) dans votre vie |  |  | 
+(O.N02j ) Subutex dans votre vie |  |  | 
+(O.N02k) Speed dans votre vie |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+C.N03  Au cours des12 DERNIERS MOIS, combien de fois avez-vous utilisé chacune des substances suivantes ? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ |  |  |  |  | jamais | 1-2 | 3 ou plus
+(O.N03a) Amphétamines au cours des 12 derniers mois | (O.N03a) Amphétamines au cours des 12 derniers mois | (O.N03a) Amphétamines au cours des 12 derniers mois | (O.N03a) Amphétamines au cours des 12 derniers mois | (O.N03a) Amphétamines au cours des 12 derniers mois |  |  | 
+(O.N03d) Dipaje au cours des 12 derniers mois | (O.N03d) Dipaje au cours des 12 derniers mois | (O.N03d) Dipaje au cours des 12 derniers mois | (O.N03d) Dipaje au cours des 12 derniers mois | (O.N03d) Dipaje au cours des 12 derniers mois |  |  | 
+(O.N03f ) Hallucinogènes (LSD, champignons hallucinogènes…) au cours des 12 derniers mois | (O.N03f ) Hallucinogènes (LSD, champignons hallucinogènes…) au cours des 12 derniers mois | (O.N03f ) Hallucinogènes (LSD, champignons hallucinogènes…) au cours des 12 derniers mois | (O.N03f ) Hallucinogènes (LSD, champignons hallucinogènes…) au cours des 12 derniers mois | (O.N03f ) Hallucinogènes (LSD, champignons hallucinogènes…) au cours des 12 derniers mois |  |  | 
+(O.N03g) Methamphetamines au cours des 12 derniers mois | (O.N03g) Methamphetamines au cours des 12 derniers mois | (O.N03g) Methamphetamines au cours des 12 derniers mois | (O.N03g) Methamphetamines au cours des 12 derniers mois | (O.N03g) Methamphetamines au cours des 12 derniers mois |  |  | 
+(O.N03h) Antalgiques (Tramadol, Tramadis, Codéine) au cours des 12 derniers mois | (O.N03h) Antalgiques (Tramadol, Tramadis, Codéine) au cours des 12 derniers mois | (O.N03h) Antalgiques (Tramadol, Tramadis, Codéine) au cours des 12 derniers mois | (O.N03h) Antalgiques (Tramadol, Tramadis, Codéine) au cours des 12 derniers mois | (O.N03h) Antalgiques (Tramadol, Tramadis, Codéine) au cours des 12 derniers mois |  |  | 
+(O.N03j ) Subutex au cours des 12 derniers mois | (O.N03j ) Subutex au cours des 12 derniers mois | (O.N03j ) Subutex au cours des 12 derniers mois | (O.N03j ) Subutex au cours des 12 derniers mois | (O.N03j ) Subutex au cours des 12 derniers mois |  |  | 
+(O.N03k) Speed au cours des 12 derniers mois | (O.N03k) Speed au cours des 12 derniers mois | (O.N03k) Speed au cours des 12 derniers mois | (O.N03k) Speed au cours des 12 derniers mois | (O.N03k) Speed au cours des 12 derniers mois |  |  | 
+ |  |  |  |  | 1 | 2 | 3
+--- TABLE END ---
+
+C.N04	À quel âge avez-vous consommé pour la première fois chacune des substances suivantes ? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | jamais | ≤ 9 ans | 10 ans | 11 ans | 12 ans | 13 ans | 14 ans | 15 ans | ≥ 16 ans
+(O.N04a) Amphétamines pour la première fois |  |  |  |  |  |  |  |  | 
+(O.N04d) Dipage pour la première fois |  |  |  |  |  |  |  |  | 
+(O.N04f) Hallucinogènes (LSD, champignons hallucinogènes…) pour la première fois |  |  |  |  |  |  |  |  | 
+(O.N04g) Methamphetamines pour la première fois |  |  |  |  |  |  |  |  | 
+(O.N04h) Antalgiques (Tramadol, Tramadis, codéine…) pour la première fois |  |  |  |  |  |  |  |  | 
+(O.N04j) Subutex pour la première fois |  |  |  |  |  |  |  |  | 
+(O.N04k) Speed pour la première fois |  |  |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+--- TABLE END ---
+
+
+--- TABLE START ---
+P | Les questions suivantes concernent les nouvelles substances narcotiques, qui sont aussi efficaces que les drogues interdites comme le cannabis ou l’ecstasy, et qui sont maintenant disponibles. Ces substances sont appelées drogues légales ou préparations chimiques (keta, spica, Meo Meo, Flakka, superman...). Nous pouvons les trouver sous différentes formes comme les mélanges à base de plantes, poudres, cristaux, pilules, encens.
+--- TABLE END ---
+
+C.P01	Combien de fois avez-vous consommé l’une de ces substances? 
+(Cochez une seule case dans chaque ligne)	
+
+--- TABLE START ---
+ | jamais | 1-2 | 3-5 | 6-9 | 10-19 | 20-39 | 40 ou plus
+(C.P01a) Nombre de fois de consommation durant votre VIE |  |  |  |  |  |  | 
+(C.P01b) Nombre de fois de consommation durant les 12 DERNIERS MOIS |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7
+--- TABLE END ---
+
+C.P02 	Si vous avez consommé l'une de ces nouvelles substances au cours des 12 derniers mois, quelle forme avaient-elles ? 
+(Cochez une ou plusieurs case(s))
+
+--- TABLE START ---
+(C.P02a) | 1 |  | Je n'ai pris aucune de ces substances au cours des 12 DERNIERS MOIS
+(C.P02b) | 1 |  | Mélanges d'herbes ayant des effets similaires à ceux des drogues
+(C.P02c) | 1 |  | Poudres, cristaux ou pilules ayant des effets similaires à ceux des drogues
+(C.P02d) | 1 |  | Liquides ayant des effets similaires à ceux des drogues
+(C.P02e) | 1 |  | Autres
+--- TABLE END ---
+
+C.P03	Combien de fois DANS VOTRE VIE avez-vous consommé l'une des substances suivantes ?
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | jamais | 1-2 | 3-5 | 6-9 | 10-19 | 20-39 | 40 ou plus
+(C.P03a) Cannabinoïdes synthétiques dans votre vie |  |  |  |  |  |  | 
+(C.P03b) Cathinones synthétiques dans votre vie |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7
+--- TABLE END ---
+
+
+--- TABLE START ---
+Q | Les questions suivantes concernent votre avis sur la consommation de substances narcotiques
+--- TABLE END ---
+
+C.Q01	A quel point pensez-vous que les gens risquent de s’exposer au danger (physique ou autre) si… ?  (cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Sans risque | Léger risque | Léger risque | Risque modéré | Risque modéré | Grand risque | Grand risque | Ne sait   pas | Ne sait   pas
+(C.Q01a) Ils fument des cigarettes OCCASIONNELLEMENT |  |  |  |  |  |  |  |  |  | 
+(C.Q01b) Ils fument un paquet de cigarettes ou plus par jour REGULIEREMENT |  |  |  |  |  |  |  |  |  | 
+(C.Q01c) Ils fument  les cigarettes électroniques OCCASIONNELLEMENT |  |  |  |  |  |  |  |  |  | 
+(C.Q01d) Ils fument les cigarettes électroniques REGULIEREMENT |  |  |  |  |  |  |  |  |  | 
+(C.Q01e) Ils fument le narguilé OCCASIONNELLEMENT |  |  |  |  |  |  |  |  |  | 
+(C.Q01f) Ils fument le narguilé REGULIEREMENT |  |  |  |  |  |  |  |  |  | 
+(C.Q01i) Ils consomment les boissons alcoolisées OCCASIONNELLEMENT |  |  |  |  |  |  |  |  |  | 
+(C.Q01j) Ils consomment les boissons alcoolisées presque tous les jours à raison d’un verre ou 2 |  |  |  |  |  |  |  |  |  | 
+(C.Q01k) Ils consomment 3 verres ou plus de boissons alcoolisées  presque tous les jours |  |  |  |  |  |  |  |  |  | 
+(C.Q01l) Ils consomment 5 verres ou plus de boissons alcoolisées à la même occasion presque chaque weekend (consommation excessive d’alcool) |  |  |  |  |  |  |  |  |  | 
+ | 1 | 1 | 2 | 2 | 3 | 3 | 4 | 4 | 5 | 5
+--- TABLE END ---
+
+C.Q02	A quel point pensez-vous que les gens risquent de s’exposer au danger (physique ou autre) si… ?  (Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Sans        risque | Léger      risque | Risque modéré | Grand     risque | Ne sait        pas
+(C.Q02a) Ils consomment des tranquillisants sans prescription médicale OCCASIONNELLEMENT |  |  |  |  | 
+(C.Q02b) Ils consomment des tranquillisants sans prescription médicale REGULIEREMENT |  |  |  |  | 
+(C.Q02c) Ils consomment du cannabis OCCASIONNELLEMENT |  |  |  |  | 
+(C.Q02d) Ils consomment du cannabis  REGULIEREMENT |  |  |  |  | 
+(C.Q02e) Ils consomment de la cocaïne OCCASIONNELLEMENT |  |  |  |  | 
+(C.Q02f) Ils consomment de l’ecstasy OCCASIONNELLEMENT |  |  |  |  | 
+(C.Q02g) Ils consommer de l’héroïne OCCASIONNELLEMENT |  |  |  |  | 
+(C.Q02h) Ils consomment des inhalants narcotiques  OCCASIONNELLEMENT |  |  |  |  | 
+(C.Q02i) Ils consomment des amphétamines OCCASIONNELLEMENT |  |  |  |  | 
+(C.Q02m) Ils consomment Subutex OCCASIONNELLEMENT |  |  |  |  | 
+(C.Q02k) Ils consomment des cannabinoïdes synthétiques OCCASIONNELLEMENT |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5
+--- TABLE END ---
+
+C.Q03  Si vous avez eu un problème à cause de l’alcool/ des drogues, savez-vous à qui vous adresser pour obtenir de l’aide? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Oui | Non | Ne sait pas
+(C.Q03a) Membre(s) de la famille |  |  | 
+(C.Q03b) Ami(e)s |  |  | 
+(C.Q03c) Enseignants ou autres responsables du lycée |  |  | 
+(C.Q03d) Médecin, psychologue… |  |  | 
+(C.Q03e) Une personne de religion |  |  | 
+(C.Q03f) Centres de traitement de la toxicomanie |  |  | 
+(C.Q03g) Associations (Organisation Non Gouvernementale) |  |  | 
+(C.Q03h) Autre option pertinente à l’échelle  nationale |  |  | 
+ | 1 | 2 | 3
+--- TABLE END ---
+
+
+--- TABLE START ---
+R | Les questions suivantes concernent les RESEAUX SOCIAUX (WhatsApp, Instagram, Facebook, Blogs, Snapchat, Skype, Twitter, Hangouts, etc.)
+--- TABLE END ---
+
+C.R01	Durant les 7 DERNIERS JOURS, combien d’heures avez-vous passé sur les réseaux sociaux en communiquant avec les autres sur internet?
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Aucune | Une demi-heure ou moins | Environ            1 heure | Environ            2-3 heures | Environ           4-5 heures | 6 heures       ou plus
+(C.R01a)    Durant un jour scolaire (un jour où vous devez aller au lycée) |  |  |  |  |  | 
+(C.R01b)  Un jour non scolaire (un weekend ou des  vacances) |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6
+--- TABLE END ---
+
+C.R02	Dans quelle mesure êtes-vous d’accord ou en désaccord avec les avis suivants concernant l’utilisation des réseaux sociaux pour communiquer avec les autres sur internet ? 
+(Cochez une seule case dans chaque ligne)
+
+--- TABLE START ---
+ | Tout à fait d’accord | Partiellement d’accord | Ni d’accord  ni pas d’accord | Partiellement en désaccord | Pas du tout d’accord
+(C.R02a)  Je pense que je passe trop de temps sur les   réseaux sociaux |  |  |  |  | 
+(C.R02b)  Je deviens de mauvaise humeur quand je ne peux pas passer du temps sur les réseaux sociaux |  |  |  |  | 
+(C.R02c) Mes parents disent que je passe trop de temps sur les réseaux sociaux |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5
+--- TABLE END ---
+
+
+--- TABLE START ---
+S | Les questions suivantes concernent les JEUX VIDEOS (stratégie, puzzle, aventure, football, guerre, etc.) que vous pouvez jouer sur ordinateur, tablette, console, smartphone ou autre appareil électronique
+--- TABLE END ---
+
+C.S01	Durant les 30 DERNIERS JOURS, combien d’heures avez-vous passé sur les jeux vidéo ? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | aucune | Une demi- heure ou moins | Environ             1 heure | Environ             2-3 heures | Environ             4-5 heures | 6 heures         ou plus
+(C.S01a) Durant un jour d’école (un jour où vous devez aller au lycée) |  |  |  |  |  | 
+(C.S01b) un jour non scolaire (un weekend ou des vacances) |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6
+--- TABLE END ---
+
+C.S02	Durant les 7 DERNIERS JOURS, combien de jours avez-vous passé sur les jeux vidéo? 
+(Cochez une seule case)
+
+--- TABLE START ---
+ | Aucun jour | 1 jour | 2 jours | 3 jours | 4 jours | 5 jours | 6 jours | 7 jours
+(C.S02) Nombre de jours passés sur les jeux vidéos |  |  |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8
+--- TABLE END ---
+
+C.S03	Dans quelle mesure êtes-vous d’accord ou en désaccord avec les avis suivants concernant les jeux vidéo ? 
+(Cochez une seule case dans chaque ligne)
+
+--- TABLE START ---
+ | Tout à fait d’accord | Plutôt en accord | Ni d’accord    ni pas d’accord | Plutôt en désaccord | Pas du tout d’accord
+(C.S03a) Je pense que je passe trop de temps sur les jeux vidéo |  |  |  |  | 
+(C.S03b) Je deviens de mauvaise humeur si je ne peux pas passer du temps à jouer aux jeux vidéo |  |  |  |  | 
+(C.S03c) Mes parents disent que je passe trop de temps sur les jeux vidéo |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5
+--- TABLE END ---
+
+
+--- TABLE START ---
+T | Les questions suivantes Concernent les jeux d’argent – jeux de chance pour gagner de l’argent (machine à sous, jeu de cartes, dés, Lotterie, paris sportifs, etc.) que ce soit virtuellement, sur Internet si vous utilisez un appareil personnel, un téléphone mobile, une tablette, etc., ou réellement : promosport ou les espaces de jeux d’argent (Gambling Terminals)
+--- TABLE END ---
+
+C.T01 	Combien de fois avez-vous joué aux jeux d’argent durant les 12 DERNIERS MOIS? 
+(cochez une seule case)
+
+--- TABLE START ---
+ | Je n’ai pas joué | 1 fois par mois ou moins | 2-4 fois par mois | 2-3 fois par semaine | 4-5 fois par semaine | 6 fois par semaine ou plus
+(C.T01) Le nombre de fois où des jeux d’argent ont été joués durant les 12 DERNIERS MOIS |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6
+--- TABLE END ---
+
+C.T02 Si vous avez joué aux jeux d’argent durant les 12 DERNIERS MOIS, quel type de jeu avez-vous joué dans les espaces de jeux d’argent (HORS LIGNE)
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Je n’ai            pas joué | 1 fois par         mois ou moins | 2-4 fois par mois | 2-3 fois par semaine | 4-5 fois par semaine | 6 fois par semaine ou plus
+(C.T02a) machines à sous |  |  |  |  |  | 
+(C.T02b) Jeux de cartes ou de dés |  |  |  |  |  | 
+(C.T02c) Loterie/jeux de hasard |  |  |  |  |  | 
+(C.T02d) Les paris sportifs « promosport » ou sur les animaux (Chevaux, Chiens) |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6
+--- TABLE END ---
+
+C.T03 Si vous avez joué aux jeux d’argent sur internet durant les 12 DERNIERS MOIS, à quels jeux avez-vous joué? 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Je n’ai pas joué | 1 fois par    mois ou    moins | 2-4 fois par mois | 2-3 fois par semaine | 4-5 fois par semaine | 6 fois par semaine   ou plus
+(C.T03a) machines à sous |  |  |  |  |  | 
+(C.T03b) Jeux de cartes ou de dés |  |  |  |  |  | 
+(C.T03c) Loterie/jeux de hasard |  |  |  |  |  | 
+(C.T03d) Les paris sportifs « promosport » ou sur les animaux (Chevaux, Chiens) |  |  |  |  |  | 
+ | 1 | 2 | 3 | 4 | 5 | 6
+--- TABLE END ---
+
+Maintenant, repensez aux jeux d’argent en général
+C.T04 	Avez-vous ressenti le besoin de multiplier de plus en plus la valeur vos mises?
+
+--- TABLE START ---
+1 |  | Non
+2 |  | Oui
+--- TABLE END ---
+
+C.T05 Avez-vous déjà dû mentir à des personnes importantes pour vous sur le montant de vos mises?
+
+--- TABLE START ---
+1 |  | Non
+2 |  | Oui
+--- TABLE END ---
+
+C.T06 	Si vous avez joué aux jeux d’argent durant les 12 DERNIERS MOIS…. 
+(Cochez une seule case pour chaque ligne)
+
+--- TABLE START ---
+ | Chaque fois | La plupart         du temps | Quelques fois | Jamais
+(C.T06a)	Combien de fois êtes-vous retourné un autre jour  pour essayer de gagner l’argent que vous avez perdu? |  |  |  | 
+ | 1 | 2 | 3 | 4
+--- TABLE END ---
+
+
+--- TABLE START ---
+ | Oui | Non
+(C.T06b)	Quand vous jouiez à des jeux d’argent, avez-vous dit aux autres que vous gagniez de l’argent, alors qu’en réalité, vous perdiez? |  | 
+(C.T06c)	Jouer aux jeux d’argent vous a-t-il déjà causé des problèmes tels que des disputes avec votre famille et vos ami(e)s, ou des problèmes au lycée ? |  | 
+(C.T06d)	Avez-vous joué aux jeux d’argent plus que vous ne l'aviez prévu au début? |  | 
+(C.T06e)	Est-ce que quelqu’un vous a critiqué à propos des jeux d’’argent ou est-ce que  vous a fait savoir que vous étiez accro à ces jeux, que vous pensiez que c’était vrai ou non? |  | 
+(C.T06f)	Avez-vous déjà senti mal à propos de combien d’argent vous pariez ou de ce qui se passe ensuite? |  | 
+(C.T06g)	Avez-vous déjà eu envie d’arrêter de jouer, mais vous ne pensiez pas que vous le pouviez? |  | 
+(C.T06h)	Avez-vous déjà caché à votre famille ou amis des cartes de pari, billets de loterie, argent que vous avez gagné ou toute preuve de vos jeux d’argent ? |  | 
+(C.T06i)	Avez-vous déjà eu des conflits financiers avec votre famille ou vos amis autour de jeux d’argent, principalement causés par les jeux d'argent? |  | 
+(C.T06j)	Avez-vous emprunté de l'argent pour parier avec et vous ne l'avez pas rendu? |  | 
+(C.T06k)	Avez-vous déjà manqué  l'école en raison des activités des jeux d’argent? |  | 
+(C.T06l)	Avez-vous emprunté ou volé de l'argent pour parier avec ou pour couvrir des activités des jeux d’argent ? |  | 
+ | 1 | 2
+--- TABLE END ---
+
+
+--- TABLE START ---
+U | Les questions suivantes concernent la violence :
+--- TABLE END ---
+
+C.U01: Au cours des 12 derniers mois, combien de fois t'es-tu battu physiquement avec une ou plusieurs autres personnes ?
+1.	      0 fois
+2.	      1 fois
+3.	      2 ou 3 fois
+4.	      4 ou 5 fois
+5.	      6 ou 7 fois
+6.	      8 ou 9 fois
+7.	      10 ou 11 fois
+8.	      12 fois ou plus
+C.U02 : Quelles étaient les circonstances de la dernière bagarre ?
+1.	      Je me battais avec quelqu'un (J’étais l’initiateur)
+2.	      J’ai été attaqué, agressé ou maltraité par une (plusieurs) personne(s)
+C.U03 : Quel était le lieu de la bagarre ?
+1.	      Au sein du lycée
+2.	      A l’extérieur du lycée
+C.U04 : En cas de problème(s) telle qu’une bagarre entre toi et un ou plusieurs autres élèves, est ce que les personnels du lycée (Enseignants, surveillant, directeur) interviennent pour t’aider ?
+Oui 	Non 
+C.U05 : Avez-vous vécu ou ressenti, suite à une bagarre, une ou plusieurs conséquences de ce genre ? (Vous pouvez choisir une ou plusieurs propositions)
+1.	      Absentéisme du lycée
+2.	      Défaut de concentration aux études
+3.	      Anxiété et peur
+4.	      Cauchemars
+5.	      Insomnie
+La question suivante porte sur la blessure la plus grave que vous ayez eue au cours des 12 derniers mois. Une blessure est grave lorsqu’elle vous fait manquer au moins un jour entier de vos activités quotidiennes (tels que d’aller au lycée, le sport) et exige des soins médicaux.
+C.U06 : Au cours des 12 derniers mois, dans quelle circonstance avez-vous été très gravement blessé ?
+1.	      Je n'ai pas été très gravement blessé au cours des 12 derniers mois
+2.	      Je me suis blessé accidentellement
+3.	      Quelqu'un d'autre m'a blessé accidentellement
+4.	      Je me suis blessé délibérément
+5.	      Quelqu'un d'autre m'a blessé délibérément
+
+--- TABLE START ---
+V | Les questions suivantes concernent le niveau de stress perçu :
+--- TABLE END ---
+
+C.V01: Durant le mois passé, combien de fois avez-vous eu le sentiment de ne pas pouvoir contrôler les aspects importants de votre vie ?
+1.	      Jamais
+2.	      Presque jamais
+3.	      Parfois
+4.	      Assez souvent
+5.	      Très souvent
+C.V02: Durant le mois passé, combien de fois avez-vous eu confiance en votre capacité à gérer vos problèmes personnels ?
+1.	      Jamais
+2.	      Presque jamais
+3.	      Parfois
+4.	      Assez souvent
+5.	      Très souvent
+C.V3: Durant le mois passé, combien de fois avez-vous eu le sentiment les choses allaient comme vous le vouliez ?
+1.	      Jamais
+2.	      Presque jamais
+3.	      Parfois
+4.	      Assez souvent
+5.	      Très souvent
+C.V04: Durant le mois passé, combien de fois avez-vous eu le sentiment que les difficultés s'accumulaient tellement que vous ne pourriez pas les surmonter ?
+1.	      Jamais
+2.	      Presque jamais
+3.	      Parfois
+4.	      Assez souvent
+5.	      Très souvent
+
+--- TABLE START ---
+Z | Vous avez presque terminé de répondre à ce questionnaire, nous vous demandons de répondre le plus franchement possible aux deux questions restantes.
+--- TABLE END ---
+
+C.Z01 Si vous étiez un consommateur d'alcool, pensez-vous que vous auriez répondu à ce questionnaire comme vous l'avez fait? 
+(Choisissez une seule réponse)
+
+--- TABLE START ---
+1 |  | J'ai déjà déclaré avoir consommé de l'alcool
+2 |  | Oui, sans aucun doute.
+3 |  | Probablement oui
+4 |  | Probablement pas
+5 |  | Non, sans aucun doute
+--- TABLE END ---
+
+C.Z02 Si vous étiez un consommateur de cannabis, pensez-vous que vous répondriez à ce questionnaire comme vous l’avez fait? (Choisissez une seule réponse)
+(Choisissez une seule réponse)
+
+--- TABLE START ---
+1 |  | J'ai déjà déclaré avoir consommé du cannabis
+2 |  | Oui, sans aucun doute.
+3 |  | Probablement oui
+4 |  | Probablement pas
+5 |  | Non, sans aucun doute
+--- TABLE END ---
+

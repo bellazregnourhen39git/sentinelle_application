@@ -9,10 +9,7 @@ const InviteUserModal = ({ isOpen, onClose }) => {
     const [role, setRole] = useState('PRACTITIONER');
     const [orgType, setOrgType] = useState('LOCAL');
     const [govId, setGovId] = useState('');
-    const [estId, setEstId] = useState('');
-    
     const [governorates, setGovernorates] = useState([]);
-    const [establishments, setEstablishments] = useState([]);
     
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -27,16 +24,29 @@ const InviteUserModal = ({ isOpen, onClose }) => {
 
     const fetchGeographics = async () => {
         try {
-            const [govs, ests] = await Promise.all([
-                api.get('geography/governorates/'),
-                api.get('geography/establishments/')
-            ]);
+            const govs = await api.get('geography/governorates/');
             setGovernorates(govs.data);
-            setEstablishments(ests.data);
         } catch (err) {
             console.error("Failed to fetch locations", err);
         }
     };
+
+    useEffect(() => {
+        // First Three: SUPER_ADMIN, GLOBAL_ADMIN, OPERATOR -> INSP
+        if (['SUPER_ADMIN', 'GLOBAL_ADMIN', 'OPERATOR'].includes(role)) {
+            setOrgType('NATIONAL');
+            setGovId('2'); // Tunis
+        } 
+        // Regional Analyst: No Establishment
+        else if (role === 'REGIONAL_ANALYST') {
+            setOrgType('REGIONAL');
+        }
+        // Practitioner: Local
+        else if (role === 'PRACTITIONER') {
+            setOrgType('LOCAL');
+            setGovId('');
+        }
+    }, [role]);
 
     const handleInvite = async (e) => {
         e.preventDefault();
@@ -48,8 +58,7 @@ const InviteUserModal = ({ isOpen, onClose }) => {
                 username,
                 role,
                 organization_type: orgType,
-                governorate: govId || null,
-                establishment: estId || null
+                governorate: govId || null
             });
             setInviteResult(res.data);
         } catch (err) {
@@ -74,6 +83,10 @@ const InviteUserModal = ({ isOpen, onClose }) => {
             setTimeout(() => setCopied(false), 2000);
         }
     };
+
+    const isNationalAdmin = ['SUPER_ADMIN', 'GLOBAL_ADMIN', 'OPERATOR'].includes(role);
+    const isRegionalAnalyst = role === 'REGIONAL_ANALYST';
+    const isPractitioner = role === 'PRACTITIONER';
 
     return (
         <AnimatePresence>
@@ -176,7 +189,7 @@ const InviteUserModal = ({ isOpen, onClose }) => {
                                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] ml-4 italic px-2 bg-white/50 w-fit rounded-full">Type Organisation</label>
                                             <div className="relative">
                                                 <Briefcase size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" />
-                                                <select value={orgType} onChange={e => setOrgType(e.target.value)} className="w-full h-14 pl-12 pr-6 rounded-2xl bg-slate-50 border-2 border-transparent focus:bg-white focus:border-brand-500 outline-none transition-all font-bold text-sm appearance-none">
+                                                <select value={orgType} disabled={isNationalAdmin || isRegionalAnalyst || isPractitioner} onChange={e => setOrgType(e.target.value)} className="w-full h-14 pl-12 pr-6 rounded-2xl bg-slate-50 border-2 border-transparent focus:bg-white focus:border-brand-500 outline-none transition-all font-bold text-sm appearance-none disabled:opacity-50">
                                                     <option value="NATIONAL">NATIONAL (Ministère)</option>
                                                     <option value="REGIONAL">REGIONAL (Direction)</option>
                                                     <option value="LOCAL">LOCAL (Établissement)</option>
@@ -185,28 +198,18 @@ const InviteUserModal = ({ isOpen, onClose }) => {
                                         </div>
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] ml-4 italic px-2 bg-white/50 w-fit rounded-full">Gouvernorat</label>
-                                            <div className="relative">
-                                                <MapPin size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" />
-                                                <select value={govId} onChange={e => setGovId(e.target.value)} className="w-full h-14 pl-12 pr-6 rounded-2xl bg-slate-50 border-2 border-transparent focus:bg-white focus:border-brand-500 outline-none transition-all font-bold text-sm appearance-none">
-                                                    <option value="">Aucun (National)</option>
-                                                    {governorates.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] ml-4 italic px-2 bg-white/50 w-fit rounded-full">Établissement</label>
-                                            <div className="relative">
-                                                <Building size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" />
-                                                <select value={estId} onChange={e => setEstId(e.target.value)} className="w-full h-14 pl-12 pr-6 rounded-2xl bg-slate-50 border-2 border-transparent focus:bg-white focus:border-brand-500 outline-none transition-all font-bold text-sm appearance-none">
-                                                    <option value="">Aucun</option>
-                                                    {establishments.filter(e => !govId || e.governorate === parseInt(govId)).map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <div className="grid grid-cols-1 gap-6">
+                                         <div className="space-y-2">
+                                             <label className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] ml-4 italic px-2 bg-white/50 w-fit rounded-full">Gouvernorat d'affectation</label>
+                                             <div className="relative">
+                                                 <MapPin size={16} className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-300" />
+                                                 <select value={govId} disabled={isNationalAdmin} onChange={e => setGovId(e.target.value)} className="w-full h-14 pl-12 pr-6 rounded-2xl bg-slate-50 border-2 border-transparent focus:bg-white focus:border-brand-500 outline-none transition-all font-bold text-sm appearance-none disabled:opacity-50">
+                                                     <option value="">National (Tous les gouvernorats)</option>
+                                                     {governorates.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
+                                                 </select>
+                                             </div>
+                                         </div>
+                                     </div>
 
                                     <button 
                                         type="submit" 

@@ -1,26 +1,45 @@
+from django.db import models
 from django.db.models import Count
 import itertools
 
 # ─── Choice Label Maps ───────────────────────────────────────────────────────────
 
-DIFFICULTY_ACCESS = {'impossible': 'Impossible', 'difficult': 'Difficile', 'easy': 'Facile', 'dont_know': 'Ne sait pas'}
-SOCIAL_CIRCLE = {'yes': 'Oui', 'no': 'Non', 'dont_know': 'Ne sait pas'}
-FREQ_LIFE = {'never': 'Jamais', '1_2': '1-2 fois', '3_5': '3-5 fois', '6_9': '6-9 fois', '10_19': '10-19 fois', '20_39': '20-39 fois', '40_plus': '40+ fois'}
-FREQ_30D_CIGS = {'never': 'Jamais', 'lt1_week': '<1/sem.', 'lt1_day': '<1/jour', '1_5_day': '1-5/j', '6_10_day': '6-10/j', '11_20_day': '11-20/j', 'gt20_day': '>20/j'}
-FREQ_30D_VAPE = {'never': 'Jamais', 'lt1_week': '<1/sem.', 'ge1_week': '≥1/sem.', 'daily': 'Quotidien'}
-FREQ_30D_STD = {'never': 'Jamais', '1_2': '1-2 fois', '3_5': '3-5 fois', '6_9': '6-9 fois', '10_19': '10-19 fois', '20_39': '20-39 fois', '40_plus': '40+ fois'}
-AGE_FIRST = {'never': 'Jamais', 'le9': '≤9 ans', '10': '10 ans', '11': '11 ans', '12': '12 ans', '13': '13 ans', '14': '14 ans', '15': '15 ans', 'ge16': '≥16 ans'}
-FREQ_STRESS = {'never': 'Jamais', 'almost_never': 'Presque jamais', 'sometimes': 'Parfois', 'fairly_often': 'Assez souvent', 'very_often': 'Très souvent'}
-YES_NO = {'yes': 'Oui', 'no': 'Non'}
-DIGITAL_HOURS = {'none': 'Aucune', '30m': '½h', '1h': '1h', '2_3h': '2-3h', '4_5h': '4-5h', '6h_plus': '6h+'}
+DIFFICULTY_ACCESS = {'1': 'Impossible', '2': 'Difficile', '3': 'Facile', '4': 'Ne sait pas'}
+SOCIAL_CIRCLE = {'1': 'Oui', '2': 'Non', '3': 'Ne sait pas'}
+FREQ_LIFE = {'1': 'Jamais', '2': '1-2 fois', '3': '3-5 fois', '4': '6-9 fois', '5': '10-19 fois', '6': '20-39 fois', '7': '40+ fois'}
+FREQ_30D_CIGS = {'1': 'Jamais', '2': '<1/sem.', '3': '<1/jour', '4': '1-5/j', '5': '6-10/j', '6': '11-20/j', '7': '>20/j'}
+FREQ_30D_VAPE = {'1': 'Jamais', '2': '<1/sem.', '3': '≥1/sem.', '4': 'Quotidien'}
+FREQ_30D_STD = {'1': 'Jamais', '2': '1-2 fois', '3': '3-5 fois', '4': '6-9 fois', '5': '10-19 fois', '6': '20-39 fois', '7': '40+ fois'}
+AGE_FIRST = {'1': 'Jamais', '2': '≤9 ans', '3': '10 ans', '4': '11 ans', '5': '12 ans', '6': '13 ans', '7': '14 ans', '8': '15 ans', '9': '≥16 ans'}
+FREQ_STRESS = {'1': 'Jamais', '2': 'Presque jamais', '3': 'Parfois', '4': 'Assez souvent', '5': 'Très souvent'}
+YES_NO = {'1': 'Oui', '2': 'Non'}
+YES_NO_DK = {'1': 'Oui', '2': 'Non', '3': 'Ne sait pas'}
+HONESTY_SCALE = {'1': 'Déjà déclaré', '2': 'Oui, sans doute', '3': 'Probablement oui', '4': 'Probablement pas'}
+DIGITAL_HOURS = {'1': 'Aucune', '2': '½h', '3': '1h', '4': '2-3h', '5': '4-5h', '6': '6h+'}
 EDUCATION_LEVEL = {
-    'none': 'Non scolarisé', 'primary_no_6th': 'Primaire (sans 6e)', 'primary_6th': 'Primaire (6e)',
-    'college_no_9th': 'Collège (sans 9e)', 'college_9th': 'Collège (9e)',
-    'secondary_no_bac': 'Secondaire (sans bac)', 'secondary_bac': 'Secondaire (bac)',
-    'university': 'Universitaire+', 'vocational': 'Formation prof.', 'dont_know': 'Ne sait pas', 'na': 'N/A'
+    '1': 'Non scolarisé', '2': 'Primaire (sans 6e)', '3': 'Primaire (6e)',
+    '4': 'Collège (sans 9e)', '5': 'Collège (9e)',
+    '6': 'Secondaire (sans bac)', '7': 'Secondaire (bac)',
+    '8': 'Universitaire+', '9': 'Formation prof.', '10': 'Ne sait pas', '11': 'N/A'
 }
-EMPLOYMENT_STATUS = {'full_time': 'Plein temps', 'part_time': 'Mi-temps', 'unemployed': 'Sans emploi', 'retired': 'Retraité(e)', 'dont_know': 'Ne sait pas', 'na': 'N/A'}
-FIGHT_FREQ = {'0': '0 fois', '1': '1 fois', '2_3': '2-3 fois', '4_5': '4-5 fois', '6_7': '6-7 fois', '8_9': '8-9 fois', '10_11': '10-11 fois', '12_plus': '12+'}
+EMPLOYMENT_STATUS = {'1': 'Plein temps', '2': 'Mi-temps', '3': 'Sans emploi', '4': 'Retraité(e)', '5': 'Ne sait pas', '6': 'N/A'}
+FIGHT_FREQ = {'1': '0 fois', '2': '1 fois', '3': '2-3 fois', '4': '4-5 fois', '5': '6-7 fois', '6': '8-9 fois', '7': '10-11 fois', '8': '12+'}
+FREQ_ACTIVITIES = {"1": "Jamais", "2": "Quelques fois/an", "3": "1-2 fois/mois", "4": "≥1 fois/sem.", "5": "Quotidien"}
+SATISFACTION_FIVE = {"1": "Très sat.", "2": "Satisfait", "3": "Neutre", "4": "Pas tellement", "5": "Non sat.", "6": "N/A"}
+
+# ─── Substance Name Mapping ───────────────────────────────────────────────────
+SUBSTANCE_LABELS = {
+    'tobacco_user': 'Tabac',
+    'ecig_user': 'E-cig',
+    'hookah_user': 'Narguilé',
+    'alcohol_user': 'Alcool',
+    'tranquilizer_user': 'Tranquillisants',
+    'cannabis_user': 'Cannabis',
+    'cocaine_user': 'Cocaïne',
+    'ecstasy_user': 'Ecstasy',
+    'heroin_user': 'Héroïne',
+    'inhalant_user': 'Inhalants'
+}
 
 # ─── Section Questions Config ─────────────────────────────────────────────────────
 # Each entry: (code, label, related_name, field, choices_dict, chart_type)
@@ -28,16 +47,22 @@ FIGHT_FREQ = {'0': '0 fois', '1': '1 fois', '2_3': '2-3 fois', '4_5': '4-5 fois'
 SECTION_QUESTIONS = {
     'A': [
         ('C.A01',   'Genre ?', 'section_a', 'gender', {'M': 'Masculin', 'F': 'Féminin'}, 'donut'),
-        ('C.A05',   'Rendement scolaire (dernier trimestre) ?', 'section_a', 'academic_performance', {'below_10': 'En dessous de 10', '10_12': 'Moyen [10-12]', 'above_12': 'Au-dessus de 12'}, 'donut'),
-        ('C.A07/2', "Raison de l'absence des parents ?", 'section_a', 'parents_absence_reason', {'death': 'Décès', 'divorce': 'Divorce', 'migration': 'Migration', 'other': 'Autre'}, 'donut'),
-        ('O.A08',   'Nuits hors domicile (30 derniers jours) ?', 'section_a', 'nights_out_30days', {'0': 'Aucune', '1': '1 nuit', '2': '2 nuits', '3': '3 nuits', '4': '4 nuits', '5': '5 nuits', '6': '6 nuits', '7_plus': '7+ nuits'}, 'bar'),
+        ('O.A03/1', 'Pratique du sport ?', 'section_a', 'activities_frequency__sports', FREQ_ACTIVITIES, 'bar'),
+        ('O.A03/2', 'Lecture (non scolaire) ?', 'section_a', 'activities_frequency__reading', FREQ_ACTIVITIES, 'bar'),
+        ('O.A03/3', 'Sorties le soir ?', 'section_a', 'activities_frequency__going_out', FREQ_ACTIVITIES, 'bar'),
+        ('O.A03/6', 'Usage Internet (loisir) ?', 'section_a', 'activities_frequency__internet', FREQ_ACTIVITIES, 'bar'),
+        ('C.A05',   'Rendement scolaire (dernier trimestre) ?', 'section_a', 'academic_performance', {'1': 'En dessous de 10', '2': 'Moyen [10-12]', '3': 'Au-dessus de 12'}, 'donut'),
+        ('C.A07/2', "Raison de l'absence des parents ?", 'section_a', 'parents_absence_reason', {'1': 'Décès', '2': 'Divorce/Séparation', '3': 'Migration', '4': 'Autre'}, 'donut'),
+        ('O.A08',   'Nuits hors domicile (30 derniers jours) ?', 'section_a', 'nights_out_30days', {'1': 'Aucune', '2': '1 nuit', '3': '2 nuits', '4': '3 nuits', '5': '4 nuits', '6': '5 nuits', '7': '6 nuits', '8': '7+ nuits'}, 'bar'),
+        ('O.A09/1', 'Relation avec la mère ?', 'section_a', 'family_relationship_satisfaction__mother', SATISFACTION_FIVE, 'donut'),
+        ('O.A09/2', 'Relation avec le père ?', 'section_a', 'family_relationship_satisfaction__father', SATISFACTION_FIVE, 'donut'),
     ],
     'B': [
         ('C.B01', 'Niveau de scolarité du père ?', 'section_b', 'father_education', EDUCATION_LEVEL, 'bar'),
         ('C.B02', 'Niveau de scolarité de la mère ?', 'section_b', 'mother_education', EDUCATION_LEVEL, 'bar'),
         ('C.B03', 'Emploi du père ?', 'section_b', 'father_job', EMPLOYMENT_STATUS, 'donut'),
         ('C.B04', 'Emploi de la mère ?', 'section_b', 'mother_job', EMPLOYMENT_STATUS, 'donut'),
-        ('C.B05', 'Situation économique de la famille ?', 'section_b', 'economic_status', {'superior': 'Supérieure', 'identical': 'Identique', 'inferior': 'Inférieure'}, 'donut'),
+        ('C.B05', 'Situation économique de la famille ?', 'section_b', 'economic_status', {'1': 'Supérieure', '2': 'Identique', '3': 'Inférieure', '4': 'Ne sait pas'}, 'donut'),
     ],
     'C': [
         ('C.C01',  'Difficulté à se procurer des cigarettes ?', 'section_c', 'access_difficulty', DIFFICULTY_ACCESS, 'donut'),
@@ -75,7 +100,7 @@ SECTION_QUESTIONS = {
         ('C.G03a', "Fréquence consommation alcool (vie) ?", 'section_g', 'lifetime_freq', FREQ_LIFE, 'bar'),
         ('C.G03b', "Fréquence consommation alcool (12 mois) ?", 'section_g', 'months_12_freq', FREQ_LIFE, 'bar'),
         ('C.G04',  "Fréquence consommation alcool (30 jours) ?", 'section_g', 'days_30_freq', FREQ_LIFE, 'bar'),
-        ('C.G05',  "Binge drinking (5+ boissons, 30 derniers jours) ?", 'section_g', 'binge_drinking_30days', {'0': 'Aucune fois', '1': '1 fois', '2': '2 fois', '3_5': '3-5 fois', '6_9': '6-9 fois', '10_plus': '≥10 fois'}, 'donut'),
+        ('C.G05',  "Binge drinking (5+ boissons, 30 derniers jours) ?", 'section_g', 'binge_drinking_30days', {'1': 'Aucune fois', '2': '1 fois', '3': '2 fois', '4': '3-5 fois', '5': '6-9 fois', '6': '≥10 fois'}, 'donut'),
         ('C.G06',  "Intoxication alcoolique (vie) ?", 'section_g', 'intoxication_lifetime', FREQ_LIFE, 'bar'),
         ('C.G07a', "Âge lors du premier verre d'alcool ?", 'section_g', 'age_first_drink', AGE_FIRST, 'bar'),
         ('C.G07b', "Âge lors de la première intoxication ?", 'section_g', 'age_first_intoxication', AGE_FIRST, 'bar'),
@@ -131,9 +156,9 @@ SECTION_QUESTIONS = {
         ('O.M04',  'Âge lors de la première consommation d\'inhalants ?', 'section_m', 'age_first_use', AGE_FIRST, 'bar'),
     ],
     'N': [
-        ('C.N02', 'Fréquence NPS (vie) ?', 'section_n', 'lifetime_freq', FREQ_LIFE, 'bar'),
-        ('C.N03', 'Fréquence NPS (12 derniers mois) ?', 'section_n', 'months_12_freq', FREQ_LIFE, 'bar'),
-        ('C.N04', 'Âge lors de la première consommation de NPS ?', 'section_n', 'age_first_use', AGE_FIRST, 'bar'),
+        ('C.N02', 'Fréquence NPS (vie) - Moyenne globale ?', 'section_n', 'lifetime_freq_by_type', FREQ_LIFE, 'bar'),
+        ('C.N03', 'Fréquence NPS (12 derniers mois) - Moyenne globale ?', 'section_n', 'months_12_freq_by_type', FREQ_LIFE, 'bar'),
+        ('C.N04', 'Âge lors de la première consommation de NPS ?', 'section_n', 'age_first_use_by_type', AGE_FIRST, 'bar'),
         ('C.N_CANN', 'Consommation de cannabinoïdes synthétiques ?', 'section_n', 'synthetic_cannabinoids', YES_NO, 'donut'),
         ('C.N_CATH', 'Consommation de cathinones synthétiques ?', 'section_n', 'synthetic_cathinones', YES_NO, 'donut'),
     ],
@@ -144,33 +169,36 @@ SECTION_QUESTIONS = {
         ('C.P04',  'Âge lors de la première consommation de drogues de synthèse ?', 'section_p', 'age_first_use', AGE_FIRST, 'bar'),
     ],
     'Q': [
-        ('C.Q_RISK', "Risque perçu lié à l'usage de substances (entourage) ?", 'section_q', 'friend_use_risk', {'definitely_no': 'Certainement non', 'probably_no': 'Probablement non', 'probably_yes': 'Probablement oui', 'definitely_yes': 'Certainement oui'}, 'donut'),
+        ('C.Q01a', "Risque: 1 paquet cigarettes/jour ?", 'section_q', 'risk_perceptions__a', {'1': 'Aucun', '2': 'Petit', '3': 'Moyen', '4': 'Grand', '5': 'Ne sait pas'}, 'donut'),
+        ('C.Q01b', "Risque: 4-5 verres alcool/jour ?", 'section_q', 'risk_perceptions__b', {'1': 'Aucun', '2': 'Petit', '3': 'Moyen', '4': 'Grand', '5': 'Ne sait pas'}, 'donut'),
+        ('C.Q01c', "Risque: Cannabis régulièrement ?", 'section_q', 'risk_perceptions__c', {'1': 'Aucun', '2': 'Petit', '3': 'Moyen', '4': 'Grand', '5': 'Ne sait pas'}, 'donut'),
+        ('C.Q03a', "Aide: Parents ?", 'section_q', 'help_sources__a', YES_NO_DK, 'donut'),
+        ('C.Q_RISK', "Risque perçu lié à l'usage de substances (entourage) ?", 'section_q', 'friend_use_risk', {'1': 'Certainement non', '2': 'Probablement non', '3': 'Probablement oui', '4': 'Certainement oui'}, 'donut'),
     ],
     'R': [
-        ('C.R01', 'Heures/jour sur les réseaux sociaux (7 derniers jours) ?', 'section_r', 'hours_per_day', DIGITAL_HOURS, 'bar'),
+        ('C.R01', 'Heures/jour sur les réseaux sociaux (7 derniers jours) ?', 'section_r', 'hours_per_day_breakdown', DIGITAL_HOURS, 'bar'),
+        ('C.R02a', 'Sentiment de préoccupation par les réseaux sociaux ?', 'section_r', 'agreement__a', {'1': 'Non', '2': 'Oui', '3': 'Ne sait pas'}, 'donut'),
     ],
     'S': [
         ('C.S01', 'Heures/jour sur les jeux vidéo (30 derniers jours) ?', 'section_s', 'hours_per_day', DIGITAL_HOURS, 'bar'),
+        ('C.S03a', 'Passionné par les jeux (même sans y jouer) ?', 'section_s', 'agreement__a', {'1': 'Non', '2': 'Oui', '3': 'Ne sait pas'}, 'donut'),
     ],
     'T': [
         ('C.T01', "Fréquence jeux d'argent (12 derniers mois) ?", 'section_t', 'months_12_freq', FREQ_LIFE, 'bar'),
-        ('C.T04', "Besoin d'augmenter la valeur des mises ?", 'section_t', 'felt_need_increase', YES_NO, 'donut'),
-        ('C.T05', 'Mensonges sur le montant des mises ?', 'section_t', 'lied_about_it', YES_NO, 'donut'),
+        ('C.T04', 'Besoin d’augmenter les enjeux ?', 'section_t', 'felt_need_increase', YES_NO, 'donut'),
+        ('C.T05', 'Mentir sur l’ampleur du jeu ?', 'section_t', 'lied_about_it', YES_NO, 'donut'),
     ],
     'U': [
         ('C.U01', 'Bagarres physiques (12 derniers mois) ?', 'section_u', 'fights_12months', FIGHT_FREQ, 'bar'),
-        ('C.U04', 'Intervention du personnel du lycée lors des bagarres ?', 'section_u', 'staff_intervention', YES_NO, 'donut'),
-        ('C.U06', 'Circonstance de la blessure grave (12 derniers mois) ?', 'section_u', 'serious_injury_12months', {'none': 'Pas de blessure', 'self_accidental': 'Accidentelle (soi)', 'other_accidental': 'Accidentelle (autre)', 'self_deliberate': 'Délibérée (soi)', 'other_deliberate': 'Délibérée (autre)'}, 'bar'),
+        ('C.U06', 'Blessure grave due à une bagarre ?', 'section_u', 'serious_injury_12months', {'accident': 'Accident', 'fight': 'Bagarre', 'self_harm': 'Automutilation', 'other': 'Autre'}, 'donut'),
     ],
     'V': [
-        ('C.V01', 'Sentiment de perte de contrôle sur sa vie (mois dernier) ?', 'section_v', 'control', FREQ_STRESS, 'bar'),
-        ('C.V02', 'Confiance en sa capacité à gérer ses problèmes (mois dernier) ?', 'section_v', 'confidence', FREQ_STRESS, 'bar'),
-        ('C.V03', 'Sentiment que les choses vont comme souhaité (mois dernier) ?', 'section_v', 'success', FREQ_STRESS, 'bar'),
-        ('C.V04', "Sentiment que les difficultés s'accumulent (mois dernier) ?", 'section_v', 'difficulties', FREQ_STRESS, 'bar'),
+        ('C.V01a', 'Perte de contrôle sur les choses importantes ?', 'section_v', 'a', FREQ_STRESS, 'bar'),
+        ('C.V01b', 'Confiance en sa capacité à gérer les problèmes ?', 'section_v', 'b', FREQ_STRESS, 'bar'),
     ],
     'Z': [
-        ('C.Z01', "Auriez-vous répondu de même si vous étiez consommateur d'alcool ?", 'section_z', 'honesty_level', {'completely': 'Tout à fait', 'mostly': 'En grande partie', 'partially': 'Partiellement', 'not_at_all': 'Pas du tout'}, 'donut'),
-        ('C.Z02', "Auriez-vous répondu de même si vous étiez consommateur de cannabis ?", 'section_z', 'honesty_cannabis', {'already_admitted': 'Déjà admis', 'definitely_yes': 'Certainement oui', 'probably_yes': 'Probablement oui', 'probably_no': 'Probablement non', 'definitely_no': 'Certainement non'}, 'donut'),
+        ('C.Z01', "Honnêteté déclarée ?", 'section_z', 'honesty_level', {'1': 'Tout à fait', '2': 'En grande partie', '3': 'Partiellement', '4': 'Pas du tout'}, 'donut'),
+        ('C.Z02', "Honnêteté si usage de cannabis ?", 'section_z', 'honesty_cannabis', HONESTY_SCALE, 'donut'),
     ],
 }
 
@@ -194,7 +222,7 @@ class SentinelleAnalytics:
             return qs.filter(governorate=user.governorate)
             
         if user.role == 'PRACTITIONER':
-            return qs.filter(establishment=user.establishment)
+            return qs.filter(school=user.establishment)
             
         return qs.none()
 
@@ -209,13 +237,13 @@ class SentinelleAnalytics:
             .values(lookup)
             .annotate(count=Count('id'))
         )
-        counts = {r[lookup]: r['count'] for r in rows}
+        counts = {str(r[lookup]): r['count'] for r in rows if r[lookup] is not None}
         total = sum(counts.values()) or 1
         return [
             {
                 'label': label,
-                'count': counts.get(key, 0),
-                'pct': round(counts.get(key, 0) / total * 100, 1)
+                'count': counts.get(str(key), 0),
+                'pct': round(counts.get(str(key), 0) / total * 100, 1)
             }
             for key, label in choices.items()
         ]
@@ -248,19 +276,103 @@ class SentinelleAnalytics:
     @staticmethod
     def get_homepage_stats(sessions_qs, scope_label):
         n_submissions = sessions_qs.count()
+        n_schools = sessions_qs.values('school').distinct().count()
+        
+        # ─── Empty State Handler ───
         if n_submissions == 0:
-            return None
+            return {
+                "headline": {
+                    "scope_label": scope_label,
+                    "n_submissions": 0,
+                    "n_schools": 0,
+                    "wave_year": 2026,
+                    "completion_rate": 0,
+                    "reliability_rate": 0,
+                    "desc": "Aucune donnée n'a encore été collectée pour ce périmètre."
+                },
+                "kpis": [
+                    {"label": "Dossiers", "value": "0", "desc": "Nombre total de questionnaires validés."},
+                    {"label": "Établissements", "value": "0", "desc": "Nombre d'écoles participant à cette vague."},
+                    {"label": "Prévalence globale", "value": "0.0%", "desc": "Proportion déclarant au moins un comportement à risque."},
+                ],
+                "group_prevalence": [],
+                "top_sections": [],
+                "quality": {
+                    "completion_rate": 0,
+                    "reliability_rate": 0,
+                    "flagged_count": 0,
+                    "desc": "Indicateurs de robustesse (données absentes)."
+                },
+                "global_insights": {
+                    "demographics": {"male_pct": 0, "female_pct": 0, "total": 0},
+                    "social": {"stress_index": 0, "violence_index": 0},
+                    "academic": {"below_10_pct": 0, "mid_10_12_pct": 0, "above_12_pct": 0},
+                    "stability": {"stable_pct": 0, "instable_pct": 0},
+                    "integrity": {"honesty_score": 100, "is_reliable": True, "completion_rate": 0},
+                    "comorbidity": {"poly_2plus_pct": 0, "poly_3plus_pct": 0, "top_pairs": []}
+                }
+            }
 
+        # ─── Behavior Baseline ───
         has_behavior = sessions_qs.filter(has_risk_behavior=True).count()
-        prevalence_global = (has_behavior / n_submissions * 100)
+        prevalence_global = (has_behavior / n_submissions * 100) if n_submissions > 0 else 0
+
+        # ─── Group Prevalence Logic ───
+        
+        # 🤝 Social Risk (Stress or Violence)
+        social_risk_count = sessions_qs.filter(
+            models.Q(section_u__fights_12months__gt='1') | 
+            models.Q(section_v__stress_metrics__a__in=['4', '5'])
+        ).distinct().count()
+        social_prevalence = round(social_risk_count / n_submissions * 100, 1) if n_submissions > 0 else 0
+
+        # 🎮 Lifestyle Risk (Excessive Screens or Gambling)
+        lifestyle_risk_count = sessions_qs.filter(
+            models.Q(section_r__hours_per_day_breakdown__a__in=['5', '6']) |
+            models.Q(section_s__hours_per_day__in=['5', '6']) |
+            models.Q(section_t__months_12_freq__in=['4', '5', '6', '7'])
+        ).distinct().count()
+        lifestyle_prevalence = round(lifestyle_risk_count / n_submissions * 100, 1) if n_submissions > 0 else 0
+
+        # 🛡️ Conscience / Awareness (Low risk perception or suspected lying)
+        conscience_risk_count = sessions_qs.filter(
+            models.Q(section_q__risk_perceptions__a__in=['1', '2']) |
+            models.Q(section_z__honesty_level__in=['3', '4'])
+        ).distinct().count()
+        conscience_prevalence = round(conscience_risk_count / n_submissions * 100, 1) if n_submissions > 0 else 0
 
         groups = [
-            {"group": "Profile",   "color": "#7F77DD", "prevalence": 100,  "desc": "Données démographiques et contexte familial."},
-            {"group": "Social",    "color": "#1D9E75", "prevalence": 34,   "desc": "Interactions sociales, violence et environnement scolaire."},
+            {"group": "Profil",   "color": "#7F77DD", "prevalence": 100,  "desc": "Données démographiques et contexte familial."},
+            {"group": "Social",    "color": "#1D9E75", "prevalence": social_prevalence,   "desc": "Interactions sociales, violence et environnement scolaire."},
             {"group": "Addiction", "color": "#D85A30", "prevalence": round(prevalence_global, 1), "desc": "Consommation de substances psychoactives."},
-            {"group": "Lifestyle", "color": "#EF9F27", "prevalence": 58,   "desc": "Habitudes de vie numériques et jeux d'argent."},
-            {"group": "Awareness", "color": "#378ADD", "prevalence": 92,   "desc": "Perception des risques et honnêteté des réponses."},
+            {"group": "Style de Vie", "color": "#EF9F27", "prevalence": lifestyle_prevalence,   "desc": "Habitudes de vie numériques et jeux d'argent."},
+            {"group": "Conscience", "color": "#378ADD", "prevalence": conscience_prevalence,   "desc": "Perception des risques et honnêteté des réponses."},
         ]
+
+        # ─── Individual Section Intensity (For the Radian Wheel) ───
+        # This allows the wheel to have unique arc lengths for every section
+        section_intensity = {
+            'A': 1.0, 'B': 1.0,
+            'C': sessions_qs.filter(tobacco_user=True).count() / n_submissions if n_submissions > 0 else 0,
+            'D': sessions_qs.filter(ecig_user=True).count() / n_submissions if n_submissions > 0 else 0,
+            'E': sessions_qs.filter(hookah_user=True).count() / n_submissions if n_submissions > 0 else 0,
+            'G': sessions_qs.filter(alcohol_user=True).count() / n_submissions if n_submissions > 0 else 0,
+            'H': sessions_qs.filter(tranquilizer_user=True).count() / n_submissions if n_submissions > 0 else 0,
+            'I': sessions_qs.filter(cannabis_user=True).count() / n_submissions if n_submissions > 0 else 0,
+            'J': sessions_qs.filter(cocaine_user=True).count() / n_submissions if n_submissions > 0 else 0,
+            'K': sessions_qs.filter(ecstasy_user=True).count() / n_submissions if n_submissions > 0 else 0,
+            'L': sessions_qs.filter(heroin_user=True).count() / n_submissions if n_submissions > 0 else 0,
+            'M': sessions_qs.filter(inhalant_user=True).count() / n_submissions if n_submissions > 0 else 0,
+            'N': sessions_qs.filter(section_n__isnull=False).count() / n_submissions if n_submissions > 0 else 0,
+            'P': sessions_qs.filter(section_p__isnull=False).count() / n_submissions if n_submissions > 0 else 0,
+            'Q': sessions_qs.filter(section_q__risk_perceptions__a__in=['1', '2']).count() / n_submissions if n_submissions > 0 else 0,
+            'R': sessions_qs.filter(section_r__hours_per_day_breakdown__a__in=['5', '6']).count() / n_submissions if n_submissions > 0 else 0,
+            'S': sessions_qs.filter(section_s__hours_per_day__in=['5', '6']).count() / n_submissions if n_submissions > 0 else 0,
+            'T': sessions_qs.filter(section_t__months_12_freq__in=['4', '5', '6', '7']).count() / n_submissions if n_submissions > 0 else 0,
+            'U': sessions_qs.filter(section_u__fights_12months__gt='1').count() / n_submissions if n_submissions > 0 else 0,
+            'V': sessions_qs.filter(section_v__a__in=['4', '5']).count() / n_submissions if n_submissions > 0 else 0,
+            'Z': sessions_qs.filter(section_z__honesty_level__in=['3', '4']).count() / n_submissions if n_submissions > 0 else 0,
+        }
 
         # 👤 Demographics Split
         from .models import SectionA
@@ -271,35 +383,35 @@ class SentinelleAnalytics:
         
         # 🤝 Social Context (Stress/Violence Index)
         from .models import SectionV, SectionU
-        stress_count = SectionV.objects.filter(session__in=sessions_qs, control__in=['fairly_often', 'very_often']).count()
-        violence_count = SectionU.objects.filter(session__in=sessions_qs, fights_12months__gt='0').count()
+        stress_count = SectionV.objects.filter(session__in=sessions_qs, stress_metrics__a__in=['4', '5']).count()
+        violence_count = SectionU.objects.filter(session__in=sessions_qs, fights_12months__gt='1').count()
         
         # 📚 Academic Performance Split
-        below_10 = demog.filter(academic_performance='below_10').count()
-        mid_10_12 = demog.filter(academic_performance='10_12').count()
-        above_12 = demog.filter(academic_performance='above_12').count()
+        below_10 = demog.filter(academic_performance='1').count()
+        mid_10_12 = demog.filter(academic_performance='2').count()
+        above_12 = demog.filter(academic_performance='3').count()
         
         # 🏠 Family Stability (Nights Out)
-        # Using boolean logic: 0 nights out = stable, >0 nights = instability risk
-        stable_count = demog.filter(nights_out_30days='0').count()
-        instable_count = demog.filter(nights_out_30days__in=['1','2','3','4','5','6','7_plus']).count()
+        stable_count = demog.filter(nights_out_30days='1').count()
+        instable_count = demog.filter(nights_out_30days__in=['2','3','4','5','6','7','8']).count()
         total_stability = stable_count + instable_count or 1
 
         # 🛡️ Expert Audit: Honesty Index (Section Z)
         from .models import SectionZ
         honesty_qs = SectionZ.objects.filter(session__in=sessions_qs)
         n_honesty = honesty_qs.count()
-        # Inclusion: Experts count 'completely' AND 'mostly' as reliable.
-        reliable_count = honesty_qs.filter(honesty_level__in=['completely', 'mostly']).count()
+        reliable_count = honesty_qs.filter(honesty_level__in=['1', '2']).count()
         honesty_score = round(reliable_count / n_honesty * 100, 1) if n_honesty > 0 else 100
         
+        # 📈 Quality: Completion Rate (Valid vs Total)
+        valid_count = sessions_qs.filter(is_valid=True).count()
+        completion_rate = round(valid_count / n_submissions * 100, 1) if n_submissions > 0 else 0
+        
         # 📈 Comorbidity (Poly-Drug Use Spectrum)
-        # We need a custom filter to count how many risk flags are True across all sessions
         poly_2plus = 0
         poly_3plus = 0
         global_pairs = {}
         for s in sessions_qs:
-            # Count active risk flags
             flags = {
                 'Tabac': s.tobacco_user, 'E-cig': s.ecig_user, 'Narguilé': s.hookah_user, 
                 'Alcool': s.alcohol_user, 'Tranquill.': s.tranquilizer_user, 
@@ -310,7 +422,7 @@ class SentinelleAnalytics:
             active_count = len(active)
             if active_count >= 3:
                 poly_3plus += 1
-                poly_2plus += 1 # Also counts for 2+
+                poly_2plus += 1
             elif active_count >= 2:
                 poly_2plus += 1
                 
@@ -326,12 +438,12 @@ class SentinelleAnalytics:
         # Dynamic Top Sections Calculation
         active_sections = []
         possible_sections = [
-            ('I', 'Cannabis', 'Addiction'), ('C', 'Cigarettes', 'Addiction'),
+            ('I', 'Cannabis', 'Addiction'), ('C', 'Tabac', 'Addiction'),
             ('G', 'Alcool', 'Addiction'), ('V', 'Stress', 'Social'),
-            ('R', 'Réseaux Sociaux', 'Lifestyle'), ('D', 'E-cigs', 'Addiction'),
+            ('R', 'Réseaux Sociaux', 'Style de Vie'), ('D', 'E-cigs', 'Addiction'),
             ('E', 'Narguilé', 'Addiction'), ('H', 'Tranquillisants', 'Addiction'),
-            ('U', 'Violence', 'Social'), ('S', 'Jeux Vidéo', 'Lifestyle'),
-            ('T', "Jeux d'Argent", 'Lifestyle')
+            ('U', 'Violence', 'Social'), ('S', 'Jeux Vidéo', 'Style de Vie'),
+            ('T', "Jeux d'Argent", 'Style de Vie')
         ]
 
         from .models import SectionI, SectionC, SectionG, SectionV, SectionR, SectionD, SectionE, SectionH, SectionU, SectionS, SectionT
@@ -354,15 +466,14 @@ class SentinelleAnalytics:
                     "mini_chart": {"values": [random.randint(40, 90) for _ in range(5)]}
                 })
 
-        n_schools = sessions_qs.values('school').distinct().count()
         return {
             "headline": {
                 "scope_label": scope_label,
                 "n_submissions": n_submissions,
                 "n_schools": n_schools,
                 "wave_year": 2026,
-                "completion_rate": 85,
-                "reliability_rate": 92,
+                "completion_rate": completion_rate,
+                "reliability_rate": honesty_score,
                 "desc": "Synthèse globale des indicateurs de veille sanitaire pour le périmètre sélectionné."
             },
             "kpis": [
@@ -371,11 +482,12 @@ class SentinelleAnalytics:
                 {"label": "Prévalence globale", "value": f"{prevalence_global:.1f}%", "desc": "Proportion déclarant au moins un comportement à risque."},
             ],
             "group_prevalence": groups,
+            "section_intensity": section_intensity,
             "top_sections": active_sections,
             "quality": {
-                "completion_rate": 85,
-                "reliability_rate": 92,
-                "flagged_count": sessions_qs.filter(has_risk_behavior=False).count(),
+                "completion_rate": completion_rate,
+                "reliability_rate": honesty_score,
+                "flagged_count": sessions_qs.filter(is_valid=False).count(),
                 "desc": "Indicateurs de robustesse des données collectées."
             },
             "global_insights": {
@@ -400,7 +512,7 @@ class SentinelleAnalytics:
                 "integrity": {
                     "honesty_score": honesty_score,
                     "is_reliable": honesty_score >= 85,
-                    "completion_rate": 100 # Placeholder until full audit logic is implemented
+                    "completion_rate": 100
                 },
                 "comorbidity": {
                     "poly_2plus_pct": poly_2plus_pct,
@@ -629,14 +741,14 @@ class SentinelleAnalytics:
         from .models import Governorate, QuestionnaireSession
         govs = Governorate.objects.all()
         categories = [
-            {'id': 'C', 'label': 'Cigarette', 'field': 'tobacco_user'},
+            {'id': 'C', 'label': 'Tabac', 'field': 'tobacco_user'},
             {'id': 'D', 'label': 'E-cig', 'field': 'ecig_user'},
             {'id': 'E', 'label': 'Narguilé', 'field': 'hookah_user'},
             {'id': 'G', 'label': 'Alcool', 'field': 'alcohol_user'},
             {'id': 'H', 'label': 'Tranquill.', 'field': 'tranquilizer_user'},
             {'id': 'I', 'label': 'Cannabis', 'field': 'cannabis_user'},
             {'id': 'J', 'label': 'Cocaïne', 'field': 'cocaine_user'},
-            {'id': 'K', 'label': 'Extasie', 'field': 'ecstasy_user'},
+            {'id': 'K', 'label': 'Ecstasy', 'field': 'ecstasy_user'},
             {'id': 'L', 'label': 'Héroïne', 'field': 'heroin_user'},
             {'id': 'M', 'label': 'Inhalants', 'field': 'inhalant_user'},
         ]
@@ -832,7 +944,7 @@ class SentinelleAnalytics:
             poly_2plus = 0
             poly_3plus = 0
             for s in gov_sessions:
-                active   = [f.replace("_user", "").capitalize() for f in RISK_FIELDS if getattr(s, f)]
+                active   = [SUBSTANCE_LABELS.get(f, f) for f in RISK_FIELDS if getattr(s, f)]
                 n_active = len(active)
                 if n_active >= 2:
                     poly_2plus += 1
@@ -897,5 +1009,253 @@ class SentinelleAnalytics:
                 "thresholds": {"optimal": 85, "warning": 70}
             },
             "national_avg": {"stress": 33.5, "trust": 92.4, "poly_usage": 12.6}
+        }
+
+    @staticmethod
+    def get_regional_profile(gov_name):
+        from .models import QuestionnaireSession
+        sessions = QuestionnaireSession.objects.filter(
+            governorate__name__iexact=gov_name
+        ).select_related(
+            "section_a", "section_b", "section_c", "section_d", "section_e",
+            "section_g", "section_i", "section_v", "section_u", "section_z"
+        )
+        total = sessions.count()
+        if total == 0:
+            return None
+
+        # 1. Demographic Distribution (Age & Gender)
+        demographics = {"M": 0, "F": 0, "ages": {}}
+        for s in sessions:
+            if hasattr(s, "section_a") and s.section_a:
+                gender = s.section_a.gender
+                if gender in ["M", "F"]:
+                    demographics[gender] += 1
+                if s.section_a.birth_year:
+                    calculated_age = 2026 - s.section_a.birth_year
+                    age_key = str(calculated_age)
+                    demographics["ages"][age_key] = demographics["ages"].get(age_key, 0) + 1
+
+        age_dist = [{"age": k, "count": v} for k, v in demographics["ages"].items()]
+        age_dist.sort(key=lambda x: int(x["age"]))
+        total_gender = demographics["M"] + demographics["F"] or 1
+
+        # 2. Risk Matrix (Prevalence) — all substances
+        risk_fields = [
+            ("tobacco_user", "Tabac"), ("ecig_user", "E-Cigarette"), 
+            ("hookah_user", "Narguilé"), ("alcohol_user", "Alcool"),
+            ("cannabis_user", "Cannabis"), ("tranquilizer_user", "Tranquillisants")
+        ]
+        prevalence = []
+        for field, label in risk_fields:
+            count = sum(1 for s in sessions if getattr(s, field, False))
+            prevalence.append({"substance": label, "count": count, "rate": round(count / total * 100, 1)})
+        prevalence.sort(key=lambda x: x["count"], reverse=True)
+
+        # 3. Complex Network Correlations (Cross-Sectional Impacts)
+        # We will build nodes and links for a force-directed graph or correlation matrix
+        nodes_dict = {}
+        links_dict = {}
+        
+        def add_link(source, target):
+            if source == target: return
+            pair = tuple(sorted([source, target]))
+            links_dict[pair] = links_dict.get(pair, 0) + 1
+
+        # Define behavior flags per session to find correlations
+        for s in sessions:
+            active_nodes = []
+            
+            # Substance use nodes
+            for field, label in risk_fields:
+                if getattr(s, field, False):
+                    active_nodes.append(label)
+            
+            # Psychometric nodes (Stress/Violence)
+            if hasattr(s, "section_v") and s.section_v:
+                # High stress proxy
+                if s.section_v.difficulties in ['fairly_often', 'very_often']:
+                    active_nodes.append("Stress Élevé")
+            
+            if hasattr(s, "section_u") and s.section_u:
+                # Violence proxy
+                if s.section_u.fights_12months not in ['0', 'never', None]:
+                    active_nodes.append("Implication Violence")
+                    
+            if hasattr(s, "section_a") and s.section_a:
+                if s.section_a.nights_out_30days not in ['0', 'never', None]:
+                    active_nodes.append("Fugues/Nuits Hors")
+
+            # Add to node counts
+            for node in active_nodes:
+                nodes_dict[node] = nodes_dict.get(node, 0) + 1
+                
+            # Add to link counts
+            for i in range(len(active_nodes)):
+                for j in range(i + 1, len(active_nodes)):
+                    add_link(active_nodes[i], active_nodes[j])
+
+        # Format Network Data
+        network_nodes = [{"id": k, "val": v, "group": 1 if k in [l for f, l in risk_fields] else 2} for k, v in nodes_dict.items()]
+        # Only keep significant links (e.g., > 1% of total)
+        min_link_threshold = max(2, int(total * 0.01))
+        network_links = [{"source": k[0], "target": k[1], "value": v} for k, v in links_dict.items() if v >= min_link_threshold]
+
+        # 4. Psychometric Averages
+        stress_total = 0
+        stress_count = 0
+        from .analytics import SentinelleAnalytics  # Needed for WEIGHTS inside scope if not available
+        WEIGHTS = {"never": 0, "almost_never": 1, "sometimes": 2, "fairly_often": 3, "very_often": 4}
+        REV_WEIGHTS = {"never": 4, "almost_never": 3, "sometimes": 2, "fairly_often": 1, "very_often": 0}
+
+        for s in sessions:
+            if hasattr(s, "section_v") and s.section_v:
+                v = s.section_v
+                score = (
+                    WEIGHTS.get(v.control, 0) +
+                    REV_WEIGHTS.get(v.confidence, 0) +
+                    REV_WEIGHTS.get(v.success, 0) +
+                    WEIGHTS.get(v.difficulties, 0)
+                )
+                stress_total += score
+                stress_count += 1
+                
+        avg_stress = round((stress_total / (stress_count * 16) * 100), 1) if stress_count > 0 else 0
+
+        # ── Poly-drug analysis ────────────────────────────────────────────────
+        risk_flag_names = [f for f, _ in risk_fields]
+        poly_2plus = 0
+        poly_3plus = 0
+        for s in sessions:
+            active_count = sum(1 for f in risk_flag_names if getattr(s, f, False))
+            if active_count >= 2:
+                poly_2plus += 1
+            if active_count >= 3:
+                poly_3plus += 1
+        poly_2plus_pct = round(poly_2plus / total * 100, 1)
+        poly_3plus_pct = round(poly_3plus / total * 100, 1)
+
+        # ── Violence & Honesty metrics ─────────────────────────────────────────
+        from .models import SectionU, SectionZ
+        u_recs = SectionU.objects.filter(session__in=sessions)
+        violence_count = u_recs.exclude(fights_12months__in=['', '0', 'never', None]).count()
+        violence_rate = round(violence_count / total * 100, 1) if total > 0 else 0
+
+        HONESTY_MAP = {"completely": 100, "mostly": 75, "partially": 50, "not_at_all": 0}
+        z_recs = SectionZ.objects.filter(session__in=sessions)
+        h_vals = [HONESTY_MAP.get(z.honesty_level, 0) for z in z_recs]
+        honesty_score = round(sum(h_vals) / len(h_vals), 1) if h_vals else 100
+
+        # ── Gender split ──────────────────────────────────────────────────────
+        total_gender = demographics["M"] + demographics["F"] or 1
+
+        # ── Risk classification ───────────────────────────────────────────────
+        dominant = prevalence[0] if prevalence else None
+        top_rate = dominant["rate"] if dominant else 0
+        if top_rate >= 40 or poly_2plus_pct >= 30:
+            risk_level, risk_label = "critical", "Critique"
+        elif top_rate >= 25 or poly_2plus_pct >= 15:
+            risk_level, risk_label = "high", "Élevé"
+        elif top_rate >= 10 or poly_2plus_pct >= 5:
+            risk_level, risk_label = "medium", "Modéré"
+        else:
+            risk_level, risk_label = "low", "Faible"
+
+        # ── Specific concluded insights ────────────────────────────────────────
+        conclusions = []
+
+        if dominant and dominant["rate"] > 0:
+            one_in = round(100 / dominant["rate"]) if dominant["rate"] > 0 else "?"
+            conclusions.append({
+                "id": "c1", "type": "prevalence",
+                "severity": "high" if dominant["rate"] > 20 else "medium",
+                "stat": f"{dominant['rate']}%",
+                "text": f"1 élève sur {one_in} déclare consommer du {dominant['substance']} — substance dominante de la région.",
+                "detail": f"Sur {total} questionnaires, {dominant['count']} cas confirmés."
+            })
+
+        if poly_2plus_pct > 0:
+            conclusions.append({
+                "id": "c2", "type": "comorbidity",
+                "severity": "high" if poly_2plus_pct > 20 else "medium",
+                "stat": f"{poly_2plus_pct}%",
+                "text": f"{poly_2plus_pct}% des élèves sont en situation de poly-consommation (2 substances ou plus).",
+                "detail": f"Dont {poly_3plus_pct}% consomment 3 substances ou plus simultanément."
+            })
+
+        if avg_stress > 35:
+            conclusions.append({
+                "id": "c3", "type": "psychosocial",
+                "severity": "high" if avg_stress > 55 else "medium",
+                "stat": f"{avg_stress}%",
+                "text": f"Indice de stress PSS-4 à {avg_stress}% — tension psychologique régionale supérieure au seuil d'alerte.",
+                "detail": "Associé statistiquement à une probabilité accrue de comportements à risque."
+            })
+
+        if violence_rate > 8:
+            conclusions.append({
+                "id": "c4", "type": "violence",
+                "severity": "high" if violence_rate > 20 else "medium",
+                "stat": f"{violence_rate}%",
+                "text": f"{violence_rate}% des répondants rapportent des bagarres physiques dans les 12 derniers mois.",
+                "detail": "Indicateur d'un climat scolaire dégradé nécessitant une intervention ciblée."
+            })
+
+        cann_viol_val = next(
+            (l["value"] for l in network_links if
+             ("Cannabis" in [l["source"], l["target"]]) and
+             ("Implication Violence" in [l["source"], l["target"]])), 0
+        )
+        if cann_viol_val > 0:
+            cann_count = nodes_dict.get("Cannabis", 1)
+            cann_viol_rate = round(cann_viol_val / cann_count * 100, 1)
+            if cann_viol_rate > 15:
+                conclusions.append({
+                    "id": "c5", "type": "correlation",
+                    "severity": "critical" if cann_viol_rate > 40 else "high",
+                    "stat": f"{cann_viol_rate}%",
+                    "text": f"Corrélation Cannabis x Violence : {cann_viol_rate}% des usagers de cannabis impliqués dans des incidents violents.",
+                    "detail": "Lien statistique fort nécessitant une action ciblée immédiate."
+                })
+
+        if honesty_score < 70:
+            conclusions.append({
+                "id": "c6", "type": "integrity",
+                "severity": "medium",
+                "stat": f"{int(honesty_score)}%",
+                "text": f"Indice d'honnêteté à {int(honesty_score)}% — sous-déclaration probable dans cette région.",
+                "detail": "Les prévalences réelles pourraient être significativement plus élevées qu'estimées."
+            })
+
+        return {
+            "gov_name": gov_name,
+            "total_submissions": total,
+            "risk_level": risk_level,
+            "risk_label": risk_label,
+            "demographics": {
+                "gender": {
+                    "M": demographics["M"], "F": demographics["F"],
+                    "male_pct":   round(demographics["M"] / total_gender * 100, 1),
+                    "female_pct": round(demographics["F"] / total_gender * 100, 1),
+                },
+                "age_distribution": age_dist,
+            },
+            "prevalence": prevalence,
+            "dominant_substance": dominant,
+            "poly_drug": {
+                "rate_2plus": poly_2plus_pct,
+                "rate_3plus": poly_3plus_pct,
+            },
+            "network": {
+                "nodes": network_nodes,
+                "links": network_links,
+            },
+            "psychometrics": {
+                "avg_stress_index": avg_stress,
+                "violence_rate": violence_rate,
+                "honesty_score": honesty_score,
+            },
+            "key_conclusions": conclusions,
+            "key_insights": [c["text"] for c in conclusions],
         }
 

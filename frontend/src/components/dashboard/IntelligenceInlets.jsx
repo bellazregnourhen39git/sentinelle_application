@@ -43,7 +43,7 @@ export const ExpertAudit = ({ integrity, locked = false }) => {
                     </div>
                 </div>
                 {!is_reliable && (
-                    <span className="px-4 py-1.5 bg-rose-500 text-white rounded-full text-[9px] font-black uppercase tracking-[2px] animate-pulse shadow-lg shadow-rose-500/20">Alerte</span>
+                    <span className="px-4 py-1.5 bg-rose-500 text-white rounded-full text-[9px] font-black uppercase tracking-[2px] animate-pulse shadow-lg shadow-rose-500/20"><EditableLabel termKey="lab_alert" defaultValue="Alerte" /></span>
                 )}
             </div>
 
@@ -123,39 +123,7 @@ export const ComorbiditySpectrum = ({ metrics, locked = false }) => {
                     </div>
                 </div>
 
-                {/* 🔗 Major Correlations - General View */}
-                {metrics?.top_pairs?.length > 0 && (
-                    <div className="mt-8 pt-8 border-t border-slate-100">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3.5px] mb-6 italic flex items-center gap-2">
-                            <Activity size={12} className="text-brand-500 animate-pulse" />
-                            <EditableLabel termKey="lab_como_correlations" defaultValue="Corrélations Majeures" />
-                        </p>
-                        <div className="grid grid-cols-1 gap-3">
-                            {metrics.top_pairs.map((pair, idx) => (
-                                <div key={idx} className="flex items-center justify-between p-4 rounded-2xl bg-white border border-slate-100 shadow-sm group/pair hover:border-brand-500/30 transition-all">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-1.5 h-1.5 rounded-full bg-brand-500" />
-                                        <span className="text-[10px] font-black text-slate-600 uppercase italic tracking-wider group-hover/pair:text-brand-600 transition-colors">
-                                            {pair.label}
-                                        </span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-24 h-1.5 bg-slate-50 rounded-full overflow-hidden border border-slate-100/50">
-                                            <motion.div 
-                                                initial={{ width: 0 }} 
-                                                animate={{ width: `${pair.pct}%` }} 
-                                                className="h-full bg-brand-500" 
-                                            />
-                                        </div>
-                                        <span className="text-[11px] font-black text-brand-600 italic tabular-nums min-w-[35px] text-right">
-                                            {pair.pct}%
-                                        </span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
+
 
                 <div className="p-6 rounded-[32px] bg-slate-900 text-white shadow-2xl shadow-slate-900/30 relative overflow-hidden mt-8">
                     <div className="absolute top-[-10%] right-[-10%] opacity-10 group-hover:rotate-12 transition-transform duration-700">
@@ -242,8 +210,8 @@ export const CohortPulse = ({ insights }) => {
                         <motion.div initial={{ width: 0 }} animate={{ width: `${stability.stable_pct}%` }} className="h-full bg-brand-500 rounded-full shadow-lg" />
                     </div>
                    <div className="mt-3 flex justify-between text-[9px] font-black uppercase text-slate-400 italic">
-                       <span className="text-brand-600">Stable ({stability.stable_pct}%)</span>
-                       <span className="text-rose-500">Aléas ({stability.instable_pct}%)</span>
+                       <span className="text-brand-600"><EditableLabel termKey="lab_cohort_stable" defaultValue="Stable" /> ({stability.stable_pct}%)</span>
+                       <span className="text-rose-500"><EditableLabel termKey="lab_cohort_unstable" defaultValue="Aléas" /> ({stability.instable_pct}%)</span>
                    </div>
                 </div>
             </div>
@@ -286,7 +254,7 @@ export const SocialInlet = ({ stressIndex = 0, violenceIndex = 0, locked = false
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[2.5px] mb-2 italic"><EditableLabel termKey="lab_social_stress" defaultValue="Contrainte Psychologique" /></p>
                     <div className="flex items-baseline gap-3">
                         <span className="text-4xl font-black text-slate-900 italic tabular-nums group-hover:text-brand-600 transition-colors">{stressIndex}%</span>
-                        <span className="text-[10px] font-black text-brand-500 uppercase italic opacity-60 tracking-widest">Normal</span>
+                        <span className="text-[10px] font-black text-brand-500 uppercase italic opacity-60 tracking-widest"><EditableLabel termKey="lab_social_normal" defaultValue="Normal" /></span>
                     </div>
                 </div>
                 <div className="w-14 h-14 rounded-full border-[6px] border-slate-100 border-t-brand-500 flex items-center justify-center transform rotate-[-45deg] bg-white shadow-xl shadow-slate-200/50 group-hover:rotate-0 transition-transform duration-700">
@@ -299,7 +267,7 @@ export const SocialInlet = ({ stressIndex = 0, violenceIndex = 0, locked = false
                     <p className="text-[10px] font-black text-rose-400 uppercase tracking-[2.5px] mb-2 italic"><EditableLabel termKey="lab_social_conflict" defaultValue="Index de Conflictualité" /></p>
                     <div className="flex items-baseline gap-3">
                         <span className="text-4xl font-black text-slate-900 italic tabular-nums">{violenceIndex}%</span>
-                        <span className="px-3 py-1 bg-rose-500 text-white rounded-lg text-[8px] font-black uppercase tracking-[1.5px] shadow-lg shadow-rose-500/20">Risque</span>
+                        <span className="px-3 py-1 bg-rose-500 text-white rounded-lg text-[8px] font-black uppercase tracking-[1.5px] shadow-lg shadow-rose-500/20"><EditableLabel termKey="lab_social_risk" defaultValue="Risque" /></span>
                     </div>
                 </div>
                 <Activity size={32} className="text-rose-300 animate-pulse" />
@@ -308,7 +276,7 @@ export const SocialInlet = ({ stressIndex = 0, violenceIndex = 0, locked = false
 
             <div className="flex items-center justify-center gap-2 pt-6 text-[8px] font-black text-brand-500 uppercase tracking-[3px] italic opacity-0 group-hover:opacity-100 transition-opacity">
                 <FlaskConical size={10} />
-                Explorer la Phénoménologie
+                <EditableLabel termKey="lab_social_explore" defaultValue="Explorer la Phénoménologie" />
             </div>
         </motion.div>
     );
@@ -342,7 +310,12 @@ export const CompetitiveMatrix = ({ rankings, govName }) => {
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 relative z-10">
                 {categories.map((cat) => (
                     <div key={cat.id} className="p-5 rounded-[28px] bg-slate-50 border border-slate-100 shadow-sm flex flex-col items-center text-center transition-all duration-500 hover:bg-white hover:border-brand-500/20 hover:scale-[1.05] hover:shadow-xl hover:shadow-brand-500/5">
-                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-[1.5px] mb-2 italic h-[16px] overflow-hidden">{cat.label}</span>
+                        <span className="text-[9px] font-black text-slate-400 uppercase tracking-[1.5px] mb-2 italic h-[16px] overflow-hidden">
+                            <EditableLabel 
+                                termKey={`substance_${cat.label.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, '_').replace(/-/g, '_')}`} 
+                                defaultValue={cat.label} 
+                            />
+                        </span>
                         <div className="flex items-baseline gap-1.5">
                            <span className="text-2xl font-black text-slate-900 italic tabular-nums tracking-tighter">#{cat.data?.rank || '0'}</span>
                            <span className="text-[10px] font-black text-brand-600 italic opacity-80">{cat.data?.prevalence}%</span>
@@ -383,7 +356,12 @@ export const NationalHeatList = ({ rankings }) => {
             <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 relative z-10">
                 {heatList.map((item, idx) => (
                     <div key={idx} className="flex flex-col p-5 rounded-3xl bg-white/[0.03] border border-white/5 hover:border-brand-500/40 hover:bg-white/[0.06] transition-all duration-300 text-center group/item hover:scale-[1.02]">
-                        <span className="text-[8px] font-black text-slate-500 uppercase tracking-[2px] mb-2 italic truncate opacity-60 group-hover/item:opacity-100 group-hover/item:text-brand-400 transition-all">{item.category}</span>
+                        <span className="text-[8px] font-black text-slate-500 uppercase tracking-[2px] mb-2 italic truncate opacity-60 group-hover/item:opacity-100 group-hover/item:text-brand-400 transition-all">
+                            <EditableLabel 
+                                termKey={`substance_${item.category.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/ /g, '_').replace(/-/g, '_')}`} 
+                                defaultValue={item.category} 
+                            />
+                        </span>
                          <span className="text-[13px] font-black text-white uppercase italic tracking-widest mb-1">{item.topRegion.gov_name}</span>
                          <span className="text-[11px] font-black text-rose-500 tabular-nums shadow-[0_0_10px_rgba(244,63,94,0.3)]">{item.topRegion.prevalence}%</span>
                     </div>

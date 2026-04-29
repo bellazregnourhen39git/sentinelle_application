@@ -1,16 +1,17 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import { motion, AnimatePresence } from 'framer-motion';
+import EditableLabel from './EditableLabel';
 
 const SECTION_GROUPS = {
-    'Profil': { color: '#0ea5e9', sections: ['A', 'B'] }, // Medical Blue
-    'Addiction': { color: '#ef4444', sections: ['C', 'D', 'E', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P'] }, // Signal Red
-    'Style de Vie': { color: '#f59e0b', sections: ['R', 'S', 'T'] }, // Alert Amber
-    'Social': { color: '#6366f1', sections: ['U', 'V'] }, // Indigo Insight
-    'Sensibilisation': { color: '#10b981', sections: ['Q', 'Z'] } // Emerald Health
+    'Profil': { color: '#0ea5e9', banner: '/banners/profile.png', sections: ['A', 'B'] },
+    'Addiction': { color: '#ef4444', banner: '/banners/addiction.png', sections: ['C', 'D', 'E', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P'] },
+    'Style de Vie': { color: '#f59e0b', banner: '/banners/digital.png', sections: ['R', 'S', 'T'] },
+    'Social': { color: '#6366f1', banner: '/banners/digital.png', sections: ['U', 'V'] },
+    'Sensibilisation': { color: '#10b981', banner: '/banners/profile.png', sections: ['Q', 'Z'] }
 };
 
-const ALL_SECTIONS = [
+const DEFAULT_SECTIONS = [
     { id: 'A', name: 'Profil' }, { id: 'B', name: 'Famille' },
     { id: 'C', name: 'Cigarettes' }, { id: 'D', name: 'E-cigarettes' },
     { id: 'E', name: 'Narguilé' }, { id: 'G', name: 'Alcool' },
@@ -33,23 +34,33 @@ const RadialSectionWheel = ({
     const svgRef = useRef();
     const [hovered, setHovered] = useState(null);
     
+    // Dynamic Section Detection
+    const dynamicSections = useMemo(() => {
+        const existingIds = new Set(DEFAULT_SECTIONS.map(s => s.id));
+        const newSections = Object.keys(intensityData)
+            .filter(id => !existingIds.has(id))
+            .map(id => ({ id, name: `Section ${id}` }));
+        
+        return [...DEFAULT_SECTIONS, ...newSections];
+    }, [intensityData]);
+
     const width = 650;
     const height = 650;
     const outerRadius = 220;
-    const innerRadius = 90;
+    const innerRadius = 100; // Slightly larger for images
     const cornerRadius = 8;
     const padAngle = 0.045;
 
     const segments = useMemo(() => {
-        const arcCount = ALL_SECTIONS.length;
+        const arcCount = dynamicSections.length;
         const angleStep = (2 * Math.PI) / arcCount;
-        const rotationOffset = -Math.PI / (arcCount * 2); // Shift slightly so segment splits don't align with vertical axis
+        const rotationOffset = -Math.PI / (arcCount * 2);
 
-        return ALL_SECTIONS.map((sec, i) => {
+        return dynamicSections.map((sec, i) => {
             const groupKey = Object.keys(SECTION_GROUPS).find(key => 
                 SECTION_GROUPS[key].sections.includes(sec.id)
             );
-            const group = SECTION_GROUPS[groupKey] || { color: '#cbd5e1' };
+            const group = SECTION_GROUPS[groupKey] || { color: '#cbd5e1', banner: '/banners/profile.png' };
             
             const intensity = intensityData[sec.id] || 0.15;
             const dynamicOuterRadius = innerRadius + (outerRadius - innerRadius) * intensity;
@@ -59,6 +70,7 @@ const RadialSectionWheel = ({
                 index: i + 1,
                 group: groupKey,
                 color: group.color,
+                banner: group.banner,
                 startAngle: (i * angleStep) + rotationOffset,
                 endAngle: ((i + 1) * angleStep) + rotationOffset,
                 innerRadius,
@@ -66,72 +78,43 @@ const RadialSectionWheel = ({
                 maxOuterRadius: outerRadius
             };
         });
-    }, [intensityData]);
+    }, [intensityData, dynamicSections]);
 
-    const arcGenerator = d3.arc()
-        .innerRadius(d => d.innerRadius)
-        .outerRadius(d => d.outerRadius)
-        .cornerRadius(cornerRadius)
-        .padAngle(padAngle);
+    // ... (Keep existing arc generators)
+    const arcGenerator = d3.arc().innerRadius(d => d.innerRadius).outerRadius(d => d.outerRadius).cornerRadius(cornerRadius).padAngle(padAngle);
+    const bgArcGenerator = d3.arc().innerRadius(innerRadius).outerRadius(outerRadius).cornerRadius(cornerRadius).padAngle(padAngle);
+    const labelArcGenerator = d3.arc().innerRadius(outerRadius + 25).outerRadius(outerRadius + 25);
 
-    const bgArcGenerator = d3.arc()
-        .innerRadius(innerRadius)
-        .outerRadius(outerRadius)
-        .cornerRadius(cornerRadius)
-        .padAngle(padAngle);
-
-    const labelArcGenerator = d3.arc()
-        .innerRadius(outerRadius + 35)
-        .outerRadius(outerRadius + 35);
+    const activeBanner = useMemo(() => {
+        const target = hovered || activeSection;
+        if (!target) return null;
+        const seg = segments.find(s => s.id === target);
+        return seg?.banner;
+    }, [hovered, activeSection, segments]);
 
     return (
         <div className="relative flex items-center justify-center select-none animate-clinical-in">
-            <svg 
-                ref={svgRef} 
-                width="100%" 
-                height="100%" 
-                viewBox={`0 0 ${width} ${height}`}
-                className="overflow-visible"
-            >
+            <svg ref={svgRef} width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
+                <defs>
+                    <clipPath id="centerClip">
+                        <circle cx="0" cy="0" r={innerRadius - 2} />
+                    </clipPath>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+
                 <g transform={`translate(${width / 2}, ${height / 2})`}>
                     
-                    {/* Pulsing center background — Crystal Core */}
-                    <motion.circle
-                        r={innerRadius - 8}
-                        fill="white"
-                        stroke="#f1f5f9"
-                        strokeWidth="1.5"
-                        animate={{
-                            scale: [1, 1.04, 1],
-                            opacity: [0.9, 0.6, 0.9]
-                        }}
-                        transition={{
-                            duration: 5,
-                            repeat: Infinity,
-                            ease: "easeInOut"
-                        }}
-                    />
-
-                    {/* 🔬 Clinical HUD Base */}
-                    <motion.circle
-                        r={innerRadius - 4}
-                        fill="rgba(255, 255, 255, 0.95)"
-                        stroke="#e2e8f0"
-                        strokeWidth="1"
-                        className="backdrop-blur-[20px] shadow-2xl shadow-slate-200/50"
-                    />
-
-                    {/* Background Arcs — Subtle Skeleton */}
+                    {/* Background Skeleton */}
                     {segments.map(d => (
-                        <path
-                            key={`bg-${d.id}`}
-                            d={bgArcGenerator(d)}
-                            fill={d.color}
-                            opacity={0.06}
-                        />
+                        <path key={`bg-${d.id}`} d={bgArcGenerator(d)} fill={d.color} opacity={0.06} />
                     ))}
 
-                    {/* Data Visualization Prisms */}
+                    {/* Data Prisms */}
                     {segments.map(d => {
                         const isHovered = hovered === d.id;
                         const isActive = activeSection === d.id;
@@ -146,87 +129,74 @@ const RadialSectionWheel = ({
                                     d={arcGenerator(d)}
                                     fill={d.color}
                                     stroke={isActive ? '#0f172a' : 'transparent'}
-                                    strokeWidth={isActive ? 1.5 : 0}
-                                    initial={{ opacity: 0, scale: 0.98 }}
+                                    strokeWidth={isActive ? 2 : 0}
                                     animate={{ 
-                                        opacity: isHovered || isActive ? 1 : 0.8, 
-                                        scale: isHovered ? 1.04 : 1,
+                                        opacity: isHovered || isActive ? 1 : 0.7, 
+                                        scale: isHovered ? 1.05 : 1,
                                     }}
                                     transition={{ type: 'spring', stiffness: 400, damping: 25 }}
-                                    style={{
-                                        filter: isHovered || isActive ? `drop-shadow(0 8px 16px ${d.color}33)` : 'none'
-                                    }}
                                 />
 
-                                {/* Frequency Indexer */}
                                 <g transform={`translate(${labelArcGenerator.centroid(d)})`}>
                                     <text
                                         transform={(() => {
                                             const midAngle = (d.startAngle + d.endAngle) / 2;
                                             const rotate = (midAngle * 180 / Math.PI);
-                                            // Flip the text if it's on the left side to keep it upright
                                             const finalRotate = (rotate > 90 && rotate < 270) ? rotate + 180 : rotate;
                                             return `rotate(${finalRotate})`;
                                         })()}
-                                        dy=".35em"
-                                        textAnchor="middle"
-                                        className={`text-[9px] font-black uppercase transition-all duration-300 ${isActive ? 'fill-slate-900 scale-110' : isHovered ? 'fill-slate-900 scale-105' : 'fill-slate-500 opacity-80'}`}
+                                        dy=".35em" textAnchor="middle"
+                                        className={`text-[10px] font-black transition-all duration-300 ${isActive ? 'fill-slate-900 scale-125' : isHovered ? 'fill-slate-900 scale-110' : 'fill-slate-400 opacity-60'}`}
                                     >
-                                        {d.id} - {d.name}
+                                        {d.id}
                                     </text>
                                 </g>
                             </g>
                         );
                     })}
 
-                    {/* 💠 HUD Content — High Contrast Crystal */}
-                    <foreignObject x="-75" y="-75" width="150" height="150" onClick={() => onSectionClick(null)}>
-                        <div className="w-full h-full flex flex-col items-center justify-center text-center p-4 cursor-pointer overflow-visible">
+                    {/* 📸 Center Visual Hub */}
+                    <g clipPath="url(#centerClip)">
+                        <circle r={innerRadius - 4} fill="#f8fafc" />
+                        <AnimatePresence mode="wait">
+                            {activeBanner && (
+                                <motion.image
+                                    key={activeBanner}
+                                    href={activeBanner}
+                                    x={-(innerRadius)} y={-(innerRadius)}
+                                    width={innerRadius * 2} height={innerRadius * 2}
+                                    preserveAspectRatio="xMidYMid slice"
+                                    initial={{ opacity: 0, scale: 1.1 }}
+                                    animate={{ opacity: 0.4, scale: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.8 }}
+                                />
+                            )}
+                        </AnimatePresence>
+                        
+                        <circle r={innerRadius - 4} fill="none" stroke="#e2e8f0" strokeWidth="1" opacity="0.3" />
+                    </g>
+
+                    {/* HUD Labels */}
+                    <foreignObject x="-85" y="-85" width="170" height="170" onClick={() => onSectionClick(null)}>
+                        <div className="w-full h-full flex flex-col items-center justify-center text-center p-4 cursor-pointer">
                             <AnimatePresence mode="wait">
                                 {hovered ? (
-                                    <motion.div
-                                        key="hovered"
-                                        initial={{ opacity: 0, y: 5 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -5 }}
-                                    >
-                                        <p className="text-[10px] font-black uppercase tracking-[3px] text-brand-600 mb-2 italic leading-none opacity-80">
-                                            SECTION {hovered}
-                                        </p>
-                                        <h3 className="text-[14px] font-black text-slate-900 leading-tight uppercase tracking-tighter px-2 italic">
-                                            {ALL_SECTIONS.find(s => s.id === hovered)?.name}
+                                    <motion.div key="hover" initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -5 }}>
+                                        <p className="text-[9px] font-black uppercase tracking-[3px] text-brand-600 mb-1 italic opacity-80">SECTION {hovered}</p>
+                                        <h3 className="text-[13px] font-black text-slate-900 leading-tight uppercase tracking-tighter italic">
+                                            {dynamicSections.find(s => s.id === hovered)?.name}
                                         </h3>
                                     </motion.div>
                                 ) : activeSection ? (
-                                    <motion.div
-                                        key="active"
-                                        initial={{ opacity: 0, scale: 0.9 }}
-                                        animate={{ opacity: 1, scale: 1 }}
-                                    >
-                                        <p className="text-[10px] font-black uppercase tracking-[4px] text-brand-500 mb-2 italic opacity-60">
-                                            VECTEUR
-                                        </p>
-                                        <h3 className="text-5xl font-black text-slate-900 leading-none tracking-tighter italic">
-                                            {activeSection}
-                                        </h3>
+                                    <motion.div key="active" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
+                                        <p className="text-[10px] font-black uppercase tracking-[4px] text-brand-500 mb-1 italic opacity-60">VECTEUR</p>
+                                        <h3 className="text-5xl font-black text-slate-900 leading-none tracking-tighter italic">{activeSection}</h3>
                                     </motion.div>
                                 ) : (
-                                    <motion.div
-                                        key="default"
-                                        initial={{ opacity: 0 }}
-                                        animate={{ opacity: 1 }}
-                                        className="flex flex-col items-center"
-                                    >
-                                        <p className="text-[11px] font-black text-brand-500 mb-3 tracking-[8px] uppercase italic opacity-70">
-                                            COHORTE
-                                        </p>
-                                        <div className="h-[2px] w-10 bg-brand-500 mb-5 rounded-full shadow-sm opacity-20"></div>
-                                        <p className="text-4xl font-black text-slate-900 tabular-nums leading-none italic tracking-tighter shadow-sm shadow-brand-100">
-                                            {totalSubmissions}
-                                        </p>
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[4px] mt-3 opacity-80">
-                                            Total
-                                        </p>
+                                    <motion.div key="default" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
+                                        <p className="text-[11px] font-black text-brand-500 mb-2 tracking-[6px] uppercase italic opacity-70">COHORTE</p>
+                                        <p className="text-4xl font-black text-slate-900 tabular-nums leading-none italic tracking-tighter">{totalSubmissions}</p>
                                     </motion.div>
                                 )}
                             </AnimatePresence>

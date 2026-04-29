@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { Layers, Maximize, MousePointer2, Info, TrendingUp } from 'lucide-react';
+import { Layers, Maximize, MousePointer2, Info, TrendingUp, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 // Simplified GeoJSON for Tunisian Governorates (Centroids and rough bounds for demonstration)
 const TUNISIA_GEOJSON = {
@@ -18,6 +19,7 @@ const TUNISIA_GEOJSON = {
 };
 
 const Map3D = () => {
+    const navigate = useNavigate();
     const mapContainer = useRef(null);
     const map = useRef(null);
     const [lng] = useState(9.53);
@@ -95,6 +97,12 @@ const Map3D = () => {
         <div className="space-y-8 animate-fade-in relative">
             <header className="flex items-center justify-between">
                 <div>
+                    <button 
+                        onClick={() => navigate(-1)}
+                        className="flex items-center gap-2 text-slate-400 hover:text-brand-600 font-bold uppercase tracking-widest text-xs mb-4 transition-colors"
+                    >
+                        <ArrowLeft size={16} /> Retour
+                    </button>
                     <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight leading-none mb-3 font-display">
                         Geospatial Intelligence
                     </h1>

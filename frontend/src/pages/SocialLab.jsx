@@ -36,7 +36,7 @@ const SocialLab = () => {
                     className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white border border-slate-100 text-slate-500 font-black uppercase tracking-[2px] text-[10px] italic hover:bg-slate-50 transition-all shadow-sm group"
                 >
                     <LucideArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                    Retour au Hub
+                    <EditableLabel termKey="lab_btn_back" defaultValue="Retour au Hub" />
                 </button>
                 <div className="flex items-center gap-4">
                     <div className="px-5 py-2.5 bg-brand-500/10 border border-brand-500/20 rounded-full text-[10px] font-black text-brand-600 uppercase tracking-[3px] italic flex items-center gap-2 shadow-sm">
@@ -70,7 +70,7 @@ const SocialLab = () => {
                                 </div>
                             ))}
                         </div>
-                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[4px] italic">Système Multi-Vecteurs Activé</span>
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-[4px] italic"><EditableLabel termKey="lab_social_hero_system_msg" defaultValue="Système Multi-Vecteurs Activé" /></span>
                     </div>
                 </div>
             </motion.div>
@@ -89,13 +89,13 @@ const SocialLab = () => {
                         <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand-500">
                             <Info size={20} />
                         </div>
-                        <h3 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">Méthodologie de Calcul</h3>
+                        <h3 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter"><EditableLabel termKey="lab_social_method_title" defaultValue="Méthodologie de Calcul" /></h3>
                     </div>
                     
                     <div className="grid md:grid-cols-2 gap-12">
                         <div className="space-y-6">
                             <div className="p-8 rounded-[32px] bg-slate-50 border border-slate-100 hover:border-brand-500/20 transition-all group">
-                                <h4 className="text-[12px] font-black text-brand-600 uppercase tracking-[3px] mb-3 italic">Index de Stress (Contrainte)</h4>
+                                <h4 className="text-[12px] font-black text-brand-600 uppercase tracking-[3px] mb-3 italic"><EditableLabel termKey="lab_social_stress_idx_title" defaultValue="Index de Stress (Contrainte)" /></h4>
                                 <p className="text-[14px] text-slate-600 font-bold leading-relaxed mb-6 italic group-hover:text-slate-900 transition-colors">
                                     Calculé à partir d'un set de 8 questions traitant de la perception des pressions académiques, familiales et sociales. Une pondération spécifique est appliquée aux réponses "Toujours" (1.0) et "Souvent" (0.6).
                                 </p>
@@ -108,13 +108,13 @@ const SocialLab = () => {
 
                         <div className="space-y-6">
                             <div className="p-8 rounded-[32px] bg-slate-50 border border-slate-100 hover:border-rose-500/20 transition-all group">
-                                <h4 className="text-[12px] font-black text-rose-500 uppercase tracking-[3px] mb-3 italic">Index de Conflictualité</h4>
+                                <h4 className="text-[12px] font-black text-rose-500 uppercase tracking-[3px] mb-3 italic"><EditableLabel termKey="lab_social_conflict_idx_title" defaultValue="Index de Conflictualité" /></h4>
                                 <p className="text-[14px] text-slate-600 font-bold leading-relaxed mb-6 italic group-hover:text-slate-900 transition-colors">
                                     Corrélation directe entre les violences verbales et physiques rapportées. Ce vecteur mesure l'exposition immédiate à des environnements instables augmentant la vulnérabilité aux substances.
                                 </p>
                                 <div className="flex items-center gap-2 text-rose-500">
                                     <TrendingUp size={16} />
-                                    <span className="text-[10px] font-black uppercase tracking-[2px] italic">Corrélation de Risque : 0.82</span>
+                                    <span className="text-[10px] font-black uppercase tracking-[2px] italic"><EditableLabel termKey="lab_social_risk_corr" defaultValue="Corrélation de Risque" /> : 0.82</span>
                                 </div>
                             </div>
                         </div>
@@ -131,11 +131,11 @@ const SocialLab = () => {
                     <div className="relative z-10">
                         <div className="flex items-center justify-between mb-12">
                             <div>
-                                <h3 className="text-2xl font-black text-slate-900 italic uppercase tracking-tighter">Classement National de la Contrainte</h3>
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] italic mt-2">Répartition des 24 Gouvernorats (Vague 2026)</p>
+                                <h3 className="text-2xl font-black text-slate-900 italic uppercase tracking-tighter"><EditableLabel termKey="lab_social_nat_rank_title" defaultValue="Classement National de la Contrainte" /></h3>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] italic mt-2"><EditableLabel termKey="lab_social_nat_rank_subtitle" defaultValue="Répartition des 24 Gouvernorats (Vague 2026)" /></p>
                             </div>
                             <div className="flex items-center gap-4">
-                                <div className="px-5 py-2 bg-slate-900 text-white rounded-full text-[9px] font-black uppercase tracking-[2px] italic">Moyenne Nationale : {nationalAvg}%</div>
+                                <div className="px-5 py-2 bg-slate-900 text-white rounded-full text-[9px] font-black uppercase tracking-[2px] italic"><EditableLabel termKey="lab_social_nat_avg" defaultValue="Moyenne Nationale" /> : {nationalAvg}%</div>
                             </div>
                         </div>
                         
@@ -148,7 +148,7 @@ const SocialLab = () => {
                                     <div className="flex-1">
                                         <div className="flex justify-between mb-2 px-1">
                                             <span className="text-[11px] font-black text-slate-700 uppercase tracking-[2px] italic">{reg.gov_name}</span>
-                                            <span className="text-[11px] font-black text-brand-600 italic">{reg.stress_index}% Stress</span>
+                                            <span className="text-[11px] font-black text-brand-600 italic">{reg.stress_index}% <EditableLabel termKey="lab_social_stress_unit" defaultValue="Stress" /></span>
                                         </div>
                                         <div className="w-full h-2 bg-white rounded-full border border-slate-100 overflow-hidden p-0.5">
                                             <motion.div 
@@ -159,7 +159,7 @@ const SocialLab = () => {
                                         </div>
                                     </div>
                                     <div className="text-right min-w-[80px]">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[1px] italic">Conflits</p>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[1px] italic"><EditableLabel termKey="lab_social_conflicts_label" defaultValue="Conflits" /></p>
                                         <p className="text-sm font-black text-rose-500 italic">{reg.conflict_rate}%</p>
                                     </div>
                                 </div>
@@ -179,25 +179,25 @@ const SocialLab = () => {
                         <Award size={120} className="text-brand-500" />
                     </div>
                     <div className="relative z-10">
-                        <h4 className="text-[10px] font-black text-brand-500 uppercase tracking-[4px] mb-8 italic">Le Protocole PSS-4</h4>
+                        <h4 className="text-[10px] font-black text-brand-500 uppercase tracking-[4px] mb-8 italic"><EditableLabel termKey="lab_social_proto_title" defaultValue="Le Protocole PSS-4" /></h4>
                         <div className="space-y-10">
                             <div className="p-8 rounded-[40px] bg-white text-slate-900 shadow-2xl relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:rotate-12 transition-transform">
                                     <Target size={40} />
                                 </div>
-                                <h5 className="text-[11px] font-black uppercase tracking-[2px] mb-4 italic text-brand-600">Équation Clinique</h5>
+                                <h5 className="text-[11px] font-black uppercase tracking-[2px] mb-4 italic text-brand-600"><EditableLabel termKey="lab_social_eq_title" defaultValue="Équation Clinique" /></h5>
                                 <div className="text-2xl font-black italic tracking-tighter mb-4 text-slate-900 bg-slate-50 p-4 rounded-2xl border border-slate-100">
                                    IS = Σ(V1, V4 + V2R, V3R)
                                 </div>
                                 <p className="text-[11px] font-bold text-slate-500 italic leading-relaxed">
-                                    La Perceived Stress Scale (PSS-4) est calculée en sommant les scores des 4 items, avec inversion des items 2 et 3. Un score {'>'} 8/16 indique une détresse psychologique modérée à sévère.
+                                    <EditableLabel termKey="lab_social_pss4_desc" defaultValue="La Perceived Stress Scale (PSS-4) est calculée en sommant les scores des 4 items, avec inversion des items 2 et 3. Un score > 8/16 indique une détresse psychologique modérée à sévère." />
                                 </p>
                             </div>
 
                             <div className="space-y-4">
                                 <div className="flex items-center gap-4">
                                     <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-brand-500">1</div>
-                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-[2px] italic">V1: Perte de Contrôle</span>
+                                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-[2px] italic"><EditableLabel termKey="lab_social_v1_label" defaultValue="V1: Perte de Contrôle" /></span>
                                 </div>
                                 <div className="flex items-center gap-4">
                                     <div className="w-8 h-8 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-brand-500">2</div>
@@ -215,7 +215,7 @@ const SocialLab = () => {
                         </div>
                     </div>
                     <button className="w-full mt-10 py-5 bg-brand-500 text-white rounded-[24px] font-black uppercase tracking-[4px] text-[10px] italic shadow-2xl hover:bg-brand-600 transition-all border-none">
-                        Documentation Psychométrique
+                        <EditableLabel termKey="lab_social_btn_doc" defaultValue="Documentation Psychométrique" />
                     </button>
                 </motion.div>
 

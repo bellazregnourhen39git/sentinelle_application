@@ -37,8 +37,8 @@ const Login = ({ setUser }) => {
 
       // Step 4: Redirect based on role
       if (['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(role)) navigate('/superadmin', { replace: true });
-      else if (role === 'REGIONAL_ANALYST') navigate('/admin', { replace: true });
-      else if (role === 'OPERATOR') navigate('/scan', { replace: true });
+      else if (['REGIONAL_ANALYST', 'ADMIN'].includes(role)) navigate('/admin', { replace: true });
+      else if (['OPERATOR', 'PRACTITIONER'].includes(role)) navigate('/guide', { replace: true });
       else navigate('/user', { replace: true });
 
     } catch (err) {
@@ -81,6 +81,13 @@ const Login = ({ setUser }) => {
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="w-full max-w-[460px] relative z-10"
       >
+        <button 
+          onClick={() => navigate('/')}
+          className="absolute -top-12 left-4 flex items-center gap-2 text-slate-400 hover:text-brand-600 font-bold uppercase tracking-widest text-[10px] transition-colors group"
+        >
+          <ArrowRight size={16} className="rotate-180 group-hover:-translate-x-1 transition-transform" />
+          <span>Retour</span>
+        </button>
         <div className="bg-white/80 backdrop-blur-2xl border border-white shadow-[0_40px_100px_-20px_rgba(15,23,42,0.1)] rounded-[48px] p-10 md:p-14 relative overflow-hidden group">
           {/* Subtle inner shine */}
           <div className="absolute inset-0 bg-gradient-to-br from-white to-transparent opacity-60 pointer-events-none" />

@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import InviteUserModal from '../components/dashboard/InviteUserModal';
 import ConfirmationModal from '../components/dashboard/ConfirmationModal';
 import api from '../api';
+import EditableLabel from '../components/dashboard/EditableLabel';
 
 const UserManagement = () => {
     const navigate = useNavigate();
@@ -32,6 +33,10 @@ const UserManagement = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
 
     const handleExportCSV = async () => {
         try {
@@ -76,36 +81,36 @@ const UserManagement = () => {
                             <ArrowLeft size={20} />
                         </button>
                         <div>
-                            <h1 className="text-3xl font-black text-slate-900 italic uppercase tracking-tight">Gestion des Praticiens</h1>
-                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[4px] italic">Administration du personnel de veille</p>
+                            <h1 className="text-3xl font-black text-slate-900 italic uppercase tracking-tight"><EditableLabel termKey="um_title" defaultValue="Gestion des Utilisateurs" /></h1>
+                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-[4px] italic"><EditableLabel termKey="um_subtitle" defaultValue="Administration du personnel de veille" /></p>
                         </div>
                     </div>
 
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-4 bg-white px-6 py-3 rounded-2xl border border-slate-100 shadow-sm">
                             <div className="w-2 h-2 rounded-full bg-brand-500 animate-pulse" />
-                            <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">{users.length} Praticiens Actifs</span>
+                            <span className="text-[10px] font-black text-slate-600 uppercase tracking-widest italic">{users.length} <EditableLabel termKey="um_active_users" defaultValue="Utilisateurs Actifs" /></span>
                         </div>
                         <button
                             onClick={handleExportCSV}
                             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-white border border-slate-100 text-slate-600 text-[10px] font-black uppercase tracking-[2px] italic hover:bg-slate-50 transition-all shadow-sm"
                         >
                             <FileText size={16} className="text-brand-500" />
-                            Détails Praticiens (CSV)
+                            <EditableLabel termKey="um_btn_export" defaultValue="Détails Utilisateurs (CSV)" />
                         </button>
                         <button
                             onClick={() => setIsInviteModalOpen(true)}
                             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-slate-900 text-white text-[10px] font-black uppercase tracking-[2px] italic hover:bg-brand-600 transition-all shadow-xl shadow-slate-200"
                         >
                             <UserPlus size={16} />
-                            Inviter un Praticien
+                            <EditableLabel termKey="um_btn_invite" defaultValue="Inviter un Utilisateur" />
                         </button>
                         <button
                             onClick={handleLogout}
                             className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-rose-50 border border-transparent text-rose-600 text-[10px] font-black uppercase tracking-[2px] italic hover:bg-rose-100 transition-all shadow-sm"
                         >
                             <LogOut size={16} />
-                            Déconnexion
+                            <EditableLabel termKey="um_btn_logout" defaultValue="Déconnexion" />
                         </button>
                     </div>
                 </div>
@@ -116,20 +121,20 @@ const UserManagement = () => {
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-slate-50/50 border-b border-slate-100">
-                                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Praticien</th>
-                                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Rôle</th>
-                                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Affectation</th>
-                                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic">Statut</th>
-                                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic text-right">Actions</th>
+                                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic"><EditableLabel termKey="um_th_user" defaultValue="Utilisateur" /></th>
+                                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic"><EditableLabel termKey="um_th_role" defaultValue="Rôle" /></th>
+                                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic"><EditableLabel termKey="um_th_assign" defaultValue="Affectation" /></th>
+                                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic"><EditableLabel termKey="um_th_status" defaultValue="Statut" /></th>
+                                    <th className="p-8 text-[10px] font-black text-slate-400 uppercase tracking-widest italic text-right"><EditableLabel termKey="um_th_actions" defaultValue="Actions" /></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {loading ? (
                                     <tr>
-                                        <td colSpan="4" className="p-20 text-center">
+                                        <td colSpan="5" className="p-20 text-center">
                                             <div className="flex flex-col items-center gap-4 text-slate-300">
                                                 <RefreshCw size={40} className="animate-spin" />
-                                                <span className="text-[10px] font-black uppercase tracking-[4px] italic">Chargement du Registre...</span>
+                                                <span className="text-[10px] font-black uppercase tracking-[4px] italic"><EditableLabel termKey="um_loading_msg" defaultValue="Chargement du Registre..." /></span>
                                             </div>
                                         </td>
                                     </tr>
@@ -155,17 +160,9 @@ const UserManagement = () => {
                                             </div>
                                         </td>
                                         <td className="p-8">
-                                            <div className="space-y-1">
-                                                <div className="flex items-center gap-2 text-[11px] font-bold text-slate-600 italic">
-                                                    <MapPin size={12} className="text-brand-500" />
-                                                    {user.governorate_name || 'National'}
-                                                </div>
-                                                {user.establishment_name && (
-                                                    <div className="flex items-center gap-2 text-[10px] font-bold text-slate-400 italic pl-5">
-                                                        <Building size={10} />
-                                                        {user.establishment_name}
-                                                    </div>
-                                                )}
+                                            <div className="flex items-center gap-2 text-[11px] font-bold text-slate-600 italic">
+                                                <MapPin size={12} className="text-brand-500" />
+                                                {user.governorate_name || 'National'}
                                             </div>
                                         </td>
                                         <td className="p-8">
@@ -209,7 +206,7 @@ const UserManagement = () => {
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setSelectedUser(null)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" />
                         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-xl bg-white rounded-[40px] shadow-2xl p-10 overflow-hidden border border-slate-100">
                             <div className="flex items-center justify-between mb-8">
-                                <h2 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">Fiche Praticien</h2>
+                                <h2 className="text-2xl font-black text-slate-900 uppercase italic tracking-tighter">Fiche Utilisateur</h2>
                                 <button onClick={() => setSelectedUser(null)} className="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-rose-50 hover:text-rose-500"><X size={18} /></button>
                             </div>
                             <div className="space-y-6">
@@ -219,7 +216,7 @@ const UserManagement = () => {
                                         <p className="text-sm font-black text-slate-800 italic">#{selectedUser.id}</p>
                                     </div>
                                     <div className="p-6 rounded-3xl bg-slate-50/50 border border-slate-100">
-                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nom du praticien</p>
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Nom de l'utilisateur</p>
                                         <p className="text-sm font-black text-slate-800 italic">{selectedUser.username}</p>
                                     </div>
                                 </div>
@@ -238,8 +235,8 @@ const UserManagement = () => {
                                     </div>
                                 </div>
                                 <div className="p-6 rounded-3xl bg-slate-50/50 border border-slate-100">
-                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Localisation / Établissement</p>
-                                    <p className="text-sm font-black text-slate-800 italic">{selectedUser.governorate_name || 'National'} {selectedUser.establishment_name ? ` - ${selectedUser.establishment_name}` : ''}</p>
+                                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Gouvernorat d'affectation</p>
+                                    <p className="text-sm font-black text-slate-800 italic">{selectedUser.governorate_name || 'National'}</p>
                                 </div>
                             </div>
                         </motion.div>
@@ -253,7 +250,7 @@ const UserManagement = () => {
                 onClose={() => setUserToDelete(null)}
                 onConfirm={handleDeleteUser}
                 title="Suppression de Compte"
-                message={`Êtes-vous sûr de vouloir supprimer définitivement le praticien "${userToDelete?.email}" ? Cette action est irréversible.`}
+                message={`Êtes-vous sûr de vouloir supprimer définitivement l'utilisateur "${userToDelete?.email}" ? Cette action est irréversible.`}
                 confirmText="Oui, Supprimer"
                 cancelText="Non, Garder"
                 type="danger"

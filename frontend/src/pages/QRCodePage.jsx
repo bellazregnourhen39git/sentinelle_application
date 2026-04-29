@@ -3,6 +3,7 @@ import { QRCodeCanvas } from 'qrcode.react';
 import { motion } from 'framer-motion';
 import { Download, Printer, Globe, ArrowLeft, RefreshCw, Smartphone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import EditableLabel from '../components/dashboard/EditableLabel';
 
 const QRCodePage = () => {
     const navigate = useNavigate();
@@ -51,7 +52,7 @@ const QRCodePage = () => {
                 className="print:hidden absolute top-8 left-8 flex items-center gap-2 text-slate-400 hover:text-brand-600 font-bold uppercase tracking-widest text-[10px] transition-colors group"
             >
                 <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                Retour
+                <EditableLabel termKey="qr_btn_back" defaultValue="Retour" />
             </button>
 
             <motion.div 
@@ -68,10 +69,10 @@ const QRCodePage = () => {
                             <Smartphone size={32} />
                         </div>
                         <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tighter italic uppercase leading-none mb-4">
-                            Accès <span className="text-brand-600">Mobile</span>
+                            <EditableLabel termKey="qr_title_1" defaultValue="Accès" /> <span className="text-brand-600"><EditableLabel termKey="qr_title_2" defaultValue="Mobile" /></span>
                         </h1>
                         <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px] italic">
-                            Scan pour accéder au questionnaire
+                            <EditableLabel termKey="qr_subtitle" defaultValue="Scan pour accéder au questionnaire" />
                         </p>
                     </div>
 
@@ -102,23 +103,33 @@ const QRCodePage = () => {
                     </div>
 
                     {/* URL Display */}
-                    <div className="w-full bg-slate-50 border border-slate-100 p-6 rounded-[32px] text-center mb-12 group transition-colors hover:border-brand-200">
+                    <div className="w-full bg-slate-50 border border-slate-100 p-6 rounded-[32px] text-center mb-6 group transition-colors hover:border-brand-200">
                         <div className="flex items-center justify-center gap-2 mb-2 text-slate-400">
                             <Globe size={14} />
-                            <span className="text-[9px] font-black uppercase tracking-widest italic">Cible du Réseau Local</span>
+                            <span className="text-[9px] font-black uppercase tracking-widest italic"><EditableLabel termKey="qr_target_msg" defaultValue="Cible du Réseau Local" /></span>
                         </div>
                         <p className="font-mono text-sm font-bold text-slate-700 break-all select-all">
                             {fullUrl}
                         </p>
                     </div>
 
+                    <div className="mb-6 p-4 bg-amber-50 border border-amber-100 rounded-2xl flex items-start gap-3">
+                        <div className="w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center text-amber-600 shrink-0 mt-0.5 font-bold text-[10px]">!</div>
+                        <p className="text-[10px] text-amber-700 font-bold italic leading-relaxed">
+                            <EditableLabel 
+                                termKey="qr_ip_warning" 
+                                defaultValue="Note : Pour que le scan fonctionne sur mobile, remplacez 'localhost' par l'adresse IP locale de votre ordinateur (ex: 192.168.1.15). Utilisez 'ipconfig' dans votre terminal pour la trouver." 
+                            />
+                        </p>
+                    </div>
+
                     {/* Configuration Panel (Hidden in print) */}
                     <div className="print:hidden w-full space-y-4 mb-12 border-t border-slate-100 pt-10">
-                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] italic mb-6">Paramètres de Déploiement</p>
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] italic mb-6"><EditableLabel termKey="qr_config_title" defaultValue="Paramètres de Déploiement" /></p>
                         
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2 italic">Adresse IP / Host</label>
+                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2 italic"><EditableLabel termKey="qr_label_ip" defaultValue="Adresse IP / Host" /></label>
                                 <input 
                                     type="text" 
                                     value={ipAddress}
@@ -128,7 +139,7 @@ const QRCodePage = () => {
                                 />
                             </div>
                             <div className="space-y-2">
-                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2 italic">Port</label>
+                                <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2 italic"><EditableLabel termKey="qr_label_port" defaultValue="Port" /></label>
                                 <input 
                                     type="text" 
                                     value={port}
@@ -139,7 +150,7 @@ const QRCodePage = () => {
                             </div>
                         </div>
                         <div className="space-y-2">
-                            <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2 italic">Chemin (Route)</label>
+                            <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-2 italic"><EditableLabel termKey="qr_label_path" defaultValue="Chemin (Route)" /></label>
                             <input 
                                 type="text" 
                                 value={path}
@@ -154,7 +165,7 @@ const QRCodePage = () => {
                                 className="flex items-center gap-2 text-slate-400 hover:text-brand-600 text-[9px] font-black uppercase tracking-widest italic transition-colors"
                             >
                                 <RefreshCw size={12} />
-                                Réinitialiser l'IP
+                                <EditableLabel termKey="qr_btn_reset" defaultValue="Réinitialiser l'IP" />
                             </button>
                         </div>
                     </div>
@@ -166,21 +177,21 @@ const QRCodePage = () => {
                             className="pro-btn-primary flex items-center gap-3 px-8 py-4 text-[10px] italic"
                         >
                             <Download size={18} />
-                            Télécharger PNG
+                            <EditableLabel termKey="qr_btn_png" defaultValue="Télécharger PNG" />
                         </button>
                         <button 
                             onClick={() => window.location.href = fullUrl}
                             className="pro-btn-secondary flex items-center gap-3 px-8 py-4 text-[10px] italic border-brand-200 text-brand-700 bg-brand-50"
                         >
                             <ArrowLeft size={18} className="rotate-180" />
-                            Accéder Directement
+                            <EditableLabel termKey="qr_btn_access" defaultValue="Accéder Directement" />
                         </button>
                         <button 
                             onClick={handlePrint}
                             className="pro-btn-secondary flex items-center gap-3 px-8 py-4 text-[10px] italic"
                         >
                             <Printer size={18} />
-                            Imprimer
+                            <EditableLabel termKey="qr_btn_print" defaultValue="Imprimer" />
                         </button>
                     </div>
 
@@ -196,7 +207,7 @@ const QRCodePage = () => {
                 <div className="print:hidden mt-8 text-center flex items-center justify-center gap-3 text-slate-400">
                     <div className="w-1.5 h-1.5 rounded-full bg-brand-500/30" />
                     <p className="text-[10px] font-bold italic">
-                        Conseil : L'imprimé peut être affiché dans les salles d'enquête.
+                        <EditableLabel termKey="qr_tip_msg" defaultValue="Conseil : L'imprimé peut être affiché dans les salles d'enquête." />
                     </p>
                 </div>
             </motion.div>

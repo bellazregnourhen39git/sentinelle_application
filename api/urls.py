@@ -9,8 +9,11 @@ from .views import (
     UserListView, UserExportCSVView, UserDeleteView,
     PlatformTerminologyView, PlatformTerminologyUpdateView,
     GovernorateListView, SchoolEstablishmentListView,
-    InsightsView, RawDataExportView,
-    DynamicQuestionListView, DynamicQuestionDetailView
+    InsightsView, RawDataExportView, RegionalProfileView,
+    DynamicQuestionListView, DynamicQuestionDetailView,
+    QuestionnaireSubmissionListView, QuestionnaireSubmissionDetailView,
+    ClassReportCreateView, ClassReportListView, ClassReportDetailView,
+    ClassReportFinalizeView, LatestActiveReportView
 )
 
 
@@ -35,6 +38,8 @@ urlpatterns = [
     # Questionnaire
     path('questionnaire/submit/', QuestionnaireSubmitView.as_view(), name='questionnaire_submit'),
     path('questionnaire/export/', QuestionnaireExportView.as_view(), name='questionnaire_export'),
+    path('questionnaire/submissions/', QuestionnaireSubmissionListView.as_view(), name='questionnaire_submissions'),
+    path('questionnaire/submissions/<int:pk>/', QuestionnaireSubmissionDetailView.as_view(), name='questionnaire_submission_detail'),
 
     # Dashboards
     path('stats/school/', SchoolStatsView.as_view(), name='stats_school'),
@@ -42,6 +47,7 @@ urlpatterns = [
     path('stats/national/', NationalStatsView.as_view(), name='stats_national'),
     path('stats/insights/', InsightsView.as_view(), name='stats_insights'),
     path('stats/export-raw/', RawDataExportView.as_view(), name='export_raw_data'),
+    path('stats/regional-profile/<str:gov_name>/', RegionalProfileView.as_view(), name='regional_profile'),
 
     # SIDRA Integration
     path('sidra/export/', SidraDataExportView.as_view(), name='sidra_export'),
@@ -54,4 +60,11 @@ urlpatterns = [
     # Dynamic Questions
     path('dynamic-questions/', DynamicQuestionListView.as_view(), name='dynamic_questions_list'),
     path('dynamic-questions/<str:code>/', DynamicQuestionDetailView.as_view(), name='dynamic_question_detail'),
+
+    # Class Reports
+    path('class-report/', ClassReportCreateView.as_view(), name='class_report_create'),
+    path('class-report/list/', ClassReportListView.as_view(), name='class_report_list'),
+    path('class-report/<int:pk>/', ClassReportDetailView.as_view(), name='class_report_detail'),
+    path('class-report/<int:pk>/finalize/', ClassReportFinalizeView.as_view(), name='class_report_finalize'),
+    path('class-report/active/', LatestActiveReportView.as_view(), name='latest_active_report'),
 ]
