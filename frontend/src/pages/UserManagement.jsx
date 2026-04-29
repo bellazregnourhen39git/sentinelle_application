@@ -23,7 +23,6 @@ const UserManagement = () => {
     };
 
     const fetchUsers = async () => {
-        setLoading(true);
         try {
             const res = await api.get('auth/users/');
             setUsers(res.data);
@@ -33,6 +32,10 @@ const UserManagement = () => {
             setLoading(false);
         }
     };
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
 
     useEffect(() => {
         fetchUsers();
@@ -129,7 +132,7 @@ const UserManagement = () => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {loading ? (
+                                {users.length === 0 ? (
                                     <tr>
                                         <td colSpan="5" className="p-20 text-center">
                                             <div className="flex flex-col items-center gap-4 text-slate-300">
