@@ -17,18 +17,28 @@ import { SocialInlet, CompetitiveMatrix, NationalHeatList, ExpertAudit, Comorbid
 import RegionalProfilePanel from './RegionalProfilePanel';
 
 const NationalVigilancePanel = ({ metrics, activeSection }) => {
+    const { t_dyn } = useTerminology();
     if (!metrics || metrics.length === 0) return null;
 
     const sectionNames = {
-        'C': 'Tabagisme', 'G': 'Alcoolisme', 'I': 'Cannabis', 'E': 'Narguilé', 'D': 'Vapotage',
-        'H': 'Tranquillisants', 'J': 'Cocaïne', 'K': 'Ecstasy', 'L': 'Héroïne', 'M': 'Inhalants'
+        'C': t_dyn('section_wheel_C', 'Tabagisme'),
+        'G': t_dyn('section_wheel_G', 'Alcoolisme'),
+        'I': t_dyn('section_wheel_I', 'Cannabis'),
+        'E': t_dyn('section_wheel_E', 'Narguilé'),
+        'D': t_dyn('section_wheel_D', 'Vapotage'),
+        'H': t_dyn('section_wheel_H', 'Tranquillisants'),
+        'J': t_dyn('section_wheel_J', 'Cocaïne'),
+        'K': t_dyn('section_wheel_K', 'Ecstasy'),
+        'L': t_dyn('section_wheel_L', 'Héroïne'),
+        'M': t_dyn('section_wheel_M', 'Inhalants')
     };
     const activeLabel = sectionNames[activeSection] || 'Global';
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
+            variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { staggerChildren: 0.05, delayChildren: 0.1 } } }}
+            initial="hidden"
+            animate="show"
             className="pro-card p-10 md:p-14 rounded-[56px] mb-12 border border-white shadow-[0_40px_100px_-20px_rgba(15,23,42,0.1)] bg-white/70 backdrop-blur-3xl relative overflow-hidden group"
         >
             <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent pointer-events-none z-0" />
@@ -77,7 +87,7 @@ const NationalVigilancePanel = ({ metrics, activeSection }) => {
                     const isMed = prevalence > 15;
 
                     return (
-                        <div key={reg.id} className="w-[180px] shrink-0 snap-start relative group p-6 rounded-[32px] bg-white border border-slate-100 flex flex-col gap-4 transition-all duration-500 hover:bg-slate-900 hover:border-slate-800 hover:-translate-y-1 hover:shadow-2xl overflow-hidden shadow-sm">
+                        <motion.div key={reg.id} variants={{ hidden: { opacity: 0, scale: 0.9 }, show: { opacity: 1, scale: 1 } }} className="w-[180px] shrink-0 snap-start relative group p-6 rounded-[32px] bg-white border border-slate-100 flex flex-col gap-4 transition-all duration-500 hover:bg-slate-900 hover:border-slate-800 hover:-translate-y-1 hover:shadow-2xl overflow-hidden shadow-sm">
                             <div className="flex items-center justify-between relative z-10">
                                 <span className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] break-words group-hover:text-slate-300 transition-colors">{reg.name}</span>
                                 <div className={`w-2 h-2 rounded-full shrink-0 transition-colors duration-500 ${isHigh ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)] animate-pulse group-hover:bg-rose-400' : isMed ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)] group-hover:bg-amber-400' : 'bg-brand-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] group-hover:bg-brand-400'}`} />
@@ -99,7 +109,7 @@ const NationalVigilancePanel = ({ metrics, activeSection }) => {
                             <div className="flex items-center text-[9px] font-black text-slate-400 uppercase tracking-widest italic relative z-10 group-hover:text-slate-500 transition-colors">
                                 <span>VOL. {reg.dossiers}</span>
                             </div>
-                        </div>
+                        </motion.div>
                     );
                 })}
             </div>
@@ -109,20 +119,44 @@ const NationalVigilancePanel = ({ metrics, activeSection }) => {
 
 
 const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin }) => {
+    const { t_dyn } = useTerminology();
     if (!data) return null;
     const { headline, kpis } = data;
 
-    const sectionNames = { 'C': 'Tabagisme', 'G': 'Alcoolisme', 'I': 'Cannabis', 'E': 'Narguilé', 'D': 'Vapotage' };
+    const sectionNames = {
+        'A': t_dyn('section_wheel_A', 'Profil'),
+        'B': t_dyn('section_wheel_B', 'Famille'),
+        'C': t_dyn('section_wheel_C', 'Tabagisme'),
+        'D': t_dyn('section_wheel_D', 'Vapotage'),
+        'E': t_dyn('section_wheel_E', 'Narguilé'),
+        'G': t_dyn('section_wheel_G', 'Alcoolisme'),
+        'H': t_dyn('section_wheel_H', 'Tranquillisants'),
+        'I': t_dyn('section_wheel_I', 'Cannabis'),
+        'J': t_dyn('section_wheel_J', 'Cocaïne'),
+        'K': t_dyn('section_wheel_K', 'Ecstasy'),
+        'L': t_dyn('section_wheel_L', 'Héroïne'),
+        'M': t_dyn('section_wheel_M', 'Inhalants'),
+        'N': t_dyn('section_wheel_N', 'Substances'),
+        'P': t_dyn('section_wheel_P', 'NPS'),
+        'Q': t_dyn('section_wheel_Q', 'Perception'),
+        'R': t_dyn('section_wheel_R', 'Réseaux Sociaux'),
+        'S': t_dyn('section_wheel_S', 'Jeux Vidéo'),
+        'T': t_dyn('section_wheel_T', 'Jeux de Hasard'),
+        'U': t_dyn('section_wheel_U', 'Violence'),
+        'V': t_dyn('section_wheel_V', 'Stress'),
+        'Z': t_dyn('section_wheel_Z', 'Intégrité')
+    };
     const activeLabel = sectionNames[activeSection] || 'Global';
 
     return (
         <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
+            variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } }}
+            initial="hidden"
+            animate="show"
             className="flex flex-col gap-10"
         >
             {/* 🔬 Regional Identity Header */}
-            <div className="p-10 md:p-14 rounded-[56px] border border-slate-200 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.05)] relative overflow-hidden group bg-gradient-to-b from-white/90 to-slate-50/90 backdrop-blur-3xl text-slate-900">
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } } }} className="p-10 md:p-14 rounded-[56px] border border-slate-200 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.05)] relative overflow-hidden group bg-gradient-to-b from-white/90 to-slate-50/90 backdrop-blur-3xl text-slate-900">
                 <div className="absolute top-0 right-0 w-full h-[60vh] bg-gradient-to-br from-brand-100/50 to-transparent pointer-events-none mix-blend-multiply rounded-full blur-[100px]" />
                 <div className="absolute top-0 right-0 p-10 opacity-[0.04] group-hover:opacity-[0.08] transition-opacity duration-700 pointer-events-none scale-150 -translate-y-10 translate-x-10">
                     <Activity size={240} strokeWidth={1} className="text-brand-600" />
@@ -157,25 +191,27 @@ const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin 
                             : <EditableLabel termKey="dash_surv_consolid" defaultValue="Surveillance et synthèse consolidée des enquêtes MEDSPAD." />}
                     </p>
                 </div>
-            </div>
+            </motion.div>
 
             {/* 📊 High-Density KPI Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <motion.div variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } }} className="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {kpis?.map((kpi, idx) => (
-                    <div key={idx} className="pro-card p-10 rounded-[48px] group transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_40px_100px_-20px_rgba(15,23,42,0.12)] bg-white/70 backdrop-blur-3xl border border-white shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] relative overflow-hidden">
+                    <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} key={idx} className="pro-card p-10 rounded-[48px] group transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_40px_100px_-20px_rgba(15,23,42,0.12)] bg-white/70 backdrop-blur-3xl border border-white shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/5 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
                         <div className="flex items-center justify-between mb-6 relative z-10">
-                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-[3px] group-hover:text-brand-500 transition-colors italic">{kpi.label}</p>
+                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-[3px] group-hover:text-brand-500 transition-colors italic">
+                                <EditableLabel termKey={`dash_kpi_label_${idx}`} defaultValue={kpi.label} />
+                            </p>
                             <div className="w-2 h-2 rounded-full bg-brand-500/20 group-hover:bg-brand-500 animate-pulse transition-colors shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
                         </div>
                         <p className="text-5xl font-black text-slate-900 tabular-nums tracking-tighter italic mb-8 relative z-10">{kpi.value}</p>
                         <div className="w-12 h-[3px] bg-slate-100 group-hover:w-full group-hover:bg-brand-500 transition-all duration-1000 rounded-full relative z-10 shadow-sm" />
-                    </div>
+                    </motion.div>
                 ))}
-            </div>
+            </motion.div>
 
             {/* 🛡️ Clinical Reliability Index */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 mb-16">
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 mb-16">
                 <div className="bg-slate-900 p-10 rounded-[48px] flex items-center justify-between shadow-2xl shadow-slate-900/30 relative overflow-hidden group hover:-translate-y-1 transition-transform">
                     <div className="absolute inset-0 bg-gradient-to-tr from-brand-500/10 to-transparent opacity-50" />
                     <div className="relative z-10">
@@ -196,10 +232,10 @@ const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin 
                         {headline?.completion_rate || 85}%
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* 🧪 LABORATOIRES D'INTELLIGENCE */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <SocialInlet
                     stressIndex={globalInsights?.social?.stress_index}
                     violenceIndex={globalInsights?.social?.violence_index}
@@ -209,7 +245,7 @@ const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin 
                 <div className="md:col-span-2">
                     <ComorbiditySpectrum metrics={globalInsights?.comorbidity} locked={!isSuperAdmin} />
                 </div>
-            </div>
+            </motion.div>
         </motion.div>
     );
 };
@@ -776,7 +812,8 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                                             )}
                                         </AnimatePresence>
                                     </div>
-                        </div>
+                                </div>
+                            )}
                     </div>
                 </AnimatePresence>
             </div>

@@ -801,13 +801,14 @@ class SentinelleAnalytics:
             "Gabes", "Mednine", "Tataouine"
         ]
 
-        if user and user.role == "ADMIN" and user.governorate:
+        if user and user.role == "REGIONAL_ANALYST" and user.governorate:
             REGIONS = [user.governorate.name]
         else:
             REGIONS = NATIONAL_REGIONS
 
-        WEIGHTS     = {"never": 0, "almost_never": 1, "sometimes": 2, "fairly_often": 3, "very_often": 4}
-        REV_WEIGHTS = {"never": 4, "almost_never": 3, "sometimes": 2, "fairly_often": 1, "very_often": 0}
+        # PSS-4 Stress Weights (1=Jamais, 5=Très souvent)
+        WEIGHTS     = {"1": 0, "2": 1, "3": 2, "4": 3, "5": 4}
+        REV_WEIGHTS = {"1": 4, "2": 3, "3": 2, "4": 1, "5": 0}
 
         # Ordinal scales for forensic checks
         FREQ_ORDER = {"never": 0, "1_2": 1, "3_5": 2, "6_9": 3, "10_19": 4, "20_39": 5, "40_plus": 6}
@@ -856,14 +857,14 @@ class SentinelleAnalytics:
             u_recs = SectionU.objects.filter(session__in=gov_sessions)
             for v in v_recs:
                 score = (
-                    WEIGHTS.get(v.control, 0) +
-                    REV_WEIGHTS.get(v.confidence, 0) +
-                    REV_WEIGHTS.get(v.success, 0) +
-                    WEIGHTS.get(v.difficulties, 0)
+                    WEIGHTS.get(v.a, 0) +
+                    REV_WEIGHTS.get(v.b, 0) +
+                    REV_WEIGHTS.get(v.c, 0) +
+                    WEIGHTS.get(v.d, 0)
                 )
                 pss_total += score
             stress_avg     = round((pss_total / (total * 16) * 100), 1) if total > 0 else 0
-            violence_count = u_recs.filter(fights_12months__gt="0").count()
+            violence_count = u_recs.exclude(fights_12months__in=['', '0', '1', 'never', None]).count()
             conflict_rate  = round((violence_count / total * 100), 1) if total > 0 else 0
             social_stats.append({
                 "gov_name": g_name, "stress_index": stress_avg,
@@ -871,11 +872,11 @@ class SentinelleAnalytics:
             })
 
             # Integrity Metrics (Section Z honesty score)
-            HONESTY_MAP = {"completely": 100, "mostly": 75, "partially": 50, "not_at_all": 0}
+            HONESTY_MAP = {"1": 100, "2": 75, "3": 50, "4": 0}
             z_recs      = SectionZ.objects.filter(session__in=gov_sessions)
             h_total     = sum(HONESTY_MAP.get(z.honesty_level, 0) for z in z_recs)
             honesty_avg = round(h_total / total, 1) if total > 0 else 100
-            self_anomalies = z_recs.filter(honesty_level__in=["partially", "not_at_all"]).count()
+            self_anomalies = z_recs.filter(honesty_level__in=["3", "4"]).count()
 
             # 3-Layer Forensic Detection — counts ALL contradictions, no early break
             region_init_prev  = 0
@@ -1073,13 +1074,13 @@ class SentinelleAnalytics:
             
             # Psychometric nodes (Stress/Violence)
             if hasattr(s, "section_v") and s.section_v:
-                # High stress proxy
-                if s.section_v.difficulties in ['fairly_often', 'very_often']:
+                # High stress proxy (d = difficulties)
+                if s.section_v.d in ['4', '5']:
                     active_nodes.append("Stress Élevé")
             
             if hasattr(s, "section_u") and s.section_u:
-                # Violence proxy
-                if s.section_u.fights_12months not in ['0', 'never', None]:
+                # Violence proxy (1 = Jamais)
+                if s.section_u.fights_12months not in ['0', '1', 'never', None]:
                     active_nodes.append("Implication Violence")
                     
             if hasattr(s, "section_a") and s.section_a:
@@ -1105,17 +1106,17 @@ class SentinelleAnalytics:
         stress_total = 0
         stress_count = 0
         from .analytics import SentinelleAnalytics  # Needed for WEIGHTS inside scope if not available
-        WEIGHTS = {"never": 0, "almost_never": 1, "sometimes": 2, "fairly_often": 3, "very_often": 4}
-        REV_WEIGHTS = {"never": 4, "almost_never": 3, "sometimes": 2, "fairly_often": 1, "very_often": 0}
+        WEIGHTS = {"1": 0, "2": 1, "3": 2, "4": 3, "5": 4}
+        REV_WEIGHTS = {"1": 4, "2": 3, "3": 2, "4": 1, "5": 0}
 
         for s in sessions:
             if hasattr(s, "section_v") and s.section_v:
                 v = s.section_v
                 score = (
-                    WEIGHTS.get(v.control, 0) +
-                    REV_WEIGHTS.get(v.confidence, 0) +
-                    REV_WEIGHTS.get(v.success, 0) +
-                    WEIGHTS.get(v.difficulties, 0)
+                    WEIGHTS.get(v.a, 0) +
+                    REV_WEIGHTS.get(v.b, 0) +
+                    REV_WEIGHTS.get(v.c, 0) +
+                    WEIGHTS.get(v.d, 0)
                 )
                 stress_total += score
                 stress_count += 1
@@ -1138,10 +1139,10 @@ class SentinelleAnalytics:
         # ── Violence & Honesty metrics ─────────────────────────────────────────
         from .models import SectionU, SectionZ
         u_recs = SectionU.objects.filter(session__in=sessions)
-        violence_count = u_recs.exclude(fights_12months__in=['', '0', 'never', None]).count()
+        violence_count = u_recs.exclude(fights_12months__in=['', '0', '1', 'never', None]).count()
         violence_rate = round(violence_count / total * 100, 1) if total > 0 else 0
 
-        HONESTY_MAP = {"completely": 100, "mostly": 75, "partially": 50, "not_at_all": 0}
+        HONESTY_MAP = {"1": 100, "2": 75, "3": 50, "4": 0}
         z_recs = SectionZ.objects.filter(session__in=sessions)
         h_vals = [HONESTY_MAP.get(z.honesty_level, 0) for z in z_recs]
         honesty_score = round(sum(h_vals) / len(h_vals), 1) if h_vals else 100

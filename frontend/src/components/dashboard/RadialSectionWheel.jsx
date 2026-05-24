@@ -1,11 +1,12 @@
 import React, { useMemo, useRef, useEffect, useState } from 'react';
 import * as d3 from 'd3';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useTerminology } from '../../TerminologyContext';
 import EditableLabel from './EditableLabel';
 
 const SECTION_GROUPS = {
     'Profil': { color: '#0ea5e9', banner: '/banners/profile.png', sections: ['A', 'B'] },
-    'Addiction': { color: '#ef4444', banner: '/banners/addiction.png', sections: ['C', 'D', 'E', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P'] },
+    'Addiction': { color: '#f43f5e', banner: '/banners/addiction.png', sections: ['C', 'D', 'E', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P'] },
     'Style de Vie': { color: '#f59e0b', banner: '/banners/digital.png', sections: ['R', 'S', 'T'] },
     'Social': { color: '#6366f1', banner: '/banners/digital.png', sections: ['U', 'V'] },
     'Sensibilisation': { color: '#10b981', banner: '/banners/profile.png', sections: ['Q', 'Z'] }
@@ -33,23 +34,27 @@ const RadialSectionWheel = ({
 }) => {
     const svgRef = useRef();
     const [hovered, setHovered] = useState(null);
+    const { t_dyn } = useTerminology();
     
     // Dynamic Section Detection
     const dynamicSections = useMemo(() => {
         const existingIds = new Set(DEFAULT_SECTIONS.map(s => s.id));
         const newSections = Object.keys(intensityData)
             .filter(id => !existingIds.has(id))
-            .map(id => ({ id, name: `Section ${id}` }));
+            .map(id => ({ id, name: t_dyn(`section_wheel_${id}`, `Section ${id}`) }));
         
-        return [...DEFAULT_SECTIONS, ...newSections];
-    }, [intensityData]);
+        return DEFAULT_SECTIONS.map(s => ({
+            ...s,
+            name: t_dyn(`section_wheel_${s.id}`, s.name)
+        })).concat(newSections);
+    }, [intensityData, t_dyn]);
 
     const width = 650;
     const height = 650;
     const outerRadius = 220;
     const innerRadius = 100; // Slightly larger for images
-    const cornerRadius = 8;
-    const padAngle = 0.045;
+    const cornerRadius = 12;
+    const padAngle = 0.025;
 
     const segments = useMemo(() => {
         const arcCount = dynamicSections.length;
@@ -109,9 +114,9 @@ const RadialSectionWheel = ({
 
                 <g transform={`translate(${width / 2}, ${height / 2})`}>
                     
-                    {/* Background Skeleton */}
+                    {/* Background Skeleton - Now more prominent for a "full" look */}
                     {segments.map(d => (
-                        <path key={`bg-${d.id}`} d={bgArcGenerator(d)} fill={d.color} opacity={0.06} />
+                        <path key={`bg-${d.id}`} d={bgArcGenerator(d)} fill={d.color} opacity={0.18} stroke="white" strokeWidth="0.5" />
                     ))}
 
                     {/* Data Prisms */}
@@ -128,11 +133,14 @@ const RadialSectionWheel = ({
                                 <motion.path
                                     d={arcGenerator(d)}
                                     fill={d.color}
-                                    stroke={isActive ? '#0f172a' : 'transparent'}
-                                    strokeWidth={isActive ? 2 : 0}
+                                    stroke={isActive ? '#0f172a' : 'white'}
+                                    strokeWidth={isActive ? 2 : 0.5}
                                     animate={{ 
                                         opacity: isHovered || isActive ? 1 : 0.7, 
                                         scale: isHovered ? 1.05 : 1,
+                                    }}
+                                    style={{ 
+                                        filter: isHovered || isActive ? 'url(#glow)' : 'none',
                                     }}
                                     transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                                 />
@@ -146,7 +154,12 @@ const RadialSectionWheel = ({
                                             return `rotate(${finalRotate})`;
                                         })()}
                                         dy=".35em" textAnchor="middle"
-                                        className={`text-[10px] font-black transition-all duration-300 ${isActive ? 'fill-slate-900 scale-125' : isHovered ? 'fill-slate-900 scale-110' : 'fill-slate-400 opacity-60'}`}
+                                        className={`text-[11px] font-black transition-all duration-300`}
+                                        style={{ 
+                                            fill: isActive || isHovered ? d.color : '#94a3b8',
+                                            opacity: isActive || isHovered ? 1 : 0.5,
+                                            transform: `scale(${isActive || isHovered ? 1.3 : 1})`
+                                        }}
                                     >
                                         {d.id}
                                     </text>
@@ -189,13 +202,20 @@ const RadialSectionWheel = ({
                                         </h3>
                                     </motion.div>
                                 ) : activeSection ? (
-                                    <motion.div key="active" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}>
-                                        <p className="text-[10px] font-black uppercase tracking-[4px] text-brand-500 mb-1 italic opacity-60">VECTEUR</p>
-                                        <h3 className="text-5xl font-black text-slate-900 leading-none tracking-tighter italic">{activeSection}</h3>
+                                    <motion.div key="active" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
+                                        <p className="text-[10px] font-black uppercase tracking-[4px] text-brand-500 mb-1 italic opacity-60">VECTEUR {activeSection}</p>
+                                        <div className="text-[12px] font-black text-slate-900 leading-none tracking-tight italic mt-1 max-w-[150px] break-words">
+                                            <EditableLabel 
+                                                termKey={`section_wheel_${activeSection}`} 
+                                                defaultValue={dynamicSections.find(s => s.id === activeSection)?.name} 
+                                            />
+                                        </div>
                                     </motion.div>
                                 ) : (
-                                    <motion.div key="default" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center">
-                                        <p className="text-[11px] font-black text-brand-500 mb-2 tracking-[6px] uppercase italic opacity-70">COHORTE</p>
+                                    <motion.div key="default" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center" onClick={(e) => e.stopPropagation()}>
+                                        <p className="text-[11px] font-black text-brand-500 mb-2 tracking-[6px] uppercase italic opacity-70">
+                                            <EditableLabel termKey="wheel_default_cohort" defaultValue="COHORTE" />
+                                        </p>
                                         <p className="text-4xl font-black text-slate-900 tabular-nums leading-none italic tracking-tighter">{totalSubmissions}</p>
                                     </motion.div>
                                 )}

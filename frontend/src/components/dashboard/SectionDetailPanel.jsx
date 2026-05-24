@@ -188,7 +188,9 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
                             {sectionId}
                         </div>
                         <div>
-                            <h2 className="text-5xl font-black text-slate-900 tracking-tighter uppercase italic leading-none mb-4">{sectionName}</h2>
+                            <h2 className="text-5xl font-black text-slate-900 tracking-tighter uppercase italic leading-none mb-4">
+                                <EditableLabel termKey={`section_detail_title_${sectionId}`} defaultValue={SECTION_NAMES[sectionId] || `Vecteur ${sectionId}`} />
+                            </h2>
                             <p className="text-[11px] font-black text-brand-600 uppercase tracking-[6px] italic opacity-60"><EditableLabel termKey="detail_consolidation_msg" defaultValue="Consolidation Intelligence Vague 2026.Alpha" /></p>
                         </div>
                     </div>
