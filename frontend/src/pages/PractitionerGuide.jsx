@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { 
-    ShieldCheck, 
-    ClipboardList, 
-    Scan, 
-    FileText, 
-    BarChart3, 
-    ArrowRight, 
-    Globe, 
+import {
+    ShieldCheck,
+    ClipboardList,
+    Scan,
+    FileText,
+    BarChart3,
+    ArrowRight,
+    Globe,
     HelpCircle,
     CheckCircle2,
     BookOpen,
@@ -40,9 +40,9 @@ const PractitionerGuide = ({ user }) => {
 
     const handleIgnore = async () => {
         if (!activeReport) return;
-        
+
         // Finalize it so it doesn't show up again
-        if (window.confirm(lang === 'fr' 
+        if (window.confirm(lang === 'fr'
             ? "Voulez-vous vraiment ignorer ce rapport ? Il sera clôturé et vous ne pourrez plus y lier de nouveaux formulaires automatiquement."
             : "هل تريد حقًا تجاهل هذا التقرير؟ سيتم إغلاقه ولن تتمكن من ربط استمارات جديدة به تلقائيًا.")) {
             try {
@@ -76,7 +76,6 @@ const PractitionerGuide = ({ user }) => {
         fr: {
             welcome: "Guide des Procédures Administratives",
             subtitle: "Méthodologie de Collecte et Liaison des Données MedSPAD",
-            roleLabel: isOperator ? "Rôle : Opérateur" : "Rôle : Praticien",
             guideTitle: "Manuel de Procédure",
             processTitle: "Le Processus de Liaison (Tethering)",
             processSubtitle: "Comprendre comment les questionnaires sont rattachés aux classes",
@@ -204,14 +203,23 @@ const PractitionerGuide = ({ user }) => {
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <button 
+                    {!isOperator && (
+                        <button
+                            onClick={() => navigate('/user')}
+                            className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-md font-black text-[10px] uppercase tracking-widest transition-all border border-blue-100 shadow-sm"
+                        >
+                            <LayoutDashboard size={14} />
+                            {currentT.actions.dashboard}
+                        </button>
+                    )}
+                    <button
                         onClick={() => setLang(lang === 'fr' ? 'ar' : 'fr')}
                         className="flex items-center gap-2 px-4 py-2 hover:bg-slate-100 rounded-md font-bold text-xs transition-colors border border-slate-200 text-slate-600"
                     >
                         <Globe size={16} />
                         {lang === 'fr' ? 'العربية' : 'Français'}
                     </button>
-                    <button 
+                    <button
                         onClick={handleLogout}
                         className="flex items-center gap-2 px-4 py-2 bg-rose-50 text-rose-600 hover:bg-rose-100 rounded-md font-black text-[10px] uppercase tracking-widest transition-all border border-rose-100 shadow-sm"
                     >
@@ -225,7 +233,7 @@ const PractitionerGuide = ({ user }) => {
                 {/* Active Session Alert (NEW) */}
                 <AnimatePresence>
                     {activeReport && (
-                        <motion.div 
+                        <motion.div
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
                             className="mb-12 bg-blue-600 rounded-[32px] p-8 text-white shadow-2xl shadow-blue-500/20 flex flex-col md:flex-row items-center justify-between gap-6"
@@ -242,13 +250,13 @@ const PractitionerGuide = ({ user }) => {
                                 </div>
                             </div>
                             <div className="flex items-center gap-4 w-full md:w-auto">
-                                <button 
+                                <button
                                     onClick={() => navigate(`/session/${activeReport.id}/collect`)}
                                     className="flex-1 md:flex-none px-8 py-4 bg-white text-blue-600 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-blue-50 transition-colors shadow-lg"
                                 >
                                     {currentT.resumeCard.btn}
                                 </button>
-                                <button 
+                                <button
                                     onClick={handleIgnore}
                                     className="px-4 py-4 bg-white/10 text-white rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-white/20 transition-colors"
                                 >
@@ -285,7 +293,7 @@ const PractitionerGuide = ({ user }) => {
                                 <div className="flex items-start gap-4 p-4 bg-emerald-50 border-l-4 border-emerald-500 rounded-r-xl">
                                     <CheckCircle2 size={20} className="text-emerald-600 shrink-0 mt-1" />
                                     <p className="text-sm font-medium text-emerald-900">
-                                        {lang === 'fr' 
+                                        {lang === 'fr'
                                             ? "Pas besoin de recommencer un rapport si vous revenez sur une classe non terminée. Reprenez simplement là où vous vous étiez arrêté."
                                             : "لا حاجة لبدء تقرير جديد إذا عدت لقسم لم ينتهِ بعد. واصل ببساطة من حيث توقفت."}
                                     </p>
@@ -297,7 +305,7 @@ const PractitionerGuide = ({ user }) => {
                         <div className="w-full md:w-80 bg-slate-50 border border-slate-200 rounded-2xl p-6 relative overflow-hidden">
                             <div className="absolute top-0 left-0 w-full h-1 bg-slate-900" />
                             <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-6 text-center">{currentT.visualLabel}</p>
-                            
+
                             <div className="flex flex-col items-center gap-4">
                                 <div className="w-full py-3 bg-white border border-slate-300 rounded-lg flex items-center justify-center gap-2 shadow-sm">
                                     <ClipboardList size={16} className="text-slate-900" />
@@ -305,16 +313,16 @@ const PractitionerGuide = ({ user }) => {
                                 </div>
                                 <ArrowDown size={16} className="text-slate-300" />
                                 <div className="grid grid-cols-3 gap-2 w-full">
-                                    {[1,2,3].map(i => (
+                                    {[1, 2, 3].map(i => (
                                         <div key={i} className="py-2 bg-blue-100 border border-blue-200 rounded flex items-center justify-center">
                                             <FileText size={12} className="text-blue-600" />
                                         </div>
                                     ))}
                                 </div>
                                 <p className="text-[8px] font-bold text-slate-400 uppercase">{currentT.visualChild}</p>
-                                
+
                                 <div className="w-full border-t border-dashed border-slate-200 my-2" />
-                                
+
                                 <div className="w-full py-3 bg-slate-200 border border-slate-300 rounded-lg flex items-center justify-center gap-2 opacity-50 italic">
                                     <PlusCircle size={16} />
                                     <span className="text-[10px] font-bold uppercase">{currentT.visualIteration}</span>
@@ -358,7 +366,7 @@ const PractitionerGuide = ({ user }) => {
                 {/* Final Call to Action */}
                 <div className="flex flex-col md:flex-row items-center justify-center gap-6 border-t border-slate-200 pt-16">
                     {!activeReport && (
-                        <button 
+                        <button
                             onClick={() => navigate('/class-report')}
                             className="w-full md:w-auto px-10 py-5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-black uppercase text-sm tracking-[2px] flex items-center justify-center gap-4 transition-all hover:scale-[1.02] active:scale-95 shadow-xl"
                         >
@@ -368,7 +376,7 @@ const PractitionerGuide = ({ user }) => {
                     )}
 
                     {activeReport && (
-                        <button 
+                        <button
                             onClick={() => navigate(`/session/${activeReport.id}/collect`)}
                             className="w-full md:w-auto px-10 py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black uppercase text-sm tracking-[2px] flex items-center justify-center gap-4 transition-all hover:scale-[1.02] active:scale-95 shadow-xl"
                         >
@@ -377,13 +385,15 @@ const PractitionerGuide = ({ user }) => {
                         </button>
                     )}
 
-                    <button 
-                        onClick={() => navigate('/user')}
-                        className="w-full md:w-auto px-10 py-5 bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl font-black uppercase text-sm tracking-[2px] flex items-center justify-center gap-4 transition-all"
-                    >
-                        <LayoutDashboard size={20} />
-                        {currentT.actions.dashboard}
-                    </button>
+                    {!isOperator && (
+                        <button
+                            onClick={() => navigate('/user')}
+                            className="w-full md:w-auto px-10 py-5 bg-white border-2 border-slate-200 text-slate-600 hover:bg-slate-50 rounded-xl font-black uppercase text-sm tracking-[2px] flex items-center justify-center gap-4 transition-all"
+                        >
+                            <LayoutDashboard size={20} />
+                            {currentT.actions.dashboard}
+                        </button>
+                    )}
                 </div>
             </main>
 

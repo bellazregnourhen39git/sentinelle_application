@@ -2,7 +2,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
-from .models import Governorate, SchoolEstablishment, SchoolClass
+from .models import Governorate, SchoolEstablishment, SchoolClass, QuestionnaireSession
+from .analytics import SentinelleAnalytics
 
 User = get_user_model()
 
@@ -14,9 +15,9 @@ class SentinelleAPITests(APITestCase):
         self.school_class = SchoolClass.objects.create(name="Terminal Math 1", establishment=self.school)
 
         # Create Users
-        self.user = User.objects.create_user(username='doc_tunis', password='password123', role='USER', establishment=self.school)
-        self.admin = User.objects.create_user(username='admin_tunis', password='password123', role='ADMIN', governorate=self.gov)
-        self.superadmin = User.objects.create_user(username='super_admin', password='password123', role='SUPERADMIN')
+        self.user = User.objects.create_user(username='doc_tunis', email='doc@example.com', password='password123', role='USER', establishment=self.school)
+        self.admin = User.objects.create_user(username='admin_tunis', email='admin@example.com', password='password123', role='ADMIN', governorate=self.gov)
+        self.superadmin = User.objects.create_user(username='super_admin', email='super@example.com', password='password123', role='SUPERADMIN')
 
     def test_login_and_role_access(self):
         # Test Login
@@ -62,3 +63,13 @@ class SentinelleAPITests(APITestCase):
         res = self.client.get(reverse('sidra_export'))
         self.assertEqual(res.status_code, status.HTTP_200_OK)
         self.assertIn('survey_source', res.data)
+
+    def test_homepage_stats_return_no_data_when_no_submissions_exist(self):
+        empty_qs = QuestionnaireSession.objects.none()
+        stats = SentinelleAnalytics.get_homepage_stats(empty_qs, 'Tunis')
+
+        self.assertEqual(stats['headline']['n_submissions'], 0)
+        self.assertIsNone(stats['global_insights']['comorbidity']['poly_2plus_pct'])
+        self.assertIsNone(stats['global_insights']['comorbidity']['poly_3plus_pct'])
+        self.assertEqual(stats['group_prevalence'], [])
+        self.assertEqual(stats['top_sections'], [])

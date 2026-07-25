@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" width="100%" height="100%">
+  <!-- Definitions -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#020617" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <radialGradient id="glowGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#6366f1" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#6366f1" stop-opacity="0" />
+    </radialGradient>
+    <pattern id="grid" width="30" height="30" patternUnits="userSpaceOnUse">
+      <path d="M 30 0 L 0 0 0 30" fill="none" stroke="#334155" stroke-width="1" stroke-opacity="0.07" />
+    </pattern>
+  </defs>
+
+  <!-- Background -->
+  <rect width="100%" height="100%" fill="url(#bgGrad)" />
+  <rect width="100%" height="100%" fill="url(#grid)" />
+
+  <!-- Scanning Glow -->
+  <circle cx="400" cy="220" r="180" fill="url(#glowGrad)" />
+
+  <!-- Cybernetic Reticles -->
+  <circle cx="400" cy="220" r="140" fill="none" stroke="#6366f1" stroke-width="1" stroke-opacity="0.1" stroke-dasharray="5 5" />
+  <circle cx="400" cy="220" r="100" fill="none" stroke="#6366f1" stroke-width="1" stroke-opacity="0.15" />
+  
+  <!-- Outer Brackets -->
+  <path d="M 230,150 L 230,120 L 260,120" fill="none" stroke="#6366f1" stroke-width="2" stroke-opacity="0.3" />
+  <path d="M 570,150 L 570,120 L 540,120" fill="none" stroke="#6366f1" stroke-width="2" stroke-opacity="0.3" />
+  <path d="M 230,290 L 230,320 L 260,320" fill="none" stroke="#6366f1" stroke-width="2" stroke-opacity="0.3" />
+  <path d="M 570,290 L 570,320 L 540,320" fill="none" stroke="#6366f1" stroke-width="2" stroke-opacity="0.3" />
+
+  <!-- Center Core Icon -->
+  <g id="coreIcon">
+    <path d="M350,220 C340,180 370,160 400,170 C430,160 460,180 450,220 C465,240 440,265 400,260 C360,265 335,240 350,220 Z" fill="none" stroke="#6366f1" stroke-width="5"/><path d="M390,195 L410,215 M410,195 L390,215" fill="none" stroke="#6366f1" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <!-- Text Annotations -->
+  <text x="400" y="380" font-family="'Outfit', 'Inter', 'Roboto', sans-serif" font-size="28" font-weight="900" fill="#f8fafc" text-anchor="middle" letter-spacing="4" font-style="italic">STRESS & SANTÉ MENTALE</text>
+  <text x="400" y="410" font-family="'Outfit', 'Inter', 'Roboto', sans-serif" font-size="11" font-weight="900" fill="#6366f1" text-anchor="middle" letter-spacing="8" opacity="0.8">SECTION V</text>
+
+  <!-- Scanning Line -->
+  <line x1="200" y1="60" x2="600" y2="60" stroke="#6366f1" stroke-width="1" stroke-opacity="0.05" />
+</svg>

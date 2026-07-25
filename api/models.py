@@ -37,7 +37,7 @@ class User(AbstractUser):
         SUPER_ADMIN = "SUPER_ADMIN", _("Super Admin")
         GLOBAL_ADMIN = "GLOBAL_ADMIN", _("Global Admin")
         OPERATOR = "OPERATOR", _("Operator")
-        REGIONAL_ANALYST = "REGIONAL_ANALYST", _("Regional Analyst")
+        REGIONAL_ADMIN = "REGIONAL_ADMIN", _("Regional Admin")
         PRACTITIONER = "PRACTITIONER", _("Practitioner")
 
     class Status(models.TextChoices):

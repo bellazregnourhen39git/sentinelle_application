@@ -3,6 +3,7 @@ from rest_framework_simplejwt.views import TokenRefreshView
 from .views import (
     SchoolStatsView, GovernorateStatsView, NationalStatsView,
     SidraDataExportView, HomepageView, SectionStatsView, LabStatsView,
+    CorrelationEngineView,
     RegisterView, ProfileView, QuestionnaireSubmitView, QuestionnaireExportView,
     InviteUserView, ActivateUserView, SecureTokenObtainPairView,
     PendingApprovalsView, ApproveUserView, RejectUserView,
@@ -48,6 +49,7 @@ urlpatterns = [
     path('stats/insights/', InsightsView.as_view(), name='stats_insights'),
     path('stats/export-raw/', RawDataExportView.as_view(), name='export_raw_data'),
     path('stats/regional-profile/<str:gov_name>/', RegionalProfileView.as_view(), name='regional_profile'),
+    path('stats/correlations/', CorrelationEngineView.as_view(), name='stats_correlations'),
 
     # SIDRA Integration
     path('sidra/export/', SidraDataExportView.as_view(), name='sidra_export'),

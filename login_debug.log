@@ -37,6 +37,19 @@ DEBUG: Login request data: {'email': 'medbouzid1234567@gmail.com', 'password': '
 DEBUG: Login request data: {'email': 'medbouzid1234567@gmail.com', 'password': 'lolalola'}
 DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
 DEBUG: Login request data: {'email': 'medbouzid1234567@gmail.com', 'password': 'lolalola'}
+<<<<<<< HEAD
+=======
+DEBUG: Login request data: {'email': 'superadmin_2@example.com', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'superadmin_2@example.com', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'globaladmin@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'analyst_tunis@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'operator@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'medbouzid1234567@gmail.com', 'password': 'lolalola'}
+DEBUG: Login request data: {'email': 'practitioner_tunis@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'medbouzid1234567@gmail.com', 'password': 'lolalola'}
+>>>>>>> 76626e5 (Mise à jour de la plateforme Sentinelle)
 DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
 DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
 DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
@@ -45,3 +58,58 @@ DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
 DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
 DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
 DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+<<<<<<< HEAD
+=======
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'globaladmin@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'globaladmin@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'globaladmin@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'superadmin_2@example.com', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'medbouzid1234567@gmail.com', 'password': 'lolalola'}
+DEBUG: Login request data: {'email': 'operator@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'analyst_tunis@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'practitioner_tunis@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'operator@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.com', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'superadmin_2@example.com', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'globaladmin@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'practitioner_tunis@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'operator@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'practitioner_tunis@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'globaladmin@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'globaladmin@sentinelle.tn', 'password': 'Password123!'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+DEBUG: Login request data: {'email': 'msi@sentinelle.tn', 'password': 'msi'}
+>>>>>>> 76626e5 (Mise à jour de la plateforme Sentinelle)

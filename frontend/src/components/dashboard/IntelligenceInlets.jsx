@@ -7,7 +7,10 @@ import { Users, ShieldAlert, Award, TrendingUp, UserCheck, Flag, GraduationCap, 
 // 🛡️ Audit Expert — Indice de Fiabilité et d'Intégrité des Données
 export const ExpertAudit = ({ integrity, locked = false }) => {
     const navigate = useNavigate();
-    const { honesty_score = 0, is_reliable = true } = integrity || {};
+    const { honesty_score = null, is_reliable = null } = integrity || {};
+    const hasData = honesty_score != null && is_reliable != null;
+    const displayScore = hasData ? `${honesty_score}%` : '—';
+    const displayAnomaly = hasData ? `${(100 - honesty_score).toFixed(1)}%` : '—';
     
     return (
         <motion.div 
@@ -15,7 +18,7 @@ export const ExpertAudit = ({ integrity, locked = false }) => {
             onClick={() => !locked && navigate('/lab/integrity')}
             className={`pro-card p-8 h-full rounded-[40px] border border-white shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] transition-all duration-500 relative overflow-hidden group
                 ${locked ? 'cursor-not-allowed opacity-70 grayscale-[30%]' : 'cursor-pointer hover:shadow-[0_40px_100px_-20px_rgba(15,23,42,0.12)]'}
-                ${!is_reliable ? 'bg-rose-50/50 backdrop-blur-3xl' : 'bg-white/70 backdrop-blur-3xl'}`}
+                ${hasData && !is_reliable ? 'bg-rose-50/50 backdrop-blur-3xl' : 'bg-white/70 backdrop-blur-3xl'}`}
         >
             {/* Lock Badge */}
             {locked && (
@@ -30,8 +33,8 @@ export const ExpertAudit = ({ integrity, locked = false }) => {
 
             <div className="flex items-center justify-between mb-8">
                 <div className="flex items-center gap-4">
-                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${!is_reliable ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20' : 'bg-brand-500 text-white shadow-lg shadow-brand-500/20'}`}>
-                        {is_reliable ? <CheckCircle2 size={24} /> : <AlertTriangle size={24} />}
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${hasData && !is_reliable ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20' : 'bg-brand-500 text-white shadow-lg shadow-brand-500/20'}`}>
+                        {hasData && !is_reliable ? <AlertTriangle size={24} /> : <CheckCircle2 size={24} />}
                     </div>
                     <div>
                         <h4 className="text-[11px] font-black text-slate-900 uppercase tracking-[3px] italic">
@@ -42,7 +45,7 @@ export const ExpertAudit = ({ integrity, locked = false }) => {
                         </p>
                     </div>
                 </div>
-                {!is_reliable && (
+                {hasData && !is_reliable && (
                     <span className="px-4 py-1.5 bg-rose-500 text-white rounded-full text-[9px] font-black uppercase tracking-[2px] animate-pulse shadow-lg shadow-rose-500/20"><EditableLabel termKey="lab_alert" defaultValue="Alerte" /></span>
                 )}
             </div>
@@ -51,23 +54,23 @@ export const ExpertAudit = ({ integrity, locked = false }) => {
                 <div>
                     <div className="flex items-center justify-between mb-3 px-1">
                         <span className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] italic"><EditableLabel termKey="lab_integrity_honesty_idx" defaultValue="Indice d'Honnêteté" /></span>
-                        <span className={`text-[12px] font-black tabular-nums italic ${!is_reliable ? 'text-rose-600' : 'text-brand-600'}`}>{honesty_score}%</span>
+                        <span className={`text-[12px] font-black tabular-nums italic ${hasData && !is_reliable ? 'text-rose-600' : 'text-brand-600'}`}>{displayScore}</span>
                     </div>
                     <div className="h-4 rounded-full bg-slate-50 overflow-hidden p-0.5 border border-slate-100 shadow-inner">
                         <motion.div 
                             initial={{ width: 0 }} 
-                            animate={{ width: `${honesty_score}%` }} 
-                            className={`h-full rounded-full ${!is_reliable ? 'bg-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.3)]' : 'bg-brand-500 shadow-[0_0_12px_rgba(14,165,233,0.3)]'}`} 
+                            animate={{ width: hasData ? `${honesty_score}%` : '0%' }} 
+                            className={`h-full rounded-full ${hasData && !is_reliable ? 'bg-rose-500 shadow-[0_0_12px_rgba(244,63,94,0.3)]' : 'bg-brand-500 shadow-[0_0_12px_rgba(14,165,233,0.3)]'}`} 
                         />
                     </div>
                 </div>
 
                 <div className="flex items-center justify-between p-5 rounded-3xl bg-slate-50 border border-slate-100 group-hover:bg-brand-50 shadow-sm transition-all duration-300">
                     <div className="flex items-center gap-3">
-                        <div className={`w-2 h-2 rounded-full ${!is_reliable ? 'bg-rose-500' : 'bg-brand-500'} animate-pulse`} />
+                        <div className={`w-2 h-2 rounded-full ${hasData && !is_reliable ? 'bg-rose-500' : 'bg-brand-500'} animate-pulse`} />
                         <span className="text-[10px] font-black text-slate-600 uppercase italic tracking-wide"><EditableLabel termKey="lab_integrity_anomaly_margin" defaultValue="Marge d'Anomalie" /></span>
                     </div>
-                    <span className={`text-[15px] font-black tabular-nums italic ${!is_reliable ? 'text-rose-600' : 'text-slate-900'}`}>{(100 - honesty_score).toFixed(1)}%</span>
+                    <span className={`text-[15px] font-black tabular-nums italic ${hasData && !is_reliable ? 'text-rose-600' : 'text-slate-900'}`}>{displayAnomaly}</span>
                 </div>
 
                 <div className="flex items-center justify-center gap-2 pt-2 text-[8px] font-black text-brand-500 uppercase tracking-[3px] italic opacity-0 group-hover:opacity-100 transition-opacity">
@@ -81,8 +84,19 @@ export const ExpertAudit = ({ integrity, locked = false }) => {
 
 // 📈 Spectre de Comorbidité — Intensité du Poly-Usage de Drogues
 export const ComorbiditySpectrum = ({ metrics, locked = false }) => {
-    const { poly_2plus_pct = 0, poly_3plus_pct = 0 } = metrics || {};
+    const {
+        poly_2plus_pct = null,
+        poly_3plus_pct = null,
+        poly_2plus_count = 0,
+        poly_3plus_count = 0,
+        total_submissions = 0,
+    } = metrics || {};
     const navigate = useNavigate();
+    const hasRealData = Number(total_submissions || 0) > 0 && (Number(poly_2plus_count || 0) > 0 || Number(poly_3plus_count || 0) > 0);
+    const normalized2plus = Number.isFinite(Number(poly_2plus_pct)) ? Number(poly_2plus_pct) : null;
+    const normalized3plus = Number.isFinite(Number(poly_3plus_pct)) ? Number(poly_3plus_pct) : null;
+    const display2plus = hasRealData && normalized2plus != null ? `${normalized2plus}%` : '—';
+    const display3plus = hasRealData && normalized3plus != null ? `${normalized3plus}%` : '—';
 
     return (
         <div 
@@ -115,15 +129,13 @@ export const ComorbiditySpectrum = ({ metrics, locked = false }) => {
             <div className="space-y-10">
                 <div>
                     <div className="flex items-center justify-between mb-4 px-1">
-                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-[2px] italic"><EditableLabel termKey="lab_como_multi_2" defaultValue="Usage Multi-Substances (2+)" /></span>
-                        <span className="text-3xl font-black text-rose-600 italic tracking-tighter tabular-nums">{poly_2plus_pct}%</span>
+                        <span className="text-[10px] font-black text-slate-900 uppercase tracking-[2px] italic"><EditableLabel termKey="lab_como_multi_2" defaultValue="Usage Multi-Substances (2+)" /></span>
+                        <span className="text-3xl font-black text-slate-900 italic tracking-tighter tabular-nums">{display2plus}</span>
                     </div>
                     <div className="h-4 rounded-full bg-slate-50 border border-slate-100 overflow-hidden shadow-inner p-1">
-                        <motion.div initial={{ width: 0 }} animate={{ width: `${poly_2plus_pct}%` }} className="h-full bg-rose-500 rounded-full shadow-[0_0_15px_rgba(244,63,94,0.3)]" />
+                        <motion.div initial={{ width: 0 }} animate={{ width: hasRealData && normalized2plus != null ? `${normalized2plus}%` : '0%' }} className="h-full bg-rose-500 rounded-full shadow-[0_0_15px_rgba(244,63,94,0.3)]" />
                     </div>
                 </div>
-
-
 
                 <div className="p-6 rounded-[32px] bg-slate-900 text-white shadow-2xl shadow-slate-900/30 relative overflow-hidden mt-8">
                     <div className="absolute top-[-10%] right-[-10%] opacity-10 group-hover:rotate-12 transition-transform duration-700">
@@ -131,14 +143,18 @@ export const ComorbiditySpectrum = ({ metrics, locked = false }) => {
                     </div>
                     <div className="relative z-10">
                         <div className="flex items-center justify-between mb-3">
-                            <span className="text-[10px] font-black uppercase tracking-[3px] italic text-rose-400"><EditableLabel termKey="lab_como_zone" defaultValue="Zone Critique (3+)" /></span>
+                            <span className="text-[10px] font-black uppercase tracking-[3px] italic text-slate-900"><EditableLabel termKey="lab_como_zone" defaultValue="Zone Critique (3+)" /></span>
                             <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                                <span className="text-[16px] font-black italic tabular-nums">{poly_3plus_pct}%</span>
+                                <span className="text-[16px] font-black italic tabular-nums text-slate-900">{display3plus}</span>
                             </div>
                         </div>
-                        <p className="text-[9px] font-black uppercase tracking-[1.5px] leading-relaxed opacity-50 italic">
-                            <EditableLabel termKey="lab_como_priority" defaultValue="Priorité d'intervention psychiatrique absolue pour les cas identifiés." />
+                        <p className="text-[9px] font-black uppercase tracking-[1.5px] leading-relaxed opacity-60 italic text-slate-900">
+                            {hasRealData ? (
+                                <EditableLabel termKey="lab_como_priority" defaultValue="Priorité d'intervention psychiatrique absolue pour les cas identifiés." />
+                            ) : (
+                                <EditableLabel termKey="lab_como_priority_empty" defaultValue="Aucune donnée exploitable pour ce périmètre." />
+                            )}
                         </p>
                     </div>
                 </div>
@@ -220,8 +236,11 @@ export const CohortPulse = ({ insights }) => {
 };
 
 // 🤝 Vecteurs de Contexte Social — Stress & Incidents
-export const SocialInlet = ({ stressIndex = 0, violenceIndex = 0, locked = false }) => {
+export const SocialInlet = ({ stressIndex = null, violenceIndex = null, locked = false }) => {
     const navigate = useNavigate();
+    const hasData = stressIndex != null || violenceIndex != null;
+    const displayStress = hasData && stressIndex != null ? `${stressIndex}%` : '—';
+    const displayViolence = hasData && violenceIndex != null ? `${violenceIndex}%` : '—';
 
     return (
         <motion.div 
@@ -253,7 +272,7 @@ export const SocialInlet = ({ stressIndex = 0, violenceIndex = 0, locked = false
                 <div>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[2.5px] mb-2 italic"><EditableLabel termKey="lab_social_stress" defaultValue="Contrainte Psychologique" /></p>
                     <div className="flex items-baseline gap-3">
-                        <span className="text-4xl font-black text-slate-900 italic tabular-nums group-hover:text-brand-600 transition-colors">{stressIndex}%</span>
+                        <span className="text-4xl font-black text-slate-900 italic tabular-nums group-hover:text-brand-600 transition-colors">{displayStress}</span>
                         <span className="text-[10px] font-black text-brand-500 uppercase italic opacity-60 tracking-widest"><EditableLabel termKey="lab_social_normal" defaultValue="Normal" /></span>
                     </div>
                 </div>
@@ -266,7 +285,7 @@ export const SocialInlet = ({ stressIndex = 0, violenceIndex = 0, locked = false
                 <div className="flex flex-col">
                     <p className="text-[10px] font-black text-rose-400 uppercase tracking-[2.5px] mb-2 italic"><EditableLabel termKey="lab_social_conflict" defaultValue="Index de Conflictualité" /></p>
                     <div className="flex items-baseline gap-3">
-                        <span className="text-4xl font-black text-slate-900 italic tabular-nums">{violenceIndex}%</span>
+                        <span className="text-4xl font-black text-slate-900 italic tabular-nums">{displayViolence}</span>
                         <span className="px-3 py-1 bg-rose-500 text-white rounded-lg text-[8px] font-black uppercase tracking-[1.5px] shadow-lg shadow-rose-500/20"><EditableLabel termKey="lab_social_risk" defaultValue="Risque" /></span>
                     </div>
                 </div>

@@ -12,6 +12,32 @@ const ComorbidityLab = ({ profile }) => {
 
     const isUser = profile?.role === 'USER';
 
+    // Tooltip component
+    const Tooltip = ({ content, children }) => {
+        const [show, setShow] = useState(false);
+        return (
+            <div className="relative inline-flex items-center cursor-help" onMouseEnter={() => setShow(true)} onMouseLeave={() => setShow(false)}>
+                {children}
+                <AnimatePresence>
+                    {show && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                            transition={{ duration: 0.15 }}
+                            className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-50 w-72 p-4 rounded-2xl bg-slate-900 text-white text-[11px] font-bold leading-relaxed italic shadow-2xl border border-white/10 pointer-events-none"
+                        >
+                            {content}
+                            <div className="absolute top-full left-1/2 -translate-x-1/2 w-2 h-2 bg-slate-900 rotate-45 -mt-1 border-r border-b border-white/10" />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+            </div>
+        );
+    };
+
+    const DEMO_COMORBIDITY_RANKINGS = [];
+    const DEMO_TOP_PAIRS = [];
+    const DEMO_TOP_TRIPLES = [];
+
     useEffect(() => {
         const fetchStats = async () => {
             try {
@@ -26,10 +52,10 @@ const ComorbidityLab = ({ profile }) => {
         fetchStats();
     }, []);
 
-    const polyStats = labData?.comorbidity?.rankings || [];
-    const topPairs = labData?.comorbidity?.top_combinations || [];
-    const topTriplesData = labData?.comorbidity?.top_triples || [];
-    const nationalAvg = labData?.national_avg?.poly_usage || 12.6;
+    const polyStats = (labData?.comorbidity?.rankings && labData.comorbidity.rankings.length > 0) ? labData.comorbidity.rankings : [];
+    const topPairs = (labData?.comorbidity?.top_combinations && labData.comorbidity.top_combinations.length > 0) ? labData.comorbidity.top_combinations : [];
+    const topTriplesData = (labData?.comorbidity?.top_triples && labData.comorbidity.top_triples.length > 0) ? labData.comorbidity.top_triples : [];
+    const nationalAvg = labData?.national_avg?.poly_usage || 0;
 
     const renderSubstanceLabel = (label) => {
         if (!label) return '';
@@ -57,7 +83,7 @@ const ComorbidityLab = ({ profile }) => {
                     <EditableLabel termKey="lab_btn_back" defaultValue="Retour au Hub" />
                 </button>
                 <div className="flex items-center gap-4">
-                    <div className="px-5 py-2.5 bg-rose-500/10 border border-rose-500/20 rounded-full text-[10px] font-black text-rose-600 uppercase tracking-[3px] italic flex items-center gap-2 shadow-sm">
+                    <div className="px-5 py-2.5 bg-rose-500/10 border border-rose-500/20 rounded-full text-[10px] font-black text-slate-900 uppercase tracking-[3px] italic flex items-center gap-2 shadow-sm">
                         <Layers size={14} className="animate-pulse" />
                         <EditableLabel termKey="lab_comorbidity_header_badge" defaultValue="Laboratoire de Phénoménologie Comorbide" />
                     </div>
@@ -75,7 +101,7 @@ const ComorbidityLab = ({ profile }) => {
                 </div>
                 <div className="relative z-10 max-w-3xl">
                     <h1 className="text-7xl font-black text-slate-900 tracking-tighter uppercase italic leading-none mb-8">
-                        <EditableLabel termKey="lab_comorbidity_hero_title_1" defaultValue="Spectre" /> <span className="text-rose-600"><EditableLabel termKey="lab_comorbidity_hero_title_2" defaultValue="Comorbidité" /></span>
+                        <EditableLabel termKey="lab_comorbidity_hero_title_1" defaultValue="Spectre" /> <span className="text-slate-900"><EditableLabel termKey="lab_comorbidity_hero_title_2" defaultValue="Comorbidité" /></span>
                     </h1>
                     <p className="text-xl text-slate-500 font-bold italic leading-relaxed opacity-80 mb-10">
                         <EditableLabel termKey="lab_comorbidity_hero_desc" defaultValue="Analyse multidimensionnelle de la poly-consommation. Identification des profils à risque psychiatrique majeur et des synergies de substances." />
@@ -116,9 +142,9 @@ const ComorbidityLab = ({ profile }) => {
                         <Target size={28} />
                     </div>
                     <div>
-                        <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest italic mb-2">Seuil Critique : <span className="text-rose-600 underline">20% Research-Based</span></h4>
+                        <h4 className="text-sm font-black text-slate-900 uppercase tracking-widest italic mb-2">Seuil Critique : <span className="text-slate-900 underline">20% Research-Based</span></h4>
                         <p className="text-[11px] font-bold text-slate-500 italic leading-relaxed">
-                            Le seuil de <span className="text-rose-600 font-black">20%</span> n'est pas arbitraire ; il est indexé sur le <span className="text-rose-600 underline">Protocole MedSPAD-C12</span>. Il marque la transition d'une consommation isolée vers une <span className="text-rose-700">épidémie de poly-consommation systémique</span>, nécessitant des protocoles d'urgence régionaux.
+                            Le seuil de <span className="text-slate-900 font-black">20%</span> n'est pas arbitraire ; il est indexé sur le <span className="text-slate-900 underline">Protocole MedSPAD-C12</span>. Il marque la transition d'une consommation isolée vers une <span className="text-slate-700">épidémie de poly-consommation systémique</span>, nécessitant des protocoles d'urgence régionaux.
                         </p>
                     </div>
                 </motion.div>
@@ -149,14 +175,16 @@ const ComorbidityLab = ({ profile }) => {
                                 <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:rotate-12 transition-transform duration-500">
                                     <FlaskConical size={60} />
                                 </div>
-                                <span className="text-[10px] font-black text-rose-500 uppercase tracking-[4px] italic mb-4 block"><EditableLabel termKey="lab_como_duo_prefix" defaultValue="Duo Alpha" /> #{idx + 1}</span>
+                                <span className="text-[10px] font-black text-slate-900 uppercase tracking-[4px] italic mb-4 block"><EditableLabel termKey="lab_como_duo_prefix" defaultValue="Duo Alpha" /> #{idx + 1}</span>
                                 <h4 className="text-2xl font-black italic uppercase tracking-tighter mb-4 text-white">
                                     {renderSubstanceLabel(combo.label)}
                                 </h4>
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-4xl font-black text-white italic tracking-tighter">{combo.count}</span>
-                                    <span className="text-[10px] font-black text-slate-500 uppercase italic"><EditableLabel termKey="lab_como_profiles_count" defaultValue="Profils Identifiés" /></span>
-                                </div>
+                                <Tooltip content={`${combo.count} profils trouvés ayant consommé ${combo.label.replace(' + ', ' et ')} simultanément dans la base de données.`}>
+                                    <div className="flex items-baseline gap-2 cursor-help">
+                                        <span className="text-4xl font-black text-white italic tracking-tighter">{combo.count}</span>
+                                        <span className="text-[10px] font-black text-slate-500 uppercase italic flex items-center gap-1"><EditableLabel termKey="lab_como_profiles_count" defaultValue="Profils Identifiés" /> <Info size={10} className="text-slate-400" /></span>
+                                    </div>
+                                </Tooltip>
                                 <div className="mt-8 p-4 rounded-2xl bg-white/5 border border-white/10 text-[9px] font-bold text-slate-400 italic">
                                     Alerte Clinique : Risque de dépression respiratoire et de syndrome sélectif accru.
                                 </div>
@@ -187,14 +215,16 @@ const ComorbidityLab = ({ profile }) => {
                     <div className="grid md:grid-cols-3 gap-8 relative z-10">
                         {topTriplesData && topTriplesData.length > 0 ? topTriplesData.map((combo, idx) => (
                             <div key={idx} className="p-10 rounded-[48px] bg-white/5 border border-white/10 text-white relative overflow-hidden group hover:bg-white/10 transition-all">
-                                <span className="text-[10px] font-black text-rose-500 uppercase tracking-[4px] italic mb-4 block underline"><EditableLabel termKey="lab_como_triple_prefix" defaultValue="Triple Menace" /> #{idx + 1}</span>
+                                <span className="text-[10px] font-black text-slate-900 uppercase tracking-[4px] italic mb-4 block underline"><EditableLabel termKey="lab_como_triple_prefix" defaultValue="Triple Menace" /> #{idx + 1}</span>
                                 <h4 className="text-xl font-extrabold italic uppercase tracking-tighter mb-4 pr-12 text-white leading-tight">
                                     {renderSubstanceLabel(combo.label)}
                                 </h4>
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-4xl font-black text-rose-500 italic tracking-tighter">{combo.count}</span>
-                                    <span className="text-[10px] font-black text-slate-400 uppercase italic"><EditableLabel termKey="lab_como_profiles_count" defaultValue="Profils Identifiés" /></span>
-                                </div>
+                                <Tooltip content={`${combo.count} profils trouvés ayant consommé ${combo.label.replace(/ \+ /g, ', ')} simultanément dans la base de données.`}>
+                                    <div className="flex items-baseline gap-2 cursor-help">
+                                        <span className="text-4xl font-black text-rose-500 italic tracking-tighter">{combo.count}</span>
+                                        <span className="text-[10px] font-black text-slate-400 uppercase italic flex items-center gap-1"><EditableLabel termKey="lab_como_profiles_count" defaultValue="Profils Identifiés" /> <Info size={10} className="text-slate-500" /></span>
+                                    </div>
+                                </Tooltip>
                             </div>
                         )) : (
                             <div className="md:col-span-3 py-12 text-center border-2 border-dashed border-white/5 rounded-[40px]">
@@ -232,14 +262,18 @@ const ComorbidityLab = ({ profile }) => {
                                                 <span className="text-sm font-black text-slate-900 uppercase tracking-[1px] italic">{reg.gov_name}</span>
                                             </div>
                                             <div className="flex items-center gap-8">
-                                                <div className="text-right">
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase italic"><EditableLabel termKey="lab_como_critical_zone" defaultValue="Zone Critique (3+)" /></p>
-                                                    <p className="text-sm font-black text-rose-600 italic">{reg.poly_3plus}%</p>
-                                                </div>
-                                                <div className="text-right">
-                                                    <p className="text-[10px] font-black text-slate-400 uppercase italic"><EditableLabel termKey="lab_como_multi_usage" defaultValue="Multi-Usage (2+)" /></p>
-                                                    <p className="text-sm font-black text-slate-900 italic">{reg.poly_2plus}%</p>
-                                                </div>
+                                                <Tooltip content={`${Math.round((reg.poly_3plus / 100) * reg.total_valid)} élèves sur ${reg.total_valid} questionnaires valides.`}>
+                                                    <div className="text-right cursor-help">
+                                                        <p className="text-[10px] font-black text-slate-400 uppercase italic flex items-center gap-1"><EditableLabel termKey="lab_como_critical_zone" defaultValue="Zone Critique (3+)" /> <Info size={9} className="text-slate-300" /></p>
+                                                        <p className="text-sm font-black text-slate-900 italic">{reg.poly_3plus}%</p>
+                                                    </div>
+                                                </Tooltip>
+                                                <Tooltip content={`${Math.round((reg.poly_2plus / 100) * reg.total_valid)} élèves sur ${reg.total_valid} questionnaires valides.`}>
+                                                    <div className="text-right cursor-help">
+                                                        <p className="text-[10px] font-black text-slate-400 uppercase italic flex items-center gap-1"><EditableLabel termKey="lab_como_multi_usage" defaultValue="Multi-Usage (2+)" /> <Info size={9} className="text-slate-300" /></p>
+                                                        <p className="text-sm font-black text-slate-900 italic">{reg.poly_2plus}%</p>
+                                                    </div>
+                                                </Tooltip>
                                             </div>
                                         </div>
                                         <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">

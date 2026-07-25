@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
     Activity, FileText, Calendar, MapPin, Building, Search, 
@@ -150,7 +150,7 @@ const SubmissionsViewer = () => {
 
                     <div className="mb-12 pt-16">
                         <div className="flex items-center gap-4 mb-4">
-                            <span className="px-4 py-1 bg-brand-100 text-brand-700 rounded-full text-[10px] font-black uppercase tracking-widest">Dossier #{sessionData.id}</span>
+                            <span className="px-4 py-1 bg-brand-100 text-brand-700 rounded-full text-[10px] font-black uppercase tracking-widest">Enquête #{sessionData.id}</span>
                             <span className="text-slate-400 font-bold text-xs uppercase tracking-widest">{new Date(sessionData.created_at).toLocaleString('fr-FR')}</span>
                         </div>
                         <h1 className="text-5xl font-black text-slate-900 uppercase italic tracking-tighter mb-4">
@@ -254,7 +254,7 @@ const SubmissionsViewer = () => {
                                 <ArrowLeft size={16} /> Retour aux régions
                             </button>
                             <h1 className="text-4xl font-black text-slate-900 uppercase italic tracking-tighter mb-2">
-                                <EditableLabel termKey="sub_list_title" defaultValue="Dossiers" /> <span className="text-brand-600">{selectedRegion}</span>
+                                <EditableLabel termKey="sub_list_title" defaultValue="Enquêtes" /> <span className="text-brand-600">{selectedRegion}</span>
                             </h1>
                             <p className="text-slate-500 font-bold text-sm tracking-widest uppercase">
                                 {groupedSubmissions[selectedRegion].length} <EditableLabel termKey="sub_forms_submitted" defaultValue="formulaires soumis" />
@@ -289,7 +289,7 @@ const SubmissionsViewer = () => {
                                 <tbody>
                                     {regionFiles.length === 0 ? (
                                         <tr>
-                                            <td colSpan="7" className="p-12 text-center text-slate-400 font-bold">Aucun dossier trouvé.</td>
+                                            <td colSpan="7" className="p-12 text-center text-slate-400 font-bold">Aucune enquête trouvée.</td>
                                         </tr>
                                     ) : (
                                         regionFiles.map((s, idx) => (
@@ -405,7 +405,7 @@ const SubmissionsViewer = () => {
                                 </div>
                                 <h3 className="text-xl font-black text-slate-900 mb-2">{gov}</h3>
                                 <p className={`text-xs font-bold uppercase tracking-widest ${hasFiles ? 'text-brand-600' : 'text-slate-400'}`}>
-                                    {count} {count === 1 ? 'Dossier' : 'Dossiers'}
+                                    {count} {count === 1 ? 'Enquête' : 'Enquêtes'}
                                 </p>
                             </motion.button>
                         );

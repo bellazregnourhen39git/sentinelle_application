@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Lock, User, AlertCircle, ArrowRight, LogIn, Eye, EyeOff } from 'lucide-react';
@@ -37,8 +37,9 @@ const Login = ({ setUser }) => {
 
       // Step 4: Redirect based on role
       if (['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(role)) navigate('/superadmin', { replace: true });
-      else if (['REGIONAL_ANALYST', 'ADMIN'].includes(role)) navigate('/admin', { replace: true });
-      else if (['OPERATOR', 'PRACTITIONER'].includes(role)) navigate('/guide', { replace: true });
+      else if (['REGIONAL_ADMIN', 'ADMIN'].includes(role)) navigate('/admin', { replace: true });
+      else if (['PRACTITIONER'].includes(role)) navigate('/guide', { replace: true });
+      else if (['OPERATOR'].includes(role)) navigate('/class-report', { replace: true });
       else navigate('/user', { replace: true });
 
     } catch (err) {
@@ -47,10 +48,12 @@ const Login = ({ setUser }) => {
       } else if (!err.response) {
         setError("Erreur réseau: Impossible de contacter le serveur. Le backend est-il lancé ?");
       } else {
-        setError(
-          err.response?.data?.detail ||
-          'Identifiants incorrects. Veuillez vérifier votre nom d\'utilisateur et votre mot de passe.'
-        );
+        const detail = err.response?.data?.detail;
+        let errorMsg = 'Identifiants incorrects. Veuillez vérifier votre email et votre mot de passe.';
+        if (detail && detail.toLowerCase().includes('bloqu')) {
+          errorMsg = 'Compte temporairement bloqué. Réessayez dans quelques minutes ou contactez un administrateur.';
+        }
+        setError(errorMsg);
       }
     } finally {
       setLoading(false);
@@ -118,7 +121,7 @@ const Login = ({ setUser }) => {
                   required
                   value={email}
                   placeholder="votre@email.com"
-                  autoComplete="email"
+                  autoComplete="off"
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full h-14 pl-6 pr-12 rounded-2xl bg-white/60 border border-slate-200 focus:bg-white focus:border-brand-500 focus:ring-[4px] focus:ring-brand-500/10 transition-all outline-none font-bold text-slate-800 placeholder:text-slate-400 backdrop-blur-sm group-hover:border-slate-300"
                 />
@@ -137,7 +140,7 @@ const Login = ({ setUser }) => {
                   required
                   value={password}
                   placeholder="••••••••"
-                  autoComplete="current-password"
+                  autoComplete="new-password"
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full h-14 px-6 pr-12 rounded-2xl bg-white/60 border border-slate-200 focus:bg-white focus:border-brand-500 focus:ring-[4px] focus:ring-brand-500/10 transition-all outline-none font-bold text-slate-800 placeholder:text-slate-400 backdrop-blur-sm group-hover:border-slate-300"
                 />

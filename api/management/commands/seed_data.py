@@ -143,18 +143,35 @@ class Command(BaseCommand):
                     SectionK.objects.create(session=session, access_difficulty='1', social_circle={'family': '2', 'friends': '2'}, lifetime_freq='1')
                     SectionL.objects.create(session=session, access_difficulty='1', social_circle={'family': '2', 'friends': '2'}, lifetime_freq='1')
                     SectionM.objects.create(session=session, access_difficulty='1', social_circle={'family': '2', 'friends': '2'}, lifetime_freq='1')
-                    SectionN.objects.create(session=session, synthetic_cannabinoids='2', synthetic_cathinones='2')
+                    SectionN.objects.create(
+                        session=session,
+                        lifetime_freq_by_type={'synthetic_cannabinoids': '1', 'synthetic_cathinones': '1'},
+                        synthetic_cannabinoids='2',
+                        synthetic_cathinones='2'
+                    )
                     SectionP.objects.create(session=session, lifetime_freq='1')
                     SectionQ.objects.create(session=session, risk_perceptions={'a': random.choice(['1', '2', '3']), 'b': '1'}, help_sources={'a': '1'})
-                    SectionR.objects.create(session=session, hours_per_day_breakdown={'total': random.choice(['3', '4', '5', '6'])})
+                    SectionR.objects.create(
+                        session=session,
+                        hours_per_day_breakdown={'social_networks': random.choice(['3', '4', '5', '6'])},
+                        agreement={}
+                    )
                     SectionS.objects.create(session=session, hours_per_day=random.choice(['3', '4', '5', '6']))
                     SectionT.objects.create(session=session, months_12_freq='1')
                     SectionU.objects.create(session=session, fights_12months='1')
-                    SectionV.objects.create(session=session,
+                    
+                    val_a = random.choice(['3', '4', '2'])
+                    val_d = random.choice(['3', '4'])
+                    SectionV.objects.create(
+                        session=session,
+                        a=val_a,
+                        b='4',
+                        c='4',
+                        d=val_d,
                         stress_metrics={
-                            'a': random.choice(['3', '4', '2']),
+                            'a': val_a,
                             'b': '4', 'c': '4',
-                            'd': random.choice(['3', '4'])
+                            'd': val_d
                         }
                     )
                     SectionZ.objects.create(session=session, honesty_level='1')

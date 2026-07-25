@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+input::-ms-reveal,
+input::-ms-clear {
+    display: none;
+}
+
 @theme {
   /* 💎 The Clinical Crystal Design System — Premium Medical Intelligence */
   --color-brand-50: #f0f9ff;

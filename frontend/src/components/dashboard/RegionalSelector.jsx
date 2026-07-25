@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, ArrowRight, Shield, Globe, RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -66,7 +66,7 @@ const RegionalSelector = ({ regions = [] }) => {
                                     <span className="text-lg font-black text-slate-900 italic tabular-nums">{reg.schools}</span>
                                 </div>
                                 <div className="flex items-center justify-between p-1 border-t border-slate-50 pt-4">
-                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic"><EditableLabel termKey="selector_dossiers" defaultValue="Dossiers Collectés" /></span>
+                                    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest italic"><EditableLabel termKey="selector_dossiers" defaultValue="Enquêtes Collectées" /></span>
                                     <span className="text-lg font-black text-slate-900 italic tabular-nums">{reg.dossiers}</span>
                                 </div>
                             </div>
@@ -88,19 +88,6 @@ const RegionalSelector = ({ regions = [] }) => {
             </div>
 
             {/* 🔬 Pied de page Système */}
-            <motion.div 
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className="mt-20 text-center relative z-10"
-            >
-                <button 
-                    onClick={() => navigate('/superadmin')}
-                    className="text-[11px] font-black text-slate-400 hover:text-brand-600 transition-all uppercase tracking-[4px] border-b border-transparent hover:border-brand-600 pb-2 italic"
-                >
-                    <EditableLabel termKey="selector_btn_hub" defaultValue="Accéder au HUB National (SuperAdmin)" />
-                </button>
-            </motion.div>
         </div>
     );
 };

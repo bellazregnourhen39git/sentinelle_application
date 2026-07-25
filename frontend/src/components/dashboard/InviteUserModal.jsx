@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, User, Shield, Briefcase, MapPin, Building, Link as LinkIcon, Copy, Check } from 'lucide-react';
 import api from '../../api';
@@ -37,8 +37,8 @@ const InviteUserModal = ({ isOpen, onClose }) => {
             setOrgType('NATIONAL');
             setGovId('2'); // Tunis
         } 
-        // Regional Analyst: No Establishment
-        else if (role === 'REGIONAL_ANALYST') {
+        // Admin Régional: No Establishment
+        else if (role === 'REGIONAL_ADMIN') {
             setOrgType('REGIONAL');
         }
         // Practitioner: Local
@@ -85,7 +85,7 @@ const InviteUserModal = ({ isOpen, onClose }) => {
     };
 
     const isNationalAdmin = ['SUPER_ADMIN', 'GLOBAL_ADMIN', 'OPERATOR'].includes(role);
-    const isRegionalAnalyst = role === 'REGIONAL_ANALYST';
+    const isRegionalAnalyst = role === 'REGIONAL_ADMIN';
     const isPractitioner = role === 'PRACTITIONER';
 
     return (
@@ -180,7 +180,7 @@ const InviteUserModal = ({ isOpen, onClose }) => {
                                                     <option value="SUPER_ADMIN">ADMINISTRATEUR SUPRÊME</option>
                                                     <option value="GLOBAL_ADMIN">ADMINISTRATEUR GLOBAL</option>
                                                     <option value="OPERATOR">OPÉRATEUR</option>
-                                                    <option value="REGIONAL_ANALYST">ANALYSTE RÉGIONAL</option>
+                                                    <option value="REGIONAL_ADMIN">ADMIN RÉGIONAL</option>
                                                     <option value="PRACTITIONER">PRATICIEN / MÉDECIN</option>
                                                 </select>
                                             </div>

@@ -1,4 +1,4 @@
-import os
+﻿import os
 import csv
 import json
 import secrets
@@ -42,8 +42,6 @@ class SecureTokenObtainPairView(TokenObtainPairView):
     throttle_scope = 'login'
 
     def post(self, request, *args, **kwargs):
-        with open("login_debug.log", "a") as f:
-            f.write(f"DEBUG: Login request data: {request.data}\n")
         response = super().post(request, *args, **kwargs)
         client_ip = request.META.get('REMOTE_ADDR')
         
@@ -279,7 +277,7 @@ class QuestionnaireSubmissionListView(generics.ListAPIView):
             
         # Role-based security filtering
         if user.role not in ['SUPER_ADMIN', 'GLOBAL_ADMIN']:
-            if user.role == 'REGIONAL_ANALYST':
+            if user.role == 'REGIONAL_ADMIN':
                 qs = qs.filter(governorate=user.governorate)
             elif user.role in ['PRACTITIONER', 'OPERATOR']:
                 if user.establishment:
@@ -307,22 +305,7 @@ class QuestionnaireSubmitView(generics.CreateAPIView):
     permission_classes = (permissions.AllowAny,)
 
     def create(self, request, *args, **kwargs):
-        # Only provide a fallback school_class if neither school_class nor class_report is present
         data = request.data.copy()
-        if not data.get('school_class') and not data.get('class_report'):
-            from .models import ClassReport
-            # Tether to the last report created BY THIS USER (if authenticated)
-            last_report = None
-            if request.user.is_authenticated:
-                last_report = ClassReport.objects.filter(created_by=request.user).order_by('-id').first()
-            
-            if not last_report:
-                # Absolute fallback to global latest if no user-specific report exists
-                last_report = ClassReport.objects.order_by('-id').first()
-                
-            if last_report:
-                data['class_report'] = last_report.id
-
         serializer = self.get_serializer(data=data)
         serializer.is_valid(raise_exception=True)
         session = serializer.save()
@@ -473,10 +456,10 @@ class GovernorateStatsView(views.APIView):
 
     def get(self, request):
         user = request.user
-        if user.role not in ['REGIONAL_ANALYST', 'GLOBAL_ADMIN', 'SUPER_ADMIN']:
+        if user.role not in ['REGIONAL_ADMIN', 'GLOBAL_ADMIN', 'SUPER_ADMIN']:
             return Response({"detail": "Not authorized."}, status=403)
 
-        gov_id = user.governorate.id if user.role == 'REGIONAL_ANALYST' else request.query_params.get('governorate_id')
+        gov_id = user.governorate.id if user.role == 'REGIONAL_ADMIN' else request.query_params.get('governorate_id')
         if not gov_id:
             return Response({"detail": "Governorate not specified."}, status=400)
 
@@ -534,10 +517,10 @@ class HomepageView(views.APIView):
         # 🎯 HARD AUTHORITY LIMITS
         # Override requested scope based on the user's secure server-side role
         if user.is_authenticated:
-            if user.role == 'REGIONAL_ANALYST' and getattr(user, 'governorate', None):
+            if user.role == 'REGIONAL_ADMIN' and getattr(user, 'governorate', None):
                 scope_type = 'gouvernorate'
                 scope_id = user.governorate.id
-            elif user.role == 'PRACTITIONER' and getattr(user, 'establishment', None):
+            elif user.role in ['PRACTITIONER', 'OPERATOR'] and getattr(user, 'establishment', None):
                 scope_type = 'user_school'
                 scope_id = user.establishment.id
 
@@ -584,7 +567,7 @@ class HomepageView(views.APIView):
                                 break
             
             # 🎯 Priority 1: Auth Role Fallback
-            if not gov and user.is_authenticated and user.role == 'REGIONAL_ANALYST':
+            if not gov and user.is_authenticated and user.role == 'REGIONAL_ADMIN':
                 gov = user.governorate
             
             # 🎯 Priority 2: No Fallback to Tunis (Phase 6 Explicit Choice)
@@ -616,7 +599,7 @@ class HomepageView(views.APIView):
 
             # Secure Region Collection: Limit iteration for Regional Analysts to stop data leakage
             govs_to_process = Governorate.objects.all()
-            if user.is_authenticated and user.role == 'REGIONAL_ANALYST' and getattr(user, 'governorate', None):
+            if user.is_authenticated and user.role == 'REGIONAL_ADMIN' and getattr(user, 'governorate', None):
                 govs_to_process = Governorate.objects.filter(id=user.governorate.id)
 
             for g in govs_to_process:
@@ -650,22 +633,43 @@ class HomepageView(views.APIView):
                 substance_id = CAT_MAP_ID.get(active_section)
                 
             heat_data = SentinelleAnalytics.get_national_heat_data(substance_id)
-            
-            # SECURE: Strip map data for unauthorized regions if REGIONAL_ANALYST
-            if user.is_authenticated and user.role == 'REGIONAL_ANALYST' and getattr(user, 'governorate', None):
+
+            MAP_THEME_LABELS = {
+                'tobacco': 'Tabac',
+                'alcohol': 'Alcool',
+                'cannabis': 'Cannabis',
+                'hookah': 'Narguilé',
+                'vaping': 'Cigarettes électroniques',
+                'tranquilizers': 'Tranquillisants',
+                'cocaine': 'Cocaïne',
+                'ecstasy': 'Ecstasy',
+                'heroin': 'Héroïne',
+                'inhalants': 'Inhalants',
+            }
+            map_variable_label = (
+                f"Taux de prévalence {MAP_THEME_LABELS.get(substance_id)}"
+                if substance_id else "Taux de risque comportemental"
+            )
+
+            # SECURE: Strip map data for unauthorized regions if REGIONAL_ADMIN
+            if user.is_authenticated and user.role == 'REGIONAL_ADMIN' and getattr(user, 'governorate', None):
                 gov_name = user.governorate.name
                 for region in heat_data.keys():
                     if region.lower() != gov_name.lower():
                         heat_data[region] = {"submissions": 0, "prevalence": 0, "active": False}
 
             data['map_data'] = heat_data
-            
+            data['map_variable'] = {
+                "key": substance_id,
+                "label": map_variable_label
+            }
+
             # 🏆 Rankings Lab: Include comparative metrics (Phase 8)
             data['rankings'] = SentinelleAnalytics.get_regional_rankings()
             
         # Log Data Access
         AuditLog.objects.create(
-            user=user,
+            user=user if user.is_authenticated else None,
             action=f"DATA_ACCESS: {scope_label} (Homepage)",
             ip_address=request.META.get('REMOTE_ADDR')
         )
@@ -716,7 +720,7 @@ class SectionStatsView(views.APIView):
         # 🎯 HARD AUTHORITY LIMITS
         # Override requested scope based on the user's secure server-side role
         if user.is_authenticated:
-            if user.role == 'REGIONAL_ANALYST' and getattr(user, 'governorate', None):
+            if user.role == 'REGIONAL_ADMIN' and getattr(user, 'governorate', None):
                 scope_type = 'gouvernorate'
                 scope_id = user.governorate.id
             elif user.role == 'PRACTITIONER' and getattr(user, 'establishment', None):
@@ -758,7 +762,7 @@ class SectionStatsView(views.APIView):
                                 break
             
             # Auth Role Fallback
-            if not gov and user.is_authenticated and user.role == 'REGIONAL_ANALYST':
+            if not gov and user.is_authenticated and user.role == 'REGIONAL_ADMIN':
                 gov = user.governorate
             
             # Default Fallback (Tunis)
@@ -788,6 +792,185 @@ class LabStatsView(views.APIView):
         # Pass the authenticated user to scope data based on role/governorate
         user = request.user if request.user.is_authenticated else None
         data = SentinelleAnalytics.get_lab_stats(user=user)
+        return Response(data)
+
+class CorrelationEngineView(views.APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        user = request.user
+        scope_type = request.query_params.get('scope_type', 'national')
+        scope_id = request.query_params.get('scope_id')
+
+        # Override scope based on secure role
+        if user.is_authenticated:
+            if user.role == 'REGIONAL_ADMIN' and getattr(user, 'governorate', None):
+                scope_type = 'gouvernorate'
+                scope_id = user.governorate.id
+            elif user.role == 'PRACTITIONER' and getattr(user, 'establishment', None):
+                scope_type = 'user_school'
+                scope_id = user.establishment.id
+
+        # Get all valid sessions globally and for the specific scope
+        global_sessions = QuestionnaireSession.objects.filter(is_valid=True)
+        sessions = SentinelleAnalytics.get_scoped_sessions(user).filter(is_valid=True)
+
+        scope_label = "Secteur National"
+
+        if scope_type == 'user_school':
+            active_user = user
+            if active_user and active_user.establishment:
+                sessions = sessions.filter(school=active_user.establishment)
+                scope_label = f"Lycée {active_user.establishment.name}"
+        elif scope_type == 'school' and scope_id:
+            school = SchoolEstablishment.objects.filter(id=scope_id).first()
+            if school:
+                sessions = sessions.filter(school=school)
+                scope_label = f"Lycée {school.name}"
+        elif scope_type == 'gouvernorate':
+            gov = None
+            if scope_id:
+                search_val = str(scope_id).strip()
+                if search_val and not search_val.lower() == 'national':
+                    if search_val.isdigit():
+                        gov = Governorate.objects.filter(id=search_val).first()
+                    else:
+                        def clean_str(s):
+                            import unicodedata
+                            return unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode('utf-8').lower().strip()
+                        target = clean_str(search_val)
+                        for g in Governorate.objects.all():
+                            if clean_str(g.name) == target:
+                                gov = g
+                                break
+            if not gov and user.is_authenticated and user.role == 'REGIONAL_ADMIN':
+                gov = user.governorate
+            
+            if gov:
+                sessions = sessions.filter(governorate=gov)
+                scope_label = f"Gouvernorat de {gov.name}"
+            else:
+                # If no governorate is found, fall back to national
+                scope_type = 'national'
+                sessions = global_sessions
+                scope_label = "Secteur National"
+        else:
+            sessions = global_sessions
+
+        # --- AUTOMATED CORRELATION ENGINE (DATA MINING) ---
+        import json
+        
+        def safe_json(val):
+            if isinstance(val, dict): return val
+            if isinstance(val, str):
+                try: return json.loads(val)
+                except: return {}
+            return {}
+
+        FEATURE_DEFINITIONS = [
+            {"id": "violence_initiator", "label": "Initiateur de bagarres", "eval": lambda s: s.get('section_u__fight_circumstances') == '1'},
+            {"id": "heavy_cannabis", "label": "Cannabis Intensif", "eval": lambda s: s.get('section_i__months_12_freq') in ['4', '5', '6', '7']},
+            {"id": "daily_tobacco", "label": "Tabagisme Quotidien", "eval": lambda s: s.get('section_c__days_30_freq') in ['4', '5', '6', '7']},
+            {"id": "alcohol_user", "label": "Consommation d'alcool", "eval": lambda s: s.get('alcohol_user') == True},
+            {"id": "failing_grades", "label": "Échec Scolaire", "eval": lambda s: s.get('section_a__academic_performance') == '1'},
+            {"id": "high_stress", "label": "Stress Élevé", "eval": lambda s: s.get('section_v__a') in ['4', '5']},
+            {"id": "social_media_addict", "label": "Réseaux Sociaux Intensifs", "eval": lambda s: safe_json(s.get('section_r__hours_per_day_breakdown')).get('social_networks') == '6'},
+            {"id": "gaming_addict", "label": "Jeux Vidéo Intensifs", "eval": lambda s: s.get('section_s__hours_per_day') == '6'},
+            {"id": "gambling_frequent", "label": "Jeux de hasard fréquents", "eval": lambda s: s.get('section_t__months_12_freq') in ['4', '5', '6', '7']},
+            {"id": "tranquilizers", "label": "Tranquillisants", "eval": lambda s: s.get('section_h__lifetime_freq') in ['2', '3', '4', '5', '6', '7']},
+            {"id": "family_problems", "label": "Problèmes familiaux", "eval": lambda s: safe_json(s.get('section_a__family_relationship_satisfaction')).get('mother') in ['4', '5', '6']},
+            {"id": "vape_daily", "label": "Vapotage Quotidien", "eval": lambda s: s.get('section_d__days_30_freq') in ['3', '4']},
+            {"id": "victim_fights", "label": "Victime d'agressions", "eval": lambda s: s.get('section_u__fight_circumstances') == '2'},
+            {"id": "nights_out", "label": "Sorties nocturnes fréquentes", "eval": lambda s: s.get('section_a__nights_out_30days') in ['4', '5', '6', '7', '8']},
+        ]
+        
+        fields_to_fetch = [
+            'section_u__fight_circumstances', 'section_i__months_12_freq', 'section_c__days_30_freq',
+            'alcohol_user', 'section_a__academic_performance', 'section_v__a',
+            'section_r__hours_per_day_breakdown', 'section_s__hours_per_day',
+            'section_t__months_12_freq', 'section_h__lifetime_freq',
+            'section_a__family_relationship_satisfaction', 'section_d__days_30_freq',
+            'section_a__nights_out_30days'
+        ]
+
+        local_data = list(sessions.values(*fields_to_fetch))
+        global_data = list(global_sessions.values(*fields_to_fetch))
+
+        def evaluate_features(data_list):
+            results = {f["id"]: set() for f in FEATURE_DEFINITIONS}
+            for i, s in enumerate(data_list):
+                for f in FEATURE_DEFINITIONS:
+                    try:
+                        if f["eval"](s):
+                            results[f["id"]].add(i)
+                    except Exception:
+                        pass
+            return results
+
+        local_sets = evaluate_features(local_data)
+        global_sets = evaluate_features(global_data)
+        
+        local_total = len(local_data)
+        global_total = len(global_data)
+
+        computed_correlations = []
+
+        if local_total > 0 and global_total > 0:
+            for i, f1 in enumerate(FEATURE_DEFINITIONS):
+                for j, f2 in enumerate(FEATURE_DEFINITIONS):
+                    if i == j: continue
+                    
+                    c_cohort = len(local_sets[f1["id"]])
+                    if c_cohort < max(2, int(local_total * 0.05)): 
+                        continue
+                        
+                    c_count = len(local_sets[f1["id"]].intersection(local_sets[f2["id"]]))
+                    c_rate = round((c_count / c_cohort) * 100, 1)
+
+                    nat_cohort = len(global_sets[f1["id"]])
+                    if nat_cohort > 0:
+                        nat_count = len(global_sets[f1["id"]].intersection(global_sets[f2["id"]]))
+                        c_nat_rate = round((nat_count / nat_cohort) * 100, 1)
+                    else:
+                        c_nat_rate = 0.0
+
+                    deviation = round(c_rate - c_nat_rate, 1)
+
+                    computed_correlations.append({
+                        "id": f'{f1["id"]}_X_{f2["id"]}',
+                        "title": f'{f1["label"]} & {f2["label"]}',
+                        "description": f"Pourcentage d'élèves déclarant: [{f2['label']}] parmi ceux qui sont classés comme: [{f1['label']}].",
+                        "condition_label": f1["label"],
+                        "outcome_label": f2["label"],
+                        "cohort_size": c_cohort,
+                        "correlation_size": c_count,
+                        "rate": c_rate,
+                        "national_rate": c_nat_rate,
+                        "deviation": deviation
+                    })
+
+            # Sort by deviation and rate
+            computed_correlations.sort(key=lambda x: (x["deviation"], x["rate"]), reverse=True)
+
+            # Deduplicate bidirectional pairs
+            seen_pairs = set()
+            top_correlations = []
+            for c in computed_correlations:
+                parts = frozenset(c["id"].split('_X_'))
+                if parts not in seen_pairs:
+                    seen_pairs.add(parts)
+                    top_correlations.append(c)
+                    if len(top_correlations) == 4:
+                        break
+        else:
+            top_correlations = []
+
+        data = {
+            "scope_label": scope_label,
+            "scope_type": scope_type,
+            "total_submissions": sessions.count(),
+            "correlations": top_correlations
+        }
         return Response(data)
 
 class InsightsView(views.APIView):

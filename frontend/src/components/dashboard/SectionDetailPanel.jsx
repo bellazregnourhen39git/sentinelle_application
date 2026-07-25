@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft, Users, AlertTriangle, BarChart2, PieChart,
@@ -149,6 +149,7 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
     const sectionName = SECTION_NAMES[sectionId] || `Vecteur ${sectionId}`;
     const questions = data.questions || [];
     const n = data.n_submissions || 0;
+    const hasAnyData = questions.some(q => Array.isArray(q.distribution) && q.distribution.some(d => (d.count || 0) > 0));
 
     return (
         <motion.div
@@ -197,7 +198,7 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
 
                     <div className="flex flex-wrap items-center gap-6">
                         {[
-                            { icon: Users, label: <EditableLabel termKey="detail_stat_dossiers" defaultValue="Dossiers" />, value: n === 0 ? '—' : n.toLocaleString(), color: 'text-brand-600' },
+                            { icon: Users, label: <EditableLabel termKey="detail_stat_dossiers" defaultValue="Enquêtes" />, value: n === 0 ? '—' : n.toLocaleString(), color: 'text-brand-600' },
                             { icon: Layers, label: <EditableLabel termKey="detail_stat_variables" defaultValue="Variables" />, value: questions.length, color: 'text-slate-900' },
                         ].map(({ icon: Icon, label, value, color }, i) => (
                             <div key={i} className="flex flex-col items-center px-8 py-5 rounded-[32px] bg-slate-50 border border-slate-100 min-w-[140px] shadow-sm hover:bg-white hover:border-brand-500/20 transition-all cursor-default">
@@ -210,7 +211,7 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
 
                 {/* 🧪 THE "BIG CARD" FIELD — Consolidated Grid */}
                 <div className="relative z-10">
-                    {questions.length > 0 ? (
+                    {questions.length > 0 && hasAnyData ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <AnimatePresence>
                                 {questions.map((q, idx) => (
@@ -231,7 +232,9 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
                     ) : (
                         <div className="h-80 flex flex-col items-center justify-center gap-6 bg-slate-50 rounded-[56px] border-4 border-dashed border-slate-100 group hover:bg-white hover:border-rose-500/20 transition-all duration-700">
                             <AlertTriangle size={64} className="text-slate-100 group-hover:text-rose-500 transition-colors" />
-                            <p className="text-[13px] font-black text-slate-400 uppercase tracking-[10px] italic">Aucun Vecteur Analytique Trouvé</p>
+                            <p className="text-[13px] font-black text-slate-400 uppercase tracking-[10px] italic">
+                                {n > 0 ? 'Aucune donnée exploitable pour ce périmètre' : 'Aucune donnée disponible pour ce périmètre'}
+                            </p>
                         </div>
                     )}
                 </div>

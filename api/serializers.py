@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model, authenticate
 from django.db.models import Q
+from datetime import timedelta
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from django.utils import timezone
@@ -57,6 +58,13 @@ class SecureTokenObtainPairSerializer(TokenObtainPairSerializer):
         user = User.objects.filter(Q(email=email) | Q(username=email)).first()
 
         if user:
+            lockout_duration = timedelta(minutes=30)
+            if user.status == 'DISABLED' and user.last_login_attempt:
+                if timezone.now() - user.last_login_attempt > lockout_duration:
+                    user.status = 'ACTIVE'
+                    user.failed_attempts = 0
+                    user.save()
+
             if user.status == 'DISABLED':
                 raise serializers.ValidationError({"detail": "Votre compte est bloqué suite à trop de tentatives. Contactez un administrateur."})
             
@@ -350,6 +358,18 @@ class QuestionnaireSessionListSerializer(serializers.ModelSerializer):
 class QuestionnaireSessionSerializer(serializers.ModelSerializer):
     school = SchoolEstablishmentSerializer(read_only=True)
     governorate = GovernorateSerializer(read_only=True)
+    school_id = serializers.PrimaryKeyRelatedField(
+        queryset=SchoolEstablishment.objects.all(),
+        source='school',
+        write_only=True,
+        required=False,
+    )
+    governorate_id = serializers.PrimaryKeyRelatedField(
+        queryset=Governorate.objects.all(),
+        source='governorate',
+        write_only=True,
+        required=False,
+    )
 
     section_a = SectionASerializer(required=True)
     section_b = SectionBSerializer(required=False)
@@ -374,6 +394,34 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
     section_z = SectionZSerializer(required=False)
     
     extra_answers = serializers.JSONField(required=False, default=dict)
+
+    def validate(self, validated_data):
+        school_class = validated_data.get('school_class')
+        class_report = validated_data.get('class_report')
+        school = validated_data.get('school')
+        governorate = validated_data.get('governorate')
+
+        if school_class:
+            validated_data['school'] = school_class.establishment
+            if school_class.establishment and school_class.establishment.governorate:
+                validated_data['governorate'] = school_class.establishment.governorate
+
+        if class_report and not school_class:
+            if class_report.establishment:
+                validated_data['school'] = class_report.establishment
+            if class_report.governorate:
+                validated_data['governorate'] = class_report.governorate
+
+        if school and not governorate and school.governorate:
+            validated_data['governorate'] = school.governorate
+
+        if not validated_data.get('school') or not validated_data.get('governorate'):
+            raise serializers.ValidationError({
+                'school': 'School/establishment must be provided.',
+                'governorate': 'Governorate must be provided.',
+            })
+
+        return validated_data
 
     class Meta:
         model = QuestionnaireSession
@@ -493,19 +541,18 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
         elif class_report:
             if class_report.establishment:
                 validated_data['school'] = class_report.establishment
-            validated_data['governorate'] = class_report.governorate
-        
-        # --- Safety Safety Net: Ensure governorate is NEVER null ---
-        if not validated_data.get('governorate'):
-            from .models import Governorate
-            # Fallback to user's establishment governorate if available
-            user = self.context.get('request').user if self.context.get('request') else None
-            if user and getattr(user, 'establishment', None) and user.establishment.governorate:
-                validated_data['governorate'] = user.establishment.governorate
-            else:
-                gov = Governorate.objects.first()
-                if gov:
-                    validated_data['governorate'] = gov
+            if class_report.governorate:
+                validated_data['governorate'] = class_report.governorate
+        elif validated_data.get('school') and not validated_data.get('governorate'):
+            school = validated_data['school']
+            if school.governorate:
+                validated_data['governorate'] = school.governorate
+
+        if not validated_data.get('school') or not validated_data.get('governorate'):
+            raise serializers.ValidationError({
+                'school': 'School/establishment must be provided.',
+                'governorate': 'Governorate must be provided.',
+            })
         
         # Pop all nested section data
         sections_data = {key: validated_data.pop(key, None) for key in SECTION_MAP}

@@ -17,6 +17,7 @@ import {
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import EditableLabel from '../components/dashboard/EditableLabel';
 import api from '../api';
+import LocationSelectionModal from '../components/dashboard/LocationSelectionModal';
 
 const ScanPage = () => {
     const navigate = useNavigate();
@@ -31,6 +32,12 @@ const ScanPage = () => {
     const [success, setSuccess] = useState(false);
     const [showSuccessScreen, setShowSuccessScreen] = useState(false);
     const [engine, setEngine] = useState("Tesseract");
+    
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const isOperator = currentUser.role === 'OPERATOR';
+    const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+    const [operatorGovId, setOperatorGovId] = useState(null);
+    const [operatorEstId, setOperatorEstId] = useState(null);
 
     const handleLogout = () => {
         localStorage.removeItem('user');
@@ -78,8 +85,14 @@ const ScanPage = () => {
         }
     };
 
-    const handleSave = async () => {
+    const handleSave = async (overrideGovId = null, overrideEstId = null) => {
         if (!scanResult) return;
+        
+        if (isOperator && !overrideGovId && !overrideEstId) {
+            setIsLocationModalOpen(true);
+            return;
+        }
+
         setIsSaving(true);
         setError(null);
 
@@ -87,7 +100,9 @@ const ScanPage = () => {
             // Include class_report to tether this scan to the session
             const payload = {
                 ...scanResult,
-                class_report: reportId
+                class_report: reportId,
+                ...(overrideGovId && { governorate_id: overrideGovId }),
+                ...(overrideEstId && { school_id: overrideEstId })
             };
             await api.post('questionnaire/submit/', payload);
             setSuccess(true);
@@ -415,6 +430,18 @@ const ScanPage = () => {
                     </div>
                 )}
             </div>
+
+            <LocationSelectionModal 
+                isOpen={isLocationModalOpen}
+                onClose={() => setIsLocationModalOpen(false)}
+                isRTL={false}
+                onConfirm={(govId, estId) => {
+                    setOperatorGovId(govId);
+                    setOperatorEstId(estId);
+                    setIsLocationModalOpen(false);
+                    handleSave(govId, estId);
+                }}
+            />
         </div>
     );
 };

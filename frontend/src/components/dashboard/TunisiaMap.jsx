@@ -32,17 +32,22 @@ const DISPLAY = {
 const W = 380;
 const H = 580;
 
-// --- Prismatic color scale: soft slate → vibrant medical blue ---
+const SECTION_LABELS = {
+    C: 'Tabac', G: 'Alcool', I: 'Cannabis', E: 'Narguilé', D: 'Cigarettes électroniques',
+    H: 'Tranquillisants', J: 'Cocaïne', K: 'Ecstasy', L: 'Héroïne', M: 'Inhalants'
+};
+
+// --- Prismatic color scale: soft lavender → deep purple violet ---
 function buildColorScale(data) {
     if (!data) return null;
     const vals = Object.values(data).map(d => d?.prevalence ?? 0).filter(v => v > 0);
     if (!vals.length) return null;
     return d3.scaleSequential()
         .domain([0, Math.max(...vals)])
-        .interpolator(d3.interpolate('#eef2ff', '#4338ca')); // indigo-50 to indigo-700 for premium authoritative vibe
+        .interpolator(d3.interpolate('#ede9fe', '#6d28d9')); // violet shades from light to dark
 }
 
-const TunisiaMap = ({ data, activeSection, currentUser, onRegionSelect }) => {
+const TunisiaMap = ({ data, mapVariable, activeSection, currentUser, onRegionSelect }) => {
     const [geoJson, setGeoJson] = useState(null);
     const [status, setStatus] = useState('loading'); // 'loading' | 'ok' | 'error'
     const [hoveredId, setHoveredId] = useState(null);
@@ -74,6 +79,14 @@ const TunisiaMap = ({ data, activeSection, currentUser, onRegionSelect }) => {
     };
 
     const colorScale = useMemo(() => buildColorScale(data), [data]);
+
+    const variableLabel = mapVariable?.label || data?.map_variable?.label || (
+        activeSection ?
+            SECTION_LABELS[activeSection]
+                ? `Taux de prévalence ${SECTION_LABELS[activeSection]}`
+                : 'Taux thématique'
+            : 'Taux de risque comportemental'
+    );
 
     // Build region objects: path, centroid, stats
     const regions = useMemo(() => {
@@ -124,21 +137,21 @@ const TunisiaMap = ({ data, activeSection, currentUser, onRegionSelect }) => {
       {/* ── Header ─────────────────────────────────── */}
       <div className="absolute top-8 left-8 z-20 space-y-3">
         <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-2xl bg-indigo-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+          <div className="w-10 h-10 rounded-2xl bg-violet-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
             <MapPin size={18} className="text-white" />
           </div>
           <div>
             <p className="text-[12px] font-black text-slate-900 uppercase italic tracking-[2px] leading-none">
                 Vecteur Géospatial {window.location.search.includes('gouvernorat=') ? `- ${new URLSearchParams(window.location.search).get('gouvernorat')}` : ''}
             </p>
-            <p className="text-[9px] font-black text-indigo-600 uppercase tracking-[3px] opacity-60">
-              24 Gouvernorats · Cohorte 2026
+            <p className="text-[9px] font-black text-violet-600 uppercase tracking-[3px] opacity-60">
+              {variableLabel} · 24 Gouvernorats
             </p>
           </div>
         </div>
 
         <div className="flex items-center gap-2.5 px-4 py-2 bg-white/60 backdrop-blur-xl rounded-full border border-slate-100 shadow-sm w-fit">
-          <div className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
+          <div className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
           <span className="text-[9px] font-black uppercase text-slate-500 tracking-[1.5px] italic">
             {isSuperAdmin
               ? <EditableLabel termKey="map_nat_monitor" defaultValue="Surveillance Nationale Active" />
@@ -172,15 +185,15 @@ const TunisiaMap = ({ data, activeSection, currentUser, onRegionSelect }) => {
                   {hoveredRegion.stats.submissions}
                 </span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-2xl bg-indigo-50 border border-indigo-100/50">
+              <div className="flex justify-between items-center p-3 rounded-2xl bg-violet-50 border border-violet-100/50">
                 <div className="flex items-center gap-2">
-                  <TrendingUp size={12} className="text-indigo-500" />
-                  <span className="text-[9px] font-black text-indigo-500 uppercase tracking-wider">Taux</span>
+                  <TrendingUp size={12} className="text-violet-500" />
+                  <span className="text-[9px] font-black text-violet-500 uppercase tracking-wider">{variableLabel}</span>
                 </div>
-                <span className="text-[12px] font-black text-indigo-700 tabular-nums italic">
-                  {hoveredRegion.stats.prevalence > 0
+                <span className="text-[12px] font-black text-violet-700 tabular-nums italic">
+                  {hoveredRegion.stats.submissions && hoveredRegion.stats.prevalence != null
                     ? `${hoveredRegion.stats.prevalence}%`
-                    : '0%'}
+                    : 'Aucune donnée'}
                 </span>
               </div>
             </div>
@@ -291,10 +304,10 @@ const TunisiaMap = ({ data, activeSection, currentUser, onRegionSelect }) => {
         <div className="absolute bottom-8 left-8 right-8 flex items-end justify-between">
           <div className="flex items-center gap-6 p-4 bg-white/40 backdrop-blur-md rounded-[24px] border border-slate-100/50">
             {[
-              { color: '#f8fafc', label: 'Zéro' },
-              { color: '#c7d2fe', label: 'Bas' },    // indigo-200
-              { color: '#818cf8', label: 'Modéré' }, // indigo-400
-              { color: '#4f46e5', label: 'Dense' },  // indigo-600
+              { color: '#f5f3ff', label: 'Zéro' },
+              { color: '#ddd6fe', label: 'Bas' },    // violet-100
+              { color: '#c4b5fd', label: 'Modéré' }, // violet-300
+              { color: '#7c3aed', label: 'Dense' },  // violet-700
             ].map(item => (
               <div key={item.label} className="flex flex-col items-center gap-2">
                 <div className="w-4 h-4 rounded-md shadow-sm border border-white" style={{ backgroundColor: item.color }} />

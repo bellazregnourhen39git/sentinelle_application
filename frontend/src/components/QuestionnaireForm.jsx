@@ -6,8 +6,14 @@ import {
 import { motion } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../api';
+import LocationSelectionModal from './dashboard/LocationSelectionModal';
 
 // ─── Shared UI Components ───────────────────────────────────────────────────────
+
+const toArabicNumeral = (num) => {
+  const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
+  return String(num).replace(/[0-9]/g, w => arabicNumbers[+w]);
+};
 
 const SectionHeader = ({ letter, title, subtitle, color = 'bg-slate-900', actionButtons }) => (
   <div className={`${color} text-white rounded-2xl p-8 mb-8 relative overflow-hidden flex items-center justify-between`}>
@@ -40,53 +46,63 @@ const SelectField = ({ name, value, onChange, options, isRTL }) => (
     className="w-full border-2 border-slate-100 rounded-xl px-4 py-3 bg-slate-50 text-slate-800 font-medium focus:border-blue-500 focus:ring-0 outline-none transition-all hover:border-slate-200"
   >
     <option value="">{isRTL ? '-- اختر --' : '-- Sélectionner --'}</option>
-    {options.map((opt, idx) => (
-      <option key={opt[0]} value={opt[0]}>
-        {opt[3] || idx + 1}. {isRTL && opt[2] ? opt[2] : opt[1]}
-      </option>
-    ))}
+    {options.map((opt, idx) => {
+      const numVal = opt[3] || idx + 1;
+      return (
+        <option key={opt[0]} value={opt[0]}>
+          {isRTL ? toArabicNumeral(numVal) : numVal}. {isRTL && opt[2] ? opt[2] : opt[1]}
+        </option>
+      );
+    })}
   </select>
 );
 
 const RadioGroup = ({ name, value, onChange, options, isRTL }) => (
-  <div className="flex flex-wrap gap-3">
-    {options.map((opt, idx) => (
-      <button
-        key={opt[0]}
-        type="button"
-        onClick={() => onChange({ target: { name, value: opt[0] } })}
-        className={`group flex items-center gap-3 px-5 py-3 rounded-xl border-2 font-medium text-sm transition-all ${value === opt[0]
-          ? 'border-blue-600 bg-blue-50 text-blue-700 shadow-md'
-          : 'border-slate-100 bg-white text-slate-600 hover:border-slate-200'
-          }`}
-      >
-        <span className={`w-5 h-5 flex items-center justify-center rounded text-[10px] font-black transition-colors ${value === opt[0] ? 'bg-blue-600 text-white' : 'bg-slate-900 text-white'}`}>
-          {opt[3] || idx + 1}
-        </span>
-        {isRTL && opt[2] ? opt[2] : opt[1]}
-      </button>
-    ))}
+  <div className="space-y-2">
+    {options.map((opt, idx) => {
+      const numVal = opt[3] || idx + 1;
+      return (
+        <label key={opt[0]} className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer group transition-all ${value === opt[0] ? 'bg-blue-50 border-blue-200' : 'hover:bg-slate-50'}`}>
+          <input
+            type="radio"
+            name={name}
+            checked={value === opt[0]}
+            onChange={() => onChange(name, opt[0])}
+            className="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-500"
+          />
+          <span className={`w-5 h-5 flex items-center justify-center rounded text-[10px] font-black transition-colors ${value === opt[0] ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500 group-hover:bg-slate-900 group-hover:text-white'}`}>
+            {isRTL ? toArabicNumeral(numVal) : numVal}
+          </span>
+          <span className={`font-medium ${value === opt[0] ? 'text-blue-900 font-bold' : 'text-slate-700 group-hover:text-slate-900'}`}>
+            {isRTL && opt[2] ? opt[2] : opt[1]}
+          </span>
+        </label>
+      );
+    })}
   </div>
 );
 
 const CheckboxGroup = ({ name, values = {}, onChange, options, isRTL }) => (
   <div className="space-y-2">
-    {options.map((opt, idx) => (
-      <label key={opt[0]} className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 cursor-pointer group">
-        <input
-          type="checkbox"
-          checked={!!values[opt[0]]}
-          onChange={(e) => onChange(name, opt[0], e.target.checked)}
-          className="w-5 h-5 rounded text-blue-600 border-slate-300"
-        />
-        <span className="w-5 h-5 flex items-center justify-center bg-slate-900 text-white rounded text-[10px] font-black transition-colors">
-          {opt[3] || idx + 1}
-        </span>
-        <span className="font-medium text-slate-700 group-hover:text-slate-900">
-          {isRTL && opt[2] ? opt[2] : opt[1]}
-        </span>
-      </label>
-    ))}
+    {options.map((opt, idx) => {
+      const numVal = opt[3] || idx + 1;
+      return (
+        <label key={opt[0]} className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 cursor-pointer group">
+          <input
+            type="checkbox"
+            checked={!!values[opt[0]]}
+            onChange={(e) => onChange(name, opt[0], e.target.checked)}
+            className="w-5 h-5 rounded text-blue-600 border-slate-300"
+          />
+          <span className="w-5 h-5 flex items-center justify-center bg-slate-900 text-white rounded text-[10px] font-black transition-colors">
+            {isRTL ? toArabicNumeral(numVal) : numVal}
+          </span>
+          <span className="font-medium text-slate-700 group-hover:text-slate-900">
+            {isRTL && opt[2] ? opt[2] : opt[1]}
+          </span>
+        </label>
+      );
+    })}
   </div>
 );
 
@@ -98,15 +114,20 @@ const GridQuestion = ({ title, titleAr, code, options, items, values, onChange, 
     <table className="w-full text-sm border-separate border-spacing-y-2 min-w-[600px]">
       <thead>
         <tr className="text-slate-400 font-black uppercase tracking-widest text-[10px]">
-          <th className="text-left py-2 px-4">{isRTL ? 'العنصر' : 'Élément'}</th>
-          {options.map((opt, idx) => (
-            <th key={opt[0]} className="text-center py-2 px-2">
-              <div className="flex flex-col items-center gap-1">
-                <span className="w-4 h-4 flex items-center justify-center bg-slate-900 text-white rounded text-[8px] font-bold">{opt[3] || idx + 1}</span>
-                {isRTL ? opt[2] : opt[1]}
-              </div>
-            </th>
-          ))}
+          <th className="text-start py-2 px-4">{isRTL ? 'العنصر' : 'Élément'}</th>
+          {options.map((opt, idx) => {
+            const numVal = opt[3] || idx + 1;
+            return (
+              <th key={opt[0]} className="text-center py-2 px-2">
+                <div className="flex flex-col items-center gap-1">
+                  <span className="w-4 h-4 flex items-center justify-center bg-slate-900 text-white rounded text-[8px] font-bold">
+                    {isRTL ? toArabicNumeral(numVal) : numVal}
+                  </span>
+                  {isRTL ? opt[2] : opt[1]}
+                </div>
+              </th>
+            );
+          })}
         </tr>
       </thead>
       <tbody>
@@ -398,7 +419,13 @@ const QuestionnaireForm = ({ onClose }) => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const reportId = searchParams.get('report_id');
-  
+
+  const localUser = JSON.parse(localStorage.getItem('user') || '{}');
+  const isOperator = localUser.role === 'OPERATOR';
+  const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
+  const [operatorGovId, setOperatorGovId] = useState(null);
+  const [operatorEstId, setOperatorEstId] = useState(null);
+
 
 
   const getExclusionWarnings = () => {
@@ -472,7 +499,7 @@ const QuestionnaireForm = ({ onClose }) => {
       if ((field.includes('days_30') || field.includes('30days')) && isReal(value)) {
         const yField = isSpecial ? `${prefix}12months` : 'months_12_freq';
         const lField = isSpecial ? `${prefix}lifetime` : 'lifetime_freq';
-        
+
         if (sectionData[yField] !== undefined && !isReal(sectionData[yField])) sectionData[yField] = '2'; // 1-2 fois
         if (sectionData[lField] !== undefined && !isReal(sectionData[lField])) sectionData[lField] = '2';
         if (sectionData.use_last_12months !== undefined) sectionData.use_last_12months = '1'; // '1' is Oui
@@ -505,8 +532,8 @@ const QuestionnaireForm = ({ onClose }) => {
 
       // Downward propagation for grids
       if (field.includes('lifetime') && !isReal(checked)) {
-          if (sectionData.months_12_freq !== undefined) sectionData.months_12_freq = '1';
-          if (sectionData.days_30_freq !== undefined) sectionData.days_30_freq = '1';
+        if (sectionData.months_12_freq !== undefined) sectionData.months_12_freq = '1';
+        if (sectionData.days_30_freq !== undefined) sectionData.days_30_freq = '1';
       }
 
       return { ...prev, [section]: sectionData };
@@ -528,7 +555,12 @@ const QuestionnaireForm = ({ onClose }) => {
 
   const handleChange = (section) => (e) => update(section, e.target.name, e.target.value);
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (overrideGovId = null, overrideEstId = null) => {
+    if (isOperator && !overrideGovId && !overrideEstId) {
+      setIsLocationModalOpen(true);
+      return;
+    }
+
     setStatus('submitting');
     setErrors(null);
 
@@ -574,7 +606,7 @@ const QuestionnaireForm = ({ onClose }) => {
         if (isRealValue(data.section_g.months_12_freq))
           warnings.push('Alcool (G): "Jamais" mais fréquence 12 mois renseignée.');
         if (data.section_g.days_30_by_type &&
-            Object.values(data.section_g.days_30_by_type).some(v => isRealValue(v)))
+          Object.values(data.section_g.days_30_by_type).some(v => isRealValue(v)))
           warnings.push('Alcool (G): "Jamais" mais consommation 30 jours par type renseignée.');
         if (isRealValue(data.section_g.binge_drinking_30days))
           warnings.push('Alcool (G): "Jamais" mais binge drinking renseigné.');
@@ -640,7 +672,7 @@ const QuestionnaireForm = ({ onClose }) => {
       const FREQ_VALS = {
         '1': 0, '2': 1, '3': 2, '4': 3, '5': 4, '6': 5, '7': 6
       };
-      
+
       const AGE_VALS = {
         '1': 0, '2': 9, '3': 10, '4': 11, '5': 12, '6': 13, '7': 14, '8': 15, '9': 16
       };
@@ -654,7 +686,7 @@ const QuestionnaireForm = ({ onClose }) => {
 
         if (month > year) warnings.push(`${label}: L'usage au cours du dernier mois ne peut pas être supérieur à l'usage sur l'année.`);
         if (year > life) warnings.push(`${label}: L'usage sur l'année ne peut pas être supérieur à l'usage sur la vie.`);
-        
+
         const ageFirst = AGE_VALS[s.age_first_use] || 0;
         const ageDaily = AGE_VALS[s.age_daily_use] || 0;
 
@@ -678,6 +710,14 @@ const QuestionnaireForm = ({ onClose }) => {
     };
 
     const contradictionWarnings = validateContradictions();
+    const exclusionWarnings = getExclusionWarnings();
+
+    if (exclusionWarnings.length > 0) {
+      setErrors({ Exclusion: exclusionWarnings });
+      setStatus('error');
+      return;
+    }
+
     if (contradictionWarnings.length > 0) {
       setErrors({ contradiction: contradictionWarnings });
       setStatus('error');
@@ -689,6 +729,8 @@ const QuestionnaireForm = ({ onClose }) => {
       await api.post('questionnaire/submit/', {
         class_report: reportId,
         language_used: lang.toUpperCase(),
+        ...(overrideGovId && { governorate: overrideGovId }),
+        ...(overrideEstId && { establishment: overrideEstId }),
         ...data,
         extra_answers: extraAnswers
       });
@@ -714,17 +756,17 @@ const QuestionnaireForm = ({ onClose }) => {
 
     const s = data[sectionId];
     if (s && s.lifetime_freq !== undefined) {
-       const life = FREQ_VALS[s.lifetime_freq] || 0;
-       const year = FREQ_VALS[s.months_12_freq] || 0;
-       const month = FREQ_VALS[s.days_30_freq] || 0;
-       
-       if (month > year) w.push(isRTL ? "الاستخدام الشهري لا يمكن أن يكون أعلى من السنوي" : "L'usage mensuel ne peut être supérieur à l'usage annuel.");
-       if (year > life) w.push(isRTL ? "الاستخدام السنوي لا يمكن أن يكون أعلى من مدى الحياة" : "L'usage annuel ne peut être supérieur à l'usage vie.");
-       if (month > 0 && year === 0) w.push(isRTL ? "تناقض: استخدام شهري مع نفي سنوي" : "Contradiction : usage mensuel déclaré mais annuel nié.");
+      const life = FREQ_VALS[s.lifetime_freq] || 0;
+      const year = FREQ_VALS[s.months_12_freq] || 0;
+      const month = FREQ_VALS[s.days_30_freq] || 0;
 
-       const ageFirst = FREQ_VALS[s.age_first_use] || 0;
-       const ageDaily = FREQ_VALS[s.age_daily_use] || 0;
-       if (ageDaily > 0 && ageDaily < ageFirst) w.push(isRTL ? "العمر اليومي لا يمكن أن يكون أقل من عمر المرة الأولى" : "L'âge quotidien ne peut être inférieur à l'âge de la première fois.");
+      if (month > year) w.push(isRTL ? "الاستخدام الشهري لا يمكن أن يكون أعلى من السنوي" : "L'usage mensuel ne peut être supérieur à l'usage annuel.");
+      if (year > life) w.push(isRTL ? "الاستخدام السنوي لا يمكن أن يكون أعلى من مدى الحياة" : "L'usage annuel ne peut être supérieur à l'usage vie.");
+      if (month > 0 && year === 0) w.push(isRTL ? "تناقض: استخدام شهري مع نفي سنوي" : "Contradiction : usage mensuel déclaré mais annuel nié.");
+
+      const ageFirst = FREQ_VALS[s.age_first_use] || 0;
+      const ageDaily = FREQ_VALS[s.age_daily_use] || 0;
+      if (ageDaily > 0 && ageDaily < ageFirst) w.push(isRTL ? "العمر اليومي لا يمكن أن يكون أقل من عمر المرة الأولى" : "L'âge quotidien ne peut être inférieur à l'âge de la première fois.");
     }
 
     return w;
@@ -734,18 +776,18 @@ const QuestionnaireForm = ({ onClose }) => {
   // ── DEV: Random data generator ────────────────────────────────────────────
   const generateRandomData = () => {
     const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-    const pickYN     = () => pick(['1', '2']);
-    const pickYN01   = () => pick(['0', '1']);
-    const pickAge    = () => pick(['2','3','4','5','6','7','8','9']); // matches AGE_SCALE 1-indexed ('1'=never)
-    const pickDiff   = () => pick(['1', '2', '3', '4']); // DIFFICULTY_LEVELS: 1=Impossible, 2=Difficile, 3=Facile, 4=Ne sait pas
-    const pickSC     = () => pick(['1', '2', '3']);
-    const freqOrder  = ['1','2','3','4','5','6','7']; // '1'=Jamais matches UI FREQ_LIFETIME
+    const pickYN = () => pick(['1', '2']);
+    const pickYN01 = () => pick(['0', '1']);
+    const pickAge = () => pick(['2', '3', '4', '5', '6', '7', '8', '9']); // matches AGE_SCALE 1-indexed ('1'=never)
+    const pickDiff = () => pick(['1', '2', '3', '4']); // DIFFICULTY_LEVELS: 1=Impossible, 2=Difficile, 3=Facile, 4=Ne sait pas
+    const pickSC = () => pick(['1', '2', '3']);
+    const freqOrder = ['1', '2', '3', '4', '5', '6', '7']; // '1'=Jamais matches UI FREQ_LIFETIME
     const freqStress = ['1', '2', '3', '4', '5'];
-    const digitalH   = ['1', '2', '3', '4', '5', '6'];
-    const agreement  = ['0', '1', '2', '3', '4'];
-    const satOpts    = ['1', '2', '3', '4', '5', '6'];
-    const freqAct    = ['1', '2', '3', '4', '5'];
-    const absOpts    = ['1', '2', '3', '4', '5', '6'];
+    const digitalH = ['1', '2', '3', '4', '5', '6'];
+    const agreement = ['0', '1', '2', '3', '4'];
+    const satOpts = ['1', '2', '3', '4', '5', '6'];
+    const freqAct = ['1', '2', '3', '4', '5'];
+    const absOpts = ['1', '2', '3', '4', '5', '6'];
 
     const socialCircle = () => ({
       a: pickSC(), b: pickSC(), c: pickSC(), d: pickSC(), e: pickSC()
@@ -820,22 +862,22 @@ const QuestionnaireForm = ({ onClose }) => {
     return {
       section_a: {
         gender: pick(['M', 'F']),
-        birth_month: pick(['1','2','3','4','5','6','7','8','9','10','11','12']),
-        birth_year: pick(['2007','2008','2009','2010','2011']),
+        birth_month: pick(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']),
+        birth_year: pick(['2007', '2008', '2009', '2010', '2011']),
         academic_performance: pick(['1', '2', '3']),      // exact backend choices (1: <10, 2: 10-12, 3: >12)
         activities_frequency: Object.fromEntries(actKeys.map(k => [k, pick(freqAct)])),
         school_absences: Object.fromEntries(absKeys.map(k => [k, pick(absOpts)])),
         household_members: hh,
         parents_absence_reason: pick(['', '1', '2', '3', '4']),
         parents_absence_reason_other: '',
-        nights_out_30days: pick(['1','2','3','4','5','6','7','8']),
+        nights_out_30days: pick(['1', '2', '3', '4', '5', '6', '7', '8']),
         family_relationship_satisfaction: Object.fromEntries(satKeys.map(k => [k, pick(satOpts)])),
       },
       section_b: {
-        father_education: pick(['1','2','3','4','5','6','7','8','9','10','11']), // EDUCATION_LEVEL numeric codes
-        mother_education: pick(['1','2','3','4','5','6','7','8','9','10','11']),
-        father_job: pick(['1','2','3','4','5','6']), // EMPLOYMENT_STATUS: 1=plein temps...6=NA
-        mother_job: pick(['1','2','3','4','5','6']),
+        father_education: pick(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']), // EDUCATION_LEVEL numeric codes
+        mother_education: pick(['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11']),
+        father_job: pick(['1', '2', '3', '4', '5', '6']), // EMPLOYMENT_STATUS: 1=plein temps...6=NA
+        mother_job: pick(['1', '2', '3', '4', '5', '6']),
         economic_status: pick(['1', '2', '3']),
       },
       section_c: smokeSection(),
@@ -846,7 +888,7 @@ const QuestionnaireForm = ({ onClose }) => {
         social_circle: socialCircle(),
         lifetime_freq: gFreqs.lifetime_freq, months_12_freq: gFreqs.months_12_freq, days_30_freq: gFreqs.days_30_freq,
         days_30_by_type: { beer: pick(freqOrder), wine: pick(freqOrder), spirits: pick(freqOrder) },
-        binge_drinking_30days: pick(['1','2','3','4','5','6']), // 1=Aucune...6=≥10
+        binge_drinking_30days: pick(['1', '2', '3', '4', '5', '6']), // 1=Aucune...6=≥10
         intoxication_lifetime: pick(freqOrder), intoxication_12months: pick(freqOrder), intoxication_30days: pick(freqOrder),
         age_first_drink: gFreqs._never ? '1' : pickAge(),
         age_first_intoxication: gFreqs._never ? '1' : pickAge(),
@@ -858,61 +900,61 @@ const QuestionnaireForm = ({ onClose }) => {
         age_first_use: iFreqs._never ? '1' : pickAge(),
         use_last_12months: iFreqs._never ? '2' : pickYN(),
         cannabis_types_12months: { resin: pick([true, false]), leaves: pick([true, false]) },
-        cannabis_problems_12months: Object.fromEntries(['a','b','c','d','e','f'].map(k => [k, pickYN()])),
+        cannabis_problems_12months: Object.fromEntries(['a', 'b', 'c', 'd', 'e', 'f'].map(k => [k, pickYN()])),
       },
       section_j: drugSection(),
       section_k: drugSectionSimple(),
       section_l: drugSectionSimple(),
       section_m: drugSectionSimple(),
       section_n: {
-        access_difficulty: Object.fromEntries(['a','d','f','g','h','j','k'].map(k => [k, pickDiff()])),
-        lifetime_freq_by_type: Object.fromEntries(['a','d','f','g','h','j','k'].map(k => [k, pick(freqOrder)])),
-        months_12_freq_by_type: Object.fromEntries(['a','d','f','g','h','j','k'].map(k => [k, pick(freqOrder)])),
-        age_first_use_by_type: Object.fromEntries(['a','d','f','g','h','j','k'].map(k => [k, pickAge()])),
+        access_difficulty: Object.fromEntries(['a', 'd', 'f', 'g', 'h', 'j', 'k'].map(k => [k, pickDiff()])),
+        lifetime_freq_by_type: Object.fromEntries(['a', 'd', 'f', 'g', 'h', 'j', 'k'].map(k => [k, pick(freqOrder)])),
+        months_12_freq_by_type: Object.fromEntries(['a', 'd', 'f', 'g', 'h', 'j', 'k'].map(k => [k, pick(freqOrder)])),
+        age_first_use_by_type: Object.fromEntries(['a', 'd', 'f', 'g', 'h', 'j', 'k'].map(k => [k, pickAge()])),
       },
       section_p: {
         lifetime_freq: pFreqs.lifetime_freq, months_12_freq: pFreqs.months_12_freq,
-        forms: Object.fromEntries(['a','b','c','d'].map(k => [k, pick([true, false])])),
-        substances: Object.fromEntries(['cannabinoids','cathinones'].map(k => [k, pick(freqOrder)])),
+        forms: Object.fromEntries(['a', 'b', 'c', 'd'].map(k => [k, pick([true, false])])),
+        substances: Object.fromEntries(['cannabinoids', 'cathinones'].map(k => [k, pick(freqOrder)])),
       },
       section_q: {
-        risk_perceptions: Object.fromEntries(['a','b','c','d','e','f','i','j','k','l','q2a','q2b','q2c','q2d','q2e','q2f','q2g','q2h','q2i','q2m','q2k'].map(k => [k, pick(['1','2','3','4','5'])])),
-        help_sources: Object.fromEntries(['a','b','c','d','e','f','g','h'].map(k => [k, pickYN()])),
-        friend_use_risk: pick(['1','2','3','4']),
+        risk_perceptions: Object.fromEntries(['a', 'b', 'c', 'd', 'e', 'f', 'i', 'j', 'k', 'l', 'q2a', 'q2b', 'q2c', 'q2d', 'q2e', 'q2f', 'q2g', 'q2h', 'q2i', 'q2m', 'q2k'].map(k => [k, pick(['1', '2', '3', '4', '5'])])),
+        help_sources: Object.fromEntries(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'].map(k => [k, pickYN()])),
+        friend_use_risk: pick(['1', '2', '3', '4']),
       },
       section_r: {
         hours_per_day_breakdown: { a: pick(digitalH), b: pick(digitalH) },
-        agreement: Object.fromEntries(['a','b','c'].map(k => [k, pick(agreement)])),
+        agreement: Object.fromEntries(['a', 'b', 'c'].map(k => [k, pick(agreement)])),
       },
       section_s: {
         hours_per_day: pick(digitalH),
-        days_per_week: pick(['0','1','2','3','4','5','6','7']),
-        agreement: Object.fromEntries(['a','b'].map(k => [k, pick(agreement)])),
+        days_per_week: pick(['0', '1', '2', '3', '4', '5', '6', '7']),
+        agreement: Object.fromEntries(['a', 'b'].map(k => [k, pick(agreement)])),
       },
       section_t: {
         months_12_freq: pick(freqOrder),                                     // uses FREQUENCY_LIFETIME_12M
-        offline_games: Object.fromEntries(['slot_machines','cards_dice','lottery','sports_betting','other'].map(k => [k, pick([true, false])])),
-        online_games: Object.fromEntries(['slot_machines','cards_dice','lottery','sports_betting','other'].map(k => [k, pick([true, false])])),
+        offline_games: Object.fromEntries(['slot_machines', 'cards_dice', 'lottery', 'sports_betting', 'other'].map(k => [k, pick([true, false])])),
+        online_games: Object.fromEntries(['slot_machines', 'cards_dice', 'lottery', 'sports_betting', 'other'].map(k => [k, pick([true, false])])),
         felt_need_increase: pickYN(), lied_about_it: pickYN(),
-        gambling_problems: Object.fromEntries(['a','b','c','d','e','f','g','h','i','j','k','l'].map(k => [k, pickYN01()])),
+        gambling_problems: Object.fromEntries(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'].map(k => [k, pickYN01()])),
       },
       section_u: {
-        fights_12months: pick(['1','2','3','4','5','6','7','8']),
-        fight_circumstances: pick(['1','2']),
-        fight_location: pick(['1','2']),
+        fights_12months: pick(['1', '2', '3', '4', '5', '6', '7', '8']),
+        fight_circumstances: pick(['1', '2']),
+        fight_location: pick(['1', '2']),
         staff_intervention: pickYN(), // YES_NO: '1'=Oui, '2'=Non
-        fight_consequences: [pick(['a','b','c','d','e'])],
-        serious_injury_12months: pick(['1','2','3','4','5']),
+        fight_consequences: [pick(['a', 'b', 'c', 'd', 'e'])],
+        serious_injury_12months: pick(['1', '2', '3', '4', '5']),
       },
       section_v: {
         a: pick(freqStress), b: pick(freqStress), c: pick(freqStress), d: pick(freqStress),
-        self_esteem: Object.fromEntries(['a','b','c','d','e'].map(k => [k, pick(agreement)])),
-        mental_health_states: Object.fromEntries(['a','b','c','d','e'].map(k => [k, pickYN()])),
-        help_seeking: Object.fromEntries(['a','b'].map(k => [k, pickYN()])),
+        self_esteem: Object.fromEntries(['a', 'b', 'c', 'd', 'e'].map(k => [k, pick(agreement)])),
+        mental_health_states: Object.fromEntries(['a', 'b', 'c', 'd', 'e'].map(k => [k, pickYN()])),
+        help_seeking: Object.fromEntries(['a', 'b'].map(k => [k, pickYN()])),
       },
       section_z: {
-        honesty_level: pick(['1','2','3','4','5']),
-        honesty_cannabis: pick(['1','2','3','4','5']),
+        honesty_level: pick(['1', '2', '3', '4', '5']),
+        honesty_cannabis: pick(['1', '2', '3', '4', '5']),
       },
     };
   };
@@ -1719,7 +1761,7 @@ const QuestionnaireForm = ({ onClose }) => {
           {/* C.Q04 */}
           <div>
             <FieldLabel code="C.Q04" fr="Pensez-vous que vous fumeriez du cannabis si l'un de vos meilleurs amis vous en proposait ?" ar="هل تعتقد أنك ستدخن القنب الهندي إذا عرضه عليك أحد أعز أصدقائك؟" isRTL={isRTL} />
-            <RadioGroup name="friend_use_risk" value={data.section_q.friend_use_risk} onChange={handleChange('section_q')} 
+            <RadioGroup name="friend_use_risk" value={data.section_q.friend_use_risk} onChange={handleChange('section_q')}
               options={[['1', 'Certainement non', 'بالتأكيد لا'], ['2', 'Probablement non', 'على الأرجح لا'], ['3', 'Probablement oui', 'على الأرجح نعم'], ['4', 'Certainement oui', 'بالتأكيد نعم']]} isRTL={isRTL} />
           </div>
         </div>
@@ -2074,7 +2116,7 @@ const QuestionnaireForm = ({ onClose }) => {
     fetchConfig();
     const u = localStorage.getItem('user');
     if (u) {
-      try { setCurrentUser(JSON.parse(u)); } catch(e){}
+      try { setCurrentUser(JSON.parse(u)); } catch (e) { }
     }
     fetchActiveReport();
   }, []);
@@ -2086,20 +2128,20 @@ const QuestionnaireForm = ({ onClose }) => {
   };
 
   const handleDeleteDynamic = async (code, type) => {
-    if(!window.confirm(isRTL ? 'تأكيد الحذف؟' : 'Confirmer la suppression ?')) return;
+    if (!window.confirm(isRTL ? 'تأكيد الحذف؟' : 'Confirmer la suppression ?')) return;
     try {
       await api.delete(`dynamic-questions/${code}/`);
       fetchConfig();
-    } catch(err) { console.error(err); }
+    } catch (err) { console.error(err); }
   };
 
   const renderDynamicQuestion = (q, extraAnswers, setExtraAnswers, isRTL) => (
     <div key={q.code} className={`p-6 bg-slate-50 rounded-3xl border-2 ${isEditMode ? 'border-brand-200' : 'border-slate-100'} relative group`}>
       {isEditMode && (
-         <div className="absolute top-4 right-4 flex gap-2 z-50">
-            <button onClick={() => setEditingItem({ id: q.code, type: 'QUESTION', section: q.section, data: q })} className="p-2 text-slate-400 hover:text-brand-600 bg-white rounded-lg shadow-sm border border-slate-100"><Edit2 size={14}/></button>
-            <button onClick={() => handleDeleteDynamic(q.code, 'QUESTION')} className="p-2 text-slate-400 hover:text-rose-600 bg-white rounded-lg shadow-sm border border-slate-100"><Trash2 size={14}/></button>
-         </div>
+        <div className="absolute top-4 right-4 flex gap-2 z-50">
+          <button onClick={() => setEditingItem({ id: q.code, type: 'QUESTION', section: q.section, data: q })} className="p-2 text-slate-400 hover:text-brand-600 bg-white rounded-lg shadow-sm border border-slate-100"><Edit2 size={14} /></button>
+          <button onClick={() => handleDeleteDynamic(q.code, 'QUESTION')} className="p-2 text-slate-400 hover:text-rose-600 bg-white rounded-lg shadow-sm border border-slate-100"><Trash2 size={14} /></button>
+        </div>
       )}
       <FieldLabel code={q.code} fr={q.label_fr} ar={q.label_ar} isRTL={isRTL} />
       {q.question_type === 'RADIO' ? (
@@ -2137,9 +2179,9 @@ const QuestionnaireForm = ({ onClose }) => {
             <div className="space-y-10">
               {sectionDynQuestions.map(q => renderDynamicQuestion(q, extraAnswers, setExtraAnswers, isRTL))}
               {isEditMode && (
-                 <button onClick={() => setEditingItem({ id: null, type: 'QUESTION', section: s.id, data: {code: '', label_fr: '', question_type: 'TEXT', section: s.id, is_dynamic: true, options_json: []} })} className="w-full py-4 border-2 border-dashed border-brand-200 text-brand-600 rounded-3xl flex items-center justify-center gap-2 hover:bg-brand-50 transition-colors font-bold text-sm">
-                    <Plus size={16} /> Ajouter une question
-                 </button>
+                <button onClick={() => setEditingItem({ id: null, type: 'QUESTION', section: s.id, data: { code: '', label_fr: '', question_type: 'TEXT', section: s.id, is_dynamic: true, options_json: [] } })} className="w-full py-4 border-2 border-dashed border-brand-200 text-brand-600 rounded-3xl flex items-center justify-center gap-2 hover:bg-brand-50 transition-colors font-bold text-sm">
+                  <Plus size={16} /> Ajouter une question
+                </button>
               )}
             </div>
           </div>
@@ -2154,14 +2196,14 @@ const QuestionnaireForm = ({ onClose }) => {
       content: contentNode,
       actionButtons: isEditMode ? (
         <>
-           <button onClick={() => setEditingItem({ id: s.id, type: 'SECTION', section: s.id, data: overriddenTitle || {code: s.id, label_fr: s.title, question_type: 'SECTION', section: s.id, is_dynamic: false} })} className="px-4 py-2 text-slate-900 bg-white rounded-lg shadow-xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:bg-slate-50"><Edit2 size={14}/> Éditer</button>
-           <button onClick={async () => {
-                if(!window.confirm('Voulez-vous masquer cette section entière ?')) return;
-                try {
-                    await api.post('dynamic-questions/', { code: s.id, label_fr: s.title, question_type: 'SECTION', section: s.id, is_hidden: true, is_dynamic: false });
-                    fetchConfig();
-                } catch(err) { alert("Erreur."); }
-           }} className="px-4 py-2 text-white bg-rose-600 rounded-lg shadow-xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:bg-rose-700"><Trash2 size={14}/> Masquer</button>
+          <button onClick={() => setEditingItem({ id: s.id, type: 'SECTION', section: s.id, data: overriddenTitle || { code: s.id, label_fr: s.title, question_type: 'SECTION', section: s.id, is_dynamic: false } })} className="px-4 py-2 text-slate-900 bg-white rounded-lg shadow-xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:bg-slate-50"><Edit2 size={14} /> Éditer</button>
+          <button onClick={async () => {
+            if (!window.confirm('Voulez-vous masquer cette section entière ?')) return;
+            try {
+              await api.post('dynamic-questions/', { code: s.id, label_fr: s.title, question_type: 'SECTION', section: s.id, is_hidden: true, is_dynamic: false });
+              fetchConfig();
+            } catch (err) { alert("Erreur."); }
+          }} className="px-4 py-2 text-white bg-rose-600 rounded-lg shadow-xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:bg-rose-700"><Trash2 size={14} /> Masquer</button>
         </>
       ) : null
     };
@@ -2178,10 +2220,10 @@ const QuestionnaireForm = ({ onClose }) => {
       titleAr: sec.label_ar || sec.label_fr,
       color: 'bg-brand-800',
       actionButtons: isEditMode ? (
-         <>
-            <button onClick={() => setEditingItem({ id: sec.code, type: 'SECTION', section: sec.code, data: sec })} className="px-4 py-2 text-slate-900 bg-white rounded-lg shadow-xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:bg-slate-50"><Edit2 size={14}/> Éditer</button>
-            <button onClick={() => handleDeleteDynamic(sec.code, 'SECTION')} className="px-4 py-2 text-white bg-rose-600 rounded-lg shadow-xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:bg-rose-700"><Trash2 size={14}/> Supprimer</button>
-         </>
+        <>
+          <button onClick={() => setEditingItem({ id: sec.code, type: 'SECTION', section: sec.code, data: sec })} className="px-4 py-2 text-slate-900 bg-white rounded-lg shadow-xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:bg-slate-50"><Edit2 size={14} /> Éditer</button>
+          <button onClick={() => handleDeleteDynamic(sec.code, 'SECTION')} className="px-4 py-2 text-white bg-rose-600 rounded-lg shadow-xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:bg-rose-700"><Trash2 size={14} /> Supprimer</button>
+        </>
       ) : null,
       content: (
         <div className="space-y-10 relative">
@@ -2193,9 +2235,9 @@ const QuestionnaireForm = ({ onClose }) => {
             </div>
           )}
           {isEditMode && (
-             <button onClick={() => setEditingItem({ id: null, type: 'QUESTION', section: sec.code, data: {code: '', label_fr: '', question_type: 'TEXT', section: sec.code, is_dynamic: true, options_json: []} })} className="w-full py-4 border-2 border-dashed border-brand-200 text-brand-600 rounded-3xl flex items-center justify-center gap-2 hover:bg-brand-50 transition-colors font-bold text-sm mt-8">
-                <Plus size={16} /> Ajouter une question
-             </button>
+            <button onClick={() => setEditingItem({ id: null, type: 'QUESTION', section: sec.code, data: { code: '', label_fr: '', question_type: 'TEXT', section: sec.code, is_dynamic: true, options_json: [] } })} className="w-full py-4 border-2 border-dashed border-brand-200 text-brand-600 rounded-3xl flex items-center justify-center gap-2 hover:bg-brand-50 transition-colors font-bold text-sm mt-8">
+              <Plus size={16} /> Ajouter une question
+            </button>
           )}
         </div>
       )
@@ -2208,7 +2250,7 @@ const QuestionnaireForm = ({ onClose }) => {
     const normalize = (id) => id.toLowerCase().replace(/^section_/, '');
     const codeA = normalize(a.id);
     const codeB = normalize(b.id);
-    
+
     // A "Letter Code" is something like 'A', 'B', 'BA', 'Z' (usually 1 or 2 letters)
     // We treat anything that's 1-2 letters as a priority group
     const isLetterA = /^[a-z]{1,2}$/.test(codeA);
@@ -2218,7 +2260,7 @@ const QuestionnaireForm = ({ onClose }) => {
       // Sort alphabetically: 'a' < 'b' < 'ba' < 'c'
       return codeA.localeCompare(codeB);
     }
-    
+
     if (isLetterA) return -1;
     if (isLetterB) return 1;
 
@@ -2229,20 +2271,20 @@ const QuestionnaireForm = ({ onClose }) => {
   const filteredSections = allProcessed;
 
   if (isEditMode) {
-      filteredSections.push({
-          id: 'add_section',
-          letter: '+',
-          title: 'Nouvelle Section',
-          color: 'bg-slate-200 !text-slate-800',
-          content: (
-              <div className="p-12 border-4 border-dashed border-slate-200 rounded-[48px] flex items-center justify-center">
-                 <button onClick={() => setEditingItem({ id: null, type: 'SECTION', section: '', data: {code: 'section_', label_fr: '', question_type: 'SECTION', section: 'section_', is_dynamic: true, options_json: []} })} className="flex flex-col items-center gap-4 text-slate-400 hover:text-brand-600 transition-colors group">
-                    <div className="w-16 h-16 rounded-full bg-slate-100 group-hover:bg-brand-100 flex items-center justify-center transition-colors"><Plus size={32} /></div>
-                    <span className="font-black uppercase tracking-widest text-sm">Ajouter une Section Dynamique</span>
-                 </button>
-              </div>
-          )
-      });
+    filteredSections.push({
+      id: 'add_section',
+      letter: '+',
+      title: 'Nouvelle Section',
+      color: 'bg-slate-200 !text-slate-800',
+      content: (
+        <div className="p-12 border-4 border-dashed border-slate-200 rounded-[48px] flex items-center justify-center">
+          <button onClick={() => setEditingItem({ id: null, type: 'SECTION', section: '', data: { code: 'section_', label_fr: '', question_type: 'SECTION', section: 'section_', is_dynamic: true, options_json: [] } })} className="flex flex-col items-center gap-4 text-slate-400 hover:text-brand-600 transition-colors group">
+            <div className="w-16 h-16 rounded-full bg-slate-100 group-hover:bg-brand-100 flex items-center justify-center transition-colors"><Plus size={32} /></div>
+            <span className="font-black uppercase tracking-widest text-sm">Ajouter une Section Dynamique</span>
+          </button>
+        </div>
+      )
+    });
   }
 
 
@@ -2266,7 +2308,7 @@ const QuestionnaireForm = ({ onClose }) => {
 
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 text-center px-8">
-        <motion.div 
+        <motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', damping: 12 }}
@@ -2274,14 +2316,14 @@ const QuestionnaireForm = ({ onClose }) => {
         >
           <CheckCircle2 size={48} className="text-green-500" />
         </motion.div>
-        
+
         <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Questionnaire soumis !</h1>
         <p className="text-slate-500 text-xl mb-12 max-w-md leading-relaxed">
           {isRTL ? 'شكراً على مشاركتك. بياناتك محمية بالكامل.' : 'Merci pour votre participation. Vos données sont entièrement protégées.'}
         </p>
 
         <div className="flex flex-col gap-4 w-full max-w-xs">
-          <button 
+          <button
             onClick={() => { setStatus(null); setStep(0); setData(INITIAL_DATA); window.scrollTo(0, 0); }}
             className="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 flex items-center justify-center gap-3"
           >
@@ -2295,7 +2337,7 @@ const QuestionnaireForm = ({ onClose }) => {
                 <div className="relative flex justify-center text-xs uppercase font-black tracking-widest text-slate-400"><span className="bg-slate-50 px-3">{isRTL ? 'إجراءات الممارس' : 'Actions Praticien'}</span></div>
               </div>
 
-              <button 
+              <button
                 onClick={() => handleFinalize('/class-report')}
                 className="w-full py-4 bg-brand-600 text-white font-bold rounded-2xl hover:bg-brand-700 transition-all flex items-center justify-center gap-3 shadow-lg shadow-brand-100"
               >
@@ -2303,7 +2345,7 @@ const QuestionnaireForm = ({ onClose }) => {
                 {isRTL ? 'إغلاق وفصل جديد' : 'Clôturer et Nouvelle Classe'}
               </button>
 
-              <button 
+              <button
                 onClick={() => handleFinalize('/user')}
                 className="w-full py-4 bg-white border-2 border-slate-200 text-slate-700 font-bold rounded-2xl hover:bg-slate-50 transition-all flex items-center justify-center gap-3"
               >
@@ -2318,13 +2360,13 @@ const QuestionnaireForm = ({ onClose }) => {
   }
 
   return (
-    <div className={`min-h-screen bg-slate-50 ${isRTL ? 'rtl' : 'ltr'}`}>
+    <div dir={isRTL ? 'rtl' : 'ltr'} className={`min-h-screen bg-slate-50 ${isRTL ? 'rtl font-arabic' : 'ltr'}`}>
       {/* Top Bar */}
       <div className="sticky top-0 z-40 bg-white border-b border-slate-100 shadow-sm">
         <div className="max-w-4xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <button 
-              onClick={() => onClose ? onClose() : navigate(-1)} 
+            <button
+              onClick={() => onClose ? onClose() : navigate(-1)}
               className="p-2.5 bg-slate-50 text-slate-500 rounded-xl hover:bg-slate-100 hover:text-slate-900 transition-all border border-slate-100"
               title="Retour"
             >
@@ -2338,12 +2380,12 @@ const QuestionnaireForm = ({ onClose }) => {
           <div className="flex items-center gap-3">
             {isSuperAdmin && (
               <button onClick={() => setIsEditMode(!isEditMode)} className={`px-5 py-2 text-[10px] font-black uppercase tracking-widest border-2 rounded-xl transition-all flex items-center gap-2 ${isEditMode ? 'bg-brand-50 text-brand-600 border-brand-200 shadow-[0_0_15px_rgba(16,185,129,0.3)]' : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-brand-50 hover:text-brand-600'}`}>
-                 <Pencil size={14} /> {isEditMode ? 'Quitter Édition' : 'Mode Édition'}
+                <Pencil size={14} /> {isEditMode ? 'Quitter Édition' : 'Mode Édition'}
               </button>
             )}
             <button onClick={() => setLang(lang === 'fr' ? 'ar' : 'fr')}
               className="px-4 py-2 text-sm font-bold border-2 border-slate-200 rounded-xl hover:bg-slate-100 transition-all">
-              {lang === 'fr' ? 'العربية' : 'Français'}
+              {lang === 'fr' ? 'arabe' : 'الفرنسية'}
             </button>
           </div>
         </div>
@@ -2496,26 +2538,26 @@ const QuestionnaireForm = ({ onClose }) => {
                 <h3 className="text-xl font-black text-slate-900 uppercase tracking-widest italic">{editingItem.id ? 'Éditer' : 'Créer'} {editingItem.type === 'SECTION' ? 'Section' : 'Question'}</h3>
                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-[2px]">{editingItem.section}</p>
               </div>
-              <button onClick={() => setEditingItem(null)} className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-rose-50 hover:text-rose-500 transition-colors"><X size={20}/></button>
+              <button onClick={() => setEditingItem(null)} className="p-3 bg-slate-50 text-slate-400 rounded-xl hover:bg-rose-50 hover:text-rose-500 transition-colors"><X size={20} /></button>
             </div>
             <div className="space-y-6">
               <div>
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Code Unique (obligatoire, max 10 chars pour section)</label>
-                <input type="text" maxLength={editingItem.type === 'SECTION' ? 10 : 50} value={editingItem.data.code} disabled={!!editingItem.id} onChange={(e) => setEditingItem({...editingItem, data: {...editingItem.data, code: e.target.value.toUpperCase()}})} className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-sm focus:border-brand-500 outline-none disabled:opacity-50" placeholder={editingItem.type === 'SECTION' ? 'SEC_W' : 'W.01'} />
+                <input type="text" maxLength={editingItem.type === 'SECTION' ? 10 : 50} value={editingItem.data.code} disabled={!!editingItem.id} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, code: e.target.value.toUpperCase() } })} className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-sm focus:border-brand-500 outline-none disabled:opacity-50" placeholder={editingItem.type === 'SECTION' ? 'SEC_W' : 'W.01'} />
               </div>
               <div>
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Libellé (Français)</label>
-                <input type="text" value={editingItem.data.label_fr} onChange={(e) => setEditingItem({...editingItem, data: {...editingItem.data, label_fr: e.target.value}})} className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-sm focus:border-brand-500 outline-none" />
+                <input type="text" value={editingItem.data.label_fr} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, label_fr: e.target.value } })} className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-sm focus:border-brand-500 outline-none" />
               </div>
               <div>
                 <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Libellé (Arabe)</label>
-                <input type="text" dir="rtl" value={editingItem.data.label_ar || ''} onChange={(e) => setEditingItem({...editingItem, data: {...editingItem.data, label_ar: e.target.value}})} className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-sm focus:border-brand-500 outline-none text-right" />
+                <input type="text" dir="rtl" value={editingItem.data.label_ar || ''} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, label_ar: e.target.value } })} className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-sm focus:border-brand-500 outline-none text-right" />
               </div>
               {editingItem.type === 'QUESTION' && (
                 <>
                   <div>
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Type de question</label>
-                    <select value={editingItem.data.question_type} onChange={(e) => setEditingItem({...editingItem, data: {...editingItem.data, question_type: e.target.value}})} className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-sm focus:border-brand-500 outline-none">
+                    <select value={editingItem.data.question_type} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, question_type: e.target.value } })} className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-sm focus:border-brand-500 outline-none">
                       <option value="TEXT">Texte</option>
                       <option value="NUMBER">Nombre</option>
                       <option value="RADIO">Choix Multiple (Radio)</option>
@@ -2525,73 +2567,85 @@ const QuestionnaireForm = ({ onClose }) => {
                     <div>
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Options (séparées par des virgules)</label>
                       <input type="text" value={Array.isArray(editingItem.data.options_json) ? editingItem.data.options_json.map(o => o[0]).join(', ') : ''} onChange={(e) => {
-                          const opts = e.target.value.split(',').map(o => [o.trim(), o.trim(), o.trim()]);
-                          setEditingItem({...editingItem, data: {...editingItem.data, options_json: opts}});
+                        const opts = e.target.value.split(',').map(o => [o.trim(), o.trim(), o.trim()]);
+                        setEditingItem({ ...editingItem, data: { ...editingItem.data, options_json: opts } });
                       }} className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 font-medium text-sm focus:border-brand-500 outline-none" placeholder="Oui, Non, Peut-être" />
                     </div>
                   )}
                 </>
               )}
               <div className="flex items-center gap-6 pt-2">
-                 <div className="flex-1">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Ordre d'affichage</label>
-                    <input type="number" value={editingItem.data.order || 100} onChange={(e) => setEditingItem({...editingItem, data: {...editingItem.data, order: parseInt(e.target.value)}})} className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-sm focus:border-brand-500 outline-none" />
-                 </div>
-                 <div className="flex-1">
-                    <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Visibilité</label>
-                    <label className="flex items-center gap-3 mt-4 cursor-pointer">
-                        <input type="checkbox" checked={!editingItem.data.is_hidden} onChange={(e) => setEditingItem({...editingItem, data: {...editingItem.data, is_hidden: !e.target.checked}})} className="w-5 h-5 rounded text-brand-600 focus:ring-brand-500 border-slate-300" />
-                        <span className="text-sm font-bold text-slate-700">Afficher au public</span>
-                    </label>
-                 </div>
+                <div className="flex-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Ordre d'affichage</label>
+                  <input type="number" value={editingItem.data.order || 100} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, order: parseInt(e.target.value) } })} className="w-full border-2 border-slate-200 rounded-xl px-4 py-3 font-bold text-sm focus:border-brand-500 outline-none" />
+                </div>
+                <div className="flex-1">
+                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 block">Visibilité</label>
+                  <label className="flex items-center gap-3 mt-4 cursor-pointer">
+                    <input type="checkbox" checked={!editingItem.data.is_hidden} onChange={(e) => setEditingItem({ ...editingItem, data: { ...editingItem.data, is_hidden: !e.target.checked } })} className="w-5 h-5 rounded text-brand-600 focus:ring-brand-500 border-slate-300" />
+                    <span className="text-sm font-bold text-slate-700">Afficher au public</span>
+                  </label>
+                </div>
               </div>
 
               {modalError && (
-                 <div className="bg-rose-50 border-2 border-rose-200 rounded-xl p-4 flex gap-3 text-rose-700">
-                    <AlertCircle size={20} className="shrink-0" />
-                    <p className="text-sm font-bold">{modalError}</p>
-                 </div>
+                <div className="bg-rose-50 border-2 border-rose-200 rounded-xl p-4 flex gap-3 text-rose-700">
+                  <AlertCircle size={20} className="shrink-0" />
+                  <p className="text-sm font-bold">{modalError}</p>
+                </div>
               )}
 
               <div className="pt-6">
                 <button onClick={async () => {
-                    setModalError(null);
-                    if (!editingItem.data.code || !editingItem.data.label_fr) {
-                        setModalError("Veuillez remplir le code unique et le libellé français.");
-                        return;
+                  setModalError(null);
+                  if (!editingItem.data.code || !editingItem.data.label_fr) {
+                    setModalError("Veuillez remplir le code unique et le libellé français.");
+                    return;
+                  }
+                  try {
+                    const payload = editingItem.data;
+                    if (editingItem.type === 'SECTION') {
+                      payload.section = payload.code;
                     }
-                    try {
-                        const payload = editingItem.data;
-                        if(editingItem.type === 'SECTION') {
-                            payload.section = payload.code;
-                        }
-                        if(editingItem.id) {
-                            await api.patch(`dynamic-questions/${editingItem.id}/`, payload);
-                        } else {
-                            await api.post('dynamic-questions/', payload);
-                        }
-                        fetchConfig();
-                        setModalError("Succès ! Modification enregistrée.");
-                        setTimeout(() => {
-                            setEditingItem(null);
-                            setModalError(null);
-                        }, 1000);
-                    } catch(err) {
-                        if (err.response && err.response.data) {
-                            const errs = Object.entries(err.response.data).map(([k,v]) => `${k}: ${v}`).join(' | ');
-                            setModalError(errs);
-                        } else {
-                            setModalError("Erreur de sauvegarde. Vérifiez le code unique.");
-                        }
+                    if (editingItem.id) {
+                      await api.patch(`dynamic-questions/${editingItem.id}/`, payload);
+                    } else {
+                      await api.post('dynamic-questions/', payload);
                     }
+                    fetchConfig();
+                    setModalError("Succès ! Modification enregistrée.");
+                    setTimeout(() => {
+                      setEditingItem(null);
+                      setModalError(null);
+                    }, 1000);
+                  } catch (err) {
+                    if (err.response && err.response.data) {
+                      const errs = Object.entries(err.response.data).map(([k, v]) => `${k}: ${v}`).join(' | ');
+                      setModalError(errs);
+                    } else {
+                      setModalError("Erreur de sauvegarde. Vérifiez le code unique.");
+                    }
+                  }
                 }} className="w-full py-4 bg-brand-600 text-white rounded-xl font-black uppercase tracking-widest text-xs hover:bg-brand-700 transition-colors flex items-center justify-center gap-2">
-                   <Save size={16}/> Sauvegarder
+                  <Save size={16} /> Sauvegarder
                 </button>
               </div>
             </div>
           </motion.div>
         </div>
       )}
+
+      <LocationSelectionModal
+        isOpen={isLocationModalOpen}
+        onClose={() => setIsLocationModalOpen(false)}
+        isRTL={isRTL}
+        onConfirm={(govId, estId) => {
+          setOperatorGovId(govId);
+          setOperatorEstId(estId);
+          setIsLocationModalOpen(false);
+          handleSubmit(govId, estId);
+        }}
+      />
     </div>
   );
 };

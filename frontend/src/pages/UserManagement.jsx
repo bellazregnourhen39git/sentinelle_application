@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, ArrowLeft, Shield, Mail, MapPin, Building, RefreshCw, UserPlus, FileText, Trash2, X, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -15,11 +15,26 @@ const UserManagement = () => {
     const [selectedUser, setSelectedUser] = useState(null); // For Details
     const [userToDelete, setUserToDelete] = useState(null); // For Deletion confirmation
 
-    const handleLogout = () => {
-        localStorage.removeItem('user');
-        localStorage.removeItem('access');
-        localStorage.removeItem('refresh');
-        window.location.href = '/';
+    const translateRole = (role) => {
+        switch(role) {
+            case 'SUPER_ADMIN': return 'Superviseur National';
+            case 'GLOBAL_ADMIN': return 'Admin Global';
+            case 'ADMIN': return 'Admin';
+            case 'REGIONAL_ADMIN': return 'Admin Régional';
+            case 'PRACTITIONER': return 'Praticien';
+            case 'OPERATOR': return 'Opérateur';
+            case 'USER': return 'Utilisateur';
+            default: return role;
+        }
+    };
+
+    const translateStatus = (status) => {
+        switch(status?.toUpperCase()) {
+            case 'ACTIVE': return 'ACTIF';
+            case 'PENDING': return 'EN ATTENTE';
+            case 'INACTIVE': return 'INACTIF';
+            default: return status || 'EN ATTENTE';
+        }
     };
 
     const fetchUsers = async () => {
@@ -108,13 +123,6 @@ const UserManagement = () => {
                             <UserPlus size={16} />
                             <EditableLabel termKey="um_btn_invite" defaultValue="Inviter un Utilisateur" />
                         </button>
-                        <button
-                            onClick={handleLogout}
-                            className="flex items-center gap-2 px-6 py-3 rounded-2xl bg-rose-50 border border-transparent text-rose-600 text-[10px] font-black uppercase tracking-[2px] italic hover:bg-rose-100 transition-all shadow-sm"
-                        >
-                            <LogOut size={16} />
-                            <EditableLabel termKey="um_btn_logout" defaultValue="Déconnexion" />
-                        </button>
                     </div>
                 </div>
 
@@ -159,7 +167,7 @@ const UserManagement = () => {
                                         <td className="p-8">
                                             <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full w-fit">
                                                 <Shield size={12} className="text-slate-500" />
-                                                <span className="text-[10px] font-black text-slate-600 uppercase italic">{user.role}</span>
+                                                <span className="text-[10px] font-black text-slate-600 uppercase italic">{translateRole(user.role)}</span>
                                             </div>
                                         </td>
                                         <td className="p-8">
@@ -172,7 +180,7 @@ const UserManagement = () => {
                                             <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest italic ${user.status === 'ACTIVE' ? 'bg-emerald-50 text-emerald-600' :
                                                     user.status === 'PENDING' ? 'bg-amber-50 text-amber-600' : 'bg-rose-50 text-rose-600'
                                                 }`}>
-                                                {user.status}
+                                                {translateStatus(user.status)}
                                             </span>
                                         </td>                                         <td className="p-8 text-right">
                                             <div className="flex items-center justify-end gap-3">

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import api from '../api';
-import { ShieldCheck, Lock, AlertTriangle, CheckCircle, Activity } from 'lucide-react';
+import { ShieldCheck, Lock, AlertTriangle, CheckCircle, Activity, Radar } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const SetPassword = () => {
@@ -55,7 +55,7 @@ const SetPassword = () => {
             >
                 <div className="flex flex-col items-center mb-12">
                      <div className="w-16 h-16 rounded-2xl bg-brand-500 flex items-center justify-center shadow-2xl shadow-brand-500/20 mb-6">
-                        <Activity size={32} className="text-white glow-brand" />
+                        <Radar size={32} className="text-white glow-brand animate-pulse" />
                     </div>
                     <h1 className="text-4xl font-black text-slate-900 tracking-tighter uppercase italic">Sentinelle</h1>
                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[5px] mt-2 italic">Activation de Compte</p>

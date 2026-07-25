@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './i18n';
 import UserDashboard from './pages/UserDashboard';
@@ -7,8 +7,8 @@ import SuperAdminDashboard from './pages/SuperAdminDashboard';
 import QuestionnaireForm from './components/QuestionnaireForm';
 import Map3D from './components/Map3D';
 import SocialLab from './pages/SocialLab';
-import IntegrityLab from './pages/IntegrityLab';
 import ComorbidityLab from './pages/ComorbidityLab';
+import CorrelationLab from './pages/CorrelationLab';
 import ClassReportPage from './pages/ClassReportPage';
 import SessionCollectionView from './pages/SessionCollectionView';
 import PractitionerGuide from './pages/PractitionerGuide';
@@ -45,11 +45,33 @@ function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      <div className="min-h-screen bg-slate-950 flex flex-col items-center justify-center gap-8">
+        {/* Branded logo */}
+        <div className="relative flex items-center justify-center">
+          {/* Outer ring */}
+          <div className="absolute w-24 h-24 rounded-full border-2 border-emerald-500/20 animate-ping" style={{ animationDuration: '2s' }} />
+          <div className="absolute w-20 h-20 rounded-full border-2 border-emerald-500/30" />
+          {/* Icon */}
+          <div className="w-14 h-14 rounded-2xl bg-emerald-500 flex items-center justify-center shadow-[0_0_40px_rgba(16,185,129,0.4)]">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M1 6l5 6 5-6 5 6 5-6" />
+              <circle cx="12" cy="18" r="2" />
+            </svg>
+          </div>
+        </div>
+        {/* Brand name */}
+        <div className="flex flex-col items-center gap-2">
+          <span className="text-white font-black text-xl uppercase tracking-[6px] italic">Sentinelle</span>
+          <span className="text-emerald-500/60 font-black text-[9px] uppercase tracking-[5px]">Initialisation du Hub Clinique...</span>
+        </div>
+        {/* Progress bar */}
+        <div className="w-48 h-0.5 bg-slate-800 rounded-full overflow-hidden">
+          <div className="h-full bg-emerald-500 rounded-full animate-[progress_1.5s_ease-in-out_infinite]" style={{ width: '60%', animation: 'pulse 1.5s ease-in-out infinite' }} />
+        </div>
       </div>
     );
   }
+
 
   const activeProfile = user;
 
@@ -60,7 +82,7 @@ function App() {
           <Route path="/" element={
             !user ? <LandingPage /> :
               (['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(user.role) ? <Navigate to="/superadmin" replace /> :
-                (['REGIONAL_ANALYST', 'ADMIN'].includes(user.role)) ? <Navigate to="/admin" replace /> :
+                (['REGIONAL_ADMIN', 'ADMIN'].includes(user.role)) ? <Navigate to="/admin" replace /> :
                   ['PRACTITIONER', 'OPERATOR'].includes(user.role) ? <Navigate to="/guide" replace /> :
                     <Navigate to="/user" replace />)
           } />
@@ -68,7 +90,7 @@ function App() {
           <Route path="/login" element={
             !user ? <Login setUser={setUser} /> :
               (['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(user.role) ? <Navigate to="/superadmin" replace /> :
-                (['REGIONAL_ANALYST', 'ADMIN'].includes(user.role)) ? <Navigate to="/admin" replace /> :
+                (['REGIONAL_ADMIN', 'ADMIN'].includes(user.role)) ? <Navigate to="/admin" replace /> :
                   ['PRACTITIONER', 'OPERATOR'].includes(user.role) ? <Navigate to="/guide" replace /> :
                     <Navigate to="/user" replace />)
           } />
@@ -77,17 +99,17 @@ function App() {
 
           {/* Standalone Dashboards */}
           <Route path="/user" element={
-            <ProtectedRoute profile={activeProfile} allowedRoles={['PRACTITIONER', 'REGIONAL_ANALYST', 'GLOBAL_ADMIN', 'SUPER_ADMIN']}>
+            <ProtectedRoute profile={activeProfile} allowedRoles={['PRACTITIONER', 'REGIONAL_ADMIN', 'GLOBAL_ADMIN', 'SUPER_ADMIN']}>
               <UserDashboard profile={activeProfile} />
             </ProtectedRoute>
           } />
           <Route path="/admin" element={
-            <ProtectedRoute profile={activeProfile} allowedRoles={['REGIONAL_ANALYST', 'ADMIN', 'GLOBAL_ADMIN', 'SUPER_ADMIN']}>
+            <ProtectedRoute profile={activeProfile} allowedRoles={['REGIONAL_ADMIN', 'ADMIN', 'GLOBAL_ADMIN', 'SUPER_ADMIN']}>
               <AdminDashboard profile={activeProfile} />
             </ProtectedRoute>
           } />
           <Route path="/admin/:regionName" element={
-            <ProtectedRoute profile={activeProfile} allowedRoles={['REGIONAL_ANALYST', 'ADMIN', 'GLOBAL_ADMIN', 'SUPER_ADMIN']}>
+            <ProtectedRoute profile={activeProfile} allowedRoles={['REGIONAL_ADMIN', 'ADMIN', 'GLOBAL_ADMIN', 'SUPER_ADMIN']}>
               <AdminDashboard profile={activeProfile} />
             </ProtectedRoute>
           } />
@@ -104,15 +126,16 @@ function App() {
             </ProtectedRoute>
           } />
 
-          <Route path="/lab/integrity" element={
-            <ProtectedRoute profile={activeProfile} allowedRoles={['SUPER_ADMIN', 'GLOBAL_ADMIN']}>
-              <IntegrityLab profile={activeProfile} />
-            </ProtectedRoute>
-          } />
 
           <Route path="/lab/comorbidity" element={
             <ProtectedRoute profile={activeProfile} allowedRoles={['SUPER_ADMIN', 'GLOBAL_ADMIN']}>
               <ComorbidityLab profile={activeProfile} />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/lab/correlation" element={
+            <ProtectedRoute profile={activeProfile} allowedRoles={['SUPER_ADMIN', 'GLOBAL_ADMIN']}>
+              <CorrelationLab profile={activeProfile} />
             </ProtectedRoute>
           } />
 
@@ -126,7 +149,11 @@ function App() {
           <Route path="/questionnaire" element={<QuestionnaireForm />} />
           <Route path="/map" element={<Map3D />} />
           <Route path="/qr" element={<QRCodePage />} />
-          <Route path="/scan" element={<ScanPage />} />
+          <Route path="/scan" element={
+            <ProtectedRoute profile={activeProfile} allowedRoles={['SUPER_ADMIN', 'GLOBAL_ADMIN', 'PRACTITIONER', 'OPERATOR']}>
+              <ScanPage />
+            </ProtectedRoute>
+          } />
           <Route path="/class-report" element={<ClassReportPage />} />
           <Route path="/session/:reportId/collect" element={<SessionCollectionView />} />
           <Route path="/guide" element={

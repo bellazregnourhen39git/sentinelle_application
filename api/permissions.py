@@ -1,4 +1,4 @@
-from rest_framework import permissions
+﻿from rest_framework import permissions
 
 class IsSuperAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -28,7 +28,7 @@ class ScopePermission(permissions.BasePermission):
         if user.role in ['SUPER_ADMIN', 'GLOBAL_ADMIN']:
             return True
         
-        if user.role == 'REGIONAL_ANALYST':
+        if user.role == 'REGIONAL_ADMIN':
             return obj.governorate == user.governorate
             
         if user.role == 'PRACTITIONER':

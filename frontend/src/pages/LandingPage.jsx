@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { ShieldCheck, Activity, Globe, Lock, ArrowRight, AlertTriangle, Database, Eye, Zap, Users, FileText } from 'lucide-react';
+import { ShieldCheck, Activity, Globe, Lock, ArrowRight, AlertTriangle, Database, Eye, Zap, Users, FileText, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const STATS = [
     { value: '24', label: 'Gouvernorats Couverts', sub: 'Couverture Nationale Totale' },
-    { value: '5', label: 'Substances Surveillées', sub: 'Protocole MedSPAD-4' },
-    { value: '3', label: 'Niveaux d\'Accès', sub: 'Architecture RBAC Sécurisée' },
-    { value: '99.8%', label: 'Disponibilité Système', sub: 'SLA Institutionnel' },
+    { value: '26', label: 'Sections de Questionnaire', sub: 'Sections A à Z — MedSPAD-4' },
+    { value: '5', label: 'Rôles d\'Accès', sub: 'RBAC Multi-Niveaux' },
+    { value: '10', label: 'Substances Surveillées', sub: 'Tabac, Alcool, Cannabis et +' },
 ];
 
 const FEATURES = [
@@ -17,19 +17,14 @@ const FEATURES = [
         desc: 'Agrégation sécurisée des questionnaires MedSPAD-4 à travers les 24 gouvernorats de la République.',
     },
     {
-        icon: Activity,
+        icon: TrendingUp,
         title: 'Analytique Temps Réel',
-        desc: 'Moteurs d\'intelligence embarqués produisant des analyses de prévalence, comorbidité et intégrité.',
-    },
-    {
-        icon: Eye,
-        title: 'Audit d\'Intégrité',
-        desc: 'Protocole forensique à 3 couches détectant les anomalies de déclaration dans chaque dossier soumis.',
+        desc: 'Moteurs d\'intelligence embarqués produisant des analyses de prévalence et de comorbidité .',
     },
     {
         icon: Users,
         title: 'Contrôle d\'Accès',
-        desc: 'Architecture RBAC multi-niveaux : Praticien, Analyste Régional, Administration Nationale.',
+        desc: 'Architecture RBAC multi-niveaux : Praticien, Admin Régional, Administration Nationale.',
     },
     {
         icon: Globe,
@@ -63,7 +58,7 @@ const Counter = ({ target }) => {
 const LandingPage = () => {
     const navigate = useNavigate();
     const { scrollY } = useScroll();
-    
+
     // 🎥 Creative Animation Transforms
     const titleScale = useTransform(scrollY, [0, 500], [1, 1.1]);
     const titleLetterSpacing = useTransform(scrollY, [0, 500], ["-0.05em", "0.2em"]);
@@ -87,10 +82,6 @@ const LandingPage = () => {
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="hidden md:flex items-center gap-2 px-4 py-2 rounded-full bg-slate-50 border border-slate-200">
-                        <div className="w-1.5 h-1.5 rounded-full bg-brand-500 animate-pulse" />
-                        <span className="text-[9px] font-black text-slate-500 uppercase tracking-[2px]">Système Opérationnel</span>
-                    </div>
                     <button
                         onClick={() => navigate('/login')}
                         className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-brand-500 text-white text-[10px] font-black uppercase tracking-[2px] hover:bg-brand-600 transition-all shadow-lg shadow-brand-500/20 hover:shadow-brand-500/40"
@@ -103,19 +94,19 @@ const LandingPage = () => {
 
             {/* ── HERO IMAGE SECTION (Creative Parallax) ── */}
             <section className="relative w-full pt-20 z-0 overflow-hidden">
-                <motion.div 
+                <motion.div
                     style={{ scale: imageScale, y: imageY }}
                     className="w-full h-[500px] md:h-[700px] relative"
                 >
-                    <img 
-                        src="/hero-banner.png" 
-                        alt="Sentinelle Health Surveillance" 
+                    <img
+                        src="/hero-banner.png"
+                        alt="Sentinelle Health Surveillance"
                         className="w-full h-full object-cover"
                     />
                     {/* Surveillance Overlay Grid */}
                     <div className="absolute inset-0 opacity-[0.05] pointer-events-none"
-                         style={{ backgroundImage: 'radial-gradient(circle, #0ea5e9 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
-                    
+                        style={{ backgroundImage: 'radial-gradient(circle, #0ea5e9 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
+
                     <div className="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent" />
                     <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent" />
                 </motion.div>
@@ -125,10 +116,10 @@ const LandingPage = () => {
             <section className="relative py-32 flex items-center justify-center z-10 -mt-32">
                 <div className="relative text-center max-w-6xl mx-auto px-6">
                     {/* Badge */}
-                    <motion.div 
+                    <motion.div
                         style={{ y: badgeY }}
-                        initial={{ opacity: 0, scale: 0.9 }} 
-                        animate={{ opacity: 1, scale: 1 }} 
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.8 }}
                         className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full border border-brand-200 bg-brand-50 mb-12 shadow-sm"
                     >
@@ -139,8 +130,8 @@ const LandingPage = () => {
 
                     {/* Headline with Creative Focus Animation */}
                     <motion.div
-                        style={{ 
-                            scale: titleScale, 
+                        style={{
+                            scale: titleScale,
                             letterSpacing: titleLetterSpacing,
                             opacity: titleOpacity
                         }}
