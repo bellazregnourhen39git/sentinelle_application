@@ -45,7 +45,6 @@ class SecureTokenObtainPairView(TokenObtainPairView):
     throttle_scope = 'login'
 
     def post(self, request, *args, **kwargs):
-        _ensure_default_users_exist()
         response = super().post(request, *args, **kwargs)
         client_ip = request.META.get('REMOTE_ADDR')
         identifier = request.data.get('email') or request.data.get('username')
