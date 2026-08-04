@@ -9,7 +9,8 @@ import {
     Users,
     Calendar,
     MapPin,
-    Search
+    Search,
+    Pencil
 } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import api from '../api';
@@ -74,6 +75,13 @@ const SessionCollectionView = () => {
                     </div>
 
                     <div className="flex items-center gap-3">
+                        <button 
+                            onClick={() => navigate(`/class-report?edit=${reportId}`)}
+                            className="flex items-center gap-2 px-5 py-3 bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 border border-amber-500/30 font-black text-xs uppercase tracking-widest rounded-xl transition-all"
+                            title="Modifier ce rapport de classe"
+                        >
+                            <Pencil size={18} /> Éditer le Rapport
+                        </button>
                         <button 
                             onClick={() => navigate(`/scan?report_id=${reportId}`)}
                             className="flex items-center gap-2 px-6 py-3 bg-brand-600 hover:bg-brand-500 text-white font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-lg shadow-brand-500/20"

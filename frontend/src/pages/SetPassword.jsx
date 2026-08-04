@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { useSearchParams } from 'react-router-dom';
 import api from '../api';
 import { ShieldCheck, Lock, AlertTriangle, CheckCircle, Activity, Radar } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const SetPassword = () => {
     const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
     const token = searchParams.get('token');
     
     const [password, setPassword] = useState('');
@@ -38,7 +37,10 @@ const SetPassword = () => {
         try {
             await api.post('auth/activate/', { token, password });
             setSuccess(true);
-            setTimeout(() => navigate('/'), 3000);
+            localStorage.removeItem('user');
+            localStorage.removeItem('access');
+            localStorage.removeItem('refresh');
+            setTimeout(() => window.location.replace('/login'), 3000);
         } catch (err) {
             setError(err.response?.data?.detail || "Une erreur est survenue lors de l'activation.");
         } finally {

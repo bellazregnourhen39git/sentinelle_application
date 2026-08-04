@@ -14,10 +14,28 @@ const LocationSelectionModal = ({ isOpen, onClose, onConfirm, isRTL = false }) =
 
     useEffect(() => {
         if (isOpen) {
-            api.get('geography/governorates/').then(res => setGovernorates(res.data)).catch(console.error);
-            api.get('geography/establishments/').then(res => setEstablishments(res.data)).catch(console.error);
+            api.get('geography/governorates/').then(res => {
+                const list = Array.isArray(res.data) ? res.data : (res.data?.results || []);
+                setGovernorates(list);
+            }).catch(console.error);
         }
     }, [isOpen]);
+
+    useEffect(() => {
+        if (isOpen) {
+            if (govId) {
+                api.get(`geography/establishments/?governorate_id=${govId}`).then(res => {
+                    const list = Array.isArray(res.data) ? res.data : (res.data?.results || []);
+                    setEstablishments(list);
+                }).catch(console.error);
+            } else {
+                api.get('geography/establishments/').then(res => {
+                    const list = Array.isArray(res.data) ? res.data : (res.data?.results || []);
+                    setEstablishments(list);
+                }).catch(console.error);
+            }
+        }
+    }, [isOpen, govId]);
 
     const handleEstablishmentChange = (e) => {
         const val = e.target.value;
@@ -29,7 +47,10 @@ const LocationSelectionModal = ({ isOpen, onClose, onConfirm, isRTL = false }) =
                 est.name.toLowerCase().includes(val.toLowerCase())
             );
             if (govId) {
-                filtered = filtered.filter(est => est.governorate == govId);
+                filtered = filtered.filter(est => {
+                    const estGov = typeof est.governorate === 'object' ? est.governorate?.id : est.governorate;
+                    return String(estGov) === String(govId) || String(est.governorate_id) === String(govId);
+                });
             }
             setSuggestions(filtered.slice(0, 5));
         } else {
@@ -40,7 +61,8 @@ const LocationSelectionModal = ({ isOpen, onClose, onConfirm, isRTL = false }) =
     const selectSuggestion = (est) => {
         setEstId(est.id);
         setEstSearch(est.name);
-        setGovId(est.governorate);
+        const estGov = typeof est.governorate === 'object' ? est.governorate?.id : (est.governorate || est.governorate_id);
+        if (estGov) setGovId(estGov);
         setSuggestions([]);
     };
 

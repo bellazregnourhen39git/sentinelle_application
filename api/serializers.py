@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model, authenticate
 from django.db.models import Q
 from datetime import timedelta
 from rest_framework import serializers
-from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.utils import timezone
 from .models import (
     Governorate, SchoolEstablishment, SchoolClass,
@@ -11,7 +11,7 @@ from .models import (
     SectionG, SectionH, SectionI, SectionJ, SectionK,
     SectionL, SectionM, SectionN, SectionP, SectionQ,
     SectionR, SectionS, SectionT, SectionU, SectionV, SectionZ,
-    PlatformTerminology, DynamicQuestion, ClassReport
+    PlatformTerminology, DynamicQuestion, ClassReport, DynamicClassReportField
 )
 
 User = get_user_model()
@@ -52,41 +52,53 @@ class ActivateUserSerializer(serializers.Serializer):
 
 
 
-class SecureTokenObtainPairSerializer(TokenObtainPairSerializer):
+class SecureTokenObtainPairSerializer(serializers.Serializer):
+    username = serializers.CharField(required=False, allow_blank=True, write_only=True)
+    email = serializers.EmailField(required=False, allow_blank=True, write_only=True)
+    password = serializers.CharField(trim_whitespace=False, write_only=True)
+    access = serializers.CharField(read_only=True)
+    refresh = serializers.CharField(read_only=True)
+
     def validate(self, attrs):
-        email = attrs.get('email') or attrs.get('username')
-        user = User.objects.filter(Q(email=email) | Q(username=email)).first()
+        identifier = attrs.get('email') or attrs.get('username')
+        password = attrs.get('password')
+        if not identifier or not password:
+            raise serializers.ValidationError({"detail": "Veuillez fournir un email ou un nom d'utilisateur et un mot de passe."})
 
-        if user:
-            lockout_duration = timedelta(minutes=30)
-            if user.status == 'DISABLED' and user.last_login_attempt:
-                if timezone.now() - user.last_login_attempt > lockout_duration:
-                    user.status = 'ACTIVE'
-                    user.failed_attempts = 0
-                    user.save()
+        user = User.objects.filter(Q(email=identifier) | Q(username=identifier)).first()
 
-            if user.status == 'DISABLED':
-                raise serializers.ValidationError({"detail": "Votre compte est bloqué suite à trop de tentatives. Contactez un administrateur."})
-            
-            # Ensure we pass the actual email to SimpleJWT/authenticate
-            attrs[User.USERNAME_FIELD] = user.email
+        if not user:
+            raise serializers.ValidationError({"detail": "Cet utilisateur n'existe pas."})
 
-        try:
-            data = super().validate(attrs)
-            # Reset on success
-            if user:
+        lockout_duration = timedelta(minutes=30)
+        if user.status == 'DISABLED' and user.last_login_attempt:
+            if timezone.now() - user.last_login_attempt > lockout_duration:
+                user.status = 'ACTIVE'
                 user.failed_attempts = 0
-                user.last_login_attempt = timezone.now()
                 user.save()
-            return data
-        except Exception as e:
-            if user:
-                user.failed_attempts += 1
-                user.last_login_attempt = timezone.now()
-                if user.failed_attempts >= 5:
-                    user.status = 'DISABLED'
-                user.save()
-            raise e
+
+        if user.status == 'DISABLED':
+            raise serializers.ValidationError({"detail": "Votre compte est bloqué suite à trop de tentatives. Contactez un administrateur."})
+
+        authenticated_user = authenticate(**{User.USERNAME_FIELD: user.email}, password=password)
+
+        if not authenticated_user:
+            user.failed_attempts += 1
+            user.last_login_attempt = timezone.now()
+            if user.failed_attempts >= 5:
+                user.status = 'DISABLED'
+            user.save()
+            raise serializers.ValidationError({"detail": "Mot de passe incorrect."})
+
+        user.failed_attempts = 0
+        user.last_login_attempt = timezone.now()
+        user.save()
+
+        refresh = RefreshToken.for_user(authenticated_user)
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -141,6 +153,12 @@ class SchoolClassSerializer(serializers.ModelSerializer):
 class DynamicQuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = DynamicQuestion
+        fields = '__all__'
+
+
+class DynamicClassReportFieldSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DynamicClassReportField
         fields = '__all__'
 
 
@@ -370,8 +388,15 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
         write_only=True,
         required=False,
     )
+    establishment = serializers.PrimaryKeyRelatedField(
+        queryset=SchoolEstablishment.objects.all(),
+        source='school',
+        write_only=True,
+        required=False,
+        allow_null=True,
+    )
 
-    section_a = SectionASerializer(required=True)
+    section_a = SectionASerializer(required=False)
     section_b = SectionBSerializer(required=False)
     section_c = SectionCSerializer(required=False)
     section_d = SectionDSerializer(required=False)
@@ -394,8 +419,22 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
     section_z = SectionZSerializer(required=False)
     
     extra_answers = serializers.JSONField(required=False, default=dict)
+    answers = serializers.JSONField(required=False, write_only=True, allow_null=True)
 
     def validate(self, validated_data):
+        initial_data = self.initial_data or {}
+
+        if 'school' not in validated_data:
+            if initial_data.get('school_id') is not None:
+                validated_data['school'] = SchoolEstablishment.objects.filter(pk=initial_data['school_id']).first()
+            elif initial_data.get('establishment') is not None:
+                validated_data['school'] = SchoolEstablishment.objects.filter(pk=initial_data['establishment']).first()
+
+        if 'governorate' not in validated_data:
+            governorate_value = initial_data.get('governorate_id') or initial_data.get('governorate')
+            if governorate_value is not None:
+                validated_data['governorate'] = Governorate.objects.filter(pk=governorate_value).first()
+
         school_class = validated_data.get('school_class')
         class_report = validated_data.get('class_report')
         school = validated_data.get('school')
@@ -415,6 +454,9 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
         if school and not governorate and school.governorate:
             validated_data['governorate'] = school.governorate
 
+        if 'answers' in initial_data and 'extra_answers' not in validated_data:
+            validated_data['extra_answers'] = initial_data.get('answers', {})
+
         if not validated_data.get('school') or not validated_data.get('governorate'):
             raise serializers.ValidationError({
                 'school': 'School/establishment must be provided.',
@@ -426,7 +468,8 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuestionnaireSession
         fields = [
-            'id', 'school_class', 'class_report', 'school', 'governorate', 'language_used', 'created_at',
+            'id', 'school_class', 'class_report', 'school', 'school_id', 'establishment', 'governorate', 'governorate_id',
+            'language_used', 'created_at',
             'tobacco_user', 'ecig_user', 'hookah_user', 'alcohol_user', 'tranquilizer_user',
             'cannabis_user', 'cocaine_user', 'ecstasy_user', 'heroin_user', 'inhalant_user',
             'has_risk_behavior', 'is_valid', 'exclusion_reason',
@@ -434,7 +477,7 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
             'section_g', 'section_h', 'section_i', 'section_j', 'section_k',
             'section_l', 'section_m', 'section_n', 'section_p', 'section_q',
             'section_r', 'section_s', 'section_t', 'section_u', 'section_v', 'section_z',
-            'extra_answers'
+            'extra_answers', 'answers'
         ]
         read_only_fields = (
             'id', 'created_at', 'school', 'governorate',
@@ -516,10 +559,14 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
                 
             birth_year = section_a_data.get('birth_year')
             if birth_year:
-                age = 2026 - birth_year
-                if age < 15 or age > 18:
-                    is_valid = False
-                    exclusion_reasons.append(f"Âge hors limites ({age} ans)")
+                try:
+                    birth_year_int = int(birth_year)
+                    age = 2026 - birth_year_int
+                    if age < 15 or age > 18:
+                        is_valid = False
+                        exclusion_reasons.append(f"Âge hors limites ({age} ans)")
+                except (ValueError, TypeError):
+                    pass
             
             instance.is_valid = is_valid
             instance.exclusion_reason = " | ".join(exclusion_reasons) if not is_valid else None
@@ -605,11 +652,14 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
             # 2. Age < 15 or > 18
             birth_year = section_a_data.get('birth_year')
             if birth_year:
-                # Calculating age based on current reference year (e.g. 2026)
-                age = 2026 - birth_year
-                if age < 15 or age > 18:
-                    is_valid = False
-                    exclusion_reasons.append(f"Âge hors limites ({age} ans)")
+                try:
+                    birth_year_int = int(birth_year)
+                    age = 2026 - birth_year_int
+                    if age < 15 or age > 18:
+                        is_valid = False
+                        exclusion_reasons.append(f"Âge hors limites ({age} ans)")
+                except (ValueError, TypeError):
+                    pass
             
             # 3. Taux de valeurs manquantes par questionnaire > 50%
             total_fields = 0
@@ -627,7 +677,7 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
             # 4. Consommation de substance fictive (Section P / Question piège)
             section_p_data = sections_data.get('section_p') or {}
             fictive_substance = section_p_data.get('fictive_substance_consumption')
-            if fictive_substance == '1': # '1' is 'Oui' in YES_NO
+            if fictive_substance in ['1', 'yes', True]: # '1' or 'yes' is 'Oui' in YES_NO
                 is_valid = False
                 exclusion_reasons.append("Consommation de substance fictive déclarée (Question piège)")
 
@@ -635,11 +685,12 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
             if 'class_report' in validated_data and validated_data['class_report']:
                 report = validated_data['class_report']
                 if not validated_data.get('school'):
-                    validated_data['school'] = report.school
+                    validated_data['school'] = report.establishment
                 if not validated_data.get('governorate'):
                     validated_data['governorate'] = report.governorate
 
             extra_answers = validated_data.pop('extra_answers', {})
+            validated_data.pop('answers', None)
             session = QuestionnaireSession.objects.create(
                 **validated_data,
                 tobacco_user=tobacco_user,

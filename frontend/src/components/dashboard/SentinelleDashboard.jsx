@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+void motion;
 import {
-    Activity, Radar, Zap, ArrowRight, Info, AlertTriangle, ShieldCheck,
+    Activity, Zap, ArrowRight, ArrowLeft, Info, AlertTriangle, ShieldCheck,
     Layers, Search, LogOut, User, Smartphone, Scan, Bell, CheckCircle, XCircle,
-    Mail, Phone, MapPin, FileText, QrCode, Users, Pencil, Database, ClipboardList, FileSpreadsheet, Menu, ChevronDown, BookOpen,
-    FlaskConical, Award, ShieldAlert
+    Mail, Phone, MapPin, FileText, QrCode, Users, Pencil, Edit3, Database, ClipboardList, FileSpreadsheet, Menu, ChevronDown, BookOpen
 } from 'lucide-react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../../api';
 import RadialSectionWheel from './RadialSectionWheel';
 import SectionDetailPanel from './SectionDetailPanel';
@@ -16,13 +16,7 @@ import EditableLabel from './EditableLabel';
 import { useTerminology } from '../../TerminologyContext';
 import { SocialInlet, CompetitiveMatrix, NationalHeatList, ExpertAudit, ComorbiditySpectrum, RankingsLabInlet } from './IntelligenceInlets';
 import RegionalProfilePanel from './RegionalProfilePanel';
-import CorrelationEngine from './CorrelationEngine';
-
-// Helper function to remove "Gouvernorat de " from labels
-const cleanGovernoratLabel = (label) => {
-    if (!label) return '';
-    return label.split('Gouvernorat de ').pop() || label;
-};
+import { isNationalAdminRole, isSuperAdminRole, isPractitionerRole } from '../../utils/roles';
 
 const NationalVigilancePanel = ({ metrics, activeSection }) => {
     const { t_dyn } = useTerminology();
@@ -40,78 +34,65 @@ const NationalVigilancePanel = ({ metrics, activeSection }) => {
         'L': t_dyn('section_wheel_L', 'Héroïne'),
         'M': t_dyn('section_wheel_M', 'Inhalants')
     };
-    const activeLabel = sectionNames[activeSection] || 'Global';
+    const activeLabel = sectionNames[activeSection] || 'GLOBAL';
 
     return (
         <motion.div
             variants={{ hidden: { opacity: 0, y: 24 }, show: { opacity: 1, y: 0, transition: { staggerChildren: 0.05, delayChildren: 0.1 } } }}
             initial="hidden"
             animate="show"
-            className="pro-card p-10 md:p-14 rounded-[56px] mb-12 border border-white shadow-[0_40px_100px_-20px_rgba(15,23,42,0.1)] bg-white/70 backdrop-blur-3xl relative overflow-hidden group"
+            className="pro-card p-7 md:p-9 rounded-[40px] mb-6 border border-slate-100 shadow-[0_20px_60px_-15px_rgba(15,23,42,0.06)] bg-white relative overflow-hidden group"
         >
-            <div className="absolute inset-0 bg-gradient-to-br from-white/60 to-transparent pointer-events-none z-0" />
-            <motion.div
-                animate={{ rotate: 360 }}
-                transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                className="absolute top-1/2 left-1/2 w-[150%] h-[150%] pointer-events-none origin-bottom-right z-0 mix-blend-multiply opacity-[0.03]"
-                style={{
-                    background: 'conic-gradient(from 0deg, transparent 70%, rgba(16,185,129,0.2) 95%, rgba(16,185,129,0.8) 100%)',
-                    transform: 'translate(-50%, -50%)',
-                }}
-            />
-            <motion.div
-                animate={{ y: ['-100%', '200%'] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                className="absolute left-0 right-0 h-[2px] bg-brand-500 shadow-[0_0_15px_rgba(16,185,129,0.4)] pointer-events-none z-0 opacity-20"
-            />
-
-            <div className="absolute inset-0 bg-[url(/noise.png)] opacity-[0.02] mix-blend-overlay pointer-events-none z-0" />
-
-            <div className="relative z-10 flex items-center justify-between mb-12">
+            <div className="relative z-10 flex items-center justify-between mb-8 pb-5 border-b border-slate-100/60">
                 <div>
-                    <div className="flex items-center gap-3 mb-2">
-                        <div className="w-2.5 h-2.5 rounded-full bg-brand-500 animate-pulse shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-                        <h3 className="text-2xl font-black text-slate-900 italic uppercase tracking-widest drop-shadow-sm"><EditableLabel termKey="dash_matrice" defaultValue="Matrice de Scanning" /></h3>
+                    <div className="flex items-center gap-3 mb-1.5">
+                        <div className="w-2.5 h-2.5 rounded-full bg-sky-400 shadow-[0_0_10px_rgba(56,189,248,0.6)]" />
+                        <h3 className="text-2xl md:text-3xl font-black text-slate-900 italic uppercase tracking-wider">
+                            <EditableLabel termKey="dash_matrice" defaultValue="Matrice de Scanning" />
+                        </h3>
                     </div>
-                    <p className="text-[11px] font-black text-slate-400 uppercase tracking-[4px] italic">
+                    <p className="text-[10px] md:text-[11px] font-black text-slate-400 uppercase tracking-[3px] italic">
                         <EditableLabel termKey="dash_surveillance" defaultValue="Surveillance" /> {activeLabel} : <EditableLabel termKey="dash_points_fixation" defaultValue="Points de Fixation Sécuritaires" />
                     </p>
                 </div>
                 <div className="flex items-center gap-4">
-                    <div className="px-5 py-2.5 bg-slate-900 border border-slate-700 rounded-full text-[10px] font-black text-white uppercase tracking-[2px] italic shadow-[0_0_15px_rgba(15,23,42,0.1)] flex items-center gap-2">
-                        <Activity size={12} className="text-brand-400 animate-pulse" />
+                    <div className="px-5 py-2 bg-slate-900 border border-slate-800 rounded-full text-[10px] font-black text-white uppercase tracking-[2px] italic shadow-sm flex items-center gap-2">
+                        <Activity size={12} className="text-sky-400 animate-pulse" />
                         {metrics.length} <EditableLabel termKey="dash_zones" defaultValue="ZONES ANALYSÉES" />
                     </div>
                 </div>
             </div>
 
-            <div className="flex gap-6 overflow-x-auto pb-4 relative z-10 snap-x" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', scrollbarHeight: 'none' }}>
+            <style>{`.hide-scrollbar::-webkit-scrollbar { display: none; }`}</style>
+            <div className="flex gap-5 overflow-x-auto pb-2 relative z-10 snap-x hide-scrollbar" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {metrics.map((reg) => {
                     const prevalence = reg.prevalence || 0;
-                    const isHigh = prevalence > 25;
-                    const isMed = prevalence > 15;
 
                     return (
-                        <motion.div key={reg.id} variants={{ hidden: { opacity: 0, scale: 0.9 }, show: { opacity: 1, scale: 1 } }} className="w-[180px] shrink-0 snap-start relative group p-6 rounded-[32px] bg-white border border-slate-100 flex flex-col gap-4 transition-all duration-500 hover:bg-slate-900 hover:border-slate-800 hover:-translate-y-1 hover:shadow-2xl overflow-hidden shadow-sm">
+                        <motion.div 
+                            key={reg.id} 
+                            variants={{ hidden: { opacity: 0, scale: 0.9 }, show: { opacity: 1, scale: 1 } }} 
+                            className="w-[190px] shrink-0 snap-start relative group p-6 rounded-[28px] bg-white border border-slate-100 flex flex-col justify-between gap-4 transition-all duration-300 hover:shadow-md hover:border-slate-200 shadow-[0_2px_12px_rgba(15,23,42,0.03)]"
+                        >
                             <div className="flex items-center justify-between relative z-10">
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-[2px] break-words group-hover:text-slate-300 transition-colors">{reg.name}</span>
-                                <div className={`w-2 h-2 rounded-full shrink-0 transition-colors duration-500 ${isHigh ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)] animate-pulse group-hover:bg-rose-400' : isMed ? 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.4)] group-hover:bg-amber-400' : 'bg-brand-500 shadow-[0_0_8px_rgba(16,185,129,0.4)] group-hover:bg-brand-400'}`} />
+                                <span className="text-[10px] font-black text-slate-300 uppercase tracking-[2px] truncate">{reg.name}</span>
+                                <div className="w-2.5 h-2.5 rounded-full bg-rose-400 shadow-[0_0_8px_rgba(244,63,94,0.5)] shrink-0" />
                             </div>
 
-                            <div className="relative z-10">
-                                <p className={`text-2xl font-black italic tracking-tighter mb-2 transition-colors duration-500 ${isHigh ? 'text-rose-600 group-hover:text-rose-400' : 'text-slate-900 group-hover:text-white'} group-hover:scale-105 transition-transform origin-left`} title={`${prevalence}%`}>
+                            <div className="relative z-10 my-1">
+                                <p className="text-3xl font-black italic tracking-tight text-rose-500 mb-2">
                                     {prevalence}%
                                 </p>
-                                <div className="w-full h-1 bg-slate-100 group-hover:bg-slate-800 transition-colors duration-500 rounded-full overflow-hidden">
+                                <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden">
                                     <motion.div
                                         initial={{ width: 0 }}
-                                        animate={{ width: `${prevalence}%` }}
-                                        className={`h-full ${isHigh ? 'bg-rose-500' : isMed ? 'bg-amber-500' : 'bg-brand-500'}`}
+                                        animate={{ width: `${Math.min(prevalence, 100)}%` }}
+                                        className="h-full bg-rose-500 rounded-full"
                                     />
                                 </div>
                             </div>
 
-                            <div className="flex items-center text-[9px] font-black text-slate-400 uppercase tracking-widest italic relative z-10 group-hover:text-slate-500 transition-colors">
+                            <div className="flex items-center text-[9px] font-black text-slate-400 uppercase tracking-widest italic relative z-10">
                                 <span>VOL. {reg.dossiers}</span>
                             </div>
                         </motion.div>
@@ -122,8 +103,10 @@ const NationalVigilancePanel = ({ metrics, activeSection }) => {
     );
 };
 
-const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin }) => {
+
+const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin, activeScope, activeScopeId }) => {
     const { t_dyn } = useTerminology();
+    const navigate = useNavigate();
     if (!data) return null;
     const { headline, kpis } = data;
 
@@ -151,6 +134,7 @@ const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin 
         'Z': t_dyn('section_wheel_Z', 'Intégrité')
     };
     const activeLabel = sectionNames[activeSection] || 'Global';
+    const isRegionalGov = headline?.scope_label && (headline.scope_label.includes('Gouvernorat') || headline.scope_label.includes('Lycée'));
 
     return (
         <motion.div
@@ -159,41 +143,51 @@ const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin 
             animate="show"
             className="flex flex-col gap-10"
         >
-<<<<<<< HEAD
             {/* 🔬 Regional Identity Header */}
-            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } } }} className="p-10 md:p-14 rounded-[56px] border border-slate-200 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.05)] relative overflow-hidden group bg-gradient-to-b from-white/90 to-slate-50/90 backdrop-blur-3xl text-slate-900">
-=======
-            <div className="p-10 md:p-14 rounded-[56px] border border-slate-200 shadow-[0_20px_40px_-15px_rgba(15,23,42,0.05)] relative overflow-hidden group bg-gradient-to-b from-white/90 to-slate-50/90 backdrop-blur-3xl text-slate-900">
->>>>>>> 76626e5 (Mise à jour de la plateforme Sentinelle)
-                <div className="absolute top-0 right-0 w-full h-[60vh] bg-gradient-to-br from-brand-100/50 to-transparent pointer-events-none mix-blend-multiply rounded-full blur-[100px]" />
-                <div className="absolute top-0 right-0 p-10 opacity-[0.04] group-hover:opacity-[0.08] transition-opacity duration-700 pointer-events-none scale-150 -translate-y-10 translate-x-10">
-                    <Radar size={240} strokeWidth={1} className="text-brand-600 animate-spin" style={{ animationDuration: '60s' }} />
+            <motion.div 
+                variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } } }} 
+                className="p-6 md:p-8 rounded-3xl border border-slate-800 shadow-2xl relative overflow-hidden group bg-gradient-to-br from-slate-900 via-slate-900 to-brand-950 text-white"
+            >
+                <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-to-br from-brand-500/10 to-transparent pointer-events-none rounded-full blur-3xl z-0" />
+                <div className="absolute top-0 right-0 p-6 opacity-[0.06] group-hover:opacity-[0.1] transition-opacity duration-700 pointer-events-none scale-110 -translate-y-4 translate-x-4">
+                    <Activity size={180} strokeWidth={1.5} className="text-brand-400" />
                 </div>
                 <div className="relative z-10">
-                    <div className="flex items-center gap-8 mb-10">
-                        <div className="flex bg-white rounded-2xl p-1.5 border border-slate-100 shadow-sm">
-                            <button className="px-8 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-[4px] bg-brand-500 text-white shadow-xl shadow-brand-500/20 italic hover:bg-brand-600 transition-colors">
-                                {activeSection ? <><EditableLabel termKey="dash_critere" defaultValue="Critère :" /> {sectionNames[activeSection]}</> : <EditableLabel termKey="dash_veille" defaultValue="Veille Active" />}
-                            </button>
+                    <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+                        <div className="flex items-center gap-6">
+                            <div className="flex bg-slate-800/50 rounded-xl p-1 border border-slate-700/50 shadow-sm backdrop-blur-md">
+                                <button className="px-5 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-[3px] bg-brand-500 text-white shadow-lg shadow-brand-500/20 italic hover:bg-brand-600 transition-colors">
+                                    {activeSection ? <><EditableLabel termKey="dash_critere" defaultValue="Critère :" /> {sectionNames[activeSection]}</> : <EditableLabel termKey="dash_veille" defaultValue="Veille Active" />}
+                                </button>
+                            </div>
+                            <div className="h-[1px] w-12 bg-slate-700" />
+                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[4px] italic opacity-90"><EditableLabel termKey="dash_medspad" defaultValue="Medspad 2026" /></span>
                         </div>
-                        <div className="h-[2px] w-16 bg-slate-200" />
-                        <span className="text-[11px] font-black text-slate-400 uppercase tracking-[6px] italic opacity-80"><EditableLabel termKey="dash_medspad" defaultValue="Medspad 2026" /></span>
+                        
+                        {(isRegionalGov || window.location.search.includes('gouvernorat=')) && (
+                            <button
+                                onClick={() => navigate('/superadmin')}
+                                className="flex items-center gap-2.5 px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[2px] bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500 hover:text-white transition-all italic shadow-lg cursor-pointer"
+                            >
+                                <ArrowLeft size={14} /> <EditableLabel termKey="dash_back_nat" defaultValue="RETOUR VUE NATIONALE" />
+                            </button>
+                        )}
                     </div>
-                    <h1 className="text-6xl font-black text-slate-800 tracking-tighter uppercase italic leading-none mb-10">
+                    <h1 className="text-3xl md:text-4xl font-black text-white tracking-tight uppercase italic leading-none mb-6">
                         {headline?.scope_label ? (
-                            <div className="flex flex-wrap items-center gap-x-4">
+                            <div className="flex flex-wrap items-center gap-x-3">
                                 <EditableLabel termKey="dash_synth_gov" defaultValue="Synthèse :" /> 
                                 <EditableLabel 
                                     termKey={`dash_scope_${headline.scope_label}`} 
-                                    defaultValue={cleanGovernoratLabel(headline.scope_label)}
+                                    defaultValue={headline.scope_label.replace('Gouvernorat de ', '')} 
                                 />
                             </div>
                         ) : (
                             <EditableLabel termKey="dash_synth_glob" defaultValue="Synthèse Globale" />
                         )} 
-                        <span className="text-brand-600 ml-4">{activeLabel === 'Global' ? '' : activeLabel}</span>
+                        <span className="text-brand-400 ml-4">{activeLabel === 'Global' ? '' : activeLabel}</span>
                     </h1>
-                    <p className="text-[15px] text-slate-500 font-bold italic max-w-2xl leading-relaxed opacity-90">
+                    <p className="text-xs md:text-sm text-slate-300 font-medium italic max-w-2xl leading-relaxed opacity-90">
                         {activeSection
                             ? <><EditableLabel termKey="dash_analyse" defaultValue="Analyse des données collectées concernant la prévalence :" /> {sectionNames[activeSection]}.</>
                             : <EditableLabel termKey="dash_surv_consolid" defaultValue="Surveillance et synthèse consolidée des enquêtes MEDSPAD." />}
@@ -201,88 +195,77 @@ const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin 
                 </div>
             </motion.div>
 
-<<<<<<< HEAD
-            {/* 📊 High-Density KPI Grid */}
-            <motion.div variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } }} className="grid grid-cols-1 md:grid-cols-3 gap-8">
-=======
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
->>>>>>> 76626e5 (Mise à jour de la plateforme Sentinelle)
+            <motion.div variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } }} className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {kpis?.map((kpi, idx) => (
-                    <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} key={idx} className="pro-card p-10 rounded-[48px] group transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_40px_100px_-20px_rgba(15,23,42,0.12)] bg-white/70 backdrop-blur-3xl border border-white shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] relative overflow-hidden">
+                    <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} key={idx} className="pro-card p-7 rounded-[36px] group transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_40px_100px_-20px_rgba(15,23,42,0.12)] bg-white/70 backdrop-blur-3xl border border-white shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/5 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
-                        <div className="flex items-center justify-between mb-6 relative z-10">
+                        <div className="flex items-center justify-between mb-4 relative z-10">
                             <p className="text-[11px] font-black text-slate-400 uppercase tracking-[3px] group-hover:text-brand-500 transition-colors italic">
                                 <EditableLabel termKey={`dash_kpi_label_${idx}`} defaultValue={kpi.label} />
                             </p>
                             <div className="w-2 h-2 rounded-full bg-brand-500/20 group-hover:bg-brand-500 animate-pulse transition-colors shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
                         </div>
-                        <p className="text-5xl font-black text-slate-900 tabular-nums tracking-tighter italic mb-8 relative z-10">{kpi.value}</p>
+                        <p className="text-5xl font-black text-slate-900 tabular-nums tracking-tighter italic mb-5 relative z-10">{kpi.value}</p>
                         <div className="w-12 h-[3px] bg-slate-100 group-hover:w-full group-hover:bg-brand-500 transition-all duration-1000 rounded-full relative z-10 shadow-sm" />
                     </motion.div>
                 ))}
             </motion.div>
 
-<<<<<<< HEAD
             {/* 🛡️ Clinical Reliability Index */}
-            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12 mb-16">
-                <div className="bg-slate-900 p-10 rounded-[48px] flex items-center justify-between shadow-2xl shadow-slate-900/30 relative overflow-hidden group hover:-translate-y-1 transition-transform">
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-6 mb-8">
+                <div className="bg-slate-900 p-7 rounded-[36px] flex items-center justify-between shadow-2xl shadow-slate-900/30 relative overflow-hidden group hover:-translate-y-1 transition-transform">
                     <div className="absolute inset-0 bg-gradient-to-tr from-brand-500/10 to-transparent opacity-50" />
                     <div className="relative z-10">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[5px] mb-2 italic"><EditableLabel termKey="dash_reliability" defaultValue="Indice de Fiabilité" /></p>
-                        <p className="text-3xl font-black text-white italic tracking-tight tabular-nums">{headline?.reliability_rate || 92}%</p>
+                        <p className="text-3xl font-black text-white italic tracking-tight tabular-nums">{headline?.reliability_rate != null ? `${headline.reliability_rate}%` : '—'}</p>
                     </div>
                     <div className="w-16 h-16 rounded-3xl border border-brand-500/20 text-brand-400 flex items-center justify-center font-black text-[10px] uppercase tracking-widest italic bg-brand-500/10 shadow-inner group-hover:bg-brand-500 group-hover:text-white transition-colors duration-500 ring-4 ring-slate-900">
                         <EditableLabel termKey="dash_optimal" defaultValue="Optimal" />
                     </div>
                 </div>
-                <div className="bg-white/70 backdrop-blur-3xl border border-white p-10 rounded-[48px] flex items-center justify-between shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] hover:-translate-y-1 transition-transform relative overflow-hidden group">
+                <div className="bg-white/70 backdrop-blur-3xl border border-white p-7 rounded-[36px] flex items-center justify-between shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] hover:-translate-y-1 transition-transform relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-tr from-cyan-500/5 to-transparent opacity-50" />
                     <div className="relative z-10">
                         <p className="text-[10px] font-black text-slate-400 uppercase tracking-[5px] mb-2 italic"><EditableLabel termKey="dash_completion" defaultValue="Taux de Complétion" /></p>
-                        <p className="text-3xl font-black text-slate-900 italic tracking-tight tabular-nums">{headline?.completion_rate || 85}%</p>
+                        <p className="text-3xl font-black text-slate-900 italic tracking-tight tabular-nums">{headline?.completion_rate != null ? `${headline.completion_rate}%` : '—'}</p>
                     </div>
                     <div className="w-16 h-16 rounded-3xl border border-slate-100 text-slate-500 flex items-center justify-center font-black text-xs italic bg-white shadow-sm ring-4 ring-slate-50">
-                        {headline?.completion_rate || 85}%
+                        {headline?.completion_rate != null ? `${headline.completion_rate}%` : '—'}
                     </div>
                 </div>
             </motion.div>
 
             {/* 🧪 LABORATOIRES D'INTELLIGENCE */}
-            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <SocialInlet
                     stressIndex={globalInsights?.social?.stress_index}
                     violenceIndex={globalInsights?.social?.violence_index}
+                    scopeType={activeScope}
+                    scopeId={activeScopeId}
                     locked={!isSuperAdmin}
                 />
-                <ExpertAudit integrity={globalInsights?.integrity} locked={!isSuperAdmin} />
+                <ExpertAudit
+                    integrity={globalInsights?.integrity}
+                    scopeType={activeScope}
+                    scopeId={activeScopeId}
+                    locked={!isSuperAdmin}
+                />
                 <div className="md:col-span-2">
-                    <ComorbiditySpectrum metrics={globalInsights?.comorbidity} locked={!isSuperAdmin} />
+                    <ComorbiditySpectrum
+                        metrics={globalInsights?.comorbidity}
+                        scopeType={activeScope}
+                        scopeId={activeScopeId}
+                        locked={!isSuperAdmin}
+                    />
                 </div>
             </motion.div>
-=======
-
-
-            {isSuperAdmin && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-12">
-                    <SocialInlet
-                        stressIndex={globalInsights?.social?.stress_index}
-                        violenceIndex={globalInsights?.social?.violence_index}
-                        locked={false}
-                    />
-                    <div className="md:col-span-2">
-                        <ComorbiditySpectrum metrics={globalInsights?.comorbidity} locked={false} />
-                    </div>
-                </div>
-            )}
->>>>>>> 76626e5 (Mise à jour de la plateforme Sentinelle)
         </motion.div>
     );
 };
 
-const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialScopeId = null, forcedUser = null, onLogout }) => {
-    const { t_dyn, isEditMode, setIsEditMode } = useTerminology();
+const SentinelleDashboard = ({ initialScope = 'user_school', initialScopeId = null, forcedUser = null, onLogout }) => {
+    const { isEditMode, setIsEditMode } = useTerminology();
     const navigate = useNavigate();
-    const location = useLocation();
     const [selectedSection, setSelectedSection] = useState(null);
     const [selectedSectionData, setSelectedSectionData] = useState(null);
     const [sectionLoading, setSectionLoading] = useState(false);
@@ -295,13 +278,14 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
         window.location.href = '/';
     });
 
+    // 🛡️ Security & Role Extraction
     const [currentUser, setCurrentUser] = useState(forcedUser);
     const [showWelcome, setShowWelcome] = useState(true);
     const [pendingUsers, setPendingUsers] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
 
     const fetchPendingUsers = useCallback(async () => {
-        if (currentUser?.role?.toUpperCase() !== 'SUPER_ADMIN') return;
+        if (!isSuperAdminRole(currentUser?.role)) return;
         try {
             const res = await api.get('auth/pending-approvals/');
             setPendingUsers(res.data);
@@ -369,12 +353,13 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
     const [error, setError] = useState(null);
     const hasInitialData = React.useRef(false);
 
-    const urlParams = useMemo(() => new URLSearchParams(location.search), [location.search]);
-    const activeScope = urlParams.get('scope') || initialScope;
-    const activeScopeId = urlParams.get('gouvernorat') || initialScopeId;
+    const urlParams = new URLSearchParams(window.location.search);
+    const activeScope = urlParams.get('scope_type') || initialScope;
+    const activeScopeId = urlParams.get('scope_id') || initialScopeId;
 
     const fetchHomepage = useCallback(async (sectionId = null) => {
         try {
+            // Only show full-screen loader if we haven't successfully loaded data yet
             if (!hasInitialData.current) {
                 setLoading(true);
             }
@@ -428,50 +413,17 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
         fetchHomepage();
     }, [activeScope, activeScopeId, fetchHomepage]);
 
-    const exportSuperAdminCSV = async () => {
-        try {
-            const accessToken = localStorage.getItem('access');
-            const response = await api.get('questionnaire/export/', {
-                params: accessToken ? {} : { mock: 'true' },
-                responseType: 'blob',
-            });
-
-            if (response.status !== 200) {
-                throw new Error(`Unexpected status ${response.status}`);
-            }
-
-            const contentType = response.headers['content-type'] || response.headers['Content-Type'];
-            if (!contentType?.includes('csv')) {
-                const text = await response.data.text();
-                throw new Error(`Expected CSV, got: ${text}`);
-            }
-
-            const filename = `questionnaire_answers_${new Date().toISOString().split('T')[0]}.csv`;
-            const blob = new Blob([response.data], { type: contentType });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute('download', filename);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch (err) {
-            console.error('Super admin export failed:', err);
-            alert(`Export failed: ${err.message}`);
-        }
-    };
-
     const intensityData = useMemo(() => {
         return homepageData?.section_intensity || {};
     }, [homepageData]);
 
-    // Echec Systeme screen disabled per user request
-    if (false && error) return (
+    if (error) return (
         <div className="flex items-center justify-center min-h-screen p-8 bg-transparent">
             <div className="pro-card p-12 rounded-[48px] text-center max-w-lg border-t-8 border-t-rose-500 shadow-2xl bg-white">
                 <div className="w-20 h-20 bg-rose-50 rounded-3xl flex items-center justify-center text-rose-500 mx-auto mb-8 shadow-inner">
                     <AlertTriangle size={40} />
                 </div>
-                <h3 className="text-3xl font-black text-slate-900 mb-4 uppercase tracking-tighter italic">Echec Systeme</h3>
+                <h3 className="text-3xl font-black text-slate-900 mb-4 uppercase tracking-tighter italic">Échec Système</h3>
                 <p className="text-slate-500 mb-10 font-bold leading-relaxed italic">{error}</p>
                 <button onClick={() => fetchHomepage()} className="w-full py-5 bg-slate-900 text-white rounded-2xl font-black uppercase tracking-[4px] text-[11px] hover:bg-brand-600 transition-all shadow-2xl shadow-slate-200 border border-white/10 active:scale-95 italic mb-4">
                     <EditableLabel termKey="dash_btn_recalibrate" defaultValue="Forcer la Recalibration" />
@@ -504,7 +456,7 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                 <div className="absolute inset-0 bg-white/60 backdrop-blur-3xl border-b border-slate-100 shadow-sm" />
                 <div className="relative flex items-center gap-6">
                     <div className="w-12 h-12 rounded-2xl bg-brand-500 flex items-center justify-center shadow-2xl shadow-brand-500/20 group hover:rotate-12 transition-transform duration-500">
-                        <Radar size={24} className="text-white glow-brand animate-pulse" />
+                        <Activity size={24} className="text-white glow-brand" />
                     </div>
                     <div>
                         <h2 className="text-2xl font-black tracking-tight text-slate-900 uppercase leading-none italic">
@@ -523,6 +475,7 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                     {currentUser && (
                         <div className="hidden md:flex items-center gap-4 border-l-[3px] border-slate-100 pl-6">
                             <div className="flex flex-col text-right">
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-[3px] leading-none mb-1 italic">{currentUser.role === 'USER' || currentUser.role === 'PRACTITIONER' ? 'PRATICIEN' : currentUser.role?.replace('_', ' ') || 'PRATICIEN'}</p>
                                 <p className="text-sm font-black text-slate-900 italic tracking-tight">{currentUser.username}</p>
                             </div>
                             <div className="w-10 h-10 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center text-brand-600">
@@ -553,7 +506,7 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                                         className="absolute right-0 top-14 w-[360px] bg-white rounded-[24px] border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden z-[100]"
                                     >
                                         <div className="p-5 border-b border-slate-50 bg-slate-50/50">
-                                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest italic">Comptes Desactives</h3>
+                                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-widest italic">Comptes Désactivés</h3>
                                         </div>
                                         <div className="max-h-[300px] overflow-y-auto">
                                             {pendingUsers.length === 0 ? (
@@ -602,7 +555,7 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                         </div>
                     )}
 
-                    {['PRACTITIONER', 'OPERATOR'].includes(currentUser?.role?.toUpperCase()) && (
+                    {isPractitionerRole(currentUser?.role) && (
                         <button
                             onClick={() => navigate('/guide')}
                             className="hidden lg:flex items-center gap-3 px-6 py-2.5 rounded-full bg-brand-50 border border-brand-100 text-brand-700 text-[10px] font-black uppercase tracking-widest italic hover:bg-brand-100 transition-all shadow-sm"
@@ -618,7 +571,7 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                             className={`flex items-center gap-2 px-5 py-2.5 rounded-full border transition-all duration-300 text-[10px] font-black uppercase tracking-widest italic group ${isNavMenuOpen ? 'bg-slate-900 border-slate-900 text-white' : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-slate-300'}`}
                         >
                             <Menu size={16} />
-                            <span><EditableLabel termKey="dash_btn_menu" defaultValue="MENU OPERATIONS" /></span>
+                            <span><EditableLabel termKey="dash_btn_menu" defaultValue="MENU OPÉRATIONS" /></span>
                             <ChevronDown size={14} className={`transition-transform duration-300 ${isNavMenuOpen ? 'rotate-180' : ''}`} />
                         </button>
 
@@ -635,13 +588,13 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                                         animate={{ opacity: 1, y: 0, scale: 1 }}
                                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                         transition={{ duration: 0.2 }}
-                                        className="absolute right-0 top-14 w-72 bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-y-auto max-h-[80vh] z-50 flex flex-col py-2"
+                                        className="absolute right-0 top-14 w-64 bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden z-50 flex flex-col py-2"
                                     >
                                         <button onClick={() => { navigate('/scan'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
                                             <Scan size={14} /> <EditableLabel termKey="dash_btn_scan" defaultValue="SCANNER OCR" />
                                         </button>
                                         <button onClick={() => { navigate('/qr'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
-                                            <QrCode size={14} /> <EditableLabel termKey="dash_btn_qr" defaultValue="ACCES QR" />
+                                            <QrCode size={14} /> <EditableLabel termKey="dash_btn_qr" defaultValue="ACCÈS QR" />
                                         </button>
                                         
                                         {['PRACTITIONER', 'OPERATOR', 'SUPER_ADMIN', 'GLOBAL_ADMIN', 'ADMIN'].includes(currentUser?.role?.toUpperCase()) && (
@@ -658,28 +611,8 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
 
                                         {['PRACTITIONER', 'OPERATOR'].includes(currentUser?.role?.toUpperCase()) && (
                                             <button onClick={() => { navigate('/guide'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
-                                                <BookOpen size={14} /> <EditableLabel termKey="dash_btn_guide" defaultValue="Guide des Procedures" />
+                                                <BookOpen size={14} /> <EditableLabel termKey="dash_btn_guide" defaultValue="Guide des Procédures" />
                                             </button>
-                                        )}
-
-                                        {/* 🔬 Intelligence Labs — visible only to Super/Global Admin */}
-                                        {['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(currentUser?.role?.toUpperCase()) && (
-                                            <>
-                                                <div className="h-px w-full bg-slate-100 my-1" />
-                                                <div className="px-5 py-2 text-[8px] font-black text-slate-500 uppercase tracking-[3px] italic flex items-center gap-2">
-                                                    <FlaskConical size={11} className="animate-pulse" />
-                                                    LABORATOIRES D'INTELLIGENCE
-                                                </div>
-                                                <button onClick={() => { navigate('/lab/comorbidity'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
-                                                    <Layers size={14} /> SPECTRE DE COMORBIDITÉ
-                                                </button>
-                                                <button onClick={() => { navigate('/lab/social'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
-                                                    <ShieldAlert size={14} /> VECTEURS SOCIAUX
-                                                </button>
-                                                <button onClick={() => { navigate('/lab/rankings'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
-                                                    <Award size={14} /> CLASSEMENT NATIONAL
-                                                </button>
-                                            </>
                                         )}
 
                                         {['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(currentUser?.role?.toUpperCase()) && (
@@ -688,11 +621,11 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
 
                                         {['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(currentUser?.role?.toUpperCase()) && (
                                             <button onClick={() => { handleExportRawData(); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
-                                                <Database size={14} /> <EditableLabel termKey="dash_btn_export" defaultValue="EXPORTER DONNEES BRUTES" />
+                                                <Database size={14} /> <EditableLabel termKey="dash_btn_export" defaultValue="EXPORTER DONNÉES BRUTES" />
                                             </button>
                                         )}
                                         
-                                        {currentUser?.role?.toUpperCase() === 'SUPER_ADMIN' && (
+{isSuperAdminRole(currentUser?.role) && (
                                             <>
                                                 <button onClick={() => { navigate('/admin/users'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
                                                     <Users size={14} /> <EditableLabel termKey="dash_btn_users" defaultValue="GESTION UTILISATEURS" />
@@ -700,8 +633,11 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                                                 <button onClick={() => { navigate('/admin/submissions'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
                                                     <Activity size={14} /> <EditableLabel termKey="dash_btn_submissions" defaultValue="VOIR LES SOUMISSIONS" />
                                                 </button>
+                                                <button onClick={() => { navigate('/questionnaire?edit=true'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-amber-600 hover:bg-amber-50 hover:text-amber-700 transition-colors w-full text-left font-bold">
+                                                    <Edit3 size={14} /> <EditableLabel termKey="dash_btn_edit_struct" defaultValue="ÉDITEUR DE STRUCTURE DU QUESTIONNAIRE" />
+                                                </button>
                                                 <button onClick={() => { setIsEditMode(!isEditMode); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
-                                                    <Pencil size={14} /> {isEditMode ? "QUITTER EDITION" : <EditableLabel termKey="dash_btn_edit" defaultValue="ACTIVER EDITION" />}
+                                                    <Pencil size={14} /> {isEditMode ? "QUITTER ÉDITION" : <EditableLabel termKey="dash_btn_edit" defaultValue="ACTIVER ÉDITION DE LABELS" />}
                                                 </button>
                                             </>
                                         )}
@@ -709,7 +645,7 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                                         <div className="h-px w-full bg-slate-100 my-1" />
 
                                         <button onClick={() => { handleLogout(); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-rose-500 hover:bg-rose-50 hover:text-rose-600 transition-colors w-full text-left">
-                                            <LogOut size={14} /> <EditableLabel termKey="dash_btn_logout" defaultValue="Deconnexion" />
+                                            <LogOut size={14} /> <EditableLabel termKey="dash_btn_logout" defaultValue="Déconnexion" />
                                         </button>
                                     </motion.div>
                                 </>
@@ -719,36 +655,10 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                 </div>
             </nav>
 
-            {error && (
-                <div className="max-w-[1600px] mx-auto mt-6 mx-12 p-4 bg-rose-50/80 backdrop-blur-md border border-rose-200 rounded-3xl text-rose-800 text-sm font-semibold flex items-center justify-between shadow-lg">
-                    <div className="flex items-center gap-3">
-                        <AlertTriangle size={18} className="text-rose-500 animate-pulse" />
-                        <span>{error}</span>
-                    </div>
-                    <button 
-                        onClick={() => { setError(null); fetchHomepage(); }} 
-                        className="text-xs bg-white px-4 py-2 rounded-xl border border-rose-200 text-rose-700 hover:bg-rose-50 transition-colors font-bold uppercase tracking-wider"
-                    >
-                        Réessayer
-                    </button>
-                </div>
-            )}
+            <div className="w-full p-8 pb-16 relative">
 
-            <div className="max-w-[1600px] mx-auto p-12 pb-24 relative">
-                {['SUPER_ADMIN', 'GLOBAL_ADMIN', 'SUPERADMIN'].includes(currentUser?.role?.toUpperCase()) && (activeScope === 'national' || activeScope === 'gouvernorate') && (
-                    <div className="mb-10 flex justify-end gap-4">
-                        <button
-                            type="button"
-                            onClick={exportSuperAdminCSV}
-                            className="pro-btn-secondary inline-flex items-center gap-2 rounded-full bg-slate-900 text-white px-5 py-3 text-xs font-black uppercase tracking-[2px] transition-colors hover:bg-slate-800"
-                        >
-                            <FileSpreadsheet size={16} />
-                            <EditableLabel termKey="dash_btn_csv" defaultValue="Exporter reponses CSV" />
-                        </button>
-                    </div>
-                )}
                 <AnimatePresence mode="wait">
-                    <div className="space-y-12">
+                    <div className="space-y-8">
                         {loading && (
                             <div className="flex items-center justify-center py-10">
                                 <div className="flex flex-col items-center gap-4 text-slate-300">
@@ -761,13 +671,14 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                         {(!activeScopeId && activeScope === 'gouvernorate') ? (
                                 <RegionalSelector regions={homepageData?.regional_metrics} />
                             ) : (
-                                <div className="grid lg:grid-cols-12 gap-12 items-start">
+                                <div className="grid lg:grid-cols-12 gap-8 items-start">
+                                    {/* Left Column: Visual Hub */}
                                     <motion.div
                                         initial={{ opacity: 0, x: -24 }}
                                         animate={{ opacity: 1, x: 0 }}
-                                        className="lg:col-span-5 flex flex-col gap-10 sticky top-36"
+                                        className="lg:col-span-5 flex flex-col gap-6 sticky top-28"
                                     >
-                                        <div className="pro-card p-12 rounded-[56px] border border-slate-100 relative overflow-hidden bg-white/80 backdrop-blur-xl shadow-2xl shadow-slate-200/40 group">
+                                        <div className="pro-card p-8 rounded-[48px] border border-slate-100 relative overflow-hidden bg-white/80 backdrop-blur-xl shadow-2xl shadow-slate-200/40 group">
                                             <RadialSectionWheel
                                                 intensityData={intensityData}
                                                 activeSection={selectedSection}
@@ -777,32 +688,37 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                                             <div className="mt-10 flex justify-center">
                                                 <div className="px-8 py-3.5 rounded-full bg-slate-50 border border-slate-100 text-[10px] font-black text-slate-400 uppercase tracking-[5px] flex items-center gap-4 italic group-hover:bg-brand-50 group-hover:text-brand-600 group-hover:border-brand-200 transition-all duration-500">
                                                     <div className="w-2 h-2 rounded-full bg-brand-500 shadow-lg glow-brand" />
-                                                    <EditableLabel termKey="dash_vecteur" defaultValue="Vecteur Cohorte Consolide" />
+                                                    <EditableLabel termKey="dash_vecteur" defaultValue="Vecteur Cohorte Consolidé" />
                                                 </div>
                                             </div>
                                         </div>
 
-                                        {['SUPER_ADMIN', 'GLOBAL_ADMIN', 'REGIONAL_ADMIN', 'SUPERADMIN', 'ADMIN', 'NATIONAL'].includes(currentUser?.role?.toUpperCase()) && (
+                                        {['SUPER_ADMIN', 'GLOBAL_ADMIN', 'REGIONAL_ANALYST', 'SUPERADMIN', 'ADMIN', 'NATIONAL'].includes(currentUser?.role?.toUpperCase()) ? (
                                             <div className="mt-4">
                                                 <TunisiaMap
                                                     data={homepageData?.map_data}
                                                     activeSection={selectedSection}
                                                     currentUser={currentUser}
                                                     onRegionSelect={(name) => {
-                                                        const params = new URLSearchParams(window.location.search);
-                                                        params.set('gouvernorat', name);
-                                                        params.set('scope', 'gouvernorate');
-                                                        navigate({
-                                                            pathname: window.location.pathname,
-                                                            search: params.toString()
-                                                        }, { replace: true });
+                                                        navigate(`/admin/${encodeURIComponent(name)}?scope_type=gouvernorate&scope_id=${encodeURIComponent(name)}`);
                                                     }}
                                                 />
+                                            </div>
+                                        ) : (
+                                            <div className="mt-4 pro-card p-14 rounded-[56px] border-dashed border-slate-100 flex flex-col items-center justify-center gap-6 min-h-[350px] bg-white/50">
+                                                <div className="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center text-slate-200">
+                                                    <ShieldCheck size={40} />
+                                                </div>
+                                                <div className="text-center">
+                                                    <p className="text-[12px] font-black text-slate-400 uppercase tracking-[6px] italic"><EditableLabel termKey="dash_hub_restr" defaultValue="Hub Géospatial Restreint" /></p>
+                                                    <p className="text-[9px] font-black text-slate-300 uppercase tracking-[2px] mt-3"><EditableLabel termKey="dash_niveau" defaultValue="Niveau d'Accès :" /> {currentUser?.role || 'INDÉFINI'}</p>
+                                                </div>
                                             </div>
                                         )}
                                     </motion.div>
 
-                                    <div className="lg:col-span-7 space-y-12 min-h-[900px]">
+                                    {/* Right Column: Analytic Workflow */}
+                                    <div className="lg:col-span-7 space-y-8 min-h-[900px]">
                                         <AnimatePresence mode="wait">
                                             {selectedSection ? (
                                                 <motion.div
@@ -825,18 +741,41 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                                                     )}
                                                 </motion.div>
                                             ) : (
-                                                <div className="space-y-12">
+                                                <div className="space-y-8">
                                                     <RegionalSummaryHub
                                                         data={homepageData}
                                                         globalInsights={homepageData?.global_insights}
                                                         activeSection={selectedSection}
+                                                        activeScope={activeScope}
+                                                        activeScopeId={activeScopeId}
                                                         isSuperAdmin={['SUPER_ADMIN', 'GLOBAL_ADMIN', 'SUPERADMIN'].includes(currentUser?.role?.toUpperCase())}
                                                     />
-                                                    {!['PRACTITIONER', 'OPERATOR'].includes(currentUser?.role?.toUpperCase()) && (
-                                                        <CorrelationEngine 
-                                                            activeScope={activeScope} 
-                                                            activeScopeId={activeScopeId} 
-                                                        />
+
+                                                    {/* Points de Vigilance Grid & Rankings Lab */}
+                                                    {['SUPER_ADMIN', 'GLOBAL_ADMIN', 'SUPERADMIN'].includes(currentUser?.role?.toUpperCase()) && (activeScope === 'national' || activeScope === 'gouvernorate') && (
+                                                        <div className="space-y-6">
+                                                            <NationalVigilancePanel
+                                                                metrics={homepageData?.regional_metrics}
+                                                                activeSection={selectedSection}
+                                                            />
+                                                            <div className="h-64">
+                                                                <RankingsLabInlet scopeType={activeScope} scopeId={activeScopeId} />
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {/* Competitive Matrix & Regional Deep Profile (if in gov scope) */}
+                                                    {activeScope === 'gouvernorate' && activeScopeId && (
+                                                        <>
+                                                            <CompetitiveMatrix
+                                                                rankings={homepageData?.rankings}
+                                                                govName={homepageData?.headline?.scope_label?.replace('Gouvernorat de ', '')}
+                                                            />
+                                                            <RegionalProfilePanel
+                                                                govName={homepageData?.headline?.scope_label?.replace('Gouvernorat de ', '')}
+                                                                isSuperAdmin={isNationalAdminRole(currentUser?.role)}
+                                                            />
+                                                        </>
                                                     )}
                                                 </div>
                                             )}
@@ -861,7 +800,7 @@ const SentinelleDashboard = ({ profile, initialScope = 'user_school', initialSco
                             className="flex items-center gap-3 px-8 py-4 bg-slate-950 text-white rounded-full font-black uppercase tracking-[3px] text-[11px] italic shadow-[0_20px_50px_rgba(0,0,0,0.3)] hover:bg-brand-600 transition-all group border border-white/10"
                         >
                             <XCircle size={20} className="text-brand-400 group-hover:text-white transition-colors" />
-                            <EditableLabel termKey="dash_btn_quit_edit" defaultValue="QUITTER LE MODE EDITION" />
+                            <EditableLabel termKey="dash_btn_quit_edit" defaultValue="QUITTER LE MODE ÉDITION" />
                         </button>
                     </motion.div>
                 )}

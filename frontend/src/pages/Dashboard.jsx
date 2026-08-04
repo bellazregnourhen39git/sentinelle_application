@@ -121,7 +121,7 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="space-y-12 animate-clinical-in pb-20 max-w-[1600px] mx-auto px-4">
+    <div className="space-y-12 animate-clinical-in pb-20 w-full px-4">
       {/* Premium Header */}
       <header className="flex flex-col md:flex-row md:items-end justify-between gap-8 pt-4">
         <div className="space-y-4">

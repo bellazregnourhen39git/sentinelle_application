@@ -1,17 +1,9 @@
-import React, { useMemo, useRef, useEffect, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import * as d3 from 'd3';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useTerminology } from '../../TerminologyContext';
+import { motion as Motion } from 'framer-motion';
 import EditableLabel from './EditableLabel';
 
 const SECTION_GROUPS = {
-<<<<<<< HEAD
-    'Profil': { color: '#0ea5e9', banner: '/banners/profile.png', sections: ['A', 'B'] },
-    'Addiction': { color: '#f43f5e', banner: '/banners/addiction.png', sections: ['C', 'D', 'E', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P'] },
-    'Style de Vie': { color: '#f59e0b', banner: '/banners/digital.png', sections: ['R', 'S', 'T'] },
-    'Social': { color: '#6366f1', banner: '/banners/digital.png', sections: ['U', 'V'] },
-    'Sensibilisation': { color: '#10b981', banner: '/banners/profile.png', sections: ['Q', 'Z'] }
-=======
     'Profil': { color: '#0ea5e9', sections: ['A', 'B'] },
     'Addiction': { color: '#ef4444', sections: ['C', 'D', 'E', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'P'] },
     'Style de Vie': { color: '#f59e0b', sections: ['R', 'S', 'T'] },
@@ -164,7 +156,6 @@ const renderSectionIcon = (sectionId, color = '#64748b', size = 46) => {
     };
 
     return iconMap[sectionId] || iconMap.default;
->>>>>>> 76626e5 (Mise à jour de la plateforme Sentinelle)
 };
 
 const DEFAULT_SECTIONS = [
@@ -185,47 +176,23 @@ const RadialSectionWheel = ({
     intensityData = {},
     activeSection = null,
     onSectionClick,
-    totalSubmissions = 0
 }) => {
     const svgRef = useRef();
     const [hovered, setHovered] = useState(null);
-<<<<<<< HEAD
-    const { t_dyn } = useTerminology();
-    
-    // Dynamic Section Detection
-=======
-
->>>>>>> 76626e5 (Mise à jour de la plateforme Sentinelle)
     const dynamicSections = useMemo(() => {
         const existingIds = new Set(DEFAULT_SECTIONS.map(s => s.id));
         const newSections = Object.keys(intensityData)
             .filter(id => !existingIds.has(id))
-<<<<<<< HEAD
-            .map(id => ({ id, name: t_dyn(`section_wheel_${id}`, `Section ${id}`) }));
-        
-        return DEFAULT_SECTIONS.map(s => ({
-            ...s,
-            name: t_dyn(`section_wheel_${s.id}`, s.name)
-        })).concat(newSections);
-    }, [intensityData, t_dyn]);
-=======
             .map(id => ({ id, name: `Section ${id}` }));
         return [...DEFAULT_SECTIONS, ...newSections];
     }, [intensityData]);
->>>>>>> 76626e5 (Mise à jour de la plateforme Sentinelle)
 
     const width = 650;
     const height = 650;
     const outerRadius = 220;
-<<<<<<< HEAD
-    const innerRadius = 100; // Slightly larger for images
-    const cornerRadius = 12;
-    const padAngle = 0.025;
-=======
     const innerRadius = 100;
     const cornerRadius = 8;
     const padAngle = 0.045;
->>>>>>> 76626e5 (Mise à jour de la plateforme Sentinelle)
 
     const segments = useMemo(() => {
         const arcCount = dynamicSections.length;
@@ -276,13 +243,8 @@ const RadialSectionWheel = ({
                 </defs>
 
                 <g transform={`translate(${width / 2}, ${height / 2})`}>
-<<<<<<< HEAD
-                    
-                    {/* Background Skeleton - Now more prominent for a "full" look */}
-=======
 
                     {/* Background skeleton */}
->>>>>>> 76626e5 (Mise à jour de la plateforme Sentinelle)
                     {segments.map(d => (
                         <path key={`bg-${d.id}`} d={bgArcGenerator(d)} fill={d.color} opacity={0.18} stroke="white" strokeWidth="0.5" />
                     ))}
@@ -296,20 +258,13 @@ const RadialSectionWheel = ({
                                 onMouseEnter={() => setHovered(d.id)}
                                 onMouseLeave={() => setHovered(null)}
                                 onClick={() => onSectionClick(d.id)}>
-                                <motion.path
+                                <Motion.path
                                     d={arcGenerator(d)}
                                     fill={d.color}
-<<<<<<< HEAD
-                                    stroke={isActive ? '#0f172a' : 'white'}
-                                    strokeWidth={isActive ? 2 : 0.5}
-                                    animate={{ 
-                                        opacity: isHovered || isActive ? 1 : 0.7, 
-=======
                                     stroke={isActive ? '#0f172a' : 'transparent'}
                                     strokeWidth={isActive ? 2 : 0}
                                     animate={{
                                         opacity: isHovered || isActive ? 1 : 0.7,
->>>>>>> 76626e5 (Mise à jour de la plateforme Sentinelle)
                                         scale: isHovered ? 1.05 : 1,
                                     }}
                                     style={{ 
@@ -344,7 +299,7 @@ const RadialSectionWheel = ({
                     {/* ── Center Visual Hub ── */}
                     <g clipPath="url(#centerClip)">
                         <circle r={r} fill="#f8fafc" />
-                        <motion.circle
+                        <Motion.circle
                             r={r}
                             fill={activeSegment ? activeSegment.color : '#cbd5e1'}
                             initial={{ opacity: 0 }}

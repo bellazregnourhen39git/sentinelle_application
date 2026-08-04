@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Users, ArrowLeft, Shield, Mail, MapPin, Building, RefreshCw, UserPlus, FileText, Trash2, X, LogOut } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -81,7 +81,8 @@ const UserManagement = () => {
             // fetchUsers(); // Optional double check
         } catch (err) {
             console.error("Failed to delete user", err);
-            alert("Erreur lors de la suppression de l'utilisateur.");
+            const errorMsg = err.response?.data?.detail || "Erreur lors de la suppression de l'utilisateur.";
+            alert(errorMsg);
         }
         setUserToDelete(null);
     };

@@ -85,6 +85,20 @@ class AuditLog(models.Model):
         return f"{self.timestamp} | {self.user} | {self.action}"
 
 
+class InviteToken(models.Model):
+    user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='invite_tokens')
+    token_hash = models.CharField(max_length=128, db_index=True)
+    email = models.EmailField()
+    created_by = models.ForeignKey('User', on_delete=models.SET_NULL, null=True, blank=True, related_name='created_invite_tokens')
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    expires_at = models.DateTimeField()
+    used_at = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"InviteToken for {self.email} (user_id={self.user_id}) expires {self.expires_at} used={self.used_at is not None}"
+
+
 class PlatformTerminology(models.Model):
     key = models.CharField(max_length=255, unique=True)
     value_fr = models.TextField()
@@ -565,6 +579,7 @@ class ClassReport(models.Model):
     last_student_time_minutes = models.IntegerField(null=True, blank=True)
 
     personal_comments = models.TextField(blank=True, null=True)
+    extra_data = models.JSONField(default=dict, blank=True, help_text="Stores dynamic custom fields added to class reports")
     created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="class_reports_created")
     is_finalized = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -600,3 +615,31 @@ class DynamicQuestion(models.Model):
 
     def __str__(self):
         return f"[{self.section}] {self.code}: {self.label_fr[:30]}"
+
+
+class DynamicClassReportField(models.Model):
+    class FieldType(models.TextChoices):
+        TEXT = "TEXT", _("Texte")
+        NUMBER = "NUMBER", _("Nombre")
+        SELECT = "SELECT", _("Liste déroulante")
+        RADIO = "RADIO", _("Boutons radio")
+        CHECKBOX = "CHECKBOX", _("Case à cocher")
+        TEXTAREA = "TEXTAREA", _("Zone de texte")
+
+    code = models.CharField(max_length=100, primary_key=True)
+    section = models.CharField(max_length=50, default="identity")
+    label_fr = models.CharField(max_length=255)
+    label_ar = models.CharField(max_length=255, blank=True, null=True)
+    field_type = models.CharField(max_length=20, choices=FieldType.choices, default=FieldType.TEXT)
+    options_json = models.JSONField(default=list, blank=True, help_text="[['val', 'label_fr', 'label_ar'], ...]")
+    order = models.IntegerField(default=100)
+    is_hidden = models.BooleanField(default=False)
+    is_required = models.BooleanField(default=False)
+    is_custom = models.BooleanField(default=False)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['section', 'order']
+
+    def __str__(self):
+        return f"[{self.section}] {self.code} - {self.label_fr}"

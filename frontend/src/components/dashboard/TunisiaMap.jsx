@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
 import * as d3 from 'd3';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Target, Users, TrendingUp, AlertCircle, RefreshCw } from 'lucide-react';
 import EditableLabel from './EditableLabel';
 
@@ -57,15 +57,22 @@ const TunisiaMap = ({ data, mapVariable, activeSection, currentUser, onRegionSel
     );
     const adminGov = currentUser?.gouvernorat;
 
-    const load = useCallback(() => {
+    const load = useCallback(async () => {
         setStatus('loading');
-        fetch(GEOJSON_URL)
-            .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
-            .then(j => { setGeoJson(j); setStatus('ok'); })
-            .catch(() => setStatus('error'));
+        try {
+            const r = await fetch(GEOJSON_URL);
+            if (!r.ok) throw new Error(r.status);
+            const j = await r.json();
+            setGeoJson(j);
+            setStatus('ok');
+        } catch {
+            setStatus('error');
+        }
     }, []);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => {
+        void load();
+    }, [load]);
 
     // Normalize names for robust mapping (strips accents, etc)
     const normalize = (str) => {
@@ -108,7 +115,11 @@ const TunisiaMap = ({ data, mapVariable, activeSection, currentUser, onRegionSel
             const displayName = DISPLAY[backendName] || backendName;
             
             let centroid = [0, 0];
-            try { centroid = gen.centroid(f); } catch (_) {}
+            try {
+                centroid = gen.centroid(f);
+            } catch {
+                // If centroid calculation fails, fallback to zero
+            }
             
             const fuzzyKey = normalize(backendName);
             const stats = normalizedData[fuzzyKey] ?? { submissions: 0, prevalence: 0 };
@@ -131,30 +142,30 @@ const TunisiaMap = ({ data, mapVariable, activeSection, currentUser, onRegionSel
     const hoveredRegion = regions.find(r => r.backendName === hoveredId);
 
     return (
-        <div className="relative w-full rounded-[48px] overflow-hidden border border-slate-100 shadow-2xl shadow-slate-200/40 animate-clinical-in"
-            style={{ background: 'linear-gradient(150deg, #f8fafc 0%, #f1f5f9 100%)', minHeight: 660 }}>
+        <div className="relative w-full rounded-[32px] overflow-hidden border border-slate-100 shadow-xl shadow-slate-200/30 animate-clinical-in"
+            style={{ background: 'linear-gradient(150deg, #f8fafc 0%, #f1f5f9 100%)', minHeight: 520 }}>
 
       {/* ── Header ─────────────────────────────────── */}
-      <div className="absolute top-8 left-8 z-20 space-y-3">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 rounded-2xl bg-violet-500 flex items-center justify-center shadow-lg shadow-violet-500/20">
-            <MapPin size={18} className="text-white" />
+      <div className="absolute top-5 left-5 z-20 space-y-2.5">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-2xl bg-violet-500 flex items-center justify-center shadow-md shadow-violet-500/20">
+            <MapPin size={16} className="text-white" />
           </div>
           <div>
-            <p className="text-[12px] font-black text-slate-900 uppercase italic tracking-[2px] leading-none">
-                Vecteur Géospatial {window.location.search.includes('gouvernorat=') ? `- ${new URLSearchParams(window.location.search).get('gouvernorat')}` : ''}
+            <p className="text-[11px] font-black text-slate-900 uppercase italic tracking-[1.5px] leading-none">
+                Vecteur Géospatial{window.location.search.includes('gouvernorat=') ? ` – ${new URLSearchParams(window.location.search).get('gouvernorat')}` : ''}
             </p>
-            <p className="text-[9px] font-black text-violet-600 uppercase tracking-[3px] opacity-60">
-              {variableLabel} · 24 Gouvernorats
+            <p className="text-[8px] font-semibold text-violet-600 uppercase tracking-[2px] opacity-70">
+              {variableLabel} · 24 gouvernorats
             </p>
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5 px-4 py-2 bg-white/60 backdrop-blur-xl rounded-full border border-slate-100 shadow-sm w-fit">
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-white/70 backdrop-blur-xl rounded-full border border-slate-100 shadow-sm w-fit">
           <div className="w-1.5 h-1.5 rounded-full bg-violet-500 animate-pulse" />
-          <span className="text-[9px] font-black uppercase text-slate-500 tracking-[1.5px] italic">
+          <span className="text-[8px] font-semibold uppercase text-slate-500 tracking-[1px] italic">
             {isSuperAdmin
-              ? <EditableLabel termKey="map_nat_monitor" defaultValue="Surveillance Nationale Active" />
+              ? <EditableLabel termKey="map_nat_monitor" defaultValue="Surveillance nationale" />
               : <><EditableLabel termKey="map_sector" defaultValue="Secteur" /> : {adminGov || <EditableLabel termKey="map_restricted" defaultValue="Restreint" />}</>}
           </span>
         </div>
@@ -163,48 +174,48 @@ const TunisiaMap = ({ data, mapVariable, activeSection, currentUser, onRegionSel
       {/* ── Hover Stats Card ───────────────────────── */}
       <AnimatePresence>
         {hoveredRegion && (
-          <motion.div
+          <Motion.div
             key="tip"
-            initial={{ opacity: 0, x: 10, scale: 0.95 }}
+            initial={{ opacity: 0, x: 8, scale: 0.96 }}
             animate={{ opacity: 1, x: 0, scale: 1 }}
-            exit={{ opacity: 0, x: 10, scale: 0.95 }}
-            transition={{ duration: 0.2 }}
-            className="absolute top-2 right-2 z-30 bg-white/95 backdrop-blur-2xl rounded-[28px] border border-slate-100 shadow-2xl p-5 min-w-[200px]"
+            exit={{ opacity: 0, x: 8, scale: 0.96 }}
+            transition={{ duration: 0.18 }}
+            className="absolute top-2 right-2 z-30 bg-white/92 backdrop-blur-xl rounded-[22px] border border-slate-100 shadow-xl p-4 min-w-[180px]"
           >
-            <p className="text-[9px] font-black text-indigo-500 uppercase tracking-[4px] italic mb-2">STATISTIQUES</p>
-            <p className="text-xl font-black text-slate-900 uppercase italic leading-tight mb-4 tracking-tighter">
+            <p className="text-[8px] font-bold text-indigo-500 uppercase tracking-[3px] italic mb-2">STAT</p>
+            <p className="text-lg font-black text-slate-900 uppercase italic leading-tight mb-3 tracking-tight">
               {hoveredRegion.displayName}
             </p>
-            <div className="space-y-2.5">
-              <div className="flex justify-between items-center p-3 rounded-2xl bg-slate-50 border border-slate-100">
+            <div className="space-y-2">
+              <div className="flex justify-between items-center gap-2 px-3 py-2 rounded-2xl bg-slate-50 border border-slate-100">
                 <div className="flex items-center gap-2">
                   <Users size={12} className="text-slate-400" />
-                  <span className="text-[9px] font-black text-slate-400 uppercase tracking-wider">Volume</span>
+                  <span className="text-[8px] font-semibold text-slate-500 uppercase tracking-[1px]">Soumissions</span>
                 </div>
-                <span className="text-[12px] font-black text-slate-900 tabular-nums">
+                <span className="text-[11px] font-semibold text-slate-900 tabular-nums">
                   {hoveredRegion.stats.submissions}
                 </span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-2xl bg-violet-50 border border-violet-100/50">
+              <div className="flex justify-between items-center gap-2 px-3 py-2 rounded-2xl bg-violet-50 border border-violet-100/70">
                 <div className="flex items-center gap-2">
-                  <TrendingUp size={12} className="text-violet-500" />
-                  <span className="text-[9px] font-black text-violet-500 uppercase tracking-wider">{variableLabel}</span>
+                  <TrendingUp size={12} className="text-violet-600" />
+                  <span className="text-[8px] font-semibold text-violet-600 uppercase tracking-[1px]">Risque</span>
                 </div>
-                <span className="text-[12px] font-black text-violet-700 tabular-nums italic">
+                <span className="text-[11px] font-semibold text-violet-700 tabular-nums italic">
                   {hoveredRegion.stats.submissions && hoveredRegion.stats.prevalence != null
                     ? `${hoveredRegion.stats.prevalence}%`
-                    : 'Aucune donnée'}
+                    : 'Aucune'}
                 </span>
               </div>
             </div>
             {canInteract(hoveredRegion) && (
-              <div className="mt-4 w-full py-2.5 rounded-xl bg-indigo-50 border border-indigo-100/50 text-center animate-clinical-in">
-                <p className="text-[9px] font-black text-indigo-600 uppercase tracking-widest leading-tight">
-                  Cliquez sur la carte<br/>pour explorer
+              <div className="mt-3 w-full py-2 rounded-xl bg-indigo-50 border border-indigo-100/60 text-center">
+                <p className="text-[9px] font-semibold text-indigo-600 uppercase tracking-[1px] leading-tight">
+                  Cliquez pour voir le détail
                 </p>
               </div>
             )}
-          </motion.div>
+          </Motion.div>
         )}
       </AnimatePresence>
 
@@ -259,7 +270,7 @@ const TunisiaMap = ({ data, mapVariable, activeSection, currentUser, onRegionSel
                       transition: 'all 0.35s cubic-bezier(0.2, 1, 0.3, 1)',
                       filter: hovered ? 'brightness(1.05)' : 'none',
                     }}
-                    onMouseEnter={() => interact && setHoveredId(region.backendName)}
+                    onMouseEnter={() => setHoveredId(region.backendName)}
                     onMouseLeave={() => setHoveredId(null)}
                     onClick={() => interact && onRegionSelect?.(region.backendName)}
                   />

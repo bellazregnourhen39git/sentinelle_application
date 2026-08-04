@@ -93,6 +93,10 @@ if _db_engine == 'django.db.backends.sqlite3':
         }
     }
 else:
+    _db_options = {}
+    if _db_engine == 'django.db.backends.mysql':
+        _db_options['charset'] = 'utf8mb4'
+
     DATABASES = {
         'default': {
             'ENGINE': _db_engine,
@@ -100,10 +104,8 @@ else:
             'USER': os.environ.get('DB_USER', 'root'),
             'PASSWORD': os.environ.get('DB_PASSWORD', ' '),
             'HOST': os.environ.get('DB_HOST', '127.0.0.1'),
-            'PORT': os.environ.get('DB_PORT', '3306'),
-            'OPTIONS': {
-                'charset': 'utf8mb4',
-            },
+            'PORT': os.environ.get('DB_PORT', '5432'),
+            'OPTIONS': _db_options,
         }
     }
 
@@ -147,7 +149,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 # Custom User Model
 AUTH_USER_MODEL = 'api.User'
 

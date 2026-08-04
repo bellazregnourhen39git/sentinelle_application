@@ -483,6 +483,8 @@ class SentinelleAnalytics:
                 "n_submissions": n_submissions,
                 "n_schools": n_schools,
                 "wave_year": 2026,
+                "reliability_rate": honesty_score,
+                "completion_rate": round(valid_count / n_submissions * 100, 1) if n_submissions > 0 else None,
                 "desc": "Synthèse globale des indicateurs de veille sanitaire pour le périmètre sélectionné."
             },
             "kpis": [
@@ -793,7 +795,7 @@ class SentinelleAnalytics:
             
         return rankings
     @staticmethod
-    def get_lab_stats(user=None):
+    def get_lab_stats(user=None, scope_type='national', scope_id=None):
         """
         Specialized engine for Lab-level deep-dives.
         Implements a 3-layer lying detector:
@@ -810,7 +812,28 @@ class SentinelleAnalytics:
             "Gabes", "Mednine", "Tataouine"
         ]
 
-        if user and user.role == "REGIONAL_ANALYST" and user.governorate:
+        if scope_type == 'gouvernorate' and scope_id:
+            gov = None
+            search_val = str(scope_id).strip()
+            if search_val and not search_val.lower() == 'national':
+                if search_val.isdigit():
+                    gov = Governorate.objects.filter(id=search_val).first()
+                else:
+                    def clean_str(s):
+                        import unicodedata
+                        return unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode('utf-8').lower().strip()
+                    target = clean_str(search_val)
+                    for g in Governorate.objects.all():
+                        if clean_str(g.name) == target:
+                            gov = g
+                            break
+            if gov:
+                REGIONS = [gov.name]
+            elif user and user.role == "REGIONAL_ANALYST" and user.governorate:
+                REGIONS = [user.governorate.name]
+            else:
+                REGIONS = NATIONAL_REGIONS
+        elif user and user.role == "REGIONAL_ANALYST" and user.governorate:
             REGIONS = [user.governorate.name]
         else:
             REGIONS = NATIONAL_REGIONS

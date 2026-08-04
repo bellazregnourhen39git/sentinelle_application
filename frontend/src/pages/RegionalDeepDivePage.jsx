@@ -171,8 +171,8 @@ const RegionalDeepDivePage = () => {
       {/* ── Top bar ── */}
       <div className="sticky top-0 z-50 bg-[#030712]/90 backdrop-blur-xl border-b border-white/5 px-6 py-4 flex items-center justify-between">
         <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-slate-400 hover:text-white text-sm font-bold transition-colors"
+          onClick={() => navigate('/superadmin')}
+          className="flex items-center gap-2 text-slate-400 hover:text-white text-sm font-bold transition-colors cursor-pointer"
         >
           <ArrowLeft size={18} /> Retour au tableau de bord
         </button>

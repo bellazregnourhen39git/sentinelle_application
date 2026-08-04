@@ -1,4 +1,5 @@
-﻿import os
+import logging
+import os
 import csv
 import json
 import secrets
@@ -10,7 +11,9 @@ from django.db.models import Count, Q, Avg
 from django.http import HttpResponse, StreamingHttpResponse
 from django.contrib.auth import get_user_model
 from django.utils import timezone
-from django.core.mail import send_mail
+from django.core.mail import send_mail, EmailMultiAlternatives
+import hashlib
+import hmac
 
 from rest_framework import generics, permissions, status, views, exceptions
 from rest_framework.response import Response
@@ -21,7 +24,7 @@ from .models import (
     SectionA, SectionB, SectionC, SectionD, SectionE, SectionG, SectionH,
     SectionI, SectionJ, SectionK, SectionL, SectionM, SectionN, SectionP,
     SectionQ, SectionR, SectionS, SectionT, SectionU, SectionV, SectionZ,
-    AuditLog, PlatformTerminology, DynamicQuestion, ClassReport
+    AuditLog, PlatformTerminology, DynamicQuestion, ClassReport, DynamicClassReportField
 )
 from .analytics import SentinelleAnalytics
 from .permissions import IsSuperAdmin, IsGlobalAdmin, ScopePermission
@@ -44,18 +47,19 @@ class SecureTokenObtainPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         response = super().post(request, *args, **kwargs)
         client_ip = request.META.get('REMOTE_ADDR')
-        
+        identifier = request.data.get('email') or request.data.get('username')
+
         if response.status_code == 200:
-            user = User.objects.get(email=request.data.get('email', request.data.get('username')))
-            AuditLog.objects.create(
-                user=user,
-                action="LOGIN_SUCCESS",
-                ip_address=client_ip
-            )
+            user = User.objects.filter(Q(email=identifier) | Q(username=identifier)).first()
+            if user:
+                AuditLog.objects.create(
+                    user=user,
+                    action="LOGIN_SUCCESS",
+                    ip_address=client_ip
+                )
         else:
-            # Note: The serializer handled the failed_attempts count
             AuditLog.objects.create(
-                action=f"LOGIN_FAILURE: {request.data.get('email', 'unknown')}",
+                action=f"LOGIN_FAILURE: {identifier or 'unknown'}",
                 ip_address=client_ip
             )
         return response
@@ -71,9 +75,12 @@ class SchoolEstablishmentListView(generics.ListAPIView):
 
     def get_queryset(self):
         qs = SchoolEstablishment.objects.all().select_related('governorate').order_by('name')
-        gov_id = self.request.query_params.get('governorate_id')
-        if gov_id:
-            qs = qs.filter(governorate_id=gov_id)
+        gov = self.request.query_params.get('governorate_id') or self.request.query_params.get('governorate') or self.request.query_params.get('region')
+        if gov:
+            if str(gov).isdigit():
+                qs = qs.filter(governorate_id=int(gov))
+            else:
+                qs = qs.filter(governorate__name__iexact=str(gov).strip())
         return qs
 
 class RegisterView(generics.CreateAPIView):
@@ -153,14 +160,25 @@ class UserDeleteView(views.APIView):
         if not user:
             return Response({"detail": "Utilisateur introuvable."}, status=404)
         
+        if user.id == request.user.id:
+            return Response({"detail": "Vous ne pouvez pas supprimer votre propre compte."}, status=400)
+
         email = user.email
-        user.delete()
+        try:
+            user.delete()
+        except Exception as e:
+            return Response({"detail": f"Erreur lors de la suppression: {str(e)}"}, status=400)
         
-        AuditLog.objects.create(
-            user=request.user,
-            action=f"DELETED_USER: {email}",
-            ip_address=request.META.get('REMOTE_ADDR')
-        )
+        try:
+            ip = (request.META.get('HTTP_X_FORWARDED_FOR') or '').split(',')[0].strip() or request.META.get('REMOTE_ADDR')
+            AuditLog.objects.create(
+                user=request.user,
+                action=f"DELETED_USER: {email}",
+                ip_address=ip if ip else None
+            )
+        except Exception:
+            pass
+
         return Response({"status": "deleted"}, status=200)
 
 class UserExportCSVView(views.APIView):
@@ -319,7 +337,8 @@ class QuestionnaireExportView(views.APIView):
 
     def get(self, request):
         can_export = False
-        if request.user and getattr(request.user, 'role', None) == 'SUPERADMIN':
+        role = getattr(request.user, 'role', None)
+        if request.user and request.user.is_authenticated and role in {'SUPER_ADMIN', 'SUPERADMIN', 'GLOBAL_ADMIN'}:
             can_export = True
         elif request.query_params.get('mock') == 'true' and (
             settings.DEBUG or
@@ -429,7 +448,25 @@ class SchoolStatsView(views.APIView):
 
     def get(self, request):
         user = request.user
-        if user.role != 'PRACTITIONER' or not user.establishment:
+        if user.role not in ['USER', 'PRACTITIONER', 'OPERATOR', 'REGIONAL_ADMIN', 'GLOBAL_ADMIN', 'SUPER_ADMIN', 'SUPERADMIN'] or not user.establishment:
+            if user.role in ['GLOBAL_ADMIN', 'SUPER_ADMIN', 'SUPERADMIN']:
+                sessions = QuestionnaireSession.objects.filter(is_valid=True)
+                total = sessions.count()
+                stats = {
+                    "total_responses": total,
+                    "tobacco_users": sessions.filter(tobacco_user=True).count(),
+                    "ecig_users": sessions.filter(ecig_user=True).count(),
+                    "hookah_users": sessions.filter(hookah_user=True).count(),
+                    "alcohol_users": sessions.filter(alcohol_user=True).count(),
+                    "tranquilizer_users": sessions.filter(tranquilizer_user=True).count(),
+                    "cannabis_users": sessions.filter(cannabis_user=True).count(),
+                    "cocaine_users": sessions.filter(cocaine_user=True).count(),
+                    "ecstasy_users": sessions.filter(ecstasy_user=True).count(),
+                    "heroin_users": sessions.filter(heroin_user=True).count(),
+                    "inhalant_users": sessions.filter(inhalant_user=True).count(),
+                    "has_risk_behavior": sessions.filter(has_risk_behavior=True).count(),
+                }
+                return Response(stats)
             return Response({"detail": "Not authorized or missing establishment."}, status=403)
 
         sessions = QuestionnaireSession.objects.filter(school=user.establishment, is_valid=True)
@@ -456,7 +493,7 @@ class GovernorateStatsView(views.APIView):
 
     def get(self, request):
         user = request.user
-        if user.role not in ['REGIONAL_ADMIN', 'GLOBAL_ADMIN', 'SUPER_ADMIN']:
+        if user.role not in ['REGIONAL_ADMIN', 'GLOBAL_ADMIN', 'SUPER_ADMIN', 'SUPERADMIN']:
             return Response({"detail": "Not authorized."}, status=403)
 
         gov_id = user.governorate.id if user.role == 'REGIONAL_ADMIN' else request.query_params.get('governorate_id')
@@ -483,7 +520,7 @@ class NationalStatsView(views.APIView):
 
     def get(self, request):
         user = request.user
-        if user.role not in ['GLOBAL_ADMIN', 'SUPER_ADMIN']:
+        if user.role not in ['GLOBAL_ADMIN', 'SUPER_ADMIN', 'SUPERADMIN']:
             return Response({"detail": "Not authorized."}, status=403)
 
         sessions = QuestionnaireSession.objects.filter(is_valid=True)
@@ -686,7 +723,7 @@ class SidraDataExportView(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
-        if request.user.role not in ['GLOBAL_ADMIN', 'SUPER_ADMIN']:
+        if request.user.role not in ['GLOBAL_ADMIN', 'SUPER_ADMIN', 'SUPERADMIN']:
             return Response({"detail": "Not authorized."}, status=status.HTTP_403_FORBIDDEN)
 
         sessions = QuestionnaireSession.objects.filter(is_valid=True)
@@ -789,9 +826,10 @@ class LabStatsView(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
-        # Pass the authenticated user to scope data based on role/governorate
         user = request.user if request.user.is_authenticated else None
-        data = SentinelleAnalytics.get_lab_stats(user=user)
+        scope_type = request.query_params.get('scope_type', 'national')
+        scope_id = request.query_params.get('scope_id')
+        data = SentinelleAnalytics.get_lab_stats(user=user, scope_type=scope_type, scope_id=scope_id)
         return Response(data)
 
 class CorrelationEngineView(views.APIView):
@@ -983,11 +1021,9 @@ class InsightsView(views.APIView):
         return Response(data)
 
 class RegionalProfileView(views.APIView):
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)
 
     def get(self, request, gov_name):
-        if request.user.role not in ['GLOBAL_ADMIN', 'SUPER_ADMIN']:
-            return Response({"detail": "Not authorized"}, status=403)
         data = SentinelleAnalytics.get_regional_profile(gov_name)
         if not data:
             return Response({"detail": "Aucune donnée pour cette région"}, status=404)
@@ -1008,7 +1044,7 @@ class InviteUserView(views.APIView):
         if serializer.is_valid():
             email = serializer.validated_data['email']
             username = serializer.validated_data.get('username')
-            
+
             if not username:
                 # Default username is the part before @
                 username = email.split('@')[0]
@@ -1019,17 +1055,35 @@ class InviteUserView(views.APIView):
                     username = f"{base_username}_{idx}"
                     idx += 1
 
+            # Always generate a new raw token and store only its HMAC-SHA256 hash in the DB
             token = secrets.token_urlsafe(32)
             expiration = timezone.now() + timedelta(hours=24)
-            
-            user = serializer.save(
-                username=username,
-                status='PENDING',
-                invite_token=token,
-                token_expiration=expiration,
-                created_by=request.user,
-                is_active=False
-            )
+
+            hashed = hmac.new(settings.SECRET_KEY.encode(), token.encode(), hashlib.sha256).hexdigest()
+
+            existing_user = User.objects.filter(email=email).first()
+            if existing_user:
+                if existing_user.is_active:
+                    return Response({"email": ["user with this email address already exists."]}, status=400)
+
+                existing_user.invite_token = hashed
+                existing_user.token_expiration = expiration
+                existing_user.status = 'PENDING'
+                existing_user.is_active = False
+                existing_user.created_by = request.user
+                if not existing_user.username:
+                    existing_user.username = username
+                existing_user.save()
+                user = existing_user
+            else:
+                user = serializer.save(
+                    username=username,
+                    status='PENDING',
+                    invite_token=hashed,
+                    token_expiration=expiration,
+                    created_by=request.user,
+                    is_active=False
+                )
 
             # Build invitation link pointing to the Frontend page
             frontend_url = os.environ.get('FRONTEND_URL', 'http://localhost:5173')
@@ -1048,15 +1102,40 @@ class InviteUserView(views.APIView):
             )
             
             try:
-                send_mail(
-                    subject=email_subject,
-                    message=email_body,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[email],
-                    fail_silently=False,
+                # Send multipart email (plain text + HTML) and include helpful headers
+                from_email = f"Sentinelle <{settings.DEFAULT_FROM_EMAIL}>"
+                html_body = (
+                    f"<p>Cher(e) {username},</p>"
+                    "<p>Vous avez été officiellement invité(e) à rejoindre la plateforme Sentinelle (MedSPAD Tunisie 2026)." 
+                    "Ce portail sécurisé vous permet de contribuer à la veille sanitaire nationale.</p>"
+                    f"<p>Veuillez cliquer sur le lien suivant pour configurer votre mot de passe et activer votre compte :</p>"
+                    f"<p><a href=\"{invitation_link}\">{invitation_link}</a></p>"
+                    "<p>Ce lien est personnel et expirera dans 24 heures.</p>"
+                    "<p>Cordialement,<br/>L'équipe d'administration Sentinelle</p>"
                 )
+
+                msg = EmailMultiAlternatives(
+                    subject=email_subject,
+                    body=email_body,
+                    from_email=from_email,
+                    to=[email],
+                    headers={
+                        'List-Unsubscribe': f"<mailto:{settings.DEFAULT_FROM_EMAIL}?subject=unsubscribe>",
+                    }
+                )
+                msg.attach_alternative(html_body, "text/html")
+                # Add Reply-To to a monitored address if desired
+                if getattr(settings, 'EMAIL_REPLY_TO', None):
+                    msg.extra_headers = msg.extra_headers or {}
+                    msg.extra_headers['Reply-To'] = settings.EMAIL_REPLY_TO
+
+                msg.send(fail_silently=False)
             except Exception as e:
-                print(f"Erreur d'envoi d'email : {e}")
+                logging.error(f"Erreur d'envoi d'email : {e}")
+                return Response({
+                    "detail": "Impossible d'envoyer l'invitation par email. Vérifiez la configuration SMTP.",
+                    "error": str(e)
+                }, status=500)
 
             # Log the invitation
             client_ip = request.META.get('REMOTE_ADDR')
@@ -1066,9 +1145,9 @@ class InviteUserView(views.APIView):
                 ip_address=client_ip
             )
 
-            # In a real app, send email here. For now, return the link.
+            # In a real app, send email here. Return the link (token plaintext for client)
             invitation_link = f"/set-password?token={token}"
-            
+
             return Response({
                 "detail": "User invited successfully.",
                 "invitation_link": invitation_link,
@@ -1087,7 +1166,9 @@ class ActivateUserView(views.APIView):
             token = serializer.validated_data['token']
             password = serializer.validated_data['password']
 
-            user = User.objects.filter(invite_token=token).first()
+            # Hash the provided token using the same HMAC and compare to stored hash
+            hashed = hmac.new(settings.SECRET_KEY.encode(), token.encode(), hashlib.sha256).hexdigest()
+            user = User.objects.filter(invite_token=hashed).first()
             
             if not user:
                 return Response({"detail": "Invalid or used token."}, status=400)
@@ -1135,6 +1216,59 @@ class DynamicQuestionDetailView(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'code'
 
 
+class DynamicClassReportFieldListView(generics.ListCreateAPIView):
+    queryset = DynamicClassReportField.objects.all().order_by('section', 'order')
+    serializer_class = serializers.DynamicClassReportFieldSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def get_queryset(self):
+        # Auto-seed default fields if none exist
+        if DynamicClassReportField.objects.count() == 0:
+            defaults = [
+                # Identity section
+                ('governorate', 'identity', 'Gouvernorat', 'الولاية', 'SELECT', [], 10, False),
+                ('establishment_name', 'identity', "Nom de l'établissement", 'اسم المؤسسة', 'TEXT', [], 20, False),
+                ('establishment_type', 'identity', "Type d'établissement", 'نوع المؤسسة', 'RADIO', [['PUBLIC', 'Public', 'عمومية'], ['PRIVATE', 'Privé', 'خاصة']], 30, False),
+                ('study_level', 'identity', "Niveau d'études", 'المستوى الدراسي', 'RADIO', [['1_AS', '1ère AS', 'السنة الأولى'], ['2_AS', '2ème AS', 'السنة الثانية']], 40, False),
+                ('report_date', 'identity', "Date de l'enquête", 'تاريخ المسح', 'TEXT', [], 50, False),
+                # Stats section
+                ('students_present', 'stats', 'Élèves présents', 'عدد التلاميذ الحاضرين', 'NUMBER', [], 10, False),
+                ('students_refused', 'stats', 'Élèves ayant refusé', 'عدد التلاميذ الرافضين', 'NUMBER', [], 20, False),
+                ('students_absent', 'stats', 'Élèves absents', 'عدد التلاميذ الغائبين', 'NUMBER', [], 30, False),
+                ('parental_authorization_required', 'stats', 'Autorisation parentale demandée ?', 'هل طُلبت موافقة الأولياء؟', 'RADIO', [['true', 'Oui', 'نعم'], ['false', 'Non', 'لا']], 40, False),
+                ('students_without_authorization', 'stats', 'Élèves sans autorisation', 'تلاميذ بدون موافقة', 'NUMBER', [], 50, False),
+                ('questionnaires_collected', 'stats', 'Questionnaires collectés', 'الاستبيانات التي تم جمعها', 'NUMBER', [], 60, False),
+                # Observations section
+                ('perturbations', 'observations', 'Perturbations remarquées', 'الاضطرابات الملاحظة', 'RADIO', [['1', 'Aucune', 'لا يوجد'], ['2', 'Quelques élèves', 'بعض التلاميذ'], ['3', 'Plusieurs élèves', 'تلاميذ كثر']], 10, False),
+                ('serious_work', 'observations', 'Sérieux des élèves', 'جدية التلاميذ', 'RADIO', [['1', 'Tous', 'الجميع'], ['2', 'La majorité', 'الأغلبية'], ['3', 'Moitié ou moins', 'النصف أو أقل']], 20, False),
+                ('difficulty_level', 'observations', 'Facilité de réponse', 'سهولة الإجابة', 'RADIO', [['1', 'Facile', 'سهل'], ['2', 'Moyen', 'متوسط'], ['3', 'Difficile', 'صعب']], 30, False),
+                # Timing section
+                ('planned_time_minutes', 'timing', 'Temps prévu (min)', 'الوقت المقرر (دقائق)', 'NUMBER', [], 10, False),
+                ('first_student_time_minutes', 'timing', 'Temps premier élève (min)', 'وقت أول تلميذ (دقائق)', 'NUMBER', [], 20, False),
+                ('last_student_time_minutes', 'timing', 'Temps dernier élève (min)', 'وقت آخر تلميذ (دقائق)', 'NUMBER', [], 30, False),
+                # Comments section
+                ('personal_comments', 'comments', 'Remarques et incidents', 'ملاحظات وحوادث', 'TEXTAREA', [], 10, False),
+            ]
+            for code, sec, fr, ar, ftype, opts, ord_num, is_cust in defaults:
+                DynamicClassReportField.objects.create(
+                    code=code, section=sec, label_fr=fr, label_ar=ar,
+                    field_type=ftype, options_json=opts, order=ord_num, is_custom=is_cust
+                )
+        return DynamicClassReportField.objects.all().order_by('section', 'order')
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsSuperAdmin()]
+        return [permissions.AllowAny()]
+
+
+class DynamicClassReportFieldDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = DynamicClassReportField.objects.all()
+    serializer_class = serializers.DynamicClassReportFieldSerializer
+    permission_classes = (IsSuperAdmin,)
+    lookup_field = 'code'
+
+
 # ─── Class Report Views ─────────────────────────────────────────────────────────
 
 class ClassReportCreateView(generics.CreateAPIView):
@@ -1169,6 +1303,12 @@ class ClassReportListView(generics.ListAPIView):
 class ClassReportDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = ClassReport.objects.all()
     serializer_class = serializers.ClassReportSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            return [IsSuperAdmin()]
+        return [permissions.IsAuthenticated()]
 
 class ClassReportFinalizeView(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)

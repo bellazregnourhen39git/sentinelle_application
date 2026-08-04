@@ -2,6 +2,8 @@ import React from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import EditableLabel from './dashboard/EditableLabel';
 
+const normalizeRole = (role) => String(role || '').toUpperCase().replace(/_/g, '');
+
 /**
  * Higher-Order Component for Role-Based Access Control
  * @param {Object} profile - Current user profile (from mock or API)
@@ -9,11 +11,12 @@ import EditableLabel from './dashboard/EditableLabel';
  */
 const ProtectedRoute = ({ children, profile, allowedRoles }) => {
     const navigate = useNavigate();
-    // If no profile, redirect to login (placeholder)
-    if (!profile) return <Navigate to="/" replace />;
+    // If no profile, redirect to login immediately
+    if (!profile) return <Navigate to="/login" replace />;
 
     // Check if user's role is in the allowed list
-    const isAuthorized = allowedRoles.includes(profile.role);
+    const normalizedAllowedRoles = (allowedRoles || []).map(normalizeRole);
+    const isAuthorized = normalizedAllowedRoles.includes(normalizeRole(profile.role));
 
     if (!isAuthorized) {
         // You could redirect to a custom "Access Denied" page here

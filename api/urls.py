@@ -14,7 +14,8 @@ from .views import (
     DynamicQuestionListView, DynamicQuestionDetailView,
     QuestionnaireSubmissionListView, QuestionnaireSubmissionDetailView,
     ClassReportCreateView, ClassReportListView, ClassReportDetailView,
-    ClassReportFinalizeView, LatestActiveReportView
+    ClassReportFinalizeView, LatestActiveReportView,
+    DynamicClassReportFieldListView, DynamicClassReportFieldDetailView
 )
 
 
@@ -69,4 +70,6 @@ urlpatterns = [
     path('class-report/<int:pk>/', ClassReportDetailView.as_view(), name='class_report_detail'),
     path('class-report/<int:pk>/finalize/', ClassReportFinalizeView.as_view(), name='class_report_finalize'),
     path('class-report/active/', LatestActiveReportView.as_view(), name='latest_active_report'),
+    path('class-report-fields/', DynamicClassReportFieldListView.as_view(), name='class_report_fields_list'),
+    path('class-report-fields/<str:code>/', DynamicClassReportFieldDetailView.as_view(), name='class_report_fields_detail'),
 ]

@@ -1,20 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Target, Award, ArrowLeft, Trophy, ChevronRight, Activity, TrendingDown } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import EditableLabel from '../components/dashboard/EditableLabel';
 import api from '../api';
 
 const RankingsLab = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const urlParams = new URLSearchParams(location.search);
+    const scopeType = urlParams.get('scope_type') || 'national';
+    const scopeId = urlParams.get('scope_id') || null;
     const [rankings, setRankings] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchRankings = async () => {
             try {
-                // Fetch the homepage data which includes the national rankings
-                const res = await api.get('homepage/', { params: { scope_type: 'national' } });
+                const params = { scope_type: scopeType };
+                if (scopeId) params.scope_id = scopeId;
+                const res = await api.get('homepage/', { params });
                 setRankings(res.data.rankings);
             } catch (err) {
                 console.error("Échec du chargement des classements", err);
@@ -23,7 +27,7 @@ const RankingsLab = () => {
             }
         };
         fetchRankings();
-    }, []);
+    }, [scopeType, scopeId]);
 
     if (loading) {
         return (
@@ -95,7 +99,7 @@ const RankingsLab = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {rankings[Object.keys(rankings)[0]]?.leaderboard.map(r => r.gov_name).sort().map((region, rowIdx) => (
+                            {rankings[Object.keys(rankings)[0]]?.leaderboard.map(r => r.gov_name).sort().map((region) => (
                                 <tr key={region} className="border-b border-slate-800/50 hover:bg-slate-800/50 transition-colors group">
                                     <td className="p-8 font-black uppercase text-[12px] tracking-widest text-slate-200 whitespace-nowrap sticky left-0 bg-slate-950/95 group-hover:bg-slate-900 transition-colors z-10 border-r border-slate-800/50 shadow-[4px_0_15px_-3px_rgba(0,0,0,0.2)]">
                                         {region}

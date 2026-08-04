@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './i18n';
 import UserDashboard from './pages/UserDashboard';
@@ -31,6 +31,17 @@ import SetPassword from './pages/SetPassword';
 import { useState, useEffect } from 'react';
 import { TerminologyProvider } from './TerminologyContext';
 
+const normalizeRole = (role) => String(role || '').toUpperCase().replace(/_/g, '');
+
+const getAdminRedirect = (user) => {
+  const role = normalizeRole(user?.role);
+  if (role === 'REGIONALANALYST') {
+    const gov = user?.governorate || user?.gouvernorat || user?.region || 'unknown';
+    return `/admin/${encodeURIComponent(gov)}?scope_type=gouvernorate&scope_id=${encodeURIComponent(gov)}`;
+  }
+  return '/admin';
+};
+
 function App() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,7 +49,11 @@ function App() {
   useEffect(() => {
     const savedUser = localStorage.getItem('user');
     if (savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        console.error("Failed to parse user session", e);
+      }
     }
     setIsLoading(false);
   }, []);
@@ -81,17 +96,17 @@ function App() {
         <Routes>
           <Route path="/" element={
             !user ? <LandingPage /> :
-              (['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(user.role) ? <Navigate to="/superadmin" replace /> :
-                (['REGIONAL_ADMIN', 'ADMIN'].includes(user.role)) ? <Navigate to="/admin" replace /> :
-                  ['PRACTITIONER', 'OPERATOR'].includes(user.role) ? <Navigate to="/guide" replace /> :
+              (['SUPERADMIN', 'GLOBALADMIN'].includes(normalizeRole(user.role)) ? <Navigate to="/superadmin" replace /> :
+                (['REGIONALADMIN', 'ADMIN', 'REGIONALANALYST'].includes(normalizeRole(user.role))) ? <Navigate to={getAdminRedirect(user)} replace /> :
+                  ['PRACTITIONER', 'OPERATOR'].includes(normalizeRole(user.role)) ? <Navigate to="/guide" replace /> :
                     <Navigate to="/user" replace />)
           } />
 
           <Route path="/login" element={
             !user ? <Login setUser={setUser} /> :
-              (['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(user.role) ? <Navigate to="/superadmin" replace /> :
-                (['REGIONAL_ADMIN', 'ADMIN'].includes(user.role)) ? <Navigate to="/admin" replace /> :
-                  ['PRACTITIONER', 'OPERATOR'].includes(user.role) ? <Navigate to="/guide" replace /> :
+              (['SUPERADMIN', 'GLOBALADMIN'].includes(normalizeRole(user.role)) ? <Navigate to="/superadmin" replace /> :
+                (['REGIONALADMIN', 'ADMIN', 'REGIONALANALYST'].includes(normalizeRole(user.role))) ? <Navigate to={getAdminRedirect(user)} replace /> :
+                  ['PRACTITIONER', 'OPERATOR'].includes(normalizeRole(user.role)) ? <Navigate to="/guide" replace /> :
                     <Navigate to="/user" replace />)
           } />
 
@@ -104,12 +119,12 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/admin" element={
-            <ProtectedRoute profile={activeProfile} allowedRoles={['REGIONAL_ADMIN', 'ADMIN', 'GLOBAL_ADMIN', 'SUPER_ADMIN']}>
+            <ProtectedRoute profile={activeProfile} allowedRoles={['REGIONAL_ADMIN', 'REGIONAL_ANALYST', 'ADMIN', 'GLOBAL_ADMIN', 'SUPER_ADMIN']}>
               <AdminDashboard profile={activeProfile} />
             </ProtectedRoute>
           } />
           <Route path="/admin/:regionName" element={
-            <ProtectedRoute profile={activeProfile} allowedRoles={['REGIONAL_ADMIN', 'ADMIN', 'GLOBAL_ADMIN', 'SUPER_ADMIN']}>
+            <ProtectedRoute profile={activeProfile} allowedRoles={['REGIONAL_ADMIN', 'REGIONAL_ANALYST', 'ADMIN', 'GLOBAL_ADMIN', 'SUPER_ADMIN']}>
               <AdminDashboard profile={activeProfile} />
             </ProtectedRoute>
           } />

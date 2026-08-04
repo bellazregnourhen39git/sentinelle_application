@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+void motion;
 import { Layers, Activity, LucideArrowLeft, Info, HelpCircle, Target, TrendingUp, AlertTriangle, Zap, FlaskConical, Award } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import EditableLabel from '../components/dashboard/EditableLabel';
 import api from '../api';
 
@@ -11,6 +12,10 @@ const ComorbidityLab = ({ profile }) => {
     const [loading, setLoading] = useState(true);
 
     const isUser = profile?.role === 'USER';
+    const location = useLocation();
+    const urlParams = new URLSearchParams(location.search);
+    const scopeType = urlParams.get('scope_type') || 'national';
+    const scopeId = urlParams.get('scope_id') || null;
 
     // Tooltip component
     const Tooltip = ({ content, children }) => {
@@ -41,7 +46,12 @@ const ComorbidityLab = ({ profile }) => {
     useEffect(() => {
         const fetchStats = async () => {
             try {
-                const res = await api.get('lab-stats/');
+                const res = await api.get('lab-stats/', {
+                    params: {
+                        scope_type: scopeType,
+                        scope_id: scopeId
+                    }
+                });
                 setLabData(res.data);
                 setLoading(false);
             } catch (err) {
@@ -50,7 +60,15 @@ const ComorbidityLab = ({ profile }) => {
             }
         };
         fetchStats();
-    }, []);
+    }, [scopeType, scopeId]);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-12">
+                <div className="w-16 h-16 border-4 border-slate-200 border-t-rose-500 rounded-full animate-spin" />
+            </div>
+        );
+    }
 
     const polyStats = (labData?.comorbidity?.rankings && labData.comorbidity.rankings.length > 0) ? labData.comorbidity.rankings : [];
     const topPairs = (labData?.comorbidity?.top_combinations && labData.comorbidity.top_combinations.length > 0) ? labData.comorbidity.top_combinations : [];

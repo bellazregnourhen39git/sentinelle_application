@@ -2,7 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
-from .models import Governorate, SchoolEstablishment, SchoolClass, QuestionnaireSession
+from .models import Governorate, SchoolEstablishment, SchoolClass, QuestionnaireSession, ClassReport
 from .analytics import SentinelleAnalytics
 
 User = get_user_model()
@@ -42,6 +42,8 @@ class SentinelleAPITests(APITestCase):
             "school": self.school.id,
             "governorate": self.gov.id,
             "language_used": "AR",
+            "section_a": {"gender": "M", "birth_year": 2008},
+            "section_c": {"lifetime_freq": "2"},
             "answers": {"tobacco_30days": "1-5 par jour"},
             "tobacco_user": True,
             "alcohol_user": False,
@@ -57,6 +59,25 @@ class SentinelleAPITests(APITestCase):
         res_stats = self.client.get(reverse('stats_school'))
         self.assertEqual(res_stats.data['total_responses'], 1)
         self.assertEqual(res_stats.data['tobacco_users'], 1)
+
+    def test_questionnaire_submission_with_class_report(self):
+        self.client.force_authenticate(user=self.user)
+        report = ClassReport.objects.create(
+            governorate=self.gov,
+            establishment=self.school,
+            establishment_name="Lycée Pilote",
+            study_level="1_AS",
+            report_date="2026-07-27"
+        )
+        payload = {
+            "class_report": report.id,
+            "language_used": "FR",
+            "section_a": {"gender": "M", "birth_year": "2008"},
+            "section_c": {"lifetime_freq": "2"},
+        }
+        res = self.client.post(reverse('questionnaire_submit'), payload, format='json')
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(res.data['class_report'], report.id)
 
     def test_sidra_export(self):
         self.client.force_authenticate(user=self.superadmin)

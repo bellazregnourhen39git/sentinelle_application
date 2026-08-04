@@ -1,21 +1,27 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+void motion;
 import { useNavigate } from 'react-router-dom';
 import EditableLabel from './EditableLabel';
 import { Users, ShieldAlert, Award, TrendingUp, UserCheck, Flag, GraduationCap, Home, Activity, CheckCircle2, AlertTriangle, Layers, Target, Thermometer, FlaskConical, ArrowUpRight } from 'lucide-react';
 
 // 🛡️ Audit Expert — Indice de Fiabilité et d'Intégrité des Données
-export const ExpertAudit = ({ integrity, locked = false }) => {
+export const ExpertAudit = ({ integrity, locked = false, scopeType = 'national', scopeId = null }) => {
     const navigate = useNavigate();
     const { honesty_score = null, is_reliable = null } = integrity || {};
     const hasData = honesty_score != null && is_reliable != null;
     const displayScore = hasData ? `${honesty_score}%` : '—';
     const displayAnomaly = hasData ? `${(100 - honesty_score).toFixed(1)}%` : '—';
     
+    const queryParams = new URLSearchParams();
+    queryParams.set('scope_type', scopeType || 'national');
+    if (scopeId) queryParams.set('scope_id', scopeId);
+    const targetPath = `/lab/integrity?${queryParams.toString()}`;
+
     return (
         <motion.div 
             whileHover={!locked ? { scale: 1.01, translateY: -4 } : {}}
-            onClick={() => !locked && navigate('/lab/integrity')}
+            onClick={() => !locked && navigate(targetPath)}
             className={`pro-card p-8 h-full rounded-[40px] border border-white shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] transition-all duration-500 relative overflow-hidden group
                 ${locked ? 'cursor-not-allowed opacity-70 grayscale-[30%]' : 'cursor-pointer hover:shadow-[0_40px_100px_-20px_rgba(15,23,42,0.12)]'}
                 ${hasData && !is_reliable ? 'bg-rose-50/50 backdrop-blur-3xl' : 'bg-white/70 backdrop-blur-3xl'}`}
@@ -83,7 +89,7 @@ export const ExpertAudit = ({ integrity, locked = false }) => {
 };
 
 // 📈 Spectre de Comorbidité — Intensité du Poly-Usage de Drogues
-export const ComorbiditySpectrum = ({ metrics, locked = false }) => {
+export const ComorbiditySpectrum = ({ metrics, locked = false, scopeType = 'national', scopeId = null }) => {
     const {
         poly_2plus_pct = null,
         poly_3plus_pct = null,
@@ -98,9 +104,14 @@ export const ComorbiditySpectrum = ({ metrics, locked = false }) => {
     const display2plus = hasRealData && normalized2plus != null ? `${normalized2plus}%` : '—';
     const display3plus = hasRealData && normalized3plus != null ? `${normalized3plus}%` : '—';
 
+    const queryParams = new URLSearchParams();
+    queryParams.set('scope_type', scopeType || 'national');
+    if (scopeId) queryParams.set('scope_id', scopeId);
+    const targetPath = `/lab/comorbidity?${queryParams.toString()}`;
+
     return (
         <div 
-            onClick={() => !locked && navigate('/lab/comorbidity')}
+            onClick={() => !locked && navigate(targetPath)}
             className={`pro-card p-8 h-full rounded-[40px] bg-white/70 backdrop-blur-3xl border border-white shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] overflow-hidden group transition-all duration-500 relative
                 ${locked ? 'cursor-not-allowed opacity-70 grayscale-[30%]' : 'cursor-pointer hover:border-rose-300 hover:shadow-[0_40px_100px_-20px_rgba(244,63,94,0.12)] active:scale-95'}
             `}
@@ -143,13 +154,19 @@ export const ComorbiditySpectrum = ({ metrics, locked = false }) => {
                     </div>
                     <div className="relative z-10">
                         <div className="flex items-center justify-between mb-3">
-                            <span className="text-[10px] font-black uppercase tracking-[3px] italic text-slate-900"><EditableLabel termKey="lab_como_zone" defaultValue="Zone Critique (3+)" /></span>
+                            <span className="text-[10px] font-black uppercase tracking-[3px] italic text-white"><EditableLabel termKey="lab_como_zone" defaultValue="Zone Critique (3+)" /></span>
                             <div className="flex items-center gap-2">
                                 <div className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                                <span className="text-[16px] font-black italic tabular-nums text-slate-900">{display3plus}</span>
+                                <span className="text-[16px] font-black italic tabular-nums text-white">{display3plus}</span>
                             </div>
                         </div>
-                        <p className="text-[9px] font-black uppercase tracking-[1.5px] leading-relaxed opacity-60 italic text-slate-900">
+                        <div className="h-3 rounded-full bg-white/10 overflow-hidden mb-4">
+                            <motion.div initial={{ width: 0 }} animate={{ width: hasRealData && normalized3plus != null ? `${normalized3plus}%` : '0%' }} className="h-full bg-rose-500 rounded-full shadow-[0_0_15px_rgba(244,63,94,0.5)]" />
+                        </div>
+                        <p className="text-[9px] font-black uppercase tracking-[1.5px] leading-relaxed opacity-60 italic text-white">
+                            <EditableLabel termKey="lab_como_triple_prevalence" defaultValue="Prévalence de triple consommation — profils à risque psychiatrique majeur." />
+                        </p>
+                        <p className="text-[9px] font-black uppercase tracking-[1.5px] leading-relaxed opacity-60 italic text-white mt-1">
                             {hasRealData ? (
                                 <EditableLabel termKey="lab_como_priority" defaultValue="Priorité d'intervention psychiatrique absolue pour les cas identifiés." />
                             ) : (
@@ -236,16 +253,21 @@ export const CohortPulse = ({ insights }) => {
 };
 
 // 🤝 Vecteurs de Contexte Social — Stress & Incidents
-export const SocialInlet = ({ stressIndex = null, violenceIndex = null, locked = false }) => {
+export const SocialInlet = ({ stressIndex = null, violenceIndex = null, locked = false, scopeType = 'national', scopeId = null }) => {
     const navigate = useNavigate();
     const hasData = stressIndex != null || violenceIndex != null;
     const displayStress = hasData && stressIndex != null ? `${stressIndex}%` : '—';
     const displayViolence = hasData && violenceIndex != null ? `${violenceIndex}%` : '—';
 
+    const queryParams = new URLSearchParams();
+    queryParams.set('scope_type', scopeType || 'national');
+    if (scopeId) queryParams.set('scope_id', scopeId);
+    const targetPath = `/lab/social?${queryParams.toString()}`;
+
     return (
         <motion.div 
             whileHover={!locked ? { scale: 1.01, translateY: -4 } : {}}
-            onClick={() => !locked && navigate('/lab/social')}
+            onClick={() => !locked && navigate(targetPath)}
             className={`pro-card p-8 h-full rounded-[40px] bg-white/70 backdrop-blur-3xl border border-white shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] transition-all duration-500 relative overflow-hidden
                 ${locked ? 'cursor-not-allowed opacity-70 grayscale-[30%]' : 'cursor-pointer hover:shadow-[0_40px_100px_-20px_rgba(15,23,42,0.12)] group'}`}
         >
@@ -391,13 +413,17 @@ export const NationalHeatList = ({ rankings }) => {
 };
 
 // 🏆 Accès Lab des Classements — Compétition Nationale
-export const RankingsLabInlet = () => {
+export const RankingsLabInlet = ({ scopeType = 'national', scopeId = null }) => {
     const navigate = useNavigate();
+    const queryParams = new URLSearchParams();
+    queryParams.set('scope_type', scopeType || 'national');
+    if (scopeId) queryParams.set('scope_id', scopeId);
+    const targetPath = `/lab/rankings?${queryParams.toString()}`;
 
     return (
         <motion.div 
             whileHover={{ scale: 1.01, translateY: -4 }}
-            onClick={() => navigate('/lab/rankings')}
+            onClick={() => navigate(targetPath)}
             className="pro-card p-10 h-full rounded-[40px] bg-slate-950 border border-slate-900 shadow-xl shadow-slate-900/20 cursor-pointer group relative overflow-hidden flex flex-col justify-between min-h-[300px]"
         >
             <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10 mix-blend-overlay pointer-events-none" />

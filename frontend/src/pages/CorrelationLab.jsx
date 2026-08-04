@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+void motion;
 import {
     Radar, Gamepad2, Swords, Flame, Sparkles, Beer, Award,
     AlertTriangle, ArrowUpRight, ArrowDownRight, Thermometer,
     ShieldAlert, Smartphone, LucideArrowLeft, Info, Activity,
     TrendingUp, Layers, HelpCircle
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../api';
 import EditableLabel from '../components/dashboard/EditableLabel';
 
@@ -89,8 +90,12 @@ const CLINICAL_NOTES = {
 };
 
 // ─── Main Component ───────────────────────────────────────────────────────────
-const CorrelationLab = ({ profile }) => {
+const CorrelationLab = () => {
     const navigate = useNavigate();
+    const location = useLocation();
+    const urlParams = new URLSearchParams(location.search);
+    const scopeType = urlParams.get('scope_type') || 'national';
+    const scopeId = urlParams.get('scope_id') || null;
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -100,7 +105,10 @@ const CorrelationLab = ({ profile }) => {
         const fetch = async () => {
             try {
                 const res = await api.get('stats/correlations/', {
-                    params: { scope_type: 'national' }
+                    params: {
+                        scope_type: scopeType,
+                        scope_id: scopeId
+                    }
                 });
                 setData(res.data);
             } catch (err) {
@@ -111,7 +119,7 @@ const CorrelationLab = ({ profile }) => {
             }
         };
         fetch();
-    }, []);
+    }, [scopeType, scopeId]);
 
     // Only show statistically significant correlations: |deviation| > 3 OR rate > 20%
     const significantCorrelations = (data?.correlations || []).filter(

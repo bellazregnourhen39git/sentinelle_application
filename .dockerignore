@@ -1,0 +1,44 @@
+# Virtual environment & Python cache
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node modules & Frontend build outputs
+frontend/node_modules/
+frontend/dist/
+node_modules/
+dist/
+
+# Git & IDE metadata
+.git/
+.gitignore
+.vscode/
+.gemini/
+.idea/
+
+# Large Word docs, OCR installers & scratch files
+*.docx
+*.exe
+*.log
+*.sqlite3
+db.sqlite3
+db_backup_before_test.sqlite3
+scratch/
+verified_section_subtitles.txt
+section_subtitles_audit.txt
+all_docx_tables_dump.txt
+all_field_labels_dump.txt
+all_grids_audit.txt
+all_sections_detailed_dump.txt
+audit_docx_scales_output.txt
+grid_codes_mapped.txt
+q_codes_cross_reference.txt
+questionnaire_2026_extracted.txt
+questionnaire_structure.txt
+rapport_de_classe_extracted.txt
+rapport_structure.txt

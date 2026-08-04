@@ -1,19 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useId, useState, useEffect } from 'react';
 import {
-  ChevronRight, ChevronLeft, CheckCircle2, AlertCircle, Send, X, LogOut, ArrowLeft,
+  ChevronRight, ChevronLeft, CheckCircle2, AlertCircle, AlertTriangle, Send, X, LogOut, ArrowLeft,
   Pencil, Plus, Trash2, Edit2, Save, LayoutDashboard
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../api';
 import LocationSelectionModal from './dashboard/LocationSelectionModal';
 
 // ─── Shared UI Components ───────────────────────────────────────────────────────
 
-const toArabicNumeral = (num) => {
-  const arabicNumbers = ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'];
-  return String(num).replace(/[0-9]/g, w => arabicNumbers[+w]);
-};
+const toArabicNumeral = (num) => String(num);
 
 const SectionHeader = ({ letter, title, subtitle, color = 'bg-slate-900', actionButtons }) => (
   <div className={`${color} text-white rounded-2xl p-8 mb-8 relative overflow-hidden flex items-center justify-between`}>
@@ -31,12 +28,49 @@ const SectionHeader = ({ letter, title, subtitle, color = 'bg-slate-900', action
   </div>
 );
 
-const FieldLabel = ({ code, fr, ar, isRTL }) => (
-  <label className="block mb-3">
-    <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">{code}</span>
-    <span className="text-base font-semibold text-slate-800">{isRTL ? ar : fr}</span>
-  </label>
-);
+export const EditModeContext = React.createContext({
+  isEditMode: false,
+  onEditQuestion: () => {},
+  onDeleteQuestion: () => {},
+  dynamicConfigs: []
+});
+
+const FieldLabel = ({ code, fr, ar, isRTL }) => {
+  const { isEditMode, onEditQuestion, onDeleteQuestion, dynamicConfigs } = React.useContext(EditModeContext);
+  const overridden = dynamicConfigs?.find(q => q.code === code);
+  const labelFr = overridden ? overridden.label_fr : fr;
+  const labelAr = overridden ? (overridden.label_ar || overridden.label_fr) : ar;
+
+  return (
+    <div className={`relative ${isEditMode ? 'p-4 bg-brand-50/60 border-2 border-dashed border-brand-300 rounded-2xl mb-4 shadow-sm group' : 'mb-3'}`}>
+      {isEditMode && (
+        <div className="absolute top-3 right-3 z-30 flex items-center gap-1.5 bg-slate-900 text-white px-2 py-1 rounded-xl shadow-md border border-slate-800">
+          <span className="text-[10px] font-black uppercase text-brand-400 tracking-wider">{code}</span>
+          <button 
+            type="button" 
+            onClick={() => onEditQuestion?.(code, labelFr, labelAr)} 
+            className="px-2.5 py-1 bg-amber-500 text-white rounded-lg text-xs font-bold flex items-center gap-1 hover:bg-amber-600 shadow-xs" 
+            title="Éditer cette question"
+          >
+            <Pencil size={12} /> Éditer
+          </button>
+          <button 
+            type="button" 
+            onClick={() => onDeleteQuestion?.(code)} 
+            className="p-1 text-rose-400 hover:text-rose-300" 
+            title="Masquer la question"
+          >
+            <Trash2 size={14} />
+          </button>
+        </div>
+      )}
+      <label className="block">
+        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">{code}</span>
+        <span className="text-base font-semibold text-slate-800">{isRTL ? labelAr : labelFr}</span>
+      </label>
+    </div>
+  );
+};
 
 const SelectField = ({ name, value, onChange, options, isRTL }) => (
   <select
@@ -47,7 +81,7 @@ const SelectField = ({ name, value, onChange, options, isRTL }) => (
   >
     <option value="">{isRTL ? '-- اختر --' : '-- Sélectionner --'}</option>
     {options.map((opt, idx) => {
-      const numVal = opt[3] || idx + 1;
+      const numVal = opt[3] !== undefined ? opt[3] : (opt[0] !== undefined ? opt[0] : idx + 1);
       return (
         <option key={opt[0]} value={opt[0]}>
           {isRTL ? toArabicNumeral(numVal) : numVal}. {isRTL && opt[2] ? opt[2] : opt[1]}
@@ -57,47 +91,58 @@ const SelectField = ({ name, value, onChange, options, isRTL }) => (
   </select>
 );
 
-const RadioGroup = ({ name, value, onChange, options, isRTL }) => (
-  <div className="space-y-2">
-    {options.map((opt, idx) => {
-      const numVal = opt[3] || idx + 1;
-      return (
-        <label key={opt[0]} className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer group transition-all ${value === opt[0] ? 'bg-blue-50 border-blue-200' : 'hover:bg-slate-50'}`}>
-          <input
-            type="radio"
-            name={name}
-            checked={value === opt[0]}
-            onChange={() => onChange(name, opt[0])}
-            className="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-500"
-          />
-          <span className={`w-5 h-5 flex items-center justify-center rounded text-[10px] font-black transition-colors ${value === opt[0] ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500 group-hover:bg-slate-900 group-hover:text-white'}`}>
-            {isRTL ? toArabicNumeral(numVal) : numVal}
-          </span>
-          <span className={`font-medium ${value === opt[0] ? 'text-blue-900 font-bold' : 'text-slate-700 group-hover:text-slate-900'}`}>
-            {isRTL && opt[2] ? opt[2] : opt[1]}
-          </span>
-        </label>
-      );
-    })}
-  </div>
-);
+const RadioGroup = ({ name, value, onChange, options, isRTL }) => {
+  const id = useId();
+  return (
+    <div className="space-y-2">
+      {options.map((opt, idx) => {
+        const numVal = opt[3] !== undefined ? opt[3] : (opt[0] !== undefined ? opt[0] : idx + 1);
+        const isSelected = value === opt[0];
+        const groupName = `${name}-${id}`;
+
+        return (
+          <label key={opt[0]} className={`relative flex items-center gap-3 p-3 rounded-xl cursor-pointer group transition-all border ${isSelected ? 'bg-blue-50 border-blue-200 shadow-[0_0_0_1px_rgba(59,130,246,0.12)]' : 'border-transparent hover:bg-slate-50'}`}>
+            <input
+              type="radio"
+              name={groupName}
+              checked={isSelected}
+              onChange={() => onChange?.({ target: { name, value: opt[0] } })}
+              className="peer sr-only"
+            />
+            <span className={`relative w-5 h-5 rounded-full border-2 transition-all ${isSelected ? 'border-blue-600 bg-blue-600' : 'border-slate-300 bg-white'}`}>
+              <span className="absolute inset-0 m-auto w-2.5 h-2.5 rounded-full bg-slate-900 transition-opacity" style={{ opacity: isSelected ? 1 : 0 }} />
+            </span>
+            <span className={`w-5 h-5 flex items-center justify-center rounded text-[10px] font-black transition-colors ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500 group-hover:bg-slate-900 group-hover:text-white'}`}>
+              {isRTL ? toArabicNumeral(numVal) : numVal}
+            </span>
+            <span className={`font-medium ${isSelected ? 'text-blue-900 font-bold' : 'text-slate-700 group-hover:text-slate-900'}`}>
+              {isRTL && opt[2] ? opt[2] : opt[1]}
+            </span>
+          </label>
+        );
+      })}
+    </div>
+  );
+};
 
 const CheckboxGroup = ({ name, values = {}, onChange, options, isRTL }) => (
   <div className="space-y-2">
     {options.map((opt, idx) => {
-      const numVal = opt[3] || idx + 1;
+      const numVal = opt[3] !== undefined ? opt[3] : (opt[0] !== undefined ? opt[0] : idx + 1);
+      const isSelected = !!values[opt[0]];
+
       return (
-        <label key={opt[0]} className="flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 cursor-pointer group">
+        <label key={opt[0]} className={`flex items-center gap-3 p-3 rounded-xl hover:bg-slate-50 cursor-pointer group transition-all border ${isSelected ? 'bg-blue-50 border-blue-200' : 'border-transparent'}`}>
           <input
             type="checkbox"
-            checked={!!values[opt[0]]}
+            checked={isSelected}
             onChange={(e) => onChange(name, opt[0], e.target.checked)}
-            className="w-5 h-5 rounded text-blue-600 border-slate-300"
+            className="w-5 h-5 rounded accent-blue-600 border-slate-300"
           />
-          <span className="w-5 h-5 flex items-center justify-center bg-slate-900 text-white rounded text-[10px] font-black transition-colors">
+          <span className={`w-5 h-5 flex items-center justify-center rounded text-[10px] font-black transition-colors ${isSelected ? 'bg-blue-600 text-white' : 'bg-slate-900 text-white'}`}>
             {isRTL ? toArabicNumeral(numVal) : numVal}
           </span>
-          <span className="font-medium text-slate-700 group-hover:text-slate-900">
+          <span className={`font-medium ${isSelected ? 'text-blue-900 font-bold' : 'text-slate-700 group-hover:text-slate-900'}`}>
             {isRTL && opt[2] ? opt[2] : opt[1]}
           </span>
         </label>
@@ -111,40 +156,84 @@ const GridQuestion = ({ title, titleAr, code, options, items, values, onChange, 
     <div className="mb-4">
       <FieldLabel code={code} fr={title} ar={titleAr || title} isRTL={isRTL} />
     </div>
-    <table className="w-full text-sm border-separate border-spacing-y-2 min-w-[600px]">
-      <thead>
-        <tr className="text-slate-400 font-black uppercase tracking-widest text-[10px]">
-          <th className="text-start py-2 px-4">{isRTL ? 'العنصر' : 'Élément'}</th>
-          {options.map((opt, idx) => {
-            const numVal = opt[3] || idx + 1;
+    <div className="border border-slate-200 rounded-2xl overflow-hidden shadow-sm bg-white min-w-[600px]">
+      <table className="w-full text-sm border-collapse">
+        <thead>
+          <tr className="bg-slate-100/80 border-b border-slate-200 text-slate-700 font-bold text-[11px]">
+            <th className="text-start py-3.5 px-4 uppercase tracking-wider">{isRTL ? 'العنصر' : 'Élément'}</th>
+            {options.map((opt, idx) => {
+              const numVal = opt[3] !== undefined ? opt[3] : (opt[0] !== undefined ? opt[0] : idx + 1);
+              return (
+                <th key={opt[0]} className="text-center py-3.5 px-2 border-l border-slate-200/60">
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span className="text-[11px] font-mono font-bold text-blue-600">
+                      ({isRTL ? toArabicNumeral(numVal) : numVal})
+                    </span>
+                    <span className="font-semibold text-slate-800">{isRTL ? opt[2] : opt[1]}</span>
+                  </div>
+                </th>
+              );
+            })}
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-slate-100">
+          {items.map(([key, fr, ar, customCode], idx) => {
+            let itemLetter = String.fromCharCode(97 + idx); // a, b, c, d...
+            let itemCodeTag = customCode;
+            if (!itemCodeTag) {
+              if (key.startsWith('C.') || key.startsWith('O.') || key.startsWith('c.') || key.startsWith('o.')) {
+                itemCodeTag = key.toUpperCase();
+              } else if (code) {
+                if (key.length === 1 && /[a-z]/i.test(key)) {
+                  itemCodeTag = `${code}${key}`;
+                } else {
+                  itemCodeTag = `${code}${itemLetter}`;
+                }
+              } else {
+                itemCodeTag = key.toUpperCase();
+              }
+            }
+            if (!itemCodeTag.startsWith('(') && !itemCodeTag.endsWith(')')) {
+              itemCodeTag = `(${itemCodeTag})`;
+            }
+
+            const isRowSelected = values[key] !== undefined && values[key] !== '';
+
             return (
-              <th key={opt[0]} className="text-center py-2 px-2">
-                <div className="flex flex-col items-center gap-1">
-                  <span className="w-4 h-4 flex items-center justify-center bg-slate-900 text-white rounded text-[8px] font-bold">
-                    {isRTL ? toArabicNumeral(numVal) : numVal}
-                  </span>
-                  {isRTL ? opt[2] : opt[1]}
-                </div>
-              </th>
+              <tr key={key} className={`transition-colors ${isRowSelected ? 'bg-blue-50/40 hover:bg-blue-50/70' : 'hover:bg-slate-50/80'}`}>
+                <td className="py-3.5 px-4 font-medium text-slate-800">
+                  <div className="flex items-center gap-2.5">
+                    <span className="inline-block px-2 py-0.5 text-[11px] font-mono font-black bg-slate-200 text-slate-800 rounded-md shrink-0 shadow-xs">
+                      {itemCodeTag}
+                    </span>
+                    <span className="leading-snug">{isRTL ? ar : fr}</span>
+                  </div>
+                </td>
+                {options.map(([val]) => {
+                  const isChecked = values[key] === val;
+                  return (
+                    <td key={val} className="text-center py-3.5 px-2 border-l border-slate-100">
+                      <label className="inline-flex items-center justify-center cursor-pointer p-1 rounded-lg hover:bg-slate-200/50 transition-all">
+                        <input
+                          type="radio"
+                          name={key}
+                          checked={isChecked}
+                          onChange={() => onChange(key, val)}
+                          className="peer sr-only"
+                        />
+                        <span className={`relative w-5 h-5 rounded-full border-2 transition-all flex items-center justify-center ${isChecked ? 'border-blue-600 bg-blue-600 shadow-sm' : 'border-slate-300 bg-white'}`}>
+                          <span className={`w-2 h-2 rounded-full bg-white transition-opacity ${isChecked ? 'opacity-100' : 'opacity-0'}`} />
+                        </span>
+                      </label>
+                    </td>
+                  );
+                })}
+              </tr>
             );
           })}
-        </tr>
-      </thead>
-      <tbody>
-        {items.map(([key, fr, ar]) => (
-          <tr key={key} className="bg-slate-50 transition-colors hover:bg-slate-100">
-            <td className="py-4 px-4 rounded-l-2xl font-bold text-slate-700">{isRTL ? ar : fr}</td>
-            {options.map(([val]) => (
-              <td key={val} className="text-center py-4 px-2">
-                <input type="radio" checked={values[key] === val} onChange={() => onChange(key, val)}
-                  className="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-500" />
-              </td>
-            ))}
-            <td className="rounded-r-2xl w-0 px-0"></td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
+        </tbody>
+      </table>
+    </div>
   </div>
 );
 
@@ -379,6 +468,7 @@ const AGREEMENT_SCALE_SIMPLE = AGREEMENT_SCALE;
 
 const INITIAL_DATA = {
   section_a: {
+    survey_date: new Date().toISOString().split('T')[0],
     gender: '', birth_month: '', birth_year: '', academic_performance: '',
     school_appreciation: '',
     activities_frequency: {}, school_absences: {}, household_members: [],
@@ -423,25 +513,43 @@ const QuestionnaireForm = ({ onClose }) => {
   const localUser = JSON.parse(localStorage.getItem('user') || '{}');
   const isOperator = localUser.role === 'OPERATOR';
   const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
-  const [operatorGovId, setOperatorGovId] = useState(null);
-  const [operatorEstId, setOperatorEstId] = useState(null);
 
+  // Auto-scroll to top when moving between sections (Tweak #4)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [step]);
 
+  // Restore draft questionnaire if available (Tweak #13)
+  useEffect(() => {
+    const draftKey = `sentinelle_draft_${reportId || 'default'}`;
+    const saved = localStorage.getItem(draftKey);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (parsed.data) {
+          setData(parsed.data);
+          if (typeof parsed.step === 'number') setStep(parsed.step);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [reportId]);
 
   const getExclusionWarnings = () => {
     const warnings = [];
-    const currentYear = 2026; // Reference year
 
     // Gender exclusion
     if (data.section_a.gender && !['M', 'F'].includes(data.section_a.gender)) {
       warnings.push(isRTL ? "جنس غير صالح" : "Genre non valide");
     }
 
-    // Age exclusion
-    if (data.section_a.birth_year && data.section_a.birth_year.length === 4) {
-      const age = currentYear - parseInt(data.section_a.birth_year);
+    // Age calculation based on Date de l'enquête (Tweak #9 & Tweak #10)
+    const surveyYear = data.section_a.survey_date ? new Date(data.section_a.survey_date).getFullYear() : 2026;
+    if (data.section_a.birth_year && String(data.section_a.birth_year).length === 4) {
+      const age = surveyYear - parseInt(data.section_a.birth_year);
       if (age < 15 || age > 18) {
-        warnings.push(isRTL ? `العمر خارج النطاق المقبول (15-18). العمر الحالي المحسوب: ${age}` : `Âge hors limites (15-18 ans). Âge calculé : ${age}`);
+        warnings.push(isRTL ? `تنبيه: العمر المحسوب بناءً على تاريخ المسح هو ${age} سنة.` : `Attention : L'âge calculé d'après la date de l'enquête est de ${age} ans (hors tranche 15-18).`);
       }
     }
 
@@ -712,28 +820,22 @@ const QuestionnaireForm = ({ onClose }) => {
     const contradictionWarnings = validateContradictions();
     const exclusionWarnings = getExclusionWarnings();
 
-    if (exclusionWarnings.length > 0) {
-      setErrors({ Exclusion: exclusionWarnings });
-      setStatus('error');
-      return;
-    }
-
-    if (contradictionWarnings.length > 0) {
-      setErrors({ contradiction: contradictionWarnings });
-      setStatus('error');
-      return;
-    }
+    // Log warnings for administrative tracking without blocking submission (Tweak #12)
+    const combinedWarnings = [...exclusionWarnings, ...contradictionWarnings];
     // ──────────────────────────────────────────────────────────────────────
 
     try {
       await api.post('questionnaire/submit/', {
         class_report: reportId,
         language_used: lang.toUpperCase(),
-        ...(overrideGovId && { governorate: overrideGovId }),
+        ...(overrideGovId && { governorate: Number(overrideGovId) }),
         ...(overrideEstId && { establishment: overrideEstId }),
         ...data,
+        exclusion_warnings: combinedWarnings,
         extra_answers: extraAnswers
       });
+      // Clear draft on successful submission
+      localStorage.removeItem(`sentinelle_draft_${reportId || 'default'}`);
       setStatus('success');
     } catch (err) {
       console.error(err);
@@ -856,7 +958,6 @@ const QuestionnaireForm = ({ onClose }) => {
 
     const iFreqs = coherentFreqs();
     const gFreqs = coherentFreqs();
-    const nFreqs = coherentFreqs();
     const pFreqs = coherentFreqs();
 
     return {
@@ -967,30 +1068,83 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'A',
       title: 'Informations Générales',
       titleAr: 'معلومات عامة',
+      subtitle: "Les premières questions concernent des informations générales sur votre profil et votre vie quotidienne.",
+      subtitleAr: "الأسئلة الأولى تتعلق بمعلومات عامة عن ملفك الشخصي وحياتك اليومية.",
       color: 'bg-slate-900',
       content: (
         <div className="space-y-12">
+          {/* Date de l'enquête */}
+          <div className="p-5 bg-blue-50/80 border border-blue-200 rounded-2xl shadow-sm">
+            <FieldLabel code="DATE" fr="Date de l'enquête" ar="تاريخ المسح" isRTL={isRTL} />
+            <input
+              type="date"
+              name="survey_date"
+              value={data.section_a.survey_date || new Date().toISOString().split('T')[0]}
+              onChange={(e) => {
+                handleChange('section_a')(e);
+                if (e.target.value) {
+                  setTimeout(() => {
+                    const ca01 = document.getElementById('ca01-target');
+                    if (ca01) {
+                      ca01.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                      const firstRadio = ca01.querySelector('input');
+                      if (firstRadio) firstRadio.focus();
+                    }
+                  }, 150);
+                }
+              }}
+              className="w-full mt-2 border-2 border-slate-200 rounded-xl px-4 py-3 bg-white text-slate-800 font-bold focus:border-blue-600 outline-none cursor-pointer"
+            />
+          </div>
+
           {/* C.A01 */}
-          <div>
+          <div id="ca01-target">
             <FieldLabel code="C.A01" fr="Genre?" ar="الجنس؟" isRTL={isRTL} />
             <RadioGroup name="gender" value={data.section_a.gender} onChange={handleChange('section_a')}
-              options={[['1', 'Masculin', 'ذكر'], ['2', 'Féminin', 'أنثى']]} isRTL={isRTL} />
+              options={[['M', 'Masculin', 'ذكر', '1'], ['F', 'Féminin', 'أنثى', '2']]} isRTL={isRTL} />
           </div>
 
           {/* C.A02 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <FieldLabel code="C.A02m" fr="Mois de naissance" ar="شهر الميلاد" isRTL={isRTL} />
-                <SelectField name="birth_month" value={data.section_a.birth_month} onChange={handleChange('section_a')} isRTL={isRTL}
-                  options={['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'].map((m, i) => [String(i + 1), m, m])} />
-              </div>
-              <div>
-                <FieldLabel code="C.A02a" fr="Année de naissance" ar="سنة الميلاد" isRTL={isRTL} />
-                <input type="number" name="birth_year" placeholder="2008" value={data.section_a.birth_year} onChange={handleChange('section_a')}
-                  className="w-full border-2 border-slate-100 rounded-xl px-4 py-[10.5px] bg-slate-50 text-slate-800 font-medium focus:border-blue-500 outline-none" />
+          <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <FieldLabel code="C.A02m" fr="Mois de naissance" ar="شهر الميلاد" isRTL={isRTL} />
+                  <SelectField name="birth_month" value={data.section_a.birth_month} onChange={handleChange('section_a')} isRTL={isRTL}
+                    options={['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'].map((m, i) => [String(i + 1), m, m])} />
+                </div>
+                <div>
+                  <FieldLabel code="C.A02a" fr="Année de naissance" ar="سنة الميلاد" isRTL={isRTL} />
+                  <input type="number" name="birth_year" placeholder="2008" value={data.section_a.birth_year} onChange={handleChange('section_a')}
+                    className="w-full border-2 border-slate-100 rounded-xl px-4 py-[10.5px] bg-slate-50 text-slate-800 font-medium focus:border-blue-500 outline-none" />
+                </div>
               </div>
             </div>
+
+            {/* Age Banner calculated strictly as {Date of survey} - {Date of birth} */}
+            {(() => {
+              const surveyDateVal = data.section_a.survey_date || new Date().toISOString().split('T')[0];
+              const sYear = new Date(surveyDateVal).getFullYear() || new Date().getFullYear();
+              const bYear = parseInt(data.section_a.birth_year, 10);
+              const age = bYear ? (sYear - bYear) : null;
+
+              if (age !== null && age > 18) {
+                return (
+                  <div className="mt-4 p-4 bg-amber-50/90 border border-amber-200 rounded-2xl flex items-start gap-3 text-amber-800 text-sm">
+                    <AlertTriangle size={20} className="text-amber-500 shrink-0 mt-0.5" />
+                    <div>
+                      <span className="font-bold block">
+                        {isRTL ? `إشعار: العمر المحسوب بناءً على تاريخ المسح (${age} سنة) يتجاوز الحد الموصى به (18 سنة).` : `Information : L'âge calculé selon la date de l'enquête (${age} ans) dépasse la limite usuelle de 18 ans.`}
+                      </span>
+                      <span className="text-xs text-amber-700 mt-1 block">
+                        {isRTL ? 'هذا التنبيه للإرشاد فقط ولا يمنع إكمال أو حفظ الاستبيان.' : 'Cet avertissement est indicatif et n\'empêche pas la saisie ni la validation du questionnaire.'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            })()}
           </div>
 
           {/* C.A03 */}
@@ -1087,6 +1241,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'B',
       title: 'Famille & Situation Socio-Économique',
       titleAr: 'العائلة والوضع الاجتماعي - الاقتصادي',
+      subtitle: "Questions sur votre environnement familial, le niveau d'instruction de vos parents et votre situation socio-économique.",
+      subtitleAr: "أسئلة حول بيئتك العائلية، المستوى التعليمي لوالديك ووضعك الاجتماعي والاقتصادي.",
       color: 'bg-blue-900',
       content: (
         <div className="space-y-12">
@@ -1136,8 +1292,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'C',
       title: 'Consommation de Tabac',
       titleAr: 'استهلاك التبغ',
-      subtitle: 'Section C',
-      subtitleAr: 'القسم C',
+      subtitle: "Questions concernant votre expérience personnelle et la fréquence d'usage des cigarettes de tabac.",
+      subtitleAr: "أسئلة تتعلق بتجربتك الشخصية ومدى تكرار استخدام سجائر التبغ.",
       color: 'bg-amber-600',
       content: (
         <div className="space-y-12">
@@ -1178,8 +1334,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'D',
       title: 'Cigarettes Électroniques',
       titleAr: 'السجائر الإلكترونية',
-      subtitle: 'Section D',
-      subtitleAr: 'القسم D',
+      subtitle: "Questions sur l'utilisation et la fréquence de consommation des cigarettes électroniques (vapotage).",
+      subtitleAr: "أسئلة حول استخدام وتكرار استهلاك السجائر الإلكترونية (الفاب).",
       color: 'bg-emerald-600',
       content: (
         <div className="space-y-12">
@@ -1220,8 +1376,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'E',
       title: 'Consommation de Narguilé (Chicha)',
       titleAr: 'استهلاك النرجيلة (شيشة)',
-      subtitle: 'Section E',
-      subtitleAr: 'القسم E',
+      subtitle: "Questions portant sur l'usage de la chicha (narguilé) au cours de votre vie et des 12 derniers mois.",
+      subtitleAr: "أسئلة تتعلق باستخدام الشيشة (النرجيلة) خلال حياتك والـ 12 شهراً الماضية.",
       color: 'bg-orange-600',
       content: (
         <div className="space-y-12">
@@ -1262,6 +1418,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'G',
       title: 'Boissons Alcoolisées',
       titleAr: 'المشروبات الكحولية',
+      subtitle: "Questions sur la consommation de boissons alcoolisées et la fréquence d'alcoolisation.",
+      subtitleAr: "أسئلة حول استهلاك المشروبات الكحولية وتكرار تناول الكحول.",
       color: 'bg-amber-800',
       content: (
         <div className="space-y-12">
@@ -1325,8 +1483,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'H',
       title: 'Tranquillisants ou Sédatifs (sans ordonnance)',
       titleAr: 'المهدئات أو المهدئات (بدون وصفة طبية)',
-      subtitle: 'Section H',
-      subtitleAr: 'القسم H',
+      subtitle: "Questions concernant l'usage de tranquillisants ou sédatifs pris sans ordonnance médicale.",
+      subtitleAr: "أسئلة تتعلق باستخدام المهدئات أو المنومات التي تؤخذ بدون وصفة طبية.",
       color: 'bg-purple-900',
       content: (
         <div className="space-y-12">
@@ -1361,8 +1519,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'I',
       title: 'Cannabis (Zatla, Marihuana...)',
       titleAr: 'القنب الهندي (زطلة، ماريجوانا...)',
-      subtitle: 'Section I',
-      subtitleAr: 'القسم I',
+      subtitle: "Questions sur la consommation de cannabis (zatla, résine, herbe) et l'évaluation d'usage.",
+      subtitleAr: "أسئلة حول استهلاك القنب الهندي (زطلة، ماريجوانا) وتقييم الاستخدام.",
       color: 'bg-green-900',
       content: (
         <div className="space-y-12">
@@ -1445,8 +1603,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'J',
       title: 'Cocaïne',
       titleAr: 'الكوكايين',
-      subtitle: 'Section J',
-      subtitleAr: 'القسم J',
+      subtitle: "Questions relatives à l'expérience ou l'accès aux substances de type cocaïne.",
+      subtitleAr: "أسئلة تتعلق بتجربة أو إمكانية الوصول إلى المواد من نوع الكوكايين.",
       color: 'bg-red-900',
       content: (
         <div className="space-y-12">
@@ -1481,8 +1639,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'K',
       title: 'Ecstasy',
       titleAr: 'إكستاسي',
-      subtitle: 'Section K',
-      subtitleAr: 'القسم K',
+      subtitle: "Questions sur l'expérimentation et l'usage de l'ecstasy (MDMA).",
+      subtitleAr: "أسئلة حول تجربة واستخدام الإكستاسي (MDMA).",
       color: 'bg-pink-900',
       content: (
         <div className="space-y-12">
@@ -1517,8 +1675,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'L',
       title: 'Héroïne',
       titleAr: 'هيروين',
-      subtitle: 'Section L',
-      subtitleAr: 'القسم L',
+      subtitle: "Questions portant sur l'expérimentation et l'usage de l'héroïne.",
+      subtitleAr: "أسئلة تتعلق بتجربة واستخدام الهيروين.",
       color: 'bg-stone-900',
       content: (
         <div className="space-y-12">
@@ -1553,8 +1711,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'M',
       title: 'Solvants et Inhalants',
       titleAr: 'المذيبات والمستنشقات',
-      subtitle: 'Section M',
-      subtitleAr: 'القسم M',
+      subtitle: "Questions sur l'inhalation de colles, solvants ou autres produits inhalables à visée psychoactive.",
+      subtitleAr: "أسئلة حول استنشاق الغراء أو المذيبات أو المنتجات الأخرى المستنشقة.",
       color: 'bg-blue-900',
       content: (
         <div className="space-y-12">
@@ -1589,8 +1747,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'N',
       title: 'Autres Substances Narcotiques',
       titleAr: 'مواد مخدرة أخرى',
-      subtitle: 'Section N',
-      subtitleAr: 'القسم N',
+      subtitle: "Questions sur la consommation d'autres médicaments ou substances psychoactives à visée non médicale.",
+      subtitleAr: "أسئلة حول استهلاك الأدوية الأخرى أو المواد النفسية لغير الأغراض الطبية.",
       color: 'bg-yellow-800',
       content: (
         <div className="space-y-12">
@@ -1655,8 +1813,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'P',
       title: 'Nouvelles Substances Narcotiques (NSP)',
       titleAr: 'المواد المخدرة الجديدة (NSP)',
-      subtitle: 'Section P',
-      subtitleAr: 'القسم P',
+      subtitle: "Questions sur l'expérimentation de nouvelles substances psychoactives chimiques ou naturelles (NSP).",
+      subtitleAr: "أسئلة حول تجربة المواد المؤثرة على العقل الجديدة الكيميائية أو الطبيعية.",
       color: 'bg-indigo-900',
       content: (
         <div className="space-y-12">
@@ -1702,8 +1860,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'Q',
       title: 'Perception des Risques et Aide',
       titleAr: 'إدراك المخاطر والمساعدة',
-      subtitle: 'Section Q',
-      subtitleAr: 'القسم Q',
+      subtitle: "Évaluation de votre perception des risques liés à la consommation de substances et recherche d'aide.",
+      subtitleAr: "تقييم تصورك للمخاطر المرتبطة باستهلاك المواد وطلب المساعدة.",
       color: 'bg-emerald-800',
       content: (
         <div className="space-y-12">
@@ -1772,8 +1930,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'R',
       title: 'Réseaux Sociaux',
       titleAr: 'وسائل التواصل الاجتماعي',
-      subtitle: 'Section R',
-      subtitleAr: 'القسم R',
+      subtitle: "Questions sur vos habitudes d'utilisation d'Internet, des réseaux sociaux et des écrans.",
+      subtitleAr: "أسئلة حول عاداتك في استخدام الإنترنت، شبكات التواصل الاجتماعي والشاشات.",
       color: 'bg-indigo-800',
       content: (
         <div className="space-y-12">
@@ -1803,8 +1961,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'S',
       title: 'Jeux Vidéo',
       titleAr: 'ألعاب الفيديو',
-      subtitle: 'Section S',
-      subtitleAr: 'القسم S',
+      subtitle: "Questions sur la pratique des jeux vidéo et le temps consacré au jeu.",
+      subtitleAr: "أسئلة حول ممارسة ألعاب الفيديو والوقت المخصص للعب.",
       color: 'bg-sky-900',
       content: (
         <div className="space-y-12">
@@ -1835,9 +1993,10 @@ const QuestionnaireForm = ({ onClose }) => {
     {
       id: 'section_t',
       letter: 'T',
-      title: "Jeux d'Argent",
-      subtitle: 'Section T',
-      subtitleAr: 'القسم T',
+      title: 'Jeux d',
+      titleAr: 'Jeux d',
+      subtitle: "Questions sur la pratique des jeux d'argent (paris, grattage, poker) et d'éventuelles difficultés.",
+      subtitleAr: "أسئلة حول ممارسة ألعاب القمار (المراهنات، اليانصيب، البوكر) والمشاكل المحتملة.",
       color: 'bg-orange-900',
       content: (
         <div className="space-y-12">
@@ -1925,8 +2084,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'U',
       title: 'Violence & Sécurité',
       titleAr: 'العنف والأمن',
-      subtitle: 'Section U',
-      subtitleAr: 'القسم U',
+      subtitle: "Questions sur la sécurité au sein de l'établissement et les situations de violence ou de bagarres.",
+      subtitleAr: "أسئلة حول السلامة داخل المؤسسة وحالات العنف أو المشاجرات.",
       color: 'bg-red-800',
       content: (
         <div className="space-y-12">
@@ -1998,8 +2157,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'V',
       title: 'Santé Mentale',
       titleAr: 'الصحة النفسية',
-      subtitle: 'Section V',
-      subtitleAr: 'القسم V',
+      subtitle: "Évaluation de votre bien-être personnel, de votre état émotionnel et de votre santé globale.",
+      subtitleAr: "تقييم رفاهيتك الشخصية، حالتك العاطفية وصحتك العامة.",
       color: 'bg-violet-800',
       content: (
         <div className="space-y-12">
@@ -2054,8 +2213,8 @@ const QuestionnaireForm = ({ onClose }) => {
       letter: 'Z',
       title: 'Validation (Honnêteté)',
       titleAr: 'التحقق (الصدق)',
-      subtitle: 'Section Z',
-      subtitleAr: 'القسم Z',
+      subtitle: "Questions finales garantissant l'anonymat et permettant de valider la sincérité de vos réponses.",
+      subtitleAr: "أسئلة نهائية تضمن السرية وتسمح بالتحقق من صدق إجاباتك.",
       color: 'bg-slate-900',
       content: (
         <div className="space-y-12">
@@ -2093,6 +2252,10 @@ const QuestionnaireForm = ({ onClose }) => {
   const [modalError, setModalError] = useState(null);
   const [activeReport, setActiveReport] = useState(null);
 
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [step]);
+
   const fetchConfig = async () => {
 
     try {
@@ -2116,10 +2279,16 @@ const QuestionnaireForm = ({ onClose }) => {
     fetchConfig();
     const u = localStorage.getItem('user');
     if (u) {
-      try { setCurrentUser(JSON.parse(u)); } catch (e) { }
+      try { 
+        const parsed = JSON.parse(u);
+        setCurrentUser(parsed); 
+        if (searchParams.get('edit') === 'true' && ['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(parsed.role?.toUpperCase())) {
+          setIsEditMode(true);
+        }
+      } catch { console.debug('Invalid user stored in localStorage'); }
     }
     fetchActiveReport();
-  }, []);
+  }, [searchParams]);
 
   const isSuperAdmin = currentUser?.role?.toUpperCase() === 'SUPER_ADMIN' || currentUser?.role?.toUpperCase() === 'GLOBAL_ADMIN';
 
@@ -2127,20 +2296,34 @@ const QuestionnaireForm = ({ onClose }) => {
     return dynamicConfigs.find(q => q.code === code && q.is_hidden);
   };
 
-  const handleDeleteDynamic = async (code, type) => {
-    if (!window.confirm(isRTL ? 'تأكيد الحذف؟' : 'Confirmer la suppression ?')) return;
+  const handleMoveDynamicQuestion = async (sectionId, index, direction) => {
+    const sectionQuestions = dynamicConfigs.filter(q => q.is_dynamic && !q.is_hidden && q.section === sectionId).sort((a, b) => (a.order || 0) - (b.order || 0));
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= sectionQuestions.length) return;
+
+    const currentQ = sectionQuestions[index];
+    const targetQ = sectionQuestions[targetIndex];
+
+    const tempOrder = currentQ.order || 100;
+    const newTargetOrder = targetQ.order || 100;
+
     try {
-      await api.delete(`dynamic-questions/${code}/`);
+      await api.patch(`dynamic-questions/${currentQ.code}/`, { order: newTargetOrder });
+      await api.patch(`dynamic-questions/${targetQ.code}/`, { order: tempOrder });
       fetchConfig();
-    } catch (err) { console.error(err); }
+    } catch (err) {
+      console.error("Reordering question failed", err);
+    }
   };
 
-  const renderDynamicQuestion = (q, extraAnswers, setExtraAnswers, isRTL) => (
-    <div key={q.code} className={`p-6 bg-slate-50 rounded-3xl border-2 ${isEditMode ? 'border-brand-200' : 'border-slate-100'} relative group`}>
+  const renderDynamicQuestion = (q, idx, arr, extraAnswers, setExtraAnswers, isRTL) => (
+    <div key={q.code} className={`p-6 bg-slate-50 rounded-3xl border-2 ${isEditMode ? 'border-brand-200 shadow-sm' : 'border-slate-100'} relative group`}>
       {isEditMode && (
-        <div className="absolute top-4 right-4 flex gap-2 z-50">
-          <button onClick={() => setEditingItem({ id: q.code, type: 'QUESTION', section: q.section, data: q })} className="p-2 text-slate-400 hover:text-brand-600 bg-white rounded-lg shadow-sm border border-slate-100"><Edit2 size={14} /></button>
-          <button onClick={() => handleDeleteDynamic(q.code, 'QUESTION')} className="p-2 text-slate-400 hover:text-rose-600 bg-white rounded-lg shadow-sm border border-slate-100"><Trash2 size={14} /></button>
+        <div className="absolute top-4 right-4 flex items-center gap-1 bg-white p-1 rounded-xl shadow-md border border-slate-200 z-50">
+          <button type="button" onClick={() => handleMoveDynamicQuestion(q.section, idx, -1)} disabled={idx === 0} className="p-1 text-slate-500 hover:text-brand-600 disabled:opacity-30" title="Monter"><ChevronLeft size={14} className="rotate-90" /></button>
+          <button type="button" onClick={() => handleMoveDynamicQuestion(q.section, idx, 1)} disabled={idx === arr.length - 1} className="p-1 text-slate-500 hover:text-brand-600 disabled:opacity-30" title="Descendre"><ChevronRight size={14} className="rotate-90" /></button>
+          <button type="button" onClick={() => setEditingItem({ id: q.code, type: 'QUESTION', section: q.section, data: q })} className="p-1 text-amber-500 hover:text-amber-700" title="Éditer"><Edit2 size={14} /></button>
+          <button type="button" onClick={() => handleDeleteDynamic(q.code, 'QUESTION')} className="p-1 text-rose-500 hover:text-rose-700" title="Supprimer"><Trash2 size={14} /></button>
         </div>
       )}
       <FieldLabel code={q.code} fr={q.label_fr} ar={q.label_ar} isRTL={isRTL} />
@@ -2166,21 +2349,31 @@ const QuestionnaireForm = ({ onClose }) => {
 
   // 1. Process static sections
   const staticProcessed = SECTIONS.filter(s => !isHidden(s.id)).map(s => {
-    const sectionDynQuestions = dynamicConfigs.filter(q => q.is_dynamic && !q.is_hidden && q.question_type !== 'SECTION' && q.section === s.id);
+    const sectionDynQuestions = dynamicConfigs.filter(q => q.is_dynamic && !q.is_hidden && q.question_type !== 'SECTION' && q.section === s.id).sort((a, b) => (a.order || 0) - (b.order || 0));
     let contentNode = s.content;
     if (sectionDynQuestions.length > 0 || isEditMode) {
       contentNode = (
         <>
           {s.content}
           <div className={`mt-12 pt-12 border-t-2 border-dashed ${isEditMode ? 'border-brand-200' : 'border-slate-200'}`}>
-            <h4 className={`font-bold mb-8 uppercase tracking-widest text-sm ${isEditMode ? 'text-brand-600' : 'text-slate-800'}`}>
-              {isRTL ? 'أسئلة إضافية' : 'Questions Supplémentaires'}
-            </h4>
-            <div className="space-y-10">
-              {sectionDynQuestions.map(q => renderDynamicQuestion(q, extraAnswers, setExtraAnswers, isRTL))}
+            <div className="flex items-center justify-between mb-8">
+              <h4 className={`font-bold uppercase tracking-widest text-sm ${isEditMode ? 'text-brand-600' : 'text-slate-800'}`}>
+                {isRTL ? 'أسئلة إضافية' : 'Questions Supplémentaires'}
+              </h4>
               {isEditMode && (
+                <button 
+                  onClick={() => setEditingItem({ id: null, type: 'QUESTION', section: s.id, data: { code: '', label_fr: '', question_type: 'TEXT', section: s.id, is_dynamic: true, options_json: [] } })} 
+                  className="px-4 py-2 bg-brand-500 text-white rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-brand-600 transition-colors flex items-center gap-1.5 shadow-md"
+                >
+                  <Plus size={14} /> Ajouter une question
+                </button>
+              )}
+            </div>
+            <div className="space-y-10">
+              {sectionDynQuestions.map((q, idx, arr) => renderDynamicQuestion(q, idx, arr, extraAnswers, setExtraAnswers, isRTL))}
+              {isEditMode && sectionDynQuestions.length === 0 && (
                 <button onClick={() => setEditingItem({ id: null, type: 'QUESTION', section: s.id, data: { code: '', label_fr: '', question_type: 'TEXT', section: s.id, is_dynamic: true, options_json: [] } })} className="w-full py-4 border-2 border-dashed border-brand-200 text-brand-600 rounded-3xl flex items-center justify-center gap-2 hover:bg-brand-50 transition-colors font-bold text-sm">
-                  <Plus size={16} /> Ajouter une question
+                  <Plus size={16} /> Ajouter une question à cette section
                 </button>
               )}
             </div>
@@ -2202,7 +2395,7 @@ const QuestionnaireForm = ({ onClose }) => {
             try {
               await api.post('dynamic-questions/', { code: s.id, label_fr: s.title, question_type: 'SECTION', section: s.id, is_hidden: true, is_dynamic: false });
               fetchConfig();
-            } catch (err) { alert("Erreur."); }
+            } catch { alert("Erreur."); }
           }} className="px-4 py-2 text-white bg-rose-600 rounded-lg shadow-xl flex items-center gap-2 text-xs font-bold uppercase tracking-widest hover:bg-rose-700"><Trash2 size={14} /> Masquer</button>
         </>
       ) : null
@@ -2228,7 +2421,7 @@ const QuestionnaireForm = ({ onClose }) => {
       content: (
         <div className="space-y-10 relative">
           {sectionDynQuestions.length > 0 ? (
-            sectionDynQuestions.map(q => renderDynamicQuestion(q, extraAnswers, setExtraAnswers, isRTL))
+            sectionDynQuestions.map((q, idx, arr) => renderDynamicQuestion(q, idx, arr, extraAnswers, setExtraAnswers, isRTL))
           ) : (
             <div className="p-8 text-center text-slate-400 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-200 font-medium">
               {isRTL ? 'هذا القسم فارغ حالياً.' : 'Cette section est vide pour le moment.'}
@@ -2292,7 +2485,6 @@ const QuestionnaireForm = ({ onClose }) => {
   const progress = ((step + 1) / filteredSections.length) * 100;
 
   if (status === 'success') {
-    const isPractitioner = ['PRACTITIONER', 'OPERATOR', 'ADMIN', 'SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(currentUser?.role?.toUpperCase());
     const reportToFinalize = activeReport || (reportId ? { id: reportId } : null);
 
     const handleFinalize = async (redirectPath) => {
@@ -2308,21 +2500,16 @@ const QuestionnaireForm = ({ onClose }) => {
 
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50 text-center px-8">
-        <motion.div
+        <Motion.div
           initial={{ scale: 0, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: 'spring', damping: 12 }}
           className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mb-8"
         >
           <CheckCircle2 size={48} className="text-green-500" />
-        </motion.div>
+        </Motion.div>
 
-        <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Questionnaire soumis !</h1>
-        <p className="text-slate-500 text-xl mb-12 max-w-md leading-relaxed">
-          {isRTL ? 'شكراً على مشاركتك. بياناتك محمية بالكامل.' : 'Merci pour votre participation. Vos données sont entièrement protégées.'}
-        </p>
-
-        <div className="flex flex-col gap-4 w-full max-w-xs">
+        <div className="space-y-4 w-full max-w-xl">
           <button
             onClick={() => { setStatus(null); setStep(0); setData(INITIAL_DATA); window.scrollTo(0, 0); }}
             className="w-full py-4 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 flex items-center justify-center gap-3"
@@ -2333,8 +2520,12 @@ const QuestionnaireForm = ({ onClose }) => {
           {currentUser && (
             <>
               <div className="relative py-4">
-                <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-200"></div></div>
-                <div className="relative flex justify-center text-xs uppercase font-black tracking-widest text-slate-400"><span className="bg-slate-50 px-3">{isRTL ? 'إجراءات الممارس' : 'Actions Praticien'}</span></div>
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-200" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase font-black tracking-widest text-slate-400">
+                  <span className="bg-slate-50 px-3">{isRTL ? 'إجراءات الممارس' : 'Actions Praticien'}</span>
+                </div>
               </div>
 
               <button
@@ -2396,57 +2587,127 @@ const QuestionnaireForm = ({ onClose }) => {
       </div>
 
       {/* Content */}
-      <div className="max-w-3xl mx-auto px-6 py-10">
-        {exclusionWarnings.length > 0 && (
-          <div className="mb-6 animate-fade-in p-5 bg-orange-50 border-2 border-orange-200 rounded-2xl flex flex-col gap-3 shadow-sm">
-            <div className="flex items-center gap-3 text-orange-700 font-extrabold text-sm uppercase tracking-wide">
-              <AlertCircle size={22} className="text-orange-500" />
-              <span>{isRTL ? "تنبيه: سيتم استبعاد هذا الاستبيان من الإحصائيات لعدم استيفائه معايير الإدراج:" : "Avertissement : Ce questionnaire ne sera pas comptabilisé dans les statistiques (Critères d'exclusion) :"}</span>
-            </div>
-            <ul className="list-disc list-inside text-sm text-orange-800 font-medium ml-2 space-y-1">
-              {exclusionWarnings.map((w, i) => <li key={i}>{w}</li>)}
-            </ul>
-          </div>
-        )}
-        <SectionHeader letter={currentSection.letter} title={currentSection.title} color={currentSection.color} actionButtons={currentSection.actionButtons} />
-        <div className="animate-fade-in">
-          {currentSection.content}
-        </div>
-
-        {/* ── Real-time contradiction banner ─────────────────────── */}
-        {(() => {
-          const warns = getSectionWarnings(currentSection.id);
-          if (!warns.length) return null;
-          return (
-            <div className="mt-6 p-5 bg-red-50 border-2 border-red-200 rounded-2xl flex flex-col gap-3 shadow-sm animate-fade-in">
-              <div className="flex items-center gap-3 text-red-700 font-extrabold text-sm uppercase tracking-wide">
-                <AlertCircle size={20} className="text-red-500 shrink-0" />
-                <span>{isRTL ? 'تناقض في الإجابات — يرجى المراجعة:' : 'Réponses contradictoires — veuillez corriger :'}</span>
+      <EditModeContext.Provider value={{
+        isEditMode,
+        dynamicConfigs,
+        onEditQuestion: (code, labelFr, labelAr) => {
+          const overridden = dynamicConfigs.find(q => q.code === code);
+          setEditingItem({
+            id: code,
+            type: 'QUESTION',
+            section: currentSection.id,
+            data: overridden || {
+              code,
+              label_fr: labelFr,
+              label_ar: labelAr,
+              question_type: 'TEXT',
+              section: currentSection.id,
+              is_dynamic: false
+            }
+          });
+        },
+        onDeleteQuestion: async (code) => {
+          if (!window.confirm(`Voulez-vous masquer la question "${code}" ?`)) return;
+          try {
+            await api.post('dynamic-questions/', {
+              code,
+              label_fr: code,
+              question_type: 'TEXT',
+              section: currentSection.id,
+              is_hidden: true,
+              is_dynamic: false
+            });
+            fetchConfig();
+          } catch { alert("Erreur lors du masquage."); }
+        }
+      }}>
+        <div className="max-w-3xl mx-auto px-6 py-10">
+          {isEditMode && (
+            <div className="mb-8 p-6 bg-brand-600 text-white rounded-3xl shadow-xl flex items-center justify-between gap-4 animate-fade-in">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-white/10 rounded-2xl shrink-0">
+                  <Pencil size={24} className="text-white" />
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-base uppercase tracking-wider">Mode Édition Dynamique du Questionnaire</h3>
+                  <p className="text-xs text-white/80 font-medium mt-0.5">Vous pouvez éditer n'importe quelle question (libellé FR/AR, type), modifier les sections ou ajouter de nouvelles questions.</p>
+                </div>
               </div>
-              <ul className="list-disc list-inside text-sm text-red-700 font-medium ml-2 space-y-1">
-                {warns.map((w, i) => <li key={i}>{w}</li>)}
-              </ul>
+              <button 
+                onClick={() => setEditingItem({ id: null, type: 'QUESTION', section: currentSection.id, data: { code: '', label_fr: '', question_type: 'TEXT', section: currentSection.id, is_dynamic: true, options_json: [] } })} 
+                className="px-4 py-3 bg-white text-brand-700 rounded-2xl text-xs font-black uppercase tracking-wider hover:bg-brand-50 shadow-md flex items-center gap-2 shrink-0 transition-all hover:scale-105"
+              >
+                <Plus size={16} /> Ajouter une question
+              </button>
             </div>
-          );
-        })()}
-        {/* ─────────────────────────────────────────────────────────── */}
-      </div>
+          )}
+
+          <SectionHeader 
+            letter={currentSection.letter} 
+            title={isRTL ? (currentSection.titleAr || currentSection.title) : currentSection.title} 
+            subtitle={isRTL ? (currentSection.subtitleAr || currentSection.subtitle) : currentSection.subtitle} 
+            color={currentSection.color} 
+            actionButtons={currentSection.actionButtons} 
+          />
+          <div className="animate-fade-in">
+            {currentSection.content}
+          </div>
+
+          {/* ── Real-time contradiction banner ─────────────────────── */}
+          {(() => {
+            const warns = getSectionWarnings(currentSection.id);
+            if (!warns.length) return null;
+            return (
+              <div className="mt-6 p-5 bg-red-50 border-2 border-red-200 rounded-2xl flex flex-col gap-3 shadow-sm animate-fade-in">
+                <div className="flex items-center gap-3 text-red-700 font-extrabold text-sm uppercase tracking-wide">
+                  <AlertCircle size={20} className="text-red-500 shrink-0" />
+                  <span>{isRTL ? 'تناقض في الإجابات — يرجى المراجعة:' : 'Réponses contradictoires — veuillez corriger :'}</span>
+                </div>
+                <ul className="list-disc list-inside text-sm text-red-700 font-medium ml-2 space-y-1">
+                  {warns.map((w, i) => <li key={i}>{w}</li>)}
+                </ul>
+              </div>
+            );
+          })()}
+          {/* ─────────────────────────────────────────────────────────── */}
+        </div>
+      </EditModeContext.Provider>
 
 
       {/* Navigation Footer */}
       <div className="sticky bottom-0 bg-white border-t border-slate-100 shadow-lg">
         <div className="max-w-3xl mx-auto px-6 py-5 flex items-center justify-between gap-4">
-          <button
-            onClick={() => setStep(s => Math.max(0, s - 1))}
-            disabled={step === 0}
-            className="flex items-center gap-2 px-6 py-3 border-2 border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
-          >
-            <ChevronLeft size={20} />
-            {isRTL ? 'السابق' : 'Précédent'}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setStep(s => Math.max(0, s - 1))}
+              disabled={step === 0}
+              className="flex items-center gap-2 px-6 py-3 border-2 border-slate-200 rounded-xl font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-30 disabled:cursor-not-allowed transition-all"
+            >
+              <ChevronLeft size={20} />
+              {isRTL ? 'السابق' : 'Précédent'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                try {
+                  const draftKey = `sentinelle_draft_${reportId || 'default'}`;
+                  localStorage.setItem(draftKey, JSON.stringify({ data, step, timestamp: new Date().toISOString() }));
+                  alert(isRTL ? 'تم حفظ المسودة بنجاح' : 'Brouillon sauvegardé avec succès.');
+                } catch (err) {
+                  console.error(err);
+                }
+              }}
+              className="flex items-center gap-2 px-4 py-3 border-2 border-amber-300 bg-amber-50 text-amber-900 rounded-xl font-bold hover:bg-amber-100 transition-all text-xs uppercase tracking-wider"
+              title="Sauvegarder le questionnaire incomplet pour reprendre plus tard"
+            >
+              <Save size={16} />
+              {isRTL ? 'حفظ مسودة' : 'Brouillon'}
+            </button>
+          </div>
 
           {/* Step dots */}
-          <div className="flex gap-1.5">
+          <div className="hidden sm:flex gap-1.5">
             {filteredSections.map((_, i) => (
               <div key={i} onClick={() => setStep(i)} className={`h-2 rounded-full cursor-pointer transition-all ${i === step ? 'w-6 bg-blue-600' : i < step ? 'w-2 bg-blue-200' : 'w-2 bg-slate-200'}`}></div>
             ))}
@@ -2454,7 +2715,7 @@ const QuestionnaireForm = ({ onClose }) => {
 
           {step === filteredSections.length - 1 ? (
             <button
-              onClick={handleSubmit}
+              onClick={() => handleSubmit()}
               disabled={status === 'submitting'}
               className="flex items-center gap-2 px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-xl shadow-blue-100 transition-all disabled:opacity-70"
             >
@@ -2531,8 +2792,8 @@ const QuestionnaireForm = ({ onClose }) => {
       {/* Inline Editor Modal */}
       {editingItem && (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setEditingItem(null)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" />
-          <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="relative w-full max-w-2xl bg-white rounded-[32px] shadow-2xl p-8 border border-slate-100">
+          <Motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setEditingItem(null)} className="absolute inset-0 bg-slate-900/60 backdrop-blur-md" />
+          <Motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="relative w-full max-w-2xl bg-white rounded-[32px] shadow-2xl p-8 border border-slate-100">
             <div className="flex justify-between items-center mb-8 border-b border-slate-100 pb-6">
               <div>
                 <h3 className="text-xl font-black text-slate-900 uppercase tracking-widest italic">{editingItem.id ? 'Éditer' : 'Créer'} {editingItem.type === 'SECTION' ? 'Section' : 'Question'}</h3>
@@ -2631,7 +2892,7 @@ const QuestionnaireForm = ({ onClose }) => {
                 </button>
               </div>
             </div>
-          </motion.div>
+          </Motion.div>
         </div>
       )}
 
@@ -2640,8 +2901,6 @@ const QuestionnaireForm = ({ onClose }) => {
         onClose={() => setIsLocationModalOpen(false)}
         isRTL={isRTL}
         onConfirm={(govId, estId) => {
-          setOperatorGovId(govId);
-          setOperatorEstId(estId);
           setIsLocationModalOpen(false);
           handleSubmit(govId, estId);
         }}

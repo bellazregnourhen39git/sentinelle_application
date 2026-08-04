@@ -1,9 +1,11 @@
-﻿import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ShieldCheck, Lock, User, AlertCircle, ArrowRight, LogIn, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
 import api from '../api';
+
+const normalizeRole = (role) => String(role || '').toUpperCase().replace(/_/g, '');
 
 const Login = ({ setUser }) => {
   const { t } = useTranslation();
@@ -20,7 +22,12 @@ const Login = ({ setUser }) => {
     setError(null);
     try {
       // Step 1: Obtain JWT tokens using email
-      const tokenRes = await api.post('auth/login/', { email, password });
+      // Sanitize payload to avoid accidentally sending DOM/event objects
+      const payload = { email: String(email || ''), password: String(password || '') };
+      // Debugging: log the payload shape (no DOM/event references)
+      // eslint-disable-next-line no-console
+      console.log('login payload:', payload);
+      const tokenRes = await api.post('auth/login/', payload);
       localStorage.setItem('access', tokenRes.data.access);
       localStorage.setItem('refresh', tokenRes.data.refresh);
 
@@ -28,7 +35,7 @@ const Login = ({ setUser }) => {
       const profileRes = await api.get('auth/profile/');
       const userData = profileRes.data;
 
-      const role = userData.role?.toUpperCase();
+      const role = normalizeRole(userData.role);
 
       localStorage.setItem('user', JSON.stringify(userData));
 
@@ -36,8 +43,11 @@ const Login = ({ setUser }) => {
       setUser(userData);
 
       // Step 4: Redirect based on role
-      if (['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(role)) navigate('/superadmin', { replace: true });
-      else if (['REGIONAL_ADMIN', 'ADMIN'].includes(role)) navigate('/admin', { replace: true });
+      if (['SUPERADMIN', 'GLOBALADMIN'].includes(role)) navigate('/superadmin', { replace: true });
+      else if (role === 'REGIONALANALYST') {
+        const gov = userData.governorate || userData.gouvernorat || userData.region || 'unknown';
+        navigate(`/admin/${encodeURIComponent(gov)}?scope_type=gouvernorate&scope_id=${encodeURIComponent(gov)}`, { replace: true });
+      } else if (['REGIONALADMIN', 'ADMIN'].includes(role)) navigate('/admin', { replace: true });
       else if (['PRACTITIONER'].includes(role)) navigate('/guide', { replace: true });
       else if (['OPERATOR'].includes(role)) navigate('/class-report', { replace: true });
       else navigate('/user', { replace: true });
@@ -49,11 +59,11 @@ const Login = ({ setUser }) => {
         setError("Erreur réseau: Impossible de contacter le serveur. Le backend est-il lancé ?");
       } else {
         const detail = err.response?.data?.detail;
-        let errorMsg = 'Identifiants incorrects. Veuillez vérifier votre email et votre mot de passe.';
-        if (detail && detail.toLowerCase().includes('bloqu')) {
-          errorMsg = 'Compte temporairement bloqué. Réessayez dans quelques minutes ou contactez un administrateur.';
+        if (detail) {
+          setError(detail);
+        } else {
+          setError('Identifiants incorrects. Veuillez vérifier vos informations.');
         }
-        setError(errorMsg);
       }
     } finally {
       setLoading(false);
