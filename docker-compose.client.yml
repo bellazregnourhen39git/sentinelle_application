@@ -20,11 +20,9 @@ services:
     image: mohamedbouzidcloud/sentinelle-backend:latest
     pull_policy: always
     container_name: sentinelle-backend
-    env_file:
-      - .env
     environment:
       DB_ENGINE: django.db.backends.postgresql
-      DB_HOST: db
+      DB_HOST: sentinelle-db
       DB_PORT: 5432
       DB_USER: ${POSTGRES_USER:-sentinelle}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-sentinelle}
