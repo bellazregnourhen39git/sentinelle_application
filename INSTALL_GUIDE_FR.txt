@@ -1,33 +1,14 @@
-SENTINELLE APPLICATION - GUIDE D'INSTALLATION
-=============================================
+SENTINELLE - GUIDE D'INSTALLATION
+=================================
 
-PREREQUIS
----------
-Assurez-vous que Docker Desktop est installe et en cours d'execution :
-
-    docker --version
-    docker compose version
-
-Si ce n'est pas installe, telechargez Docker Desktop depuis :
-    https://www.docker.com/products/docker-desktop/
-
-Apres l'installation, redemarrez votre PC.
+ETAPE 1: Ouvrez le fichier docker-compose.client.yml
+-----------------------------------------------------
+Allez dans le dossier Desktop/sentinelle
+Ouvrez le fichier docker-compose.client.yml avec le Bloc-notes
+Remplacez TOUT le contenu par ceci :
 
 
-ETAPE 1: Creer le repertoire du projet
----------------------------------------
-Ouvrez PowerShell (clic droit sur le Bureau -> Terminal)
-et executez :
 
-    mkdir Desktop\sentinelle
-    cd Desktop\sentinelle
-
-
-ETAPE 2: Creer le fichier docker-compose
------------------------------------------
-Executez cette commande PowerShell (copiez et collez TOUT d'un coup) :
-
-$yaml = @'
 version: "3.9"
 
 services:
@@ -75,101 +56,46 @@ services:
 
 volumes:
   postgres_data:
-'@
-$yaml | Out-File -FilePath docker-compose.client.yml -Encoding utf8
 
 
-ETAPE 3: Arreter les anciens conteneurs et nettoyer
-----------------------------------------------------
-    cd Desktop\sentinelle
-    docker compose -f docker-compose.client.yml down -v
-    docker image rm -f mohamedbouzidcloud/sentinelle-backend:latest 2>$null
-    docker image rm -f mohamedbouzidcloud/sentinelle-frontend:latest 2>$null
+
+Enregistrez le fichier (Ctrl+S) et fermez le Bloc-notes.
 
 
-ETAPE 4: Telecharger les images et demarrer
---------------------------------------------
-    cd Desktop\sentinelle
-    docker compose -f docker-compose.client.yml pull
-    docker compose -f docker-compose.client.yml up -d
+ETAPE 2: Ouvrez PowerShell et executez ces commandes
+-----------------------------------------------------
+Collez ces commandes une par une :
+
+cd Desktop\sentinelle
+docker compose -f docker-compose.client.yml down -v
+docker compose -f docker-compose.client.yml pull
+docker compose -f docker-compose.client.yml up -d
+docker compose -f docker-compose.client.yml ps
 
 
-ETAPE 5: Verifier que tout fonctionne
---------------------------------------
-    docker compose -f docker-compose.client.yml ps
-
-Vous devez voir 3 conteneurs tous avec le statut "Up" ou "running" :
+ETAPE 3: Verifiez
+-----------------
+Vous devez voir 3 conteneurs avec le statut "Up" :
 
     sentinelle-db       -> Up
     sentinelle-backend  -> Up
     sentinelle-frontend -> Up
 
-Si un conteneur affiche "Exit" ou "Restarting", verifiez les logs :
 
-    docker compose -f docker-compose.client.yml logs backend --tail=50
-    docker compose -f docker-compose.client.yml logs db --tail=50
-
-
-ETAPE 6: Tester l'application
+ETAPE 4: Testez l'application
 ------------------------------
 Ouvrez votre navigateur et allez sur :
 
     http://localhost
 
-Vous devriez voir la page de connexion de Sentinelle.
+Identifiants par defaut :
 
-IDENTIFIANTS PAR DEFAUT :
-
-    Email: msi@sentinelle.tn              Mot de passe: msi        Role: Super Admin
-    Email: medbouzid1234567@gmail.com     Mot de passe: lolalola   Role: Praticien
+    Email: msi@sentinelle.tn           Mot de passe: msi
+    Email: medbouzid1234567@gmail.com  Mot de passe: lolalola
 
 
-ETAPE 7: Verifier l'API backend
---------------------------------
-    curl http://localhost:8000/api/login/
+SI CA NE MARCHE PAS
+--------------------
+Executez ceci dans PowerShell et envoyez-moi le resultat :
 
-Vous devriez recevoir une reponse (pas une erreur de connexion).
-
-
-DEPANNAGE
----------
-
-Si le backend redemarre en boucle :
-    docker compose -f docker-compose.client.yml logs backend --tail=100
-
-Si la base de donnees est inaccessible :
-    docker compose -f docker-compose.client.yml exec db pg_isready -U sentinelle -d sentinelle_db
-
-Pour tout recommencer depuis zero :
-    cd Desktop\sentinelle
-    docker compose -f docker-compose.client.yml down -v
-    docker compose -f docker-compose.client.yml pull
-    docker compose -f docker-compose.client.yml up -d
-
-Pour arreter l'application :
-    cd Desktop\sentinelle
-    docker compose -f docker-compose.client.yml down
-
-Pour voir tous les conteneurs en cours d'execution :
-    docker ps
-
-
-REQUIS DU PC
-------------
-- Systeme : Windows 10 ou 11
-- Docker Desktop installe et en cours d'execution
-- RAM : Minimum 4 Go
-- Disque : Minimum 10 Go d'espace libre
-- Ports : 80 et 8000 doivent etre ouverts
-
-
-NOTES IMPORTANTES
------------------
-1. Ne changez PAS les mots de passe dans le fichier compose sauf si vous savez ce que vous faites.
-2. Sauvegardez regulierement votre base de donnees si vous avez des donnees importantes.
-3. Les donnees de l'application sont stockees dans un volume Docker appele "postgres_data". Elles persistent meme si vous arretez les conteneurs.
-4. Pour mettre a jour vers une nouvelle version, executez simplement :
-
-    cd Desktop\sentinelle
-    docker compose -f docker-compose.client.yml pull
-    docker compose -f docker-compose.client.yml up -d
+    docker compose -f docker-compose.client.yml logs backend --tail=50
