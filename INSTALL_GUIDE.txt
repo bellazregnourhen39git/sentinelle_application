@@ -1,0 +1,172 @@
+SENTINELLE APPLICATION - INSTALLATION GUIDE
+============================================
+
+PREREQUISITES
+-------------
+Make sure Docker and Docker Compose are installed:
+
+    docker --version
+    docker compose version
+
+If not installed, run:
+
+    sudo apt update
+    sudo apt install -y docker.io docker-compose-plugin
+    sudo systemctl enable docker
+    sudo systemctl start docker
+
+
+STEP 1: Create the project directory
+-------------------------------------
+    mkdir -p /home/mehdi/sentinelle
+    cd /home/mehdi/sentinelle
+
+
+STEP 2: Create the docker-compose file
+---------------------------------------
+Run this command (copy and paste the whole block):
+
+    cat > docker-compose.client.yml << 'EOF'
+    version: "3.9"
+
+    services:
+      db:
+        image: postgres:16-alpine
+        container_name: sentinelle-db
+        environment:
+          POSTGRES_DB: sentinelle_db
+          POSTGRES_USER: sentinelle
+          POSTGRES_PASSWORD: sentinelle
+        volumes:
+          - postgres_data:/var/lib/postgresql/data
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U sentinelle -d sentinelle_db"]
+          interval: 5s
+          timeout: 5s
+          retries: 10
+
+      backend:
+        image: mohamedbouzidcloud/sentinelle-backend:latest
+        pull_policy: always
+        container_name: sentinelle-backend
+        environment:
+          DB_ENGINE: django.db.backends.postgresql
+          DB_HOST: sentinelle-db
+          DB_PORT: 5432
+          DB_USER: sentinelle
+          DB_PASSWORD: sentinelle
+          DB_NAME: sentinelle_db
+        depends_on:
+          db:
+            condition: service_healthy
+        restart: on-failure
+        ports:
+          - "8000:8000"
+
+      frontend:
+        image: mohamedbouzidcloud/sentinelle-frontend:latest
+        pull_policy: always
+        container_name: sentinelle-frontend
+        depends_on:
+          - backend
+        ports:
+          - "80:80"
+
+    volumes:
+      postgres_data:
+    EOF
+
+
+STEP 3: Stop any old containers and clean up
+---------------------------------------------
+    cd /home/mehdi/sentinelle
+    docker compose -f docker-compose.client.yml down -v
+    docker image rm -f mohamedbouzidcloud/sentinelle-backend:latest 2>/dev/null
+    docker image rm -f mohamedbouzidcloud/sentinelle-frontend:latest 2>/dev/null
+
+
+STEP 4: Pull the images and start
+----------------------------------
+    cd /home/mehdi/sentinelle
+    docker compose -f docker-compose.client.yml pull
+    docker compose -f docker-compose.client.yml up -d
+
+
+STEP 5: Verify everything is running
+-------------------------------------
+    docker compose -f docker-compose.client.yml ps
+
+You should see 3 containers all showing "Up" or "running":
+
+    sentinelle-db       -> Up
+    sentinelle-backend  -> Up
+    sentinelle-frontend -> Up
+
+If any container shows "Exit" or "Restarting", check the logs:
+
+    docker compose -f docker-compose.client.yml logs backend --tail=50
+    docker compose -f docker-compose.client.yml logs db --tail=50
+
+
+STEP 6: Test the application
+-----------------------------
+Open your browser and go to:
+
+    http://YOUR_SERVER_IP
+
+You should see the Sentinelle login page.
+
+DEFAULT LOGIN CREDENTIALS:
+
+    Email: msi@sentinelle.tn        Password: msi        Role: Super Admin
+    Email: medbouzid1234567@gmail.com  Password: lolalola  Role: Practitioner
+
+
+STEP 7: Check the backend API
+------------------------------
+    curl http://localhost:8000/api/login/
+
+You should get a response (not a connection error).
+
+
+TROUBLESHOOTING
+---------------
+
+If the backend keeps restarting:
+    docker compose -f docker-compose.client.yml logs backend --tail=100
+
+If the database is not reachable:
+    docker compose -f docker-compose.client.yml exec db pg_isready -U sentinelle -d sentinelle_db
+
+To restart everything from scratch:
+    cd /home/mehdi/sentinelle
+    docker compose -f docker-compose.client.yml down -v
+    docker compose -f docker-compose.client.yml pull
+    docker compose -f docker-compose.client.yml up -d
+
+To stop the application:
+    cd /home/mehdi/sentinelle
+    docker compose -f docker-compose.client.yml down
+
+To view all running containers:
+    docker ps
+
+
+SERVER REQUIREMENTS
+-------------------
+- OS: Ubuntu 20.04+ or Debian 10+
+- RAM: Minimum 2 GB
+- Disk: Minimum 10 GB free space
+- Ports: 80 and 8000 must be open
+
+
+IMPORTANT NOTES
+---------------
+1. Do NOT change the passwords in the compose file unless you know what you are doing.
+2. Back up your database regularly if you have important data.
+3. The application data is stored in a Docker volume called "postgres_data". It persists even if you stop the containers.
+4. To update to a newer version, just run:
+
+    cd /home/mehdi/sentinelle
+    docker compose -f docker-compose.client.yml pull
+    docker compose -f docker-compose.client.yml up -d
