@@ -19,7 +19,11 @@ import {
     ArrowDown,
     X,
     Save,
-    Edit3
+    Edit3,
+    RotateCcw,
+    ClipboardList,
+    ChevronDown,
+    ChevronUp
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../api';
@@ -39,6 +43,9 @@ const ClassReportPage = () => {
     const [fieldsList, setFieldsList] = useState([]);
     const [isEditMode, setIsEditMode] = useState(false);
     const [existingReports, setExistingReports] = useState([]);
+    const [activeReports, setActiveReports] = useState([]);
+    const [showReportsDrawer, setShowReportsDrawer] = useState(false);
+    const [finalizingReport, setFinalizingReport] = useState(null);
     const [editingField, setEditingField] = useState(null);
     const [addingToSection, setAddingToSection] = useState(null);
     const [newFieldData, setNewFieldData] = useState({
@@ -51,9 +58,12 @@ const ClassReportPage = () => {
 
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
     const isSuperAdmin = ['SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(currentUser?.role?.toUpperCase());
+    const isOperator = currentUser?.role?.toUpperCase() === 'OPERATOR';
+    const isPractitioner = !isSuperAdmin && !isOperator;
+    const userGovId = currentUser?.governorate || currentUser?.gouvernorat || currentUser?.governorate_id || '';
 
-    const [formData, setFormData] = useState({
-        governorate: '',
+    const INITIAL_FORM = {
+        governorate: (isPractitioner && userGovId) ? String(userGovId) : '',
         establishment: '',
         establishment_name: '',
         establishment_type: 'PUBLIC',
@@ -73,12 +83,17 @@ const ClassReportPage = () => {
         last_student_time_minutes: '',
         personal_comments: '',
         extra_data: {}
-    });
+    };
+
+    const [formData, setFormData] = useState(INITIAL_FORM);
 
     const t = {
         fr: {
             title: "Rapport de Classe",
             subtitle: "Administration de l'enquête MedSPAD",
+            active_title: "Mes Rapports de Classe Actifs (En cours)",
+            active_desc: "Vous pouvez basculer entre vos classes ou créer un nouveau rapport pour un autre établissement.",
+            new_report_btn: "+ Nouveau Rapport de Classe",
             sections: {
                 identity: "Identité de l'établissement",
                 stats: "Statistiques de participation",
@@ -123,14 +138,21 @@ const ClassReportPage = () => {
             },
             actions: {
                 submit: "Enregistrer le Rapport",
+                update: "Mettre à jour le Rapport",
                 back: "Retour",
                 success: "Rapport enregistré avec succès",
-                error: "Erreur lors de l'enregistrement"
+                error: "Erreur lors de l'enregistrement",
+                finalize_btn: "Clôturer la classe",
+                continue_btn: "Saisir les Questionnaires",
+                edit_btn: "Modifier"
             }
         },
         ar: {
             title: "تقرير القسم",
             subtitle: "إدارة مسح MedSPAD",
+            active_title: "تقارير الأقسام النشطة (قيد الإنجاز)",
+            active_desc: "يمكنك التنقل بين أقسامك أو فتح تقرير جديد لمؤسسة تعليمية أخرى.",
+            new_report_btn: "+ تقرير قسم جديد",
             sections: {
                 identity: "هوية المؤسسة",
                 stats: "إحصائيات المشاركة",
@@ -175,9 +197,13 @@ const ClassReportPage = () => {
             },
             actions: {
                 submit: "حفظ التقرير",
+                update: "تحديث التقرير",
                 back: "رجوع",
                 success: "تم حفظ التقرير بنجاح",
-                error: "خطأ أثناء الحفظ"
+                error: "خطأ أثناء الحفظ",
+                finalize_btn: "إغلاق القسم نهائياً",
+                continue_btn: "متابعة إدخال الاستبيانات",
+                edit_btn: "تعديل"
             }
         }
     };
@@ -191,6 +217,17 @@ const ClassReportPage = () => {
         }).catch(err => console.error(err));
     };
 
+    const loadReports = () => {
+        api.get('class-report/list/').then(res => {
+            const list = Array.isArray(res.data) ? res.data : (res.data?.results || []);
+            setExistingReports(list);
+            setActiveReports(list.filter(r => !r.is_finalized));
+        }).catch(() => {
+            setExistingReports([]);
+            setActiveReports([]);
+        });
+    };
+
     useEffect(() => {
         api.get('geography/governorates/').then(res => {
             const list = Array.isArray(res.data) ? res.data : (res.data?.results || []);
@@ -198,30 +235,18 @@ const ClassReportPage = () => {
         }).catch(() => setGovernorates([]));
 
         loadFields();
+        loadReports();
 
         if (editId) {
             api.get(`class-report/${editId}/`).then(res => {
-                setFormData(prev => ({
-                    ...prev,
+                setFormData({
+                    ...INITIAL_FORM,
                     ...res.data,
                     extra_data: res.data?.extra_data || {}
-                }));
+                });
             }).catch(console.error);
         } else {
-            const savedUser = localStorage.getItem('user');
-            if (savedUser) {
-                try {
-                    const user = JSON.parse(savedUser);
-                    if (user.role === 'PRACTITIONER' || user.role === 'OPERATOR') {
-                        setFormData(prev => ({
-                            ...prev,
-                            establishment: user.establishment || '',
-                            establishment_name: user.establishment_name || '',
-                            governorate: user.governorate || ''
-                        }));
-                    }
-                } catch (e) {}
-            }
+            setFormData(INITIAL_FORM);
         }
     }, [editId]);
 
@@ -239,18 +264,11 @@ const ClassReportPage = () => {
         }
     }, [formData.governorate]);
 
-    useEffect(() => {
-        api.get('class-report/list/').then(res => {
-            const list = Array.isArray(res.data) ? res.data : (res.data?.results || []);
-            setExistingReports(list);
-        }).catch(() => setExistingReports([]));
-    }, []);
-
     const handleEstablishmentChange = (e) => {
         const val = e.target.value;
-        setFormData({ ...formData, establishment_name: val });
+        setFormData({ ...formData, establishment_name: val, establishment: '' });
         
-        if (val.length > 2) {
+        if (val.length > 1) {
             let matches = establishments.filter(est => 
                 est.name.toLowerCase().includes(val.toLowerCase())
             );
@@ -260,20 +278,47 @@ const ClassReportPage = () => {
                     return String(estGov) === String(formData.governorate) || String(est.governorate_id) === String(formData.governorate);
                 });
             }
-            setSuggestions(matches.slice(0, 5));
+            setSuggestions(matches.slice(0, 6));
         } else {
             setSuggestions([]);
         }
     };
 
     const selectSuggestion = (est) => {
-        setFormData({ 
-            ...formData, 
+        const estGovId = typeof est.governorate === 'object' ? est.governorate?.id : est.governorate;
+        setFormData(prev => ({ 
+            ...prev, 
             establishment: est.id,
             establishment_name: est.name,
-            governorate: est.governorate 
-        });
+            governorate: (isPractitioner && userGovId) ? String(userGovId) : (estGovId || prev.governorate)
+        }));
         setSuggestions([]);
+    };
+
+    const [reportViewFilter, setReportViewFilter] = useState('active');
+
+    const handleReopenReport = async (reportId) => {
+        try {
+            await api.post(`class-report/${reportId}/finalize/`, { action: 'unfinalize', is_finalized: false });
+            loadReports();
+        } catch (err) {
+            console.error("Failed to reopen report", err);
+            alert("Erreur lors de la réouverture du rapport.");
+        }
+    };
+
+    const handleFinalizeConfirm = async (reportId) => {
+        try {
+            await api.post(`class-report/${reportId}/finalize/`);
+            setFinalizingReport(null);
+            loadReports();
+            if (editId === String(reportId)) {
+                navigate('/class-report');
+            }
+        } catch (err) {
+            console.error("Failed to finalize report", err);
+            alert("Erreur lors de la clôture du rapport.");
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -284,10 +329,31 @@ const ClassReportPage = () => {
         ['students_present', 'students_refused', 'students_absent', 'questionnaires_collected', 
          'planned_time_minutes', 'first_student_time_minutes', 'last_student_time_minutes',
          'students_without_authorization'].forEach(field => {
-            if (cleanedData[field] === '') {
+            if (cleanedData[field] === '' || cleanedData[field] === undefined || cleanedData[field] === null) {
                 cleanedData[field] = null;
+            } else {
+                cleanedData[field] = Math.max(0, Number(cleanedData[field]));
             }
         });
+
+        if (cleanedData.questionnaires_collected === null || cleanedData.questionnaires_collected === undefined || cleanedData.questionnaires_collected <= 0) {
+            if (cleanedData.students_present) {
+                cleanedData.questionnaires_collected = Math.max(0, (cleanedData.students_present || 0) - (cleanedData.students_refused || 0) - (cleanedData.students_without_authorization || 0));
+            }
+        }
+
+        if (!cleanedData.establishment || cleanedData.establishment === '') {
+            cleanedData.establishment = null;
+        } else {
+            cleanedData.establishment = Number(cleanedData.establishment);
+        }
+
+        const effectiveGov = cleanedData.governorate || userGovId;
+        if (effectiveGov) {
+            cleanedData.governorate = Number(effectiveGov);
+        } else {
+            delete cleanedData.governorate;
+        }
 
         try {
             let res;
@@ -296,10 +362,13 @@ const ClassReportPage = () => {
             } else {
                 res = await api.post('class-report/', cleanedData);
             }
+            const activeId = String(res.data?.id || editId);
+            localStorage.setItem('sentinelle_active_report_id', activeId);
             setStatus('success');
-            setTimeout(() => navigate(`/session/${res.data?.id || editId}/collect`), 2000);
+            loadReports();
+            setTimeout(() => navigate(`/session/${activeId}/collect`), 1500);
         } catch (err) {
-            console.error(err);
+            console.error("Submit class report error:", err.response?.data || err);
             setStatus('error');
         }
     };
@@ -463,7 +532,7 @@ const ClassReportPage = () => {
             if (opts.length === 0) {
                 return (
                     <div className="p-3 bg-slate-950 border border-slate-800 rounded-xl text-slate-500 text-xs italic">
-                        {lang === 'ar' ? 'لم يتم تحديد خيارات (انقر فوق ✏️ للتعديل)' : 'Aucune option définie (cliquez sur ✏️ pour ajouter des options)'}
+                        {lang === 'ar' ? 'لم يتم تحديد خيارات (انقر فوق تعديل لإضافة خيارات)' : 'Aucune option définie (cliquez sur Modifier pour ajouter des options)'}
                     </div>
                 );
             }
@@ -552,32 +621,65 @@ const ClassReportPage = () => {
 
     return (
         <div className={`min-h-screen bg-slate-950 text-slate-200 p-4 md:p-8 font-sans ${lang === 'ar' ? 'rtl' : 'ltr'}`} dir={lang === 'ar' ? 'rtl' : 'ltr'}>
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-5xl mx-auto space-y-8">
                 {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800/80">
                     <div className="flex items-center gap-4">
                         <button 
-                            onClick={() => navigate(-1)}
-                            className="p-2 hover:bg-slate-900 rounded-full transition-colors border border-slate-800"
+                            onClick={() => navigate('/dashboard')}
+                            className="p-2.5 hover:bg-slate-900 rounded-2xl transition-colors border border-slate-800 text-slate-400 hover:text-white"
+                            title="Tableau de bord"
                         >
-                            <ArrowLeft className={lang === 'ar' ? 'rotate-180' : ''} />
+                            <ArrowLeft className={lang === 'ar' ? 'rotate-180' : ''} size={20} />
                         </button>
                         <div>
-                            <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white uppercase italic flex items-center gap-3">
-                                {currentT.title}
-                                {editId && (
-                                    <span className="text-xs px-2.5 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/30 rounded-full normal-case font-bold tracking-normal">
+                            <div className="flex items-center gap-3">
+                                <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white uppercase italic">
+                                    {currentT.title}
+                                </h1>
+                                {editId ? (
+                                    <span className="text-xs px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full font-bold">
                                         Mode Édition #{editId}
                                     </span>
+                                ) : (
+                                    <span className="text-xs px-3 py-1 bg-brand-500/20 text-brand-300 border border-brand-500/40 rounded-full font-bold">
+                                        Nouveau Rapport
+                                    </span>
                                 )}
-                            </h1>
-                            <p className="text-brand-400 font-bold text-xs uppercase tracking-widest">
+                            </div>
+                            <p className="text-brand-400 font-bold text-xs uppercase tracking-widest mt-0.5">
                                 {currentT.subtitle}
                             </p>
                         </div>
                     </div>
                     
-                    <div className="flex items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-3">
+                        {editId && (
+                            <button
+                                type="button"
+                                onClick={() => navigate('/class-report')}
+                                className="flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold text-xs bg-slate-900 border border-slate-700 text-slate-300 hover:text-white hover:border-slate-500 transition-all"
+                            >
+                                <Plus size={14} /> {currentT.new_report_btn}
+                            </button>
+                        )}
+
+                        {existingReports.length > 0 && (
+                            <button
+                                type="button"
+                                onClick={() => setShowReportsDrawer(!showReportsDrawer)}
+                                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-bold text-xs border transition-all ${
+                                    showReportsDrawer
+                                        ? 'bg-brand-600 text-white border-brand-500 shadow-md shadow-brand-500/20'
+                                        : 'bg-slate-900 border-slate-700 text-slate-300 hover:text-white hover:border-slate-500'
+                                }`}
+                            >
+                                <ClipboardList size={14} />
+                                <span>{lang === 'ar' ? 'سجل التقارير' : 'Historique'} ({activeReports.length} {lang === 'ar' ? 'نشط' : 'actifs'})</span>
+                                {showReportsDrawer ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+                            </button>
+                        )}
+
                         {isSuperAdmin && (
                             <button
                                 type="button"
@@ -589,56 +691,263 @@ const ClassReportPage = () => {
                                 }`}
                             >
                                 <Pencil size={14} />
-                                {isEditMode ? 'Quitter Éditeur Structure' : 'Éditeur de Structure'}
+                                {isEditMode ? 'Quitter Structure' : 'Structure Formulaire'}
                             </button>
-                        )}
-
-                        {existingReports.length > 0 && (
-                            <select
-                                className="bg-slate-900 border border-slate-700 text-xs font-bold px-3 py-2 rounded-lg text-slate-300 outline-none focus:border-brand-500"
-                                value={editId || ''}
-                                onChange={(e) => {
-                                    const val = e.target.value;
-                                    if (val) {
-                                        navigate(`/class-report?edit=${val}`);
-                                    } else {
-                                        navigate('/class-report');
-                                    }
-                                }}
-                            >
-                                <option value="">-- {editId ? 'Créer nouveau rapport' : 'Éditer un rapport existant'} --</option>
-                                {existingReports.map(r => (
-                                    <option key={r.id} value={r.id}>
-                                        #{r.id} - {r.establishment_name} ({r.report_date})
-                                    </option>
-                                ))}
-                            </select>
                         )}
 
                         <button 
                             onClick={() => setLang(lang === 'fr' ? 'ar' : 'fr')}
-                            className="flex items-center gap-2 px-4 py-2 bg-slate-900 border border-brand-500/30 rounded-lg font-bold text-sm hover:border-brand-500 transition-all"
+                            className="flex items-center gap-2 px-4 py-2 bg-slate-900 border border-brand-500/30 rounded-xl font-bold text-xs hover:border-brand-500 transition-all text-white"
                         >
-                            <Globe size={18} />
+                            <Globe size={16} />
                             {lang === 'fr' ? 'العربية' : 'Français'}
                         </button>
                     </div>
                 </div>
 
+                {/* ─── REPORTS LIST & ACTIONS SECTION ─────────────────────── */}
+                {showReportsDrawer && existingReports.length > 0 && (
+                    <div className="bg-slate-900/70 border border-brand-500/30 rounded-3xl p-6 shadow-2xl backdrop-blur-md relative overflow-hidden">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4 pb-3 border-b border-slate-800">
+                            <div>
+                                <div className="flex items-center gap-3">
+                                    <h2 className="text-base font-black text-white uppercase italic tracking-wide flex items-center gap-2">
+                                        <ClipboardList size={18} className="text-brand-400" />
+                                        Mes Rapports de Classe
+                                    </h2>
+                                    <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs font-bold">
+                                        <button
+                                            type="button"
+                                            onClick={() => setReportViewFilter('active')}
+                                            className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
+                                                reportViewFilter === 'active' 
+                                                    ? 'bg-brand-500 text-white shadow-md' 
+                                                    : 'text-slate-400 hover:text-white'
+                                            }`}
+                                        >
+                                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                            En cours ({activeReports.length})
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setReportViewFilter('closed')}
+                                            className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
+                                                reportViewFilter === 'closed' 
+                                                    ? 'bg-amber-500 text-white shadow-md' 
+                                                    : 'text-slate-400 hover:text-white'
+                                            }`}
+                                        >
+                                            <span className="w-2 h-2 rounded-full bg-amber-400"></span>
+                                            Clôturés ({existingReports.filter(r => r.is_finalized).length})
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setReportViewFilter('all')}
+                                            className={`px-3 py-1 rounded-lg transition-all ${
+                                                reportViewFilter === 'all' 
+                                                    ? 'bg-brand-500 text-white shadow-md' 
+                                                    : 'text-slate-400 hover:text-white'
+                                            }`}
+                                        >
+                                            Tous ({existingReports.length})
+                                        </button>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-slate-400 font-medium mt-1.5">
+                                    {reportViewFilter === 'active' ? currentT.active_desc : (reportViewFilter === 'closed' ? 'Sessions clôturées et archivées.' : 'Historique complet de toutes vos sessions créées.')}
+                                </p>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setFormData(INITIAL_FORM);
+                                    if (editId) navigate('/class-report');
+                                }}
+                                className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-brand-500/20 transition-all shrink-0"
+                            >
+                                <Plus size={16} /> {currentT.new_report_btn}
+                            </button>
+                        </div>
+
+                        {/* List Grid */}
+                        {((reportViewFilter === 'active' ? activeReports : (reportViewFilter === 'closed' ? existingReports.filter(r => r.is_finalized) : existingReports)).length === 0) ? (
+                            <div className="text-center py-8 text-slate-500 text-xs font-bold">
+                                Aucun rapport dans cette vue.
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                {(reportViewFilter === 'active' ? activeReports : (reportViewFilter === 'closed' ? existingReports.filter(r => r.is_finalized) : existingReports)).map(rep => {
+                                    const isCurrentEdit = String(rep.id) === String(editId);
+                                    const collected = rep.submissions_count || 0;
+                                    const rawTarget = Number(rep.questionnaires_collected);
+                                    const rawPres = Number(rep.students_present) || 0;
+                                    const rawRef = Number(rep.students_refused) || 0;
+                                    const rawNoA = Number(rep.students_without_authorization) || 0;
+                                    const target = (rawTarget > 0) ? rawTarget : Math.max(0, rawPres - rawRef - rawNoA);
+                                    return (
+                                        <div 
+                                            key={rep.id} 
+                                            className={`p-4 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${
+                                                isCurrentEdit 
+                                                    ? 'bg-amber-500/10 border-amber-500/50 shadow-lg shadow-amber-500/10 ring-1 ring-amber-400' 
+                                                    : 'bg-slate-950/80 border-slate-800 hover:border-slate-700 hover:bg-slate-950'
+                                            }`}
+                                        >
+                                            <div>
+                                                <div className="flex items-start justify-between gap-2 mb-2">
+                                                    <h3 className="font-extrabold text-sm text-white line-clamp-1 flex items-center gap-1.5" title={rep.establishment_name}>
+                                                        <Building2 size={15} className="text-brand-400 shrink-0" />
+                                                        {rep.establishment_name || 'Établissement non précisé'}
+                                                    </h3>
+                                                    <div className="flex items-center gap-1.5">
+                                                        {rep.is_finalized ? (
+                                                            <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-slate-800 text-slate-400 border border-slate-700">
+                                                                Clôturé
+                                                            </span>
+                                                        ) : (
+                                                            <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                                                En cours
+                                                            </span>
+                                                        )}
+                                                        <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-slate-800 text-brand-300 shrink-0">
+                                                            #{rep.id}
+                                                        </span>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-center gap-3 text-[11px] text-slate-400 font-medium mb-3">
+                                                    <span className="flex items-center gap-1">
+                                                        <School size={12} className="text-slate-500" />
+                                                        {rep.study_level === '1_AS' ? '1ère AS' : '2ème AS'}
+                                                    </span>
+                                                    <span>•</span>
+                                                    <span className="flex items-center gap-1">
+                                                        <Calendar size={12} className="text-slate-500" />
+                                                        {rep.report_date}
+                                                    </span>
+                                                    {rep.governorate_name && (
+                                                        <>
+                                                            <span>•</span>
+                                                            <span className="text-slate-300 font-bold">{rep.governorate_name}</span>
+                                                        </>
+                                                    )}
+                                                </div>
+
+                                                {/* Progress indicator */}
+                                                <div className="bg-slate-900/90 rounded-xl p-2.5 border border-slate-800/80 mb-3">
+                                                    <div className="flex justify-between text-[10px] font-black uppercase tracking-wider mb-1">
+                                                        <span className="text-slate-400">Questionnaires saisis</span>
+                                                        <span className="text-brand-400 font-mono font-bold">
+                                                            {collected} {target > 0 ? `/ ${target}` : ''}
+                                                        </span>
+                                                    </div>
+                                                    <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                                        <div 
+                                                            className={`h-full transition-all duration-500 ${rep.is_finalized ? 'bg-slate-600' : 'bg-gradient-to-r from-brand-500 to-emerald-400'}`}
+                                                            style={{ width: `${target > 0 ? Math.min(100, (collected / target) * 100) : (collected > 0 ? 100 : 0)}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Action buttons */}
+                                            <div className="flex items-center gap-2 pt-2 border-t border-slate-800/80">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        localStorage.setItem('sentinelle_active_report_id', String(rep.id));
+                                                        navigate(`/session/${rep.id}/collect`);
+                                                    }}
+                                                    className="flex-1 py-2 px-2.5 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                                                    title="Saisir ou consulter les questionnaires"
+                                                >
+                                                    <FileText size={13} /> {currentT.actions.continue_btn}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    onClick={() => navigate(`/class-report?edit=${rep.id}`)}
+                                                    className="p-2 bg-slate-800 hover:bg-slate-700 text-amber-300 hover:text-white rounded-xl text-xs font-bold transition-all border border-slate-700"
+                                                    title="Modifier les informations du rapport"
+                                                >
+                                                    <Pencil size={14} />
+                                                </button>
+                                                {rep.is_finalized ? (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleReopenReport(rep.id)}
+                                                        className="p-2 bg-slate-800 hover:bg-emerald-500/20 text-slate-400 hover:text-emerald-400 rounded-xl text-xs font-bold transition-all border border-slate-700"
+                                                        title="Rouvrir cette classe"
+                                                    >
+                                                        <RotateCcw size={14} />
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setFinalizingReport(rep)}
+                                                        className="p-2 bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 rounded-xl text-xs font-bold transition-all border border-slate-700"
+                                                        title="Clôturer cette classe définitivement"
+                                                    >
+                                                        <ShieldCheck size={14} />
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* ─── EDIT MODE BANNER ──────────────────────────────────────── */}
+                {editId && (
+                    <div className="p-4 bg-amber-500/10 border border-amber-500/40 rounded-2xl flex items-center justify-between gap-4 animate-fade-in">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                                <Pencil size={18} />
+                            </div>
+                            <div>
+                                <h4 className="text-sm font-black text-amber-300 uppercase tracking-tight">
+                                    Mode Modification : Rapport #{editId} ({formData.establishment_name || 'Établissement'})
+                                </h4>
+                                <p className="text-xs text-slate-400 font-medium">
+                                    Vos modifications s'appliqueront directement à cette session de classe.
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                setFormData(INITIAL_FORM);
+                                navigate('/class-report');
+                            }}
+                            className="px-4 py-2 bg-slate-900 border border-slate-700 hover:bg-slate-800 text-slate-300 hover:text-white rounded-xl text-xs font-bold transition-all"
+                        >
+                            Annuler l'édition
+                        </button>
+                    </div>
+                )}
+
+                {/* ─── FORM SECTION ─────────────────────────────────────────── */}
                 <form onSubmit={handleSubmit} className="space-y-8">
                     
                     {/* SECTION 1: IDENTITY */}
-                    <div className="bg-slate-900/50 border border-slate-800 p-6 rounded-2xl backdrop-blur-sm relative overflow-hidden group">
-                        <div className="flex items-center justify-between mb-6 border-b border-slate-800 pb-3">
-                            <h2 className="flex items-center gap-2 text-lg font-bold text-white uppercase italic">
-                                <Building2 className="text-brand-500" size={20} />
-                                {currentT.sections.identity}
-                            </h2>
+                    <div className="bg-slate-900/50 border border-slate-800 p-6 md:p-8 rounded-3xl backdrop-blur-sm relative overflow-hidden group">
+                        <div className="flex items-center justify-between mb-6 border-b border-slate-800 pb-4">
+                            <div>
+                                <h2 className="flex items-center gap-2.5 text-lg font-black text-white uppercase italic">
+                                    <Building2 className="text-brand-500" size={22} />
+                                    {currentT.sections.identity}
+                                </h2>
+                                <p className="text-xs text-slate-400 font-medium mt-1">
+                                    Sélectionnez la région et le lycée concerné pour ce rapport spécifique.
+                                </p>
+                            </div>
                             {isEditMode && (
                                 <button
                                     type="button"
                                     onClick={() => setAddingToSection('identity')}
-                                    className="flex items-center gap-1 px-3 py-1 bg-brand-500/20 text-brand-300 border border-brand-500/40 rounded-lg text-xs font-bold hover:bg-brand-500/30"
+                                    className="flex items-center gap-1 px-3 py-1.5 bg-brand-500/20 text-brand-300 border border-brand-500/40 rounded-xl text-xs font-bold hover:bg-brand-500/30"
                                 >
                                     <Plus size={14} /> Ajouter une question
                                 </button>
@@ -647,9 +956,9 @@ const ClassReportPage = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {getSectionFields('identity').map((field, idx, arr) => (
-                                <div key={field.code} className={`space-y-2 p-3 rounded-xl transition-all ${isEditMode ? 'bg-slate-950/80 border border-slate-800' : ''}`}>
+                                <div key={field.code} className={`space-y-2 p-3 rounded-2xl transition-all ${isEditMode ? 'bg-slate-950/80 border border-slate-800' : ''}`}>
                                     <div className="flex items-center justify-between">
-                                        <label className="text-xs font-black uppercase tracking-tighter text-slate-400">
+                                        <label className="text-xs font-black uppercase tracking-tighter text-slate-300">
                                             {isRTL && field.label_ar ? field.label_ar : field.label_fr}
                                         </label>
                                         {isEditMode && (
@@ -663,36 +972,69 @@ const ClassReportPage = () => {
                                     </div>
 
                                     {field.code === 'governorate' ? (
-                                        <select 
-                                            className="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none disabled:opacity-50"
-                                            value={formData.governorate}
-                                            onChange={e => {
-                                                setFormData(prev => ({ ...prev, governorate: e.target.value, establishment: '', establishment_name: '' }));
-                                                setSuggestions([]);
-                                            }}
-                                            required
-                                            disabled={formData.governorate !== '' && !isSuperAdmin}
-                                        >
-                                            <option value="">-- {currentT.fields.governorate} --</option>
-                                            {governorates.map(g => <option key={g.id} value={g.id}>{g.name}</option>)}
-                                        </select>
+                                        (isPractitioner && userGovId) ? (
+                                            <div className="w-full bg-slate-950/90 border border-brand-500/30 p-3.5 rounded-xl flex items-center justify-between">
+                                                <div className="flex items-center gap-2.5">
+                                                    <span className="w-2.5 h-2.5 rounded-full bg-brand-400"></span>
+                                                    <span className="text-white font-bold text-sm">
+                                                        {governorates.find(g => String(g.id) === String(formData.governorate || userGovId))?.name || (formData.governorate_name || 'Gouvernorat Assigné')}
+                                                    </span>
+                                                </div>
+                                                <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-md bg-brand-500/20 text-brand-300 border border-brand-500/30">
+                                                    {lang === 'ar' ? 'الولاية المعينة' : 'Région assignée'}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <select 
+                                                className="w-full bg-slate-950 border border-slate-800 p-3.5 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-white font-medium text-sm"
+                                                value={formData.governorate}
+                                                onChange={e => {
+                                                    setFormData(prev => ({ 
+                                                        ...prev, 
+                                                        governorate: e.target.value, 
+                                                        establishment: '', 
+                                                        establishment_name: '' 
+                                                    }));
+                                                    setSuggestions([]);
+                                                }}
+                                                required
+                                            >
+                                                <option value="">-- {currentT.fields.governorate} --</option>
+                                                {governorates.map(g => (
+                                                    <option key={g.id} value={g.id}>{g.name}</option>
+                                                ))}
+                                            </select>
+                                        )
                                     ) : field.code === 'establishment_name' ? (
                                         <div className="relative">
                                             <input 
                                                 type="text"
-                                                className="w-full bg-slate-950 border border-slate-800 p-3 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none disabled:opacity-50"
-                                                placeholder="..."
+                                                className="w-full bg-slate-950 border border-slate-800 p-3.5 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none text-white font-medium text-sm pr-10"
+                                                placeholder="Tapez le nom ou choisissez dans la liste..."
                                                 value={formData.establishment_name}
                                                 onChange={handleEstablishmentChange}
                                                 required
-                                                readOnly={formData.establishment !== '' && !isSuperAdmin}
                                             />
+                                            {formData.establishment_name && (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setFormData(prev => ({ ...prev, establishment: '', establishment_name: '' }))}
+                                                    className="absolute right-3 top-3.5 text-slate-500 hover:text-slate-300 p-0.5 rounded-full"
+                                                    title="Effacer le nom"
+                                                >
+                                                    <X size={16} />
+                                                </button>
+                                            )}
                                             {suggestions.length > 0 && (
-                                                <div className="absolute z-10 w-full mt-1 bg-slate-900 border border-slate-700 rounded-xl shadow-2xl overflow-hidden">
+                                                <div className="absolute z-30 w-full mt-1 bg-slate-900 border border-slate-700 rounded-2xl shadow-2xl overflow-hidden max-h-60 overflow-y-auto">
                                                     {suggestions.map(est => (
-                                                        <div key={est.id} className="p-3 hover:bg-brand-500/10 cursor-pointer text-sm border-b border-slate-800 last:border-0" onClick={() => selectSuggestion(est)}>
-                                                            <div className="font-bold text-white">{est.name}</div>
-                                                            <div className="text-xs text-slate-500">{est.governorate_name}</div>
+                                                        <div 
+                                                            key={est.id} 
+                                                            className="p-3.5 hover:bg-brand-500/20 cursor-pointer border-b border-slate-800/80 last:border-0 transition-colors" 
+                                                            onClick={() => selectSuggestion(est)}
+                                                        >
+                                                            <div className="font-bold text-white text-sm">{est.name}</div>
+                                                            <div className="text-xs text-brand-400 font-medium">{est.governorate_name}</div>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -997,6 +1339,44 @@ const ClassReportPage = () => {
                         <div className="flex justify-end gap-3 pt-3 border-t border-slate-800">
                             <button type="button" onClick={() => setAddingToSection(null)} className="px-4 py-2 bg-slate-950 border border-slate-800 text-slate-400 rounded-xl text-xs font-bold">Annuler</button>
                             <button type="button" onClick={handleCreateField} className="px-5 py-2 bg-brand-500 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 hover:bg-brand-400"><Plus size={14} /> Créer la question</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* FINALIZE CONFIRMATION MODAL */}
+            {finalizingReport && (
+                <div className="fixed inset-0 z-50 bg-slate-950/85 backdrop-blur-md flex items-center justify-center p-4">
+                    <div className="bg-slate-900 border border-slate-800 rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl animate-fade-in">
+                        <div className="w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mx-auto">
+                            <ShieldCheck size={28} />
+                        </div>
+                        <div className="text-center space-y-2">
+                            <h3 className="text-lg font-black text-white uppercase italic tracking-tight">
+                                Clôturer cette classe ?
+                            </h3>
+                            <p className="text-xs text-slate-300 font-medium">
+                                Vous êtes sur le point de clôturer définitivement le rapport pour <span className="text-amber-300 font-bold">{finalizingReport.establishment_name}</span> ({finalizingReport.study_level === '1_AS' ? '1ère AS' : '2ème AS'}).
+                            </p>
+                            <p className="text-[11px] text-slate-500 font-medium">
+                                Total de questionnaires enregistrés : <span className="font-bold text-brand-400">{finalizingReport.submissions_count || 0}</span>.
+                            </p>
+                        </div>
+                        <div className="flex gap-3 pt-2">
+                            <button
+                                type="button"
+                                onClick={() => setFinalizingReport(null)}
+                                className="flex-1 py-3 bg-slate-950 border border-slate-800 hover:bg-slate-800 text-slate-300 rounded-xl text-xs font-bold transition-all"
+                            >
+                                Annuler
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => handleFinalizeConfirm(finalizingReport.id)}
+                                className="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl text-xs font-black uppercase tracking-wider transition-all shadow-lg shadow-amber-500/20"
+                            >
+                                Confirmer la clôture
+                            </button>
                         </div>
                     </div>
                 </div>

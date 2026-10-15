@@ -1,12 +1,18 @@
-﻿from rest_framework import permissions
+from rest_framework import permissions
 
 class IsSuperAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.role == 'SUPER_ADMIN'
+        if not request.user or not request.user.is_authenticated:
+            return False
+        role = getattr(request.user, 'role', '').upper()
+        return role in ['SUPER_ADMIN', 'SUPERADMIN', 'GLOBAL_ADMIN'] or request.user.is_staff or request.user.is_superuser
 
 class IsGlobalAdmin(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.role in ['SUPER_ADMIN', 'GLOBAL_ADMIN']
+        if not request.user or not request.user.is_authenticated:
+            return False
+        role = getattr(request.user, 'role', '').upper()
+        return role in ['SUPER_ADMIN', 'SUPERADMIN', 'GLOBAL_ADMIN'] or request.user.is_staff or request.user.is_superuser
 
 class RoleBasedPermission(permissions.BasePermission):
     """

@@ -40,10 +40,10 @@ const SECTION_LABELS = {
 // --- Prismatic color scale: soft lavender → deep purple violet ---
 function buildColorScale(data) {
     if (!data) return null;
-    const vals = Object.values(data).map(d => d?.prevalence ?? 0).filter(v => v > 0);
-    if (!vals.length) return null;
+    const vals = Object.values(data).map(d => d?.prevalence ?? 0).filter(v => v !== null && v > 0);
+    if (!vals.length) return () => '#ede9fe';
     return d3.scaleSequential()
-        .domain([0, Math.max(...vals)])
+        .domain([0, Math.max(...vals, 100)])
         .interpolator(d3.interpolate('#ede9fe', '#6d28d9')); // violet shades from light to dark
 }
 
@@ -52,10 +52,10 @@ const TunisiaMap = ({ data, mapVariable, activeSection, currentUser, onRegionSel
     const [status, setStatus] = useState('loading'); // 'loading' | 'ok' | 'error'
     const [hoveredId, setHoveredId] = useState(null);
 
-    const isSuperAdmin = ['SUPER_ADMIN', 'NATIONAL'].includes(
+    const isSuperAdmin = ['SUPER_ADMIN', 'NATIONAL', 'GLOBAL_ADMIN', 'SUPERADMIN', 'ADMIN'].includes(
         (currentUser?.role ?? '').toUpperCase()
     );
-    const adminGov = currentUser?.gouvernorat;
+    const adminGov = currentUser?.governorate_name || currentUser?.governorate?.name || currentUser?.governorate || currentUser?.gouvernorat;
 
     const load = useCallback(async () => {
         setStatus('loading');
@@ -74,15 +74,22 @@ const TunisiaMap = ({ data, mapVariable, activeSection, currentUser, onRegionSel
         void load();
     }, [load]);
 
-    // Normalize names for robust mapping (strips accents, etc)
+    // Normalize names for robust mapping (strips accents, handles spelling variations)
     const normalize = (str) => {
         if (!str) return "";
-        return str.normalize("NFD")
-                  .replace(/[\u0300-\u036f]/g, "")
-                  .toLowerCase()
-                  .trim()
-                  .replace(/^(el|le|al)\s+/i, "")
-                  .replace(/\s+/g, "");
+        let clean = str.normalize("NFD")
+                   .replace(/[\u0300-\u036f]/g, "")
+                   .toLowerCase()
+                   .trim()
+                   .replace(/^(el|le|al|la)\s+/i, "")
+                   .replace(/\s+/g, "")
+                   .replace(/-/g, "");
+        if (clean.startsWith('bej')) return 'beja';
+        if (clean.includes('kef')) return 'kef';
+        if (clean.includes('mednin') || clean.includes('medenine')) return 'mednine';
+        if (clean.includes('manoub') || clean.includes('mannoub')) return 'mannouba';
+        if (clean.includes('jendoub') || clean.includes('jandoub')) return 'jandouba';
+        return clean;
     };
 
     const colorScale = useMemo(() => buildColorScale(data), [data]);
@@ -128,15 +135,15 @@ const TunisiaMap = ({ data, mapVariable, activeSection, currentUser, onRegionSel
     }, [geoJson, data]);
 
     const getFill = (r) => {
-        if (!isSuperAdmin && adminGov && r.backendName !== adminGov) return '#f1f5f9';
-        if (!r.stats.submissions || !colorScale) return '#f1f5f9'; 
+        if (!isSuperAdmin && adminGov && r.backendName.toLowerCase() !== String(adminGov).toLowerCase()) return '#f1f5f9';
+        if (!r.stats?.submissions || r.stats?.prevalence == null || !colorScale) return '#f8fafc'; 
         return colorScale(r.stats.prevalence);
     };
 
     const getOpacity = (r) =>
-        (!isSuperAdmin && adminGov && r.backendName !== adminGov) ? 0.3 : 1;
+        (!isSuperAdmin && adminGov && r.backendName.toLowerCase() !== String(adminGov).toLowerCase()) ? 0.4 : 1;
 
-    const canInteract = (r) => isSuperAdmin || r.backendName === adminGov;
+    const canInteract = (r) => isSuperAdmin || (adminGov && r.backendName.toLowerCase() === String(adminGov).toLowerCase());
 
     // Hovered region data
     const hoveredRegion = regions.find(r => r.backendName === hoveredId);

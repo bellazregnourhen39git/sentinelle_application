@@ -1,4 +1,4 @@
-﻿import React from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft, Users, AlertTriangle, BarChart2, PieChart,
@@ -42,100 +42,155 @@ const GROUP_COLORS = {
     U: '#F43F5E', V: '#F43F5E',
 };
 
-// ─── Chart Components (Refined) ──────────────────────────────────────────
+// ─── Chart Components (Refined with Percentage & Count) ──────────────────────────
 
 const BarQuestionItem = ({ code, label, distribution, index }) => {
     const palette = PALETTES[index % PALETTES.length];
-    const hasData = distribution.some(d => d.count > 0);
-    const data = distribution.map(d => ({ name: d.label, value: d.pct }));
+    const hasData = distribution.some(d => (d.count || 0) > 0);
+    const data = distribution.map(d => ({ 
+        name: d.label, 
+        value: d.pct, 
+        count: d.count || 0 
+    }));
 
     return (
-        <div className="flex flex-col gap-6 p-8 rounded-[40px] bg-white border border-slate-100 shadow-xl shadow-slate-200/20 hover:scale-[1.02] transition-all duration-500 group min-h-[250px]">
-            <div className="flex items-center gap-4">
-                <span className="w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-black uppercase text-white shadow-lg italic"
-                    style={{ backgroundColor: palette[0] }}>
-                    {code}
-                </span>
-                <p className="text-[13px] font-black text-slate-800 italic tracking-tight uppercase leading-tight flex-1">{label}</p>
+        <div className="flex flex-col justify-between gap-5 p-8 rounded-[40px] bg-white border border-slate-100 shadow-xl shadow-slate-200/20 hover:scale-[1.01] transition-all duration-500 group min-h-[290px]">
+            <div>
+                <div className="flex items-center gap-4 mb-2">
+                    <span className="w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-black uppercase text-white shadow-lg italic shrink-0"
+                        style={{ backgroundColor: palette[0] }}>
+                        {code}
+                    </span>
+                    <p className="text-[13px] font-black text-slate-800 italic tracking-tight uppercase leading-tight flex-1">{label}</p>
+                </div>
+                <div className="h-44 mt-2 flex items-center justify-center relative">
+                    {hasData ? (
+                        <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={data} margin={{ top: 20, right: 15, left: -15, bottom: 25 }}>
+                                <XAxis dataKey="name" tick={{ fontSize: 8, fill: '#64748b', fontWeight: 700 }} axisLine={false} tickLine={false} interval={0} angle={-35} textAnchor="end" />
+                                <YAxis tick={{ fontSize: 8, fill: '#64748b', fontWeight: 700 }} axisLine={false} tickLine={false} unit="%" dx={-5} />
+                                <Tooltip
+                                    cursor={{ fill: '#f1f5f9', radius: 4 }}
+                                    formatter={(v, name, item) => [
+                                        `${v}% (${item?.payload?.count || 0} réponses)`,
+                                        'Prévalence & Effectif'
+                                    ]}
+                                    contentStyle={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', fontSize: '11px', fontWeight: 900, color: '#0f172a', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                                />
+                                <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={22} label={{ position: 'top', formatter: (val) => val > 0 ? `${val}%` : '', fill: '#475569', fontSize: 9, fontWeight: 800 }}>
+                                    {data.map((_, i) => (
+                                        <Cell key={i} fill={palette[0]} fillOpacity={1 - (i * 0.12)} />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
+                    ) : (
+                        <div className="flex flex-col items-center gap-3 opacity-20 hover:opacity-40 transition-opacity">
+                            <BarChart2 size={32} className="text-slate-400" />
+                            <p className="text-[9px] font-black uppercase tracking-[4px] text-slate-400 italic">Aucun Jeu de Données Détecté</p>
+                        </div>
+                    )}
+                </div>
             </div>
-            <div className="h-44 mt-2 flex items-center justify-center relative">
-                {hasData ? (
-                    <ResponsiveContainer width="100%" height="100%">
-                        <BarChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 25 }}>
-                            <XAxis dataKey="name" tick={{ fontSize: 8, fill: '#64748b', fontWeight: 700 }} axisLine={false} tickLine={false} interval={0} angle={-35} textAnchor="end" />
-                            <YAxis tick={{ fontSize: 8, fill: '#64748b', fontWeight: 700 }} axisLine={false} tickLine={false} unit="%" dx={-5} />
-                            <Tooltip
-                                cursor={{ fill: '#f1f5f9', radius: 4 }}
-                                formatter={(v) => [`${v}%`, 'Prévalence']}
-                                contentStyle={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', fontSize: '10px', fontWeight: 900, color: '#0f172a', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
-                            />
-                            <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={20}>
-                                {data.map((_, i) => (
-                                    <Cell key={i} fill={palette[0]} fillOpacity={1 - (i * 0.15)} />
-                                ))}
-                            </Bar>
-                        </BarChart>
-                    </ResponsiveContainer>
-                ) : (
-                    <div className="flex flex-col items-center gap-3 opacity-20 hover:opacity-40 transition-opacity">
-                        <BarChart2 size={32} className="text-slate-400" />
-                        <p className="text-[9px] font-black uppercase tracking-[4px] text-slate-400 italic">Aucun Jeu de Données Détecté</p>
-                    </div>
-                )}
-            </div>
+
+            {/* Breakdown Tags showing Percentage AND Exact Number */}
+            {hasData && (
+                <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-100">
+                    {data.filter(d => (d.count || 0) > 0).map((d, i) => (
+                        <span key={i} className="text-[10px] font-black px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-100 text-slate-700 flex items-center gap-1.5 shadow-2xs">
+                            <span className="text-slate-500 font-bold truncate max-w-[120px]">{d.name}:</span>
+                            <span className="text-brand-600 font-black">{d.value}%</span>
+                            <span className="text-slate-400 font-bold">({d.count})</span>
+                        </span>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
 
 const DonutQuestionItem = ({ code, label, distribution, index }) => {
     const palette = PALETTES[index % PALETTES.length];
-    const hasData = distribution.some(d => d.count > 0);
-    const data = distribution.filter(d => d.count > 0).map(d => ({ name: d.label, value: d.pct }));
+    const hasData = distribution.some(d => (d.count || 0) > 0);
+    const data = distribution.filter(d => (d.count || 0) > 0).map(d => ({ 
+        name: d.label, 
+        value: d.pct, 
+        count: d.count || 0 
+    }));
 
     return (
-        <div className="flex flex-col gap-6 p-8 rounded-[40px] bg-white border border-slate-100 shadow-xl shadow-slate-200/20 hover:scale-[1.02] transition-all duration-500 group min-h-[250px]">
-            <div className="flex items-center gap-4">
-                <span className="w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-black uppercase text-white shadow-lg italic"
-                    style={{ backgroundColor: palette[0] }}>
-                    {code}
-                </span>
-                <p className="text-[13px] font-black text-slate-800 italic tracking-tight uppercase leading-tight flex-1">{label}</p>
+        <div className="flex flex-col justify-between gap-5 p-8 rounded-[40px] bg-white border border-slate-100 shadow-xl shadow-slate-200/20 hover:scale-[1.01] transition-all duration-500 group min-h-[290px]">
+            <div>
+                <div className="flex items-center gap-4 mb-2">
+                    <span className="w-10 h-10 rounded-xl flex items-center justify-center text-[10px] font-black uppercase text-white shadow-lg italic shrink-0"
+                        style={{ backgroundColor: palette[0] }}>
+                        {code}
+                    </span>
+                    <p className="text-[13px] font-black text-slate-800 italic tracking-tight uppercase leading-tight flex-1">{label}</p>
+                </div>
+                <div className="h-44 mt-2 flex items-center justify-center">
+                    {hasData ? (
+                        <ResponsiveContainer width="100%" height="100%">
+                            <RechartsPie>
+                                <Pie 
+                                    data={data} 
+                                    cx="38%" 
+                                    cy="50%" 
+                                    innerRadius={40} 
+                                    outerRadius={58}
+                                    paddingAngle={5} 
+                                    dataKey="value" 
+                                    stroke="white" 
+                                    strokeWidth={3}
+                                >
+                                    {data.map((_, i) => (
+                                        <Cell key={i} fill={DIVERSE_PALETTE[i % DIVERSE_PALETTE.length]} />
+                                    ))}
+                                </Pie>
+                                <Tooltip 
+                                    formatter={(v, name, item) => [
+                                        `${v}% (${item?.payload?.count || 0} réponses)`, 
+                                        'Prévalence & Effectif'
+                                    ]}
+                                    contentStyle={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', fontSize: '11px', fontWeight: 900, color: '#0f172a', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} 
+                                />
+                                <Legend 
+                                    iconType="circle" 
+                                    iconSize={8} 
+                                    layout="vertical" 
+                                    verticalAlign="middle" 
+                                    align="right" 
+                                    formatter={(v, entry) => (
+                                        <span className="text-[9px] font-black text-slate-700 tracking-wide pl-2 inline-flex items-center gap-1">
+                                            <span className="truncate max-w-[85px]">{v}</span>
+                                            <span className="text-brand-600 font-black">{entry.payload.value}%</span>
+                                            <span className="text-slate-400 font-bold">({entry.payload.count || 0})</span>
+                                        </span>
+                                    )} 
+                                />
+                            </RechartsPie>
+                        </ResponsiveContainer>
+                    ) : (
+                        <div className="flex flex-col items-center gap-3 opacity-20 hover:opacity-40 transition-opacity">
+                            <PieChart size={32} className="text-slate-400" />
+                            <p className="text-[9px] font-black uppercase tracking-[4px] text-slate-400 italic">Participation Aléatoire</p>
+                        </div>
+                    )}
+                </div>
             </div>
-            <div className="h-44 mt-2 flex items-center justify-center">
-                {hasData ? (
-                    <ResponsiveContainer width="100%" height="100%">
-                        <RechartsPie>
-                            <Pie data={data} cx="45%" cy="50%" innerRadius={42} outerRadius={58}
-                            paddingAngle={5} dataKey="value" stroke="white" strokeWidth={3}>
-                            {data.map((_, i) => (
-                                <Cell key={i} fill={DIVERSE_PALETTE[i % DIVERSE_PALETTE.length]} />
-                            ))}
-                        </Pie>
-                            <Tooltip 
-                                formatter={(v) => [`${v}%`, 'Prévalence']}
-                                contentStyle={{ backgroundColor: '#fff', borderRadius: '16px', border: '1px solid #e2e8f0', fontSize: '10px', fontWeight: 900, color: '#0f172a', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }} 
-                            />
-                            <Legend 
-                                iconType="circle" 
-                                iconSize={8} 
-                                layout="vertical" 
-                                verticalAlign="middle" 
-                                align="right" 
-                                formatter={(v, entry) => (
-                                    <span className="text-[8px] font-black text-slate-400 uppercase tracking-widest pl-2 truncate max-w-[80px]">
-                                        {v} ({entry.payload.value}%)
-                                    </span>
-                                )} 
-                            />
-                        </RechartsPie>
-                    </ResponsiveContainer>
-                ) : (
-                    <div className="flex flex-col items-center gap-3 opacity-20 hover:opacity-40 transition-opacity">
-                        <PieChart size={32} className="text-slate-400" />
-                        <p className="text-[9px] font-black uppercase tracking-[4px] text-slate-400 italic">Participation Aléatoire</p>
-                    </div>
-                )}
-            </div>
+
+            {/* Breakdown Tags showing Percentage AND Exact Number */}
+            {hasData && (
+                <div className="flex flex-wrap gap-2 pt-3 border-t border-slate-100">
+                    {data.map((d, i) => (
+                        <span key={i} className="text-[10px] font-black px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-100 text-slate-700 flex items-center gap-1.5 shadow-2xs">
+                            <span className="text-slate-500 font-bold truncate max-w-[120px]">{d.name}:</span>
+                            <span className="text-brand-600 font-black">{d.value}%</span>
+                            <span className="text-slate-400 font-bold">({d.count})</span>
+                        </span>
+                    ))}
+                </div>
+            )}
         </div>
     );
 };
@@ -211,7 +266,7 @@ const SectionDetailPanel = ({ sectionId, onBack, data }) => {
 
                 {/* 🧪 THE "BIG CARD" FIELD — Consolidated Grid */}
                 <div className="relative z-10">
-                    {questions.length > 0 && hasAnyData ? (
+                    {questions.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                             <AnimatePresence>
                                 {questions.map((q, idx) => (

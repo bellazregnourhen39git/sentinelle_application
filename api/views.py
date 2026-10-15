@@ -208,41 +208,111 @@ class RawDataExportView(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
-        if request.user.role not in ['GLOBAL_ADMIN', 'SUPER_ADMIN']:
-            return Response({"detail": "Not authorized."}, status=status.HTTP_403_FORBIDDEN)
-            
-        response = HttpResponse(content_type='text/csv')
+        user = request.user
+        
+        # Scoped sessions matching user role
+        sessions = SentinelleAnalytics.get_scoped_sessions(user).select_related(
+            'school', 'governorate', 'class_report'
+        ).prefetch_related(
+            'section_a', 'section_b', 'section_c', 'section_d',
+            'section_e', 'section_g', 'section_h', 'section_i',
+            'section_j', 'section_k', 'section_l', 'section_m',
+            'section_n', 'section_p', 'section_q', 'section_r',
+            'section_s', 'section_t', 'section_u', 'section_v',
+            'section_z'
+        )
+
+        response = HttpResponse(content_type='text/csv; charset=utf-8')
         response['Content-Disposition'] = 'attachment; filename="donnees_brutes_sentinelle.csv"'
-        
+        # Write UTF-8 BOM so Excel displays non-ASCII characters without encoding glitches
+        response.write('\ufeff')
+
+        SECTION_MAPPINGS = [
+            ('section_a', SectionA, 'A'),
+            ('section_b', SectionB, 'B'),
+            ('section_c', SectionC, 'C'),
+            ('section_d', SectionD, 'D'),
+            ('section_e', SectionE, 'E'),
+            ('section_g', SectionG, 'G'),
+            ('section_h', SectionH, 'H'),
+            ('section_i', SectionI, 'I'),
+            ('section_j', SectionJ, 'J'),
+            ('section_k', SectionK, 'K'),
+            ('section_l', SectionL, 'L'),
+            ('section_m', SectionM, 'M'),
+            ('section_n', SectionN, 'N'),
+            ('section_p', SectionP, 'P'),
+            ('section_q', SectionQ, 'Q'),
+            ('section_r', SectionR, 'R'),
+            ('section_s', SectionS, 'S'),
+            ('section_t', SectionT, 'T'),
+            ('section_u', SectionU, 'U'),
+            ('section_v', SectionV, 'V'),
+            ('section_z', SectionZ, 'Z'),
+        ]
+
+        headers = [
+            'session_id', 'ecole', 'gouvernorat', 'rapport_classe', 'langue', 'date_creation', 'est_valide',
+            'has_risk_behavior', 'tabac', 'vape', 'narguile', 'alcool', 'tranquillisants',
+            'cannabis', 'cocaine', 'ecstasy', 'heroine', 'inhalants'
+        ]
+
+        section_field_map = {}
+        for rel_name, model_cls, sec_letter in SECTION_MAPPINGS:
+            fields = [f.name for f in model_cls._meta.get_fields() if f.name not in ['id', 'session']]
+            section_field_map[rel_name] = fields
+            for f in fields:
+                headers.append(f"{sec_letter}_{f}")
+
         writer = csv.writer(response)
-        writer.writerow([
-            'session_id', 'ecole', 'gouvernorat', 'langue', 'date_creation',
-            'tabac', 'vape', 'narguile', 'alcool', 'tranquillisants', 
-            'cannabis', 'cocaine', 'ecstasy', 'heroine', 'inhalants', 'est_valide'
-        ])
-        
-        sessions = QuestionnaireSession.objects.all().select_related('school', 'governorate')
-        
+        writer.writerow(headers)
+
         for s in sessions:
-            writer.writerow([
+            row = [
                 s.id,
-                s.school.name if s.school else 'N/A',
-                s.governorate.name if s.governorate else 'N/A',
+                s.school.name if s.school else '',
+                s.governorate.name if s.governorate else '',
+                s.class_report.establishment_name if s.class_report else '',
                 s.language_used,
-                s.created_at.strftime('%Y-%m-%d %H:%M') if s.created_at else 'N/A',
-                s.tobacco_user,
-                s.ecig_user,
-                s.hookah_user,
-                s.alcohol_user,
-                s.tranquilizer_user,
-                s.cannabis_user,
-                s.cocaine_user,
-                s.ecstasy_user,
-                s.heroin_user,
-                s.inhalant_user,
-                s.is_valid
-            ])
-            
+                s.created_at.strftime('%Y-%m-%d %H:%M') if s.created_at else '',
+                1 if s.is_valid else 0,
+                1 if s.has_risk_behavior else 0,
+                1 if s.tobacco_user else 0,
+                1 if s.ecig_user else 0,
+                1 if s.hookah_user else 0,
+                1 if s.alcohol_user else 0,
+                1 if s.tranquilizer_user else 0,
+                1 if s.cannabis_user else 0,
+                1 if s.cocaine_user else 0,
+                1 if s.ecstasy_user else 0,
+                1 if s.heroin_user else 0,
+                1 if s.inhalant_user else 0,
+            ]
+
+            for rel_name, model_cls, sec_letter in SECTION_MAPPINGS:
+                sec_obj = getattr(s, rel_name, None)
+                fields = section_field_map[rel_name]
+                for f in fields:
+                    if not sec_obj:
+                        row.append('')
+                    else:
+                        val = getattr(sec_obj, f, None)
+                        if val is None:
+                            row.append('')
+                        elif isinstance(val, (dict, list)):
+                            row.append(json.dumps(val, ensure_ascii=False))
+                        elif isinstance(val, bool):
+                            row.append('1' if val else '0')
+                        else:
+                            row.append(str(val))
+            writer.writerow(row)
+
+        AuditLog.objects.create(
+            user=user,
+            action="EXPORT: Raw Questionnaire Data (Full Survey)",
+            ip_address=request.META.get('REMOTE_ADDR')
+        )
+
         return response
 
 class PlatformTerminologyView(generics.ListCreateAPIView):
@@ -292,26 +362,46 @@ class QuestionnaireSubmissionListView(generics.ListAPIView):
         report_id = self.request.query_params.get('class_report')
         if report_id:
             qs = qs.filter(class_report_id=report_id)
+            if user.role not in ['SUPER_ADMIN', 'GLOBAL_ADMIN', 'SUPERADMIN', 'ADMIN']:
+                if user.role == 'REGIONAL_ADMIN' and user.governorate:
+                    qs = qs.filter(governorate=user.governorate)
+                elif user.role in ['PRACTITIONER', 'OPERATOR']:
+                    qs = qs.filter(class_report__created_by=user)
+            return qs.order_by('-created_at')
             
-        # Role-based security filtering
-        if user.role not in ['SUPER_ADMIN', 'GLOBAL_ADMIN']:
+        # Global listing role-based security filtering
+        if user.role not in ['SUPER_ADMIN', 'GLOBAL_ADMIN', 'SUPERADMIN', 'ADMIN']:
             if user.role == 'REGIONAL_ADMIN':
-                qs = qs.filter(governorate=user.governorate)
+                if user.governorate:
+                    qs = qs.filter(governorate=user.governorate)
             elif user.role in ['PRACTITIONER', 'OPERATOR']:
-                if user.establishment:
-                    qs = qs.filter(school=user.establishment)
-                elif report_id:
-                    # If they are linked to the report, they can see it
-                    # (Fallback if establishment is missing on user profile)
-                    pass
+                qs = qs.filter(class_report__created_by=user)
         
         return qs.order_by('-created_at')
 
 
 class QuestionnaireSubmissionDetailView(generics.RetrieveUpdateAPIView):
-    queryset = QuestionnaireSession.objects.all()
     serializer_class = serializers.QuestionnaireSessionSerializer
-    permission_classes = (IsSuperAdmin,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        role = getattr(user, 'role', '').upper()
+        if role in ['SUPER_ADMIN', 'SUPERADMIN', 'GLOBAL_ADMIN'] or user.is_staff or user.is_superuser:
+            return QuestionnaireSession.objects.all().select_related('school', 'governorate')
+        elif role == 'REGIONAL_ADMIN':
+            if getattr(user, 'governorate', None):
+                return QuestionnaireSession.objects.filter(governorate=user.governorate).select_related('school', 'governorate')
+            return QuestionnaireSession.objects.none()
+        elif role in ['PRACTITIONER', 'OPERATOR']:
+            return QuestionnaireSession.objects.filter(class_report__created_by=user).select_related('school', 'governorate')
+        return QuestionnaireSession.objects.filter(class_report__created_by=user).select_related('school', 'governorate')
+
+    def update(self, request, *args, **kwargs):
+        role = getattr(request.user, 'role', '').upper()
+        if role in ['GLOBAL_ADMIN', 'REGIONAL_ADMIN']:
+            return Response({"detail": "Les administrateurs globaux et régionaux ont un accès en consultation seule."}, status=403)
+        return super().update(request, *args, **kwargs)
 
 
 class QuestionnaireSubmitView(generics.CreateAPIView):
@@ -557,9 +647,8 @@ class HomepageView(views.APIView):
             if user.role == 'REGIONAL_ADMIN' and getattr(user, 'governorate', None):
                 scope_type = 'gouvernorate'
                 scope_id = user.governorate.id
-            elif user.role in ['PRACTITIONER', 'OPERATOR'] and getattr(user, 'establishment', None):
-                scope_type = 'user_school'
-                scope_id = user.establishment.id
+            elif user.role in ['PRACTITIONER', 'OPERATOR'] and not scope_id:
+                scope_type = 'practitioner'
 
         # --- Advanced Authority Filter (Secure Scoping) ---
         sessions_qs = SentinelleAnalytics.get_scoped_sessions(user)
@@ -567,21 +656,20 @@ class HomepageView(views.APIView):
         # 1. Scope Determination (URL vs Auth context)
         sessions = sessions_qs
         scope_label = "Secteur National"
+        target_school = None
+        target_gov = None
 
         # 2. Advanced Scope Resolution — Prioritizing Parameters
-        if scope_type == 'user_school':
-            active_user = user
-            if not user.is_authenticated:
-                active_user = User.objects.filter(username='test_submit_user').first()
-            if active_user and active_user.establishment:
-                sessions = sessions.filter(school=active_user.establishment)
-                scope_label = f"LYCÉE {active_user.establishment.name.upper()}"
-        
-        elif scope_type == 'school' and scope_id:
+        if scope_type == 'school' and scope_id:
             school = SchoolEstablishment.objects.filter(id=scope_id).first()
             if school:
+                target_school = school
                 sessions = sessions.filter(school=school)
-                scope_label = f"Lycée {school.name}"
+                s_name = school.name.strip()
+                if any(s_name.lower().startswith(prefix) for prefix in ['lycée', 'lycee', 'collège', 'college', 'école', 'ecole']):
+                    scope_label = s_name
+                else:
+                    scope_label = f"Établissement {s_name}"
 
         elif scope_type == 'gouvernorate':
             gov = None
@@ -611,14 +699,22 @@ class HomepageView(views.APIView):
             if not gov:
                 # If no governorate was found, stay in national scope to show the selector
                 scope_type = 'national'
-                sessions = QuestionnaireSession.objects.filter(is_valid=True)
+                sessions = sessions_qs
                 scope_label = "Secteur National"
             else:
-                sessions = sessions.filter(governorate=gov)
-                scope_label = f"Gouvernorat de {gov.name}"
+                target_gov = gov
+        elif scope_type == 'practitioner':
+            sessions = sessions_qs
+            scope_label = "Session Praticien"
 
         # 3. Generate Analytical Intelligence
-        data = SentinelleAnalytics.get_homepage_stats(sessions, scope_label)
+        data = SentinelleAnalytics.get_homepage_stats(
+            sessions, 
+            scope_label, 
+            scope_type=scope_type, 
+            target_gov=target_gov, 
+            target_school=target_school
+        )
         
         # 🇹🇳 National Distribution Hub Extension
         if scope_type in ['national', 'gouvernorate']:
@@ -640,9 +736,13 @@ class HomepageView(views.APIView):
                 govs_to_process = Governorate.objects.filter(id=user.governorate.id)
 
             for g in govs_to_process:
-                s_count = SchoolEstablishment.objects.filter(governorate=g).count()
                 gov_sessions = QuestionnaireSession.objects.filter(governorate=g, is_valid=True)
                 d_count = gov_sessions.count()
+
+                cr_schools = set(ClassReport.objects.filter(governorate=g).exclude(establishment_name='').values_list('establishment_name', flat=True))
+                sess_schools = set(gov_sessions.filter(school__isnull=False).values_list('school__name', flat=True))
+                all_active_schools = cr_schools | sess_schools
+                s_count = len(all_active_schools)
                 
                 # Prevalence Calculation
                 prevalence = 0
@@ -760,9 +860,12 @@ class SectionStatsView(views.APIView):
             if user.role == 'REGIONAL_ADMIN' and getattr(user, 'governorate', None):
                 scope_type = 'gouvernorate'
                 scope_id = user.governorate.id
-            elif user.role == 'PRACTITIONER' and getattr(user, 'establishment', None):
-                scope_type = 'user_school'
-                scope_id = user.establishment.id
+            elif user.role in ['PRACTITIONER', 'OPERATOR'] and not scope_id:
+                if getattr(user, 'governorate', None):
+                    scope_type = 'gouvernorate'
+                    scope_id = user.governorate.id
+                else:
+                    scope_type = 'national'
 
         # 1. Base Query — Symmetric with HomepageView (SCOPED)
         sessions = SentinelleAnalytics.get_scoped_sessions(user).filter(is_valid=True)
@@ -799,7 +902,7 @@ class SectionStatsView(views.APIView):
                                 break
             
             # Auth Role Fallback
-            if not gov and user.is_authenticated and user.role == 'REGIONAL_ADMIN':
+            if not gov and user.is_authenticated and user.role in ['REGIONAL_ADMIN', 'PRACTITIONER', 'OPERATOR']:
                 gov = user.governorate
             
             # Default Fallback (Tunis)
@@ -845,9 +948,12 @@ class CorrelationEngineView(views.APIView):
             if user.role == 'REGIONAL_ADMIN' and getattr(user, 'governorate', None):
                 scope_type = 'gouvernorate'
                 scope_id = user.governorate.id
-            elif user.role == 'PRACTITIONER' and getattr(user, 'establishment', None):
-                scope_type = 'user_school'
-                scope_id = user.establishment.id
+            elif user.role in ['PRACTITIONER', 'OPERATOR'] and not scope_id:
+                if getattr(user, 'governorate', None):
+                    scope_type = 'gouvernorate'
+                    scope_id = user.governorate.id
+                else:
+                    scope_type = 'national'
 
         # Get all valid sessions globally and for the specific scope
         global_sessions = QuestionnaireSession.objects.filter(is_valid=True)
@@ -855,16 +961,15 @@ class CorrelationEngineView(views.APIView):
 
         scope_label = "Secteur National"
 
-        if scope_type == 'user_school':
-            active_user = user
-            if active_user and active_user.establishment:
-                sessions = sessions.filter(school=active_user.establishment)
-                scope_label = f"Lycée {active_user.establishment.name}"
-        elif scope_type == 'school' and scope_id:
+        if scope_type == 'school' and scope_id:
             school = SchoolEstablishment.objects.filter(id=scope_id).first()
             if school:
                 sessions = sessions.filter(school=school)
-                scope_label = f"Lycée {school.name}"
+                s_name = school.name.strip()
+                if any(s_name.lower().startswith(prefix) for prefix in ['lycée', 'lycee', 'collège', 'college', 'école', 'ecole']):
+                    scope_label = s_name
+                else:
+                    scope_label = f"Établissement {s_name}"
         elif scope_type == 'gouvernorate':
             gov = None
             if scope_id:
@@ -1209,11 +1314,33 @@ class DynamicQuestionListView(generics.ListCreateAPIView):
             return [IsSuperAdmin()]
         return super().get_permissions()
 
+    def create(self, request, *args, **kwargs):
+        code = request.data.get('code')
+        if code and DynamicQuestion.objects.filter(code=code).exists():
+            instance = DynamicQuestion.objects.get(code=code)
+            serializer = self.get_serializer(instance, data=request.data, partial=True)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return super().create(request, *args, **kwargs)
+
 class DynamicQuestionDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = DynamicQuestion.objects.all()
     serializer_class = serializers.DynamicQuestionSerializer
     permission_classes = (IsSuperAdmin,)
     lookup_field = 'code'
+
+    def update(self, request, *args, **kwargs):
+        code = self.kwargs.get('code')
+        instance = DynamicQuestion.objects.filter(code=code).first()
+        if not instance:
+            data = request.data.copy()
+            data['code'] = code
+            serializer = self.get_serializer(data=data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return super().update(request, *args, **kwargs)
 
 
 class DynamicClassReportFieldListView(generics.ListCreateAPIView):
@@ -1274,61 +1401,159 @@ class DynamicClassReportFieldDetailView(generics.RetrieveUpdateDestroyAPIView):
 class ClassReportCreateView(generics.CreateAPIView):
     queryset = ClassReport.objects.all()
     serializer_class = serializers.ClassReportSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def create(self, request, *args, **kwargs):
+        role = getattr(request.user, 'role', '').upper()
+        if role in ['GLOBAL_ADMIN', 'REGIONAL_ADMIN']:
+            return Response({"detail": "Les administrateurs globaux et régionaux ont un accès en consultation seule."}, status=403)
+        return super().create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        if self.request.user.is_authenticated:
-            serializer.save(created_by=self.request.user)
-        else:
-            serializer.save()
+        serializer.save(created_by=self.request.user)
 
 class LatestActiveReportView(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
-        # Get the latest NON-FINALIZED report created by the user
-        last_report = ClassReport.objects.filter(created_by=request.user, is_finalized=False).order_by('-created_at').first()
-        if not last_report:
-            return Response(None, status=200)
-        
-        # Check if it has submissions (optional logic, but let's just return the report for now)
-        serializer = serializers.ClassReportSerializer(last_report)
-        return Response(serializer.data)
+        user = request.user
+        role = getattr(user, 'role', '').upper()
+        is_super = role in ['SUPER_ADMIN', 'SUPERADMIN', 'GLOBAL_ADMIN'] or user.is_staff or user.is_superuser
+        report_id = request.query_params.get('id')
+
+        if report_id:
+            if is_super:
+                report = ClassReport.objects.filter(pk=report_id).first()
+            elif role == 'REGIONAL_ADMIN':
+                report = ClassReport.objects.filter(pk=report_id, governorate=user.governorate).first()
+            else:
+                report = ClassReport.objects.filter(pk=report_id, created_by=user).first()
+            if not report:
+                return Response({"detail": "Report not found"}, status=404)
+            return Response(serializers.ClassReportSerializer(report).data)
+
+        # Get the latest NON-FINALIZED report
+        if role in ['SUPER_ADMIN', 'SUPERADMIN', 'GLOBAL_ADMIN']:
+            user_report = ClassReport.objects.filter(is_finalized=False).order_by('-created_at').first()
+        elif role == 'REGIONAL_ADMIN':
+            user_report = ClassReport.objects.filter(is_finalized=False, governorate=user.governorate).order_by('-created_at').first()
+        else:
+            user_report = ClassReport.objects.filter(is_finalized=False, created_by=user).order_by('-created_at').first()
+
+        if user_report:
+            return Response(serializers.ClassReportSerializer(user_report).data)
+            
+        return Response(None, status=200)
 
 class ClassReportListView(generics.ListAPIView):
-    queryset = ClassReport.objects.all().order_by('-report_date')
     serializer_class = serializers.ClassReportSerializer
     permission_classes = (permissions.IsAuthenticated,)
+
+    def get_queryset(self):
+        user = self.request.user
+        role = getattr(user, 'role', '').upper()
+        target_user_id = self.request.query_params.get('user_id') or self.request.query_params.get('user')
+
+        if role in ['SUPER_ADMIN', 'SUPERADMIN'] or user.is_staff or user.is_superuser:
+            if target_user_id:
+                qs = ClassReport.objects.filter(created_by_id=target_user_id)
+            elif self.request.query_params.get('all') == 'true':
+                qs = ClassReport.objects.all()
+            else:
+                qs = ClassReport.objects.filter(created_by=user)
+        elif role == 'GLOBAL_ADMIN':
+            # Global admin sees all reports across all regions
+            qs = ClassReport.objects.all()
+        elif role == 'REGIONAL_ADMIN':
+            # Regional admin sees all reports of their region
+            if getattr(user, 'governorate', None):
+                qs = ClassReport.objects.filter(governorate=user.governorate)
+            else:
+                qs = ClassReport.objects.all()
+        else:
+            # Practitioner or Operator: strictly their own reports
+            qs = ClassReport.objects.filter(created_by=user)
+
+        qs = qs.select_related('governorate', 'establishment').prefetch_related('submissions')
+        
+        # Filter by finalized status if specified
+        is_finalized = self.request.query_params.get('is_finalized')
+        if is_finalized is not None:
+            if is_finalized.lower() in ['true', '1']:
+                qs = qs.filter(is_finalized=True)
+            elif is_finalized.lower() in ['false', '0']:
+                qs = qs.filter(is_finalized=False)
+                
+        gov_id = self.request.query_params.get('governorate')
+        if gov_id:
+            qs = qs.filter(governorate_id=gov_id)
+            
+        return qs.order_by('-created_at')
 
 class ClassReportDetailView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ClassReport.objects.all()
     serializer_class = serializers.ClassReportSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-    def get_permissions(self):
-        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
-            return [IsSuperAdmin()]
-        return [permissions.IsAuthenticated()]
+    def get_queryset(self):
+        user = self.request.user
+        role = getattr(user, 'role', '').upper()
+        if role in ['SUPER_ADMIN', 'SUPERADMIN', 'GLOBAL_ADMIN'] or user.is_staff or user.is_superuser:
+            return ClassReport.objects.all().select_related('governorate', 'establishment')
+        elif role == 'REGIONAL_ADMIN':
+            if getattr(user, 'governorate', None):
+                return ClassReport.objects.filter(governorate=user.governorate).select_related('governorate', 'establishment')
+            return ClassReport.objects.none()
+        return ClassReport.objects.filter(created_by=user).select_related('governorate', 'establishment')
+
+    def update(self, request, *args, **kwargs):
+        role = getattr(request.user, 'role', '').upper()
+        if role in ['GLOBAL_ADMIN', 'REGIONAL_ADMIN']:
+            return Response({"detail": "Les administrateurs globaux et régionaux ont un accès en consultation seule."}, status=403)
+        return super().update(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        role = getattr(request.user, 'role', '').upper()
+        if role in ['GLOBAL_ADMIN', 'REGIONAL_ADMIN']:
+            return Response({"detail": "Les administrateurs globaux et régionaux ont un accès en consultation seule."}, status=403)
+        instance = self.get_object()
+        # Delete all attached questionnaire submissions so indicators update immediately
+        instance.submissions.all().delete()
+        return super().destroy(request, *args, **kwargs)
 
 class ClassReportFinalizeView(views.APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, pk):
-        report = ClassReport.objects.filter(pk=pk, created_by=request.user).first()
+        user = request.user
+        role = getattr(user, 'role', '').upper()
+        if role in ['GLOBAL_ADMIN', 'REGIONAL_ADMIN']:
+            return Response({"detail": "Les administrateurs globaux et régionaux ont un accès en consultation seule."}, status=403)
+
+        is_super = role in ['SUPER_ADMIN', 'SUPERADMIN'] or user.is_staff or user.is_superuser
+
+        if is_super:
+            report = ClassReport.objects.filter(pk=pk).first()
+        else:
+            report = ClassReport.objects.filter(pk=pk, created_by=user).first()
+
         if not report:
-            return Response({"detail": "Report not found or not owned by you."}, status=404)
+            return Response({"detail": "Report not found."}, status=404)
         
-        report.is_finalized = True
+        action = request.data.get('action') or request.query_params.get('action')
+        if action == 'unfinalize' or request.data.get('is_finalized') is False:
+            report.is_finalized = False
+        else:
+            report.is_finalized = True
         report.save()
         
-        # Log the finalization
+        # Log the action
         from .models import AuditLog
         AuditLog.objects.create(
             user=request.user,
-            action=f"FINALIZED_CLASS_REPORT: {report.id} ({report.establishment_name})",
+            action=f"{'FINALIZED' if report.is_finalized else 'REOPENED'}_CLASS_REPORT: {report.id} ({report.establishment_name})",
             ip_address=request.META.get('REMOTE_ADDR')
         )
         
-        return Response({"status": "finalized", "id": report.id})
-    permission_classes = (permissions.IsAuthenticated,)
+        return Response({"status": "finalized" if report.is_finalized else "reopened", "id": report.id, "is_finalized": report.is_finalized})
+
 

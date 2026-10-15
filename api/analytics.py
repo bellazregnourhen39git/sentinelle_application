@@ -47,15 +47,15 @@ SUBSTANCE_LABELS = {
 SECTION_QUESTIONS = {
     'A': [
         ('C.A01',   'Genre ?', 'section_a', 'gender', {'M': 'Masculin', 'F': 'Féminin'}, 'donut'),
-        ('O.A03/1', 'Pratique du sport ?', 'section_a', 'activities_frequency__sports', FREQ_ACTIVITIES, 'bar'),
-        ('O.A03/2', 'Lecture (non scolaire) ?', 'section_a', 'activities_frequency__reading', FREQ_ACTIVITIES, 'bar'),
-        ('O.A03/3', 'Sorties le soir ?', 'section_a', 'activities_frequency__going_out', FREQ_ACTIVITIES, 'bar'),
-        ('O.A03/6', 'Usage Internet (loisir) ?', 'section_a', 'activities_frequency__internet', FREQ_ACTIVITIES, 'bar'),
+        ('O.A03/1', 'Pratique du sport ?', 'section_a', 'activities_frequency__a', FREQ_ACTIVITIES, 'bar'),
+        ('O.A03/2', 'Lecture (non scolaire) ?', 'section_a', 'activities_frequency__b', FREQ_ACTIVITIES, 'bar'),
+        ('O.A03/3', 'Sorties le soir ?', 'section_a', 'activities_frequency__c', FREQ_ACTIVITIES, 'bar'),
+        ('O.A03/6', 'Usage Internet (loisir) ?', 'section_a', 'activities_frequency__f', FREQ_ACTIVITIES, 'bar'),
         ('C.A05',   'Rendement scolaire (dernier trimestre) ?', 'section_a', 'academic_performance', {'1': 'En dessous de 10', '2': 'Moyen [10-12]', '3': 'Au-dessus de 12'}, 'donut'),
         ('C.A07/2', "Raison de l'absence des parents ?", 'section_a', 'parents_absence_reason', {'1': 'Décès', '2': 'Divorce/Séparation', '3': 'Migration', '4': 'Autre'}, 'donut'),
         ('O.A08',   'Nuits hors domicile (30 derniers jours) ?', 'section_a', 'nights_out_30days', {'1': 'Aucune', '2': '1 nuit', '3': '2 nuits', '4': '3 nuits', '5': '4 nuits', '6': '5 nuits', '7': '6 nuits', '8': '7+ nuits'}, 'bar'),
-        ('O.A09/1', 'Relation avec la mère ?', 'section_a', 'family_relationship_satisfaction__mother', SATISFACTION_FIVE, 'donut'),
-        ('O.A09/2', 'Relation avec le père ?', 'section_a', 'family_relationship_satisfaction__father', SATISFACTION_FIVE, 'donut'),
+        ('O.A09/1', 'Relation avec la mère ?', 'section_a', 'family_relationship_satisfaction__a', SATISFACTION_FIVE, 'donut'),
+        ('O.A09/2', 'Relation avec le père ?', 'section_a', 'family_relationship_satisfaction__b', SATISFACTION_FIVE, 'donut'),
     ],
     'B': [
         ('C.B01', 'Niveau de scolarité du père ?', 'section_b', 'father_education', EDUCATION_LEVEL, 'bar'),
@@ -66,8 +66,8 @@ SECTION_QUESTIONS = {
     ],
     'C': [
         ('C.C01',  'Difficulté à se procurer des cigarettes ?', 'section_c', 'access_difficulty', DIFFICULTY_ACCESS, 'donut'),
-        ('C.C02a', 'Membre de la famille qui fume des cigarettes ?', 'section_c', 'social_circle__family', SOCIAL_CIRCLE, 'donut'),
-        ('C.C02b', 'Amis qui fument des cigarettes ?', 'section_c', 'social_circle__friends', SOCIAL_CIRCLE, 'donut'),
+        ('C.C02a', 'Père/Famille qui fume ?', 'section_c', 'social_circle__a', SOCIAL_CIRCLE, 'donut'),
+        ('C.C02b', 'Amis qui fument des cigarettes ?', 'section_c', 'social_circle__d', SOCIAL_CIRCLE, 'donut'),
         ('C.C03a', 'Fréquence tabagisme (vie) ?', 'section_c', 'lifetime_freq', FREQ_LIFE, 'bar'),
         ('C.C03b', 'Fréquence tabagisme (12 derniers mois) ?', 'section_c', 'months_12_freq', FREQ_LIFE, 'bar'),
         ('C.C04',  'Fréquence tabagisme (30 derniers jours) ?', 'section_c', 'days_30_freq', FREQ_30D_CIGS, 'bar'),
@@ -76,8 +76,8 @@ SECTION_QUESTIONS = {
     ],
     'D': [
         ('C.D01',  'Difficulté à se procurer des cigarettes électroniques ?', 'section_d', 'access_difficulty', DIFFICULTY_ACCESS, 'donut'),
-        ('C.D02a', 'Membre de la famille qui vape ?', 'section_d', 'social_circle__family', SOCIAL_CIRCLE, 'donut'),
-        ('C.D02b', 'Amis qui vapent ?', 'section_d', 'social_circle__friends', SOCIAL_CIRCLE, 'donut'),
+        ('C.D02a', 'Père/Famille qui vape ?', 'section_d', 'social_circle__a', SOCIAL_CIRCLE, 'donut'),
+        ('C.D02b', 'Amis qui vapent ?', 'section_d', 'social_circle__d', SOCIAL_CIRCLE, 'donut'),
         ('C.D03a', 'Fréquence vape (vie) ?', 'section_d', 'lifetime_freq', FREQ_LIFE, 'bar'),
         ('C.D03b', 'Fréquence vape (12 derniers mois) ?', 'section_d', 'months_12_freq', FREQ_LIFE, 'bar'),
         ('C.D04',  'Fréquence vape (30 derniers jours) ?', 'section_d', 'days_30_freq', FREQ_30D_VAPE, 'donut'),
@@ -86,8 +86,8 @@ SECTION_QUESTIONS = {
     ],
     'E': [
         ('C.E01',  'Difficulté à se procurer un narguilé ?', 'section_e', 'access_difficulty', DIFFICULTY_ACCESS, 'donut'),
-        ('C.E02a', 'Membre de la famille qui fume le narguilé ?', 'section_e', 'social_circle__family', SOCIAL_CIRCLE, 'donut'),
-        ('C.E02b', 'Amis qui fument le narguilé ?', 'section_e', 'social_circle__friends', SOCIAL_CIRCLE, 'donut'),
+        ('C.E02a', 'Père/Famille qui fume le narguilé ?', 'section_e', 'social_circle__a', SOCIAL_CIRCLE, 'donut'),
+        ('C.E02b', 'Amis qui fument le narguilé ?', 'section_e', 'social_circle__d', SOCIAL_CIRCLE, 'donut'),
         ('C.E03a', 'Fréquence narguilé (vie) ?', 'section_e', 'lifetime_freq', FREQ_LIFE, 'bar'),
         ('C.E03b', 'Fréquence narguilé (12 derniers mois) ?', 'section_e', 'months_12_freq', FREQ_LIFE, 'bar'),
         ('C.E04',  'Fréquence narguilé (30 derniers jours) ?', 'section_e', 'days_30_freq', FREQ_30D_CIGS, 'bar'),
@@ -95,8 +95,8 @@ SECTION_QUESTIONS = {
         ('C.E05b', 'Âge lors du premier narguilé quotidien ?', 'section_e', 'age_daily_use', AGE_FIRST, 'bar'),
     ],
     'G': [
-        ('C.G02a', "Membre de la famille qui consomme de l'alcool ?", 'section_g', 'social_circle__family', SOCIAL_CIRCLE, 'donut'),
-        ('C.G02b', "Amis qui consomment de l'alcool ?", 'section_g', 'social_circle__friends', SOCIAL_CIRCLE, 'donut'),
+        ('C.G02a', "Père/Famille qui consomme de l'alcool ?", 'section_g', 'social_circle__a', SOCIAL_CIRCLE, 'donut'),
+        ('C.G02b', "Amis qui consomment de l'alcool ?", 'section_g', 'social_circle__d', SOCIAL_CIRCLE, 'donut'),
         ('C.G03a', "Fréquence consommation alcool (vie) ?", 'section_g', 'lifetime_freq', FREQ_LIFE, 'bar'),
         ('C.G03b', "Fréquence consommation alcool (12 mois) ?", 'section_g', 'months_12_freq', FREQ_LIFE, 'bar'),
         ('C.G04',  "Fréquence consommation alcool (30 jours) ?", 'section_g', 'days_30_freq', FREQ_LIFE, 'bar'),
@@ -107,8 +107,8 @@ SECTION_QUESTIONS = {
     ],
     'H': [
         ('C.H01',  'Difficulté à se procurer des tranquillisants (sans prescription) ?', 'section_h', 'access_difficulty', DIFFICULTY_ACCESS, 'donut'),
-        ('C.H02a', 'Membre de la famille qui consomme des tranquillisants ?', 'section_h', 'social_circle__family', SOCIAL_CIRCLE, 'donut'),
-        ('C.H02b', 'Amis qui consomment des tranquillisants ?', 'section_h', 'social_circle__friends', SOCIAL_CIRCLE, 'donut'),
+        ('C.H02a', 'Père/Famille qui consomme des tranquillisants ?', 'section_h', 'social_circle__a', SOCIAL_CIRCLE, 'donut'),
+        ('C.H02b', 'Amis qui consomment des tranquillisants ?', 'section_h', 'social_circle__d', SOCIAL_CIRCLE, 'donut'),
         ('C.H03a', 'Fréquence tranquillisants (vie) ?', 'section_h', 'lifetime_freq', FREQ_LIFE, 'bar'),
         ('C.H03b', 'Fréquence tranquillisants (12 mois) ?', 'section_h', 'months_12_freq', FREQ_LIFE, 'bar'),
         ('C.H03c', 'Fréquence tranquillisants (30 jours) ?', 'section_h', 'days_30_freq', FREQ_LIFE, 'bar'),
@@ -116,8 +116,8 @@ SECTION_QUESTIONS = {
     ],
     'I': [
         ('C.I01',  'Difficulté à se procurer du cannabis ?', 'section_i', 'access_difficulty', DIFFICULTY_ACCESS, 'donut'),
-        ('C.I02a', 'Membre de la famille qui consomme du cannabis ?', 'section_i', 'social_circle__family', SOCIAL_CIRCLE, 'donut'),
-        ('C.I02b', 'Amis qui consomment du cannabis ?', 'section_i', 'social_circle__friends', SOCIAL_CIRCLE, 'donut'),
+        ('C.I02a', 'Père/Famille qui consomme du cannabis ?', 'section_i', 'social_circle__a', SOCIAL_CIRCLE, 'donut'),
+        ('C.I02b', 'Amis qui consomment du cannabis ?', 'section_i', 'social_circle__d', SOCIAL_CIRCLE, 'donut'),
         ('C.I03a', 'Fréquence cannabis (vie) ?', 'section_i', 'lifetime_freq', FREQ_LIFE, 'bar'),
         ('C.I03b', 'Fréquence cannabis (12 mois) ?', 'section_i', 'months_12_freq', FREQ_LIFE, 'bar'),
         ('C.I03c', 'Fréquence cannabis (30 jours) ?', 'section_i', 'days_30_freq', FREQ_LIFE, 'bar'),
@@ -125,48 +125,46 @@ SECTION_QUESTIONS = {
     ],
     'J': [
         ('C.J01',  'Difficulté à se procurer de la cocaïne ?', 'section_j', 'access_difficulty', DIFFICULTY_ACCESS, 'donut'),
-        ('C.J02a', 'Membre de la famille qui consomme de la cocaïne ?', 'section_j', 'social_circle__family', SOCIAL_CIRCLE, 'donut'),
-        ('C.J02b', 'Amis qui consomment de la cocaïne ?', 'section_j', 'social_circle__friends', SOCIAL_CIRCLE, 'donut'),
+        ('C.J02a', 'Père/Famille qui consomme de la cocaïne ?', 'section_j', 'social_circle__a', SOCIAL_CIRCLE, 'donut'),
+        ('C.J02b', 'Amis qui consomment de la cocaïne ?', 'section_j', 'social_circle__d', SOCIAL_CIRCLE, 'donut'),
         ('C.J03a', 'Fréquence cocaïne (vie) ?', 'section_j', 'lifetime_freq', FREQ_30D_STD, 'bar'),
         ('C.J03b', 'Fréquence cocaïne (12 mois) ?', 'section_j', 'months_12_freq', FREQ_30D_STD, 'bar'),
         ('C.J04',  'Âge lors de la première consommation de cocaïne ?', 'section_j', 'age_first_use', AGE_FIRST, 'bar'),
     ],
     'K': [
         ('C.K01',  "Difficulté à se procurer de l'Ecstasy ?", 'section_k', 'access_difficulty', DIFFICULTY_ACCESS, 'donut'),
-        ('C.K02a', "Membre de la famille qui consomme de l'Ecstasy ?", 'section_k', 'social_circle__family', SOCIAL_CIRCLE, 'donut'),
-        ('C.K02b', "Amis qui consomment de l'Ecstasy ?", 'section_k', 'social_circle__friends', SOCIAL_CIRCLE, 'donut'),
+        ('C.K02a', "Père/Famille qui consomme de l'Ecstasy ?", 'section_k', 'social_circle__a', SOCIAL_CIRCLE, 'donut'),
+        ('C.K02b', "Amis qui consomment de l'Ecstasy ?", 'section_k', 'social_circle__d', SOCIAL_CIRCLE, 'donut'),
         ('C.K03a', "Fréquence Ecstasy (vie) ?", 'section_k', 'lifetime_freq', FREQ_30D_STD, 'bar'),
         ('C.K03b', "Fréquence Ecstasy (12 mois) ?", 'section_k', 'months_12_freq', FREQ_30D_STD, 'bar'),
         ('C.K04',  "Âge lors de la première consommation d'Ecstasy ?", 'section_k', 'age_first_use', AGE_FIRST, 'bar'),
     ],
     'L': [
         ('C.L01',  "Difficulté à se procurer de l'héroïne ?", 'section_l', 'access_difficulty', DIFFICULTY_ACCESS, 'donut'),
-        ('C.L02a', "Membre de la famille qui consomme de l'héroïne ?", 'section_l', 'social_circle__family', SOCIAL_CIRCLE, 'donut'),
-        ('C.L02b', "Amis qui consomment de l'héroïne ?", 'section_l', 'social_circle__friends', SOCIAL_CIRCLE, 'donut'),
+        ('C.L02a', "Père/Famille qui consomme de l'héroïne ?", 'section_l', 'social_circle__a', SOCIAL_CIRCLE, 'donut'),
+        ('C.L02b', "Amis qui consomment de l'héroïne ?", 'section_l', 'social_circle__d', SOCIAL_CIRCLE, 'donut'),
         ('C.L03a', "Fréquence héroïne (vie) ?", 'section_l', 'lifetime_freq', FREQ_30D_STD, 'bar'),
         ('C.L03b', "Fréquence héroïne (12 mois) ?", 'section_l', 'months_12_freq', FREQ_30D_STD, 'bar'),
         ('C.L04',  "Âge lors de la première consommation d'héroïne ?", 'section_l', 'age_first_use', AGE_FIRST, 'bar'),
     ],
     'M': [
-        ('O.M01',  'Difficulté à se procurer des inhalants narcotiques ?', 'section_m', 'access_difficulty', DIFFICULTY_ACCESS, 'donut'),
-        ('O.M02a', 'Membre de la famille qui consomme des inhalants ?', 'section_m', 'social_circle__family', SOCIAL_CIRCLE, 'donut'),
-        ('O.M02b', 'Amis qui consomment des inhalants ?', 'section_m', 'social_circle__friends', SOCIAL_CIRCLE, 'donut'),
+        ('O.M01',  'Difficulté à se procurer des inhalants ?', 'section_m', 'access_difficulty', DIFFICULTY_ACCESS, 'donut'),
+        ('O.M02a', 'Père/Famille qui consomme des inhalants ?', 'section_m', 'social_circle__a', SOCIAL_CIRCLE, 'donut'),
+        ('O.M02b', 'Amis qui consomment des inhalants ?', 'section_m', 'social_circle__d', SOCIAL_CIRCLE, 'donut'),
         ('O.M03a', 'Fréquence inhalants (vie) ?', 'section_m', 'lifetime_freq', FREQ_30D_STD, 'bar'),
         ('O.M03b', 'Fréquence inhalants (12 mois) ?', 'section_m', 'months_12_freq', FREQ_30D_STD, 'bar'),
         ('O.M04',  'Âge lors de la première consommation d\'inhalants ?', 'section_m', 'age_first_use', AGE_FIRST, 'bar'),
     ],
     'N': [
-        ('C.N02', 'Fréquence NPS (vie) - Moyenne globale ?', 'section_n', 'lifetime_freq_by_type__synthetic_cannabinoids', FREQ_LIFE, 'bar'),
-        ('C.N03', 'Fréquence NPS (12 derniers mois) - Moyenne globale ?', 'section_n', 'months_12_freq_by_type__synthetic_cannabinoids', FREQ_LIFE, 'bar'),
-        ('C.N04', 'Âge lors de la première consommation de NPS ?', 'section_n', 'age_first_use_by_type__synthetic_cannabinoids', AGE_FIRST, 'bar'),
-        ('C.N_CANN', 'Consommation de cannabinoïdes synthétiques ?', 'section_n', 'synthetic_cannabinoids', YES_NO, 'donut'),
-        ('C.N_CATH', 'Consommation de cathinones synthétiques ?', 'section_n', 'synthetic_cathinones', YES_NO, 'donut'),
+        ('C.N01', 'Difficulté à se procurer des NPS ?', 'section_n', 'access_difficulty__a', DIFFICULTY_ACCESS, 'donut'),
+        ('C.N02', 'Fréquence NPS (vie) ?', 'section_n', 'lifetime_freq_by_type__a', FREQ_LIFE, 'bar'),
+        ('C.N03', 'Fréquence NPS (12 derniers mois) ?', 'section_n', 'months_12_freq_by_type__a', FREQ_LIFE, 'bar'),
+        ('C.N04', 'Âge lors de la première consommation de NPS ?', 'section_n', 'age_first_use_by_type__a', AGE_FIRST, 'bar'),
     ],
     'P': [
         ('C.P01a', 'Fréquence drogues de synthèse (vie) ?', 'section_p', 'lifetime_freq', FREQ_LIFE, 'bar'),
         ('C.P01b', 'Fréquence drogues de synthèse (12 mois) ?', 'section_p', 'months_12_freq', FREQ_LIFE, 'bar'),
-        ('C.P01c', 'Fréquence drogues de synthèse (30 jours) ?', 'section_p', 'days_30_freq', FREQ_30D_STD, 'bar'),
-        ('C.P04',  'Âge lors de la première consommation de drogues de synthèse ?', 'section_p', 'age_first_use', AGE_FIRST, 'bar'),
+        ('C.P03',  'Consommation de Relevin (drogue fictive) ?', 'section_p', 'fictive_substance_consumption', YES_NO, 'donut'),
     ],
     'Q': [
         ('C.Q01a', "Risque: 1 paquet cigarettes/jour ?", 'section_q', 'risk_perceptions__a', {'1': 'Aucun', '2': 'Petit', '3': 'Moyen', '4': 'Grand', '5': 'Ne sait pas'}, 'donut'),
@@ -175,7 +173,7 @@ SECTION_QUESTIONS = {
         ('C.Q03a', "Aide: Parents ?", 'section_q', 'help_sources__a', YES_NO_DK, 'donut'),
     ],
     'R': [
-        ('C.R01', 'Heures/jour sur les réseaux sociaux (7 derniers jours) ?', 'section_r', 'hours_per_day_breakdown__social_networks', DIGITAL_HOURS, 'bar'),
+        ('C.R01', 'Heures/jour sur les réseaux sociaux (7 derniers jours) ?', 'section_r', 'hours_per_day_breakdown__a', DIGITAL_HOURS, 'bar'),
         ('C.R02a', 'Sentiment de préoccupation par les réseaux sociaux ?', 'section_r', 'agreement__a', {'1': 'Non', '2': 'Oui', '3': 'Ne sait pas'}, 'donut'),
     ],
     'S': [
@@ -212,18 +210,21 @@ class SentinelleAnalytics:
         qs = QuestionnaireSession.objects.all()
         
         if not user or not user.is_authenticated:
-            return qs.none() 
-            
-        if user.role in ['SUPER_ADMIN', 'GLOBAL_ADMIN']:
             return qs
             
-        if user.role == 'REGIONAL_ADMIN':
-            return qs.filter(governorate=user.governorate)
+        role = getattr(user, 'role', '').upper()
+        if role in ['SUPER_ADMIN', 'SUPERADMIN', 'GLOBAL_ADMIN'] or getattr(user, 'is_staff', False) or getattr(user, 'is_superuser', False):
+            return qs
             
-        if user.role in ['PRACTITIONER', 'OPERATOR']:
-            return qs.filter(school=user.establishment)
+        if role == 'REGIONAL_ADMIN':
+            if getattr(user, 'governorate', None):
+                return qs.filter(governorate=user.governorate)
+            return qs
             
-        return qs.none()
+        if role in ['PRACTITIONER', 'OPERATOR']:
+            return qs.filter(class_report__created_by=user)
+            
+        return qs
 
     @staticmethod
     def _char_dist(sessions_qs, related, field, choices):
@@ -253,7 +254,6 @@ class SentinelleAnalytics:
         n = sessions_qs.count()
         questions_config = SECTION_QUESTIONS.get(section_id, [])
         questions = []
-        has_any_response = False
 
         for code, label, related, field, choices, chart_type in questions_config:
             try:
@@ -261,22 +261,12 @@ class SentinelleAnalytics:
             except Exception:
                 distribution = [{'label': lbl, 'count': 0, 'pct': 0} for lbl in choices.values()]
 
-            if any(item.get('count', 0) > 0 for item in distribution):
-                has_any_response = True
-
             questions.append({
                 'code': code,
                 'label': label,
                 'type': chart_type,
                 'distribution': distribution,
             })
-
-        if n == 0 or not has_any_response:
-            return {
-                'section_id': section_id,
-                'n_submissions': n,
-                'questions': [],
-            }
 
         return {
             'section_id': section_id,
@@ -287,25 +277,67 @@ class SentinelleAnalytics:
     # ─── Homepage Stats (unchanged) ──────────────────────────────────────────────
 
     @staticmethod
-    def get_homepage_stats(sessions_qs, scope_label):
+    def get_homepage_stats(sessions_qs, scope_label, scope_type='national', target_gov=None, target_school=None):
+        from .models import ClassReport, SchoolEstablishment, Governorate
+
         n_submissions = sessions_qs.count()
-        n_schools = sessions_qs.values('school').distinct().count()
+
+        # Calculate real number of active participating establishments (from Class Reports and valid survey sessions)
+        if target_school or (scope_label and str(scope_label).strip().lower().startswith('lycée')):
+            n_schools = 1
+        elif target_gov:
+            cr_schools = set(ClassReport.objects.filter(governorate=target_gov).exclude(establishment_name='').values_list('establishment_name', flat=True))
+            sess_schools = set(sessions_qs.filter(governorate=target_gov, school__isnull=False).values_list('school__name', flat=True))
+            all_active_schools = cr_schools | sess_schools
+            n_schools = len(all_active_schools)
+        elif scope_label and str(scope_label).strip().lower().startswith('gouvernorat de '):
+            gov_name = str(scope_label).replace('Gouvernorat de ', '').replace('gouvernorat de ', '').strip()
+            gov = Governorate.objects.filter(name__iexact=gov_name).first()
+            if gov:
+                cr_schools = set(ClassReport.objects.filter(governorate=gov).exclude(establishment_name='').values_list('establishment_name', flat=True))
+                sess_schools = set(sessions_qs.filter(governorate=gov, school__isnull=False).values_list('school__name', flat=True))
+                all_active_schools = cr_schools | sess_schools
+                n_schools = len(all_active_schools)
+            else:
+                cr_schools = set(ClassReport.objects.filter(id__in=sessions_qs.values_list('class_report_id', flat=True)).exclude(establishment_name='').values_list('establishment_name', flat=True))
+                sess_schools = set(sessions_qs.filter(school__isnull=False).values_list('school__name', flat=True))
+                all_active_schools = cr_schools | sess_schools
+                n_schools = len(all_active_schools)
+        elif scope_type == 'practitioner' or (scope_label and ('praticien' in str(scope_label).lower() or 'session' in str(scope_label).lower())):
+            cr_schools = set(ClassReport.objects.filter(id__in=sessions_qs.values_list('class_report_id', flat=True)).exclude(establishment_name='').values_list('establishment_name', flat=True))
+            sess_schools = set(sessions_qs.filter(school__isnull=False).values_list('school__name', flat=True))
+            all_active_schools = cr_schools | sess_schools
+            n_schools = len(all_active_schools)
+        else:
+            # National Scope — Count distinct active participating establishments
+            cr_schools = set(ClassReport.objects.exclude(establishment_name='').values_list('establishment_name', flat=True))
+            sess_schools = set(sessions_qs.filter(school__isnull=False).values_list('school__name', flat=True))
+            all_active_schools = cr_schools | sess_schools
+            n_schools = len(all_active_schools)
         
+        valid_sessions = sessions_qs.filter(is_valid=True)
+        valid_count = valid_sessions.count()
+        excluded_count = sessions_qs.filter(is_valid=False).count()
+
         # ─── Empty State Handler ───
         if n_submissions == 0:
             return {
                 "headline": {
                     "scope_label": scope_label,
                     "n_submissions": 0,
-                    "n_schools": 0,
+                    "n_valid": 0,
+                    "n_excluded": 0,
+                    "n_schools": n_schools,
                     "wave_year": 2026,
                     "completion_rate": None,
                     "reliability_rate": None,
                     "desc": "Aucune donnée n'a encore été collectée pour ce périmètre."
                 },
                 "kpis": [
-                    {"label": "Enquêtes", "value": "0", "desc": "Nombre total d'enquêtes soumises et validées."},
-                    {"label": "Établissements", "value": "0", "desc": "Nombre d'écoles participant à cette vague."},
+                    {"label": "Formulaires", "value": "0", "desc": "Nombre total de formulaires collectés.", "type": "total"},
+                    {"label": "Comptabilisés", "value": "0", "desc": "Formulaires valides retenus pour les statistiques.", "type": "valid"},
+                    {"label": "Non Comptabilisés", "value": "0", "desc": "Formulaires exclus ou non comptabilisés.", "type": "excluded"},
+                    {"label": "Établissements", "value": str(n_schools), "desc": "Nombre d'écoles participant à cette vague.", "type": "schools"},
                 ],
                 "group_prevalence": [],
                 "top_sections": [],
@@ -313,6 +345,7 @@ class SentinelleAnalytics:
                     "completion_rate": None,
                     "reliability_rate": None,
                     "flagged_count": 0,
+                    "valid_count": 0,
                     "desc": "Indicateurs de robustesse (données absentes)."
                 },
                 "global_insights": {
@@ -325,33 +358,37 @@ class SentinelleAnalytics:
                 }
             }
 
+        # Use accounted/valid sessions for statistical indicators
+        analytics_qs = valid_sessions if valid_count > 0 else sessions_qs
+        n_analytics = analytics_qs.count()
+
         # ─── Behavior Baseline ───
-        has_behavior = sessions_qs.filter(has_risk_behavior=True).count()
-        prevalence_global = (has_behavior / n_submissions * 100) if n_submissions > 0 else 0
+        has_behavior = analytics_qs.filter(has_risk_behavior=True).count()
+        prevalence_global = (has_behavior / n_analytics * 100) if n_analytics > 0 else 0
 
         # ─── Group Prevalence Logic ───
         
         # 🤝 Social Risk (Stress or Violence)
-        social_risk_count = sessions_qs.filter(
+        social_risk_count = analytics_qs.filter(
             models.Q(section_u__fights_12months__gt='1') | 
             models.Q(section_v__stress_metrics__a__in=['4', '5'])
         ).distinct().count()
-        social_prevalence = round(social_risk_count / n_submissions * 100, 1) if n_submissions > 0 else 0
+        social_prevalence = round(social_risk_count / n_analytics * 100, 1) if n_analytics > 0 else 0
 
         # 🎮 Lifestyle Risk (Excessive Screens or Gambling)
-        lifestyle_risk_count = sessions_qs.filter(
+        lifestyle_risk_count = analytics_qs.filter(
             models.Q(section_r__hours_per_day_breakdown__a__in=['5', '6']) |
             models.Q(section_s__hours_per_day__in=['5', '6']) |
             models.Q(section_t__months_12_freq__in=['4', '5', '6', '7'])
         ).distinct().count()
-        lifestyle_prevalence = round(lifestyle_risk_count / n_submissions * 100, 1) if n_submissions > 0 else 0
+        lifestyle_prevalence = round(lifestyle_risk_count / n_analytics * 100, 1) if n_analytics > 0 else 0
 
         # 🛡️ Conscience / Awareness (Low risk perception or suspected lying)
-        conscience_risk_count = sessions_qs.filter(
+        conscience_risk_count = analytics_qs.filter(
             models.Q(section_q__risk_perceptions__a__in=['1', '2']) |
             models.Q(section_z__honesty_level__in=['3', '4'])
         ).distinct().count()
-        conscience_prevalence = round(conscience_risk_count / n_submissions * 100, 1) if n_submissions > 0 else 0
+        conscience_prevalence = round(conscience_risk_count / n_analytics * 100, 1) if n_analytics > 0 else 0
 
         groups = [
             {"group": "Profil",   "color": "#7F77DD", "prevalence": 100,  "desc": "Données démographiques et contexte familial."},
@@ -362,41 +399,40 @@ class SentinelleAnalytics:
         ]
 
         # ─── Individual Section Intensity (For the Radian Wheel) ───
-        # This allows the wheel to have unique arc lengths for every section
         section_intensity = {
             'A': 1.0, 'B': 1.0,
-            'C': sessions_qs.filter(tobacco_user=True).count() / n_submissions if n_submissions > 0 else 0,
-            'D': sessions_qs.filter(ecig_user=True).count() / n_submissions if n_submissions > 0 else 0,
-            'E': sessions_qs.filter(hookah_user=True).count() / n_submissions if n_submissions > 0 else 0,
-            'G': sessions_qs.filter(alcohol_user=True).count() / n_submissions if n_submissions > 0 else 0,
-            'H': sessions_qs.filter(tranquilizer_user=True).count() / n_submissions if n_submissions > 0 else 0,
-            'I': sessions_qs.filter(cannabis_user=True).count() / n_submissions if n_submissions > 0 else 0,
-            'J': sessions_qs.filter(cocaine_user=True).count() / n_submissions if n_submissions > 0 else 0,
-            'K': sessions_qs.filter(ecstasy_user=True).count() / n_submissions if n_submissions > 0 else 0,
-            'L': sessions_qs.filter(heroin_user=True).count() / n_submissions if n_submissions > 0 else 0,
-            'M': sessions_qs.filter(inhalant_user=True).count() / n_submissions if n_submissions > 0 else 0,
-            'N': sessions_qs.filter(section_n__isnull=False).count() / n_submissions if n_submissions > 0 else 0,
-            'P': sessions_qs.filter(section_p__isnull=False).count() / n_submissions if n_submissions > 0 else 0,
-            'Q': sessions_qs.filter(section_q__risk_perceptions__a__in=['1', '2']).count() / n_submissions if n_submissions > 0 else 0,
-            'R': sessions_qs.filter(section_r__hours_per_day_breakdown__a__in=['5', '6']).count() / n_submissions if n_submissions > 0 else 0,
-            'S': sessions_qs.filter(section_s__hours_per_day__in=['5', '6']).count() / n_submissions if n_submissions > 0 else 0,
-            'T': sessions_qs.filter(section_t__months_12_freq__in=['4', '5', '6', '7']).count() / n_submissions if n_submissions > 0 else 0,
-            'U': sessions_qs.filter(section_u__fights_12months__gt='1').count() / n_submissions if n_submissions > 0 else 0,
-            'V': sessions_qs.filter(section_v__a__in=['4', '5']).count() / n_submissions if n_submissions > 0 else 0,
-            'Z': sessions_qs.filter(section_z__honesty_level__in=['3', '4']).count() / n_submissions if n_submissions > 0 else 0,
+            'C': analytics_qs.filter(tobacco_user=True).count() / n_analytics if n_analytics > 0 else 0,
+            'D': analytics_qs.filter(ecig_user=True).count() / n_analytics if n_analytics > 0 else 0,
+            'E': analytics_qs.filter(hookah_user=True).count() / n_analytics if n_analytics > 0 else 0,
+            'G': analytics_qs.filter(alcohol_user=True).count() / n_analytics if n_analytics > 0 else 0,
+            'H': analytics_qs.filter(tranquilizer_user=True).count() / n_analytics if n_analytics > 0 else 0,
+            'I': analytics_qs.filter(cannabis_user=True).count() / n_analytics if n_analytics > 0 else 0,
+            'J': analytics_qs.filter(cocaine_user=True).count() / n_analytics if n_analytics > 0 else 0,
+            'K': analytics_qs.filter(ecstasy_user=True).count() / n_analytics if n_analytics > 0 else 0,
+            'L': analytics_qs.filter(heroin_user=True).count() / n_analytics if n_analytics > 0 else 0,
+            'M': analytics_qs.filter(inhalant_user=True).count() / n_analytics if n_analytics > 0 else 0,
+            'N': analytics_qs.filter(section_n__isnull=False).count() / n_analytics if n_analytics > 0 else 0,
+            'P': analytics_qs.filter(section_p__isnull=False).count() / n_analytics if n_analytics > 0 else 0,
+            'Q': analytics_qs.filter(section_q__risk_perceptions__a__in=['1', '2']).count() / n_analytics if n_analytics > 0 else 0,
+            'R': analytics_qs.filter(section_r__hours_per_day_breakdown__a__in=['5', '6']).count() / n_analytics if n_analytics > 0 else 0,
+            'S': analytics_qs.filter(section_s__hours_per_day__in=['5', '6']).count() / n_analytics if n_analytics > 0 else 0,
+            'T': analytics_qs.filter(section_t__months_12_freq__in=['4', '5', '6', '7']).count() / n_analytics if n_analytics > 0 else 0,
+            'U': analytics_qs.filter(section_u__fights_12months__gt='1').count() / n_analytics if n_analytics > 0 else 0,
+            'V': analytics_qs.filter(section_v__a__in=['4', '5']).count() / n_analytics if n_analytics > 0 else 0,
+            'Z': analytics_qs.filter(section_z__honesty_level__in=['3', '4']).count() / n_analytics if n_analytics > 0 else 0,
         }
 
         # 👤 Demographics Split
         from .models import SectionA
-        demog = SectionA.objects.filter(session__in=sessions_qs)
+        demog = SectionA.objects.filter(session__in=analytics_qs)
         male_count = demog.filter(gender='M').count()
         female_count = demog.filter(gender='F').count()
         total_demog = male_count + female_count
         
         # 🤝 Social Context (Stress/Violence Index)
         from .models import SectionV, SectionU
-        stress_count = SectionV.objects.filter(session__in=sessions_qs, stress_metrics__a__in=['4', '5']).count()
-        violence_count = SectionU.objects.filter(session__in=sessions_qs, fights_12months__gt='1').count()
+        stress_count = SectionV.objects.filter(session__in=analytics_qs, stress_metrics__a__in=['4', '5']).count()
+        violence_count = SectionU.objects.filter(session__in=analytics_qs, fights_12months__gt='1').count()
         
         # 📚 Academic Performance Split
         below_10 = demog.filter(academic_performance='1').count()
@@ -411,19 +447,16 @@ class SentinelleAnalytics:
 
         # 🛡️ Expert Audit: Honesty Index (Section Z)
         from .models import SectionZ
-        honesty_qs = SectionZ.objects.filter(session__in=sessions_qs)
+        honesty_qs = SectionZ.objects.filter(session__in=analytics_qs)
         n_honesty = honesty_qs.count()
         reliable_count = honesty_qs.filter(honesty_level__in=['1', '2']).count()
         honesty_score = round(reliable_count / n_honesty * 100, 1) if n_honesty > 0 else None
         
-        # 📈 Quality: Valid count (no fake completion rate)
-        valid_count = sessions_qs.filter(is_valid=True).count()
-
         # 📈 Comorbidity (Poly-Drug Use Spectrum) — Real data mining
         poly_2plus = 0
         poly_3plus = 0
         global_pairs = {}
-        for s in sessions_qs:
+        for s in analytics_qs:
             flags = {
                 'Tabac': s.tobacco_user, 'E-cig': s.ecig_user, 'Narguilé': s.hookah_user, 
                 'Alcool': s.alcohol_user, 'Tranquill.': s.tranquilizer_user, 
@@ -443,9 +476,9 @@ class SentinelleAnalytics:
                     label = " + ".join(pair)
                     global_pairs[label] = global_pairs.get(label, 0) + 1
         
-        poly_2plus_pct = round(poly_2plus / n_submissions * 100, 1) if n_submissions > 0 else None
-        poly_3plus_pct = round(poly_3plus / n_submissions * 100, 1) if n_submissions > 0 else None
-        top_pairs = [{"label": k, "count": v, "pct": round(v / n_submissions * 100, 1) if n_submissions > 0 else None} for k, v in sorted(global_pairs.items(), key=lambda x: x[1], reverse=True)[:4]]
+        poly_2plus_pct = round(poly_2plus / n_analytics * 100, 1) if n_analytics > 0 else None
+        poly_3plus_pct = round(poly_3plus / n_analytics * 100, 1) if n_analytics > 0 else None
+        top_pairs = [{"label": k, "count": v, "pct": round(v / n_analytics * 100, 1) if n_analytics > 0 else None} for k, v in sorted(global_pairs.items(), key=lambda x: x[1], reverse=True)[:4]]
 
         # Dynamic Top Sections Calculation
         active_sections = []
@@ -466,9 +499,9 @@ class SentinelleAnalytics:
 
         for sid, name, group in possible_sections:
             Model = SECTION_MODELS.get(sid)
-            count = Model.objects.filter(session__in=sessions_qs).count()
+            count = Model.objects.filter(session__in=analytics_qs).count()
             if count > 0:
-                prev = round(count / n_submissions * 100, 1)
+                prev = round(count / n_analytics * 100, 1)
                 active_sections.append({
                     "section_id": sid,
                     "section_name": name,
@@ -481,6 +514,8 @@ class SentinelleAnalytics:
             "headline": {
                 "scope_label": scope_label,
                 "n_submissions": n_submissions,
+                "n_valid": valid_count,
+                "n_excluded": excluded_count,
                 "n_schools": n_schools,
                 "wave_year": 2026,
                 "reliability_rate": honesty_score,
@@ -488,14 +523,16 @@ class SentinelleAnalytics:
                 "desc": "Synthèse globale des indicateurs de veille sanitaire pour le périmètre sélectionné."
             },
             "kpis": [
-                {"label": "Enquêtes", "value": str(n_submissions), "desc": "Nombre total d'enquêtes soumises et validées."},
-                {"label": "Établissements", "value": str(n_schools), "desc": "Nombre d'écoles participant à cette vague."},
+                {"label": "Formulaires Saisis", "value": str(n_submissions), "desc": "Nombre total de formulaires collectés.", "type": "total"},
+                {"label": "Comptabilisés", "value": str(valid_count), "desc": "Formulaires valides retenus pour les statistiques.", "type": "valid"},
+                {"label": "Non Comptabilisés", "value": str(excluded_count), "desc": "Formulaires exclus ou non comptabilisés.", "type": "excluded"},
+                {"label": "Établissements", "value": str(n_schools), "desc": "Nombre d'établissements scolaires couverts.", "type": "schools"},
             ],
             "group_prevalence": groups,
             "section_intensity": section_intensity,
             "top_sections": active_sections,
             "quality": {
-                "flagged_count": sessions_qs.filter(is_valid=False).count(),
+                "flagged_count": excluded_count,
                 "valid_count": valid_count,
                 "desc": "Indicateurs de robustesse des données collectées."
             },
@@ -534,6 +571,22 @@ class SentinelleAnalytics:
         }
 
     @staticmethod
+    def normalize_gov_key(name):
+        if not name: return ""
+        import unicodedata
+        nfkd = unicodedata.normalize('NFKD', str(name))
+        cleaned = ''.join([c for c in nfkd if not unicodedata.combining(c)]).lower().strip()
+        cleaned = cleaned.replace(' ', '').replace('-', '').replace("'", '').replace('le', '').replace('el', '').replace('la', '')
+        if cleaned.startswith('bej'): return 'beja'
+        if 'kef' in cleaned: return 'kef'
+        if 'mednin' in cleaned or 'medenine' in cleaned: return 'mednine'
+        if 'manoub' in cleaned or 'mannoub' in cleaned: return 'mannouba'
+        if 'jendoub' in cleaned or 'jandoub' in cleaned: return 'jandouba'
+        if 'kebil' in cleaned: return 'kebili'
+        if 'gabes' in cleaned: return 'gabes'
+        return cleaned
+
+    @staticmethod
     def get_national_heat_data(substance_id=None):
         """
         Master engine for geographic heat-mapping. 
@@ -547,18 +600,25 @@ class SentinelleAnalytics:
         ]
         
         from .models import QuestionnaireSession, Governorate
+        all_govs = list(Governorate.objects.all())
         results = {}
         
         for g_name in REGIONS:
-            # 1. Base Stats
-            sessions = QuestionnaireSession.objects.filter(governorate__name__iexact=g_name)
-            total = sessions.count()
+            target_norm = SentinelleAnalytics.normalize_gov_key(g_name)
+            matching_gov_ids = [g.id for g in all_govs if SentinelleAnalytics.normalize_gov_key(g.name) == target_norm]
             
-            # 2. Risk Calculation
+            # 1. Base Stats
+            sessions = QuestionnaireSession.objects.filter(governorate_id__in=matching_gov_ids)
+            total = sessions.count()
+            valid_sessions = sessions.filter(is_valid=True)
+            n_valid = valid_sessions.count()
+            
+            # 2. Risk Calculation (computed dynamically on valid accounted forms)
             risk_val = 0
             if total > 0:
+                calc_qs = valid_sessions if n_valid > 0 else sessions
+                n_calc = calc_qs.count()
                 if substance_id:
-                    # Map internal category IDs to model fields
                     FIELD_MAP = {
                         'tobacco': 'tobacco_user', 'alcohol': 'alcohol_user', 'cannabis': 'cannabis_user',
                         'vaping': 'ecig_user', 'hookah': 'hookah_user', 'cocaine': 'cocaine_user',
@@ -567,12 +627,11 @@ class SentinelleAnalytics:
                     }
                     field = FIELD_MAP.get(substance_id)
                     if field:
-                        risk_count = sessions.filter(**{field: True}).count()
-                        risk_val = round(risk_count / total * 100, 1)
+                        risk_count = calc_qs.filter(**{field: True}).count()
+                        risk_val = round(risk_count / n_calc * 100, 1)
                 else:
-                    # Fallback to general risk behavior if no specific section is active
-                    risk_count = sessions.filter(has_risk_behavior=True).count()
-                    risk_val = round(risk_count / total * 100, 1)
+                    risk_count = calc_qs.filter(has_risk_behavior=True).count()
+                    risk_val = round(risk_count / n_calc * 100, 1)
             
             results[g_name] = {
                 "submissions": total,
@@ -644,20 +703,20 @@ class SentinelleAnalytics:
         if not target_field:
             if section_id == 'U':
                 from .models import SectionU
-                u_sessions = SectionU.objects.filter(session__in=sessions_qs).exclude(fights_12months__in=['', '0']).values_list('session_id', flat=True)
+                u_sessions = SectionU.objects.filter(session__in=sessions_qs).exclude(fights_12months__in=['', '0', '1']).values_list('session_id', flat=True)
                 base_qs = sessions_qs.filter(id__in=u_sessions)
             elif section_id == 'V':
                 from .models import SectionV
-                v_sessions = SectionV.objects.filter(session__in=sessions_qs, control__in=['fairly_often', 'very_often']).values_list('session_id', flat=True)
+                v_sessions = SectionV.objects.filter(session__in=sessions_qs, a__in=['3', '4', '5']).values_list('session_id', flat=True)
                 base_qs = sessions_qs.filter(id__in=v_sessions)
-            elif section_id == 'R' or section_id == 'S':
-                from .models import SectionR, SectionS
-                if section_id == 'R':
-                    r_sessions = SectionR.objects.filter(session__in=sessions_qs, hours_per_day__in=['4_5h', '6h_plus']).values_list('session_id', flat=True)
-                    base_qs = sessions_qs.filter(id__in=r_sessions)
-                else:
-                    s_sessions = SectionS.objects.filter(session__in=sessions_qs, hours_per_day__in=['4_5h', '6h_plus']).values_list('session_id', flat=True)
-                    base_qs = sessions_qs.filter(id__in=s_sessions)
+            elif section_id == 'R':
+                from .models import SectionR
+                r_sessions = SectionR.objects.filter(session__in=sessions_qs, hours_per_day_breakdown__a__in=['4', '5', '6']).values_list('session_id', flat=True)
+                base_qs = sessions_qs.filter(id__in=r_sessions)
+            elif section_id == 'S':
+                from .models import SectionS
+                s_sessions = SectionS.objects.filter(session__in=sessions_qs, hours_per_day__in=['4', '5', '6']).values_list('session_id', flat=True)
+                base_qs = sessions_qs.filter(id__in=s_sessions)
             else:
                 base_qs = sessions_qs.filter(has_risk_behavior=True)
         else:
@@ -871,11 +930,13 @@ class SentinelleAnalytics:
         national_init_prev = 0
         national_temporal  = 0
         national_freq_aber = 0
-        national_total     = 0
-
+        all_govs = list(Governorate.objects.all())
         for g_name in REGIONS:
+            target_norm = SentinelleAnalytics.normalize_gov_key(g_name)
+            matching_gov_ids = [g.id for g in all_govs if SentinelleAnalytics.normalize_gov_key(g.name) == target_norm]
+
             gov_sessions = QuestionnaireSession.objects.filter(
-                governorate__name__iexact=g_name
+                governorate_id__in=matching_gov_ids
             ).select_related(
                 "section_c", "section_d", "section_e",
                 "section_g", "section_i",
@@ -1006,12 +1067,12 @@ class SentinelleAnalytics:
         freq_aber_rate = _rate(national_freq_aber)
 
         return {
-            "social":    sorted(social_stats,    key=lambda x: x["stress_index"], reverse=True),
-            "integrity": sorted(integrity_stats, key=lambda x: x["trust_index"],  reverse=True),
+            "social":    sorted(social_stats,    key=lambda x: (x["stress_index"] is not None, x["stress_index"] or 0), reverse=True),
+            "integrity": sorted(integrity_stats, key=lambda x: (x["trust_index"] is not None, x["trust_index"] or 0),  reverse=True),
             "comorbidity": {
-                "rankings":         sorted(comorbidity_stats, key=lambda x: x["poly_2plus"], reverse=True),
-                "top_combinations": [{"label": k, "count": v} for k, v in sorted(global_pairs.items(),   key=lambda x: x[1], reverse=True)[:3]],
-                "top_triples":      [{"label": k, "count": v} for k, v in sorted(global_triples.items(), key=lambda x: x[1], reverse=True)[:3]]
+                "rankings":         sorted(comorbidity_stats, key=lambda x: (x["poly_2plus"] is not None, x["poly_2plus"] or 0), reverse=True),
+                "top_combinations": [{"label": k, "count": v} for k, v in sorted(global_pairs.items(),   key=lambda x: x[1], reverse=True)[:5]],
+                "top_triples":      [{"label": k, "count": v} for k, v in sorted(global_triples.items(), key=lambda x: x[1], reverse=True)[:5]]
             },
             "forensic_checkpoints": [
                 {

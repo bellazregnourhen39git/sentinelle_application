@@ -1,0 +1,146 @@
+==================== SECTION_A ====================
+Question Codes (8): ['C.A01', 'C.A02m', 'C.A02a', 'C.A05', 'C.A06', 'C.A07', 'C.A07/2', 'C.A08']
+  SelectField count: 2
+  RadioGroup count:  4
+  GridQuestion count: 3
+  Custom Inputs:     3
+
+==================== SECTION_B ====================
+Question Codes (6): ['C.B01', 'C.B02', 'C.B03', 'C.B04', 'C.B05', 'C.B06']
+  SelectField count: 0
+  RadioGroup count:  6
+  GridQuestion count: 0
+  Custom Inputs:     0
+
+==================== SECTION_C ====================
+Question Codes (2): ['C.C01', 'C.C04']
+  SelectField count: 0
+  RadioGroup count:  2
+  GridQuestion count: 3
+  Custom Inputs:     0
+
+==================== SECTION_D ====================
+Question Codes (2): ['C.D01', 'C.D04']
+  SelectField count: 0
+  RadioGroup count:  2
+  GridQuestion count: 3
+  Custom Inputs:     0
+
+==================== SECTION_E ====================
+Question Codes (2): ['C.E01', 'C.E04']
+  SelectField count: 0
+  RadioGroup count:  2
+  GridQuestion count: 3
+  Custom Inputs:     0
+
+==================== SECTION_G ====================
+Question Codes (1): ['C.G05']
+  SelectField count: 0
+  RadioGroup count:  1
+  GridQuestion count: 6
+  Custom Inputs:     0
+
+==================== SECTION_H ====================
+Question Codes (2): ['C.H01', 'C.H04']
+  SelectField count: 1
+  RadioGroup count:  1
+  GridQuestion count: 2
+  Custom Inputs:     0
+
+==================== SECTION_I ====================
+Question Codes (3): ['C.I01', 'C.I03', 'C.I06']
+  SelectField count: 1
+  RadioGroup count:  3
+  GridQuestion count: 2
+  Custom Inputs:     1
+
+==================== SECTION_J ====================
+Question Codes (2): ['C.J01', 'C.J04']
+  SelectField count: 1
+  RadioGroup count:  1
+  GridQuestion count: 2
+  Custom Inputs:     0
+
+==================== SECTION_K ====================
+Question Codes (2): ['C.K01', 'C.K04']
+  SelectField count: 1
+  RadioGroup count:  1
+  GridQuestion count: 2
+  Custom Inputs:     0
+
+==================== SECTION_L ====================
+Question Codes (2): ['C.L01', 'C.L04']
+  SelectField count: 1
+  RadioGroup count:  1
+  GridQuestion count: 2
+  Custom Inputs:     0
+
+==================== SECTION_M ====================
+Question Codes (2): ['C.M01', 'C.M04']
+  SelectField count: 1
+  RadioGroup count:  1
+  GridQuestion count: 2
+  Custom Inputs:     0
+
+==================== SECTION_N ====================
+Question Codes (0): []
+  SelectField count: 0
+  RadioGroup count:  0
+  GridQuestion count: 4
+  Custom Inputs:     0
+
+==================== SECTION_P ====================
+Question Codes (0): []
+  SelectField count: 0
+  RadioGroup count:  0
+  GridQuestion count: 2
+  Custom Inputs:     1
+
+==================== SECTION_Q ====================
+Question Codes (1): ['C.Q04']
+  SelectField count: 0
+  RadioGroup count:  1
+  GridQuestion count: 3
+  Custom Inputs:     0
+
+==================== SECTION_R ====================
+Question Codes (0): []
+  SelectField count: 0
+  RadioGroup count:  0
+  GridQuestion count: 2
+  Custom Inputs:     0
+
+==================== SECTION_S ====================
+Question Codes (2): ['C.S01', 'C.S02']
+  SelectField count: 2
+  RadioGroup count:  0
+  GridQuestion count: 1
+  Custom Inputs:     0
+
+==================== SECTION_T ====================
+Question Codes (3): ['C.T01', 'C.T04', 'C.T05']
+  SelectField count: 1
+  RadioGroup count:  2
+  GridQuestion count: 1
+  Custom Inputs:     2
+
+==================== SECTION_U ====================
+Question Codes (5): ['C.U01', 'C.U02', 'C.U03', 'C.U04', 'C.U06']
+  SelectField count: 1
+  RadioGroup count:  4
+  GridQuestion count: 0
+  Custom Inputs:     1
+
+==================== SECTION_V ====================
+Question Codes (0): []
+  SelectField count: 0
+  RadioGroup count:  0
+  GridQuestion count: 4
+  Custom Inputs:     0
+
+==================== SECTION_Z ====================
+Question Codes (2): ['C.Z01', 'C.Z02']
+  SelectField count: 0
+  RadioGroup count:  2
+  GridQuestion count: 0
+  Custom Inputs:     0

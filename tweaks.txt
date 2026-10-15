@@ -1,0 +1,29 @@
+Rapport de classe et nom de l'établissement : Le filtre par région ne fonctionne pas correctement. Par exemple, en sélectionnant la région « Manouba », des lycées appartenant à d'autres régions s'affichent, alors que seuls les lycées de Manouba devraient apparaître.
+
+Date de l'enquête : Cette information est actuellement manquante.
+
+Ordre des questions : C'est utile de conserver le même ordre des questions que celui du questionnaire ou du rapport physique fourni.
+
+Navigation (Boutons Suivant/Précédent) : L'action de cliquer sur ces boutons ne repositionne pas l'utilisateur en haut de la page suivante. L'écran reste bloqué au niveau du bouton cliqué, ce qui prête à confusion lors de la saisie.
+
+Passage automatique (Questionnaire) : Une fois la date de l'enquête renseignée, le curseur doit passer automatiquement à la question suivante sans nécessiter une action manuelle.
+
+Format des chiffres (Date de naissance) : Pour le questionnaire en arabe, on va utiliser les chiffres standards (1, 2, 3...) plutôt que les chiffres arabes orientaux.
+
+Numérotation des modalités : Les options de réponse (modalités) doivent être numérotées comme dans le questionnaire papier.
+
+Description des sections : Les descriptions des sections (Section A, B, C, etc.) ne sont pas mentionnées.
+
+Calcul de l'âge : Pour calculer l'âge et vérifier s'il dépasse la limite autorisée, le système doit se baser sur la formule {Date de l'enquête} - {Date de naissance}, et non sur la date de saisie.
+
+Message d'alerte pour l'âge : La formulation actuelle est perçue comme un blocage strict de la saisie et la non considération du questionnaire alors qu'il suffit que le message indique que l'âge est supérieur à la limite.
+
+Format des tableaux : La structure en tableau doit être identique à celle du questionnaire initial.
+
+Contrôle de cohérence et flexibilité : Aucun blocage ou contrôle strict ne doit être appliqué en cas de contradiction entre les réponses. L'agent de saisie doit garder la main pour retranscrire fidèlement les réponses de l'élève, la saisie devant être parfaitement conforme au questionnaire papier.
+
+Sauvegarde intermédiaire : Il est actuellement impossible d'enregistrer un questionnaire incomplet pour reprendre et continuer la saisie ultérieurement.
+
+Édition et modification : Les fonctionnalités de modification des questions et d'édition des rapports de classes sont toutes deux indisponibles.
+
+Nous sommes encore en phase de test concernant la saisie de différents questionnaires afin de vérifier le chevauchement des questionnaires par région, le téléchargement des fichiers CSV pour analyse, ainsi que d'autres fonctionnalités. 

@@ -165,12 +165,20 @@ function App() {
           <Route path="/map" element={<Map3D />} />
           <Route path="/qr" element={<QRCodePage />} />
           <Route path="/scan" element={
-            <ProtectedRoute profile={activeProfile} allowedRoles={['SUPER_ADMIN', 'GLOBAL_ADMIN', 'PRACTITIONER', 'OPERATOR']}>
+            <ProtectedRoute profile={activeProfile} allowedRoles={['SUPER_ADMIN', 'PRACTITIONER', 'OPERATOR']}>
               <ScanPage />
             </ProtectedRoute>
           } />
-          <Route path="/class-report" element={<ClassReportPage />} />
-          <Route path="/session/:reportId/collect" element={<SessionCollectionView />} />
+          <Route path="/class-report" element={
+            <ProtectedRoute profile={activeProfile} allowedRoles={['SUPER_ADMIN', 'PRACTITIONER', 'OPERATOR']}>
+              <ClassReportPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/session/:reportId/collect" element={
+            <ProtectedRoute profile={activeProfile} allowedRoles={['SUPER_ADMIN', 'GLOBAL_ADMIN', 'REGIONAL_ADMIN', 'PRACTITIONER', 'OPERATOR']}>
+              <SessionCollectionView />
+            </ProtectedRoute>
+          } />
           <Route path="/guide" element={
             <ProtectedRoute profile={activeProfile} allowedRoles={['PRACTITIONER', 'OPERATOR']}>
               <PractitionerGuide user={activeProfile} />
@@ -182,7 +190,7 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/admin/submissions" element={
-            <ProtectedRoute profile={activeProfile} allowedRoles={['SUPER_ADMIN', 'GLOBAL_ADMIN']}>
+            <ProtectedRoute profile={activeProfile} allowedRoles={['SUPER_ADMIN', 'GLOBAL_ADMIN', 'REGIONAL_ADMIN']}>
               <SubmissionsViewer />
             </ProtectedRoute>
           } />

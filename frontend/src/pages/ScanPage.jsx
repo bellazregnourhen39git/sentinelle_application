@@ -12,7 +12,9 @@ import {
     LogOut, 
     ArrowLeft,
     Scan,
-    PlusCircle
+    PlusCircle,
+    Building2,
+    ChevronDown
 } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import EditableLabel from '../components/dashboard/EditableLabel';
@@ -23,6 +25,8 @@ const ScanPage = () => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const reportId = searchParams.get('report_id');
+    const [activeReports, setActiveReports] = useState([]);
+    const [selectedReportId, setSelectedReportId] = useState(reportId || '');
     const [file, setFile] = useState(null);
     const [isProcessing, setIsProcessing] = useState(false);
     const [scanResult, setScanResult] = useState(null);
@@ -38,6 +42,26 @@ const ScanPage = () => {
     const [isLocationModalOpen, setIsLocationModalOpen] = useState(false);
     const [operatorGovId, setOperatorGovId] = useState(null);
     const [operatorEstId, setOperatorEstId] = useState(null);
+
+    const [allReports, setAllReports] = useState([]);
+    const [reportFilter, setReportFilter] = useState('active'); // 'active' | 'all'
+
+    useEffect(() => {
+        api.get('class-report/list/').then(res => {
+            const list = Array.isArray(res.data) ? res.data : (res.data?.results || []);
+            setAllReports(list);
+            const active = list.filter(r => !r.is_finalized);
+            setActiveReports(active);
+            if (!reportId && active.length > 0) {
+                setSelectedReportId(String(active[0].id));
+            } else if (!reportId && list.length > 0) {
+                setSelectedReportId(String(list[0].id));
+            }
+        }).catch(() => {
+            setAllReports([]);
+            setActiveReports([]);
+        });
+    }, [reportId]);
 
     const handleLogout = () => {
         localStorage.removeItem('user');
@@ -88,7 +112,7 @@ const ScanPage = () => {
     const handleSave = async (overrideGovId = null, overrideEstId = null) => {
         if (!scanResult) return;
         
-        if (isOperator && !overrideGovId && !overrideEstId) {
+        if (isOperator && !overrideGovId && !overrideEstId && !selectedReportId && !reportId) {
             setIsLocationModalOpen(true);
             return;
         }
@@ -97,12 +121,14 @@ const ScanPage = () => {
         setError(null);
 
         try {
-            // Include class_report to tether this scan to the session
+            const currentTargetReport = activeReports.find(r => String(r.id) === String(selectedReportId || reportId));
             const payload = {
                 ...scanResult,
-                class_report: reportId,
+                class_report: selectedReportId || reportId || null,
                 ...(overrideGovId && { governorate_id: overrideGovId }),
-                ...(overrideEstId && { school_id: overrideEstId })
+                ...(overrideEstId && { school_id: overrideEstId }),
+                ...(currentTargetReport?.governorate && { governorate: currentTargetReport.governorate }),
+                ...(currentTargetReport?.establishment && { establishment: currentTargetReport.establishment })
             };
             await api.post('questionnaire/submit/', payload);
             setSuccess(true);
@@ -260,6 +286,65 @@ const ScanPage = () => {
                     <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 bg-rose-50 hover:bg-rose-100 text-rose-500 rounded-lg text-xs font-bold uppercase tracking-widest transition-colors">
                         <LogOut size={14} />
                         <EditableLabel termKey="scan_btn_logout" defaultValue="Déconnexion" />
+                    </button>
+                </div>
+
+                {/* 🎯 Target Class Session Selection Bar */}
+                <div className="mb-6 p-4 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-brand-50 border border-brand-100 flex items-center justify-center text-brand-600 shrink-0">
+                            <Building2 size={20} />
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <span className="text-[10px] font-black uppercase tracking-widest text-slate-400 block">Session Cible de Numérisation</span>
+                                <div className="flex bg-slate-100 p-0.5 rounded-lg text-[10px] font-bold">
+                                    <button
+                                        type="button"
+                                        onClick={() => setReportFilter('active')}
+                                        className={`px-2 py-0.5 rounded-md transition-all ${reportFilter === 'active' ? 'bg-white text-brand-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
+                                    >
+                                        En cours ({activeReports.length})
+                                    </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setReportFilter('all')}
+                                        className={`px-2 py-0.5 rounded-md transition-all ${reportFilter === 'all' ? 'bg-white text-brand-600 shadow-sm' : 'text-slate-500 hover:text-slate-900'}`}
+                                    >
+                                        Toutes ({allReports.length})
+                                    </button>
+                                </div>
+                            </div>
+                            {(reportFilter === 'active' ? activeReports : allReports).length > 0 ? (
+                                <div className="flex items-center gap-2 mt-1">
+                                    <select
+                                        value={selectedReportId}
+                                        onChange={(e) => setSelectedReportId(e.target.value)}
+                                        className="bg-slate-50 border border-slate-200 text-slate-900 font-bold text-sm rounded-lg px-2.5 py-1 outline-none focus:border-brand-500 cursor-pointer"
+                                    >
+                                        {(reportFilter === 'active' ? activeReports : allReports).map(r => (
+                                            <option key={r.id} value={r.id}>
+                                                {r.is_finalized ? '[Clôturé] ' : ''}{r.establishment_name} — {r.study_level === '1_AS' ? '1ère AS' : '2ème AS'} (#{r.id})
+                                            </option>
+                                        ))}
+                                    </select>
+                                    <span className="text-xs text-brand-600 font-bold">
+                                        ({allReports.find(r => String(r.id) === String(selectedReportId))?.submissions_count || 0} saisis)
+                                    </span>
+                                </div>
+                            ) : (
+                                <p className="text-xs text-slate-600 font-bold mt-1">
+                                    Aucune classe {reportFilter === 'active' ? 'active' : ''} disponible
+                                </p>
+                            )}
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={() => navigate('/class-report')}
+                        className="px-3.5 py-2 bg-slate-100 hover:bg-brand-50 hover:text-brand-600 text-slate-600 font-bold text-xs rounded-xl border border-slate-200 transition-all flex items-center gap-1.5 shrink-0"
+                    >
+                        <PlusCircle size={14} /> Gérer les Classes
                     </button>
                 </div>
 

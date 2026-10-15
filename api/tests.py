@@ -10,14 +10,14 @@ User = get_user_model()
 class SentinelleAPITests(APITestCase):
     def setUp(self):
         # Create Governorate, School, Class
-        self.gov = Governorate.objects.create(name="Tunis")
-        self.school = SchoolEstablishment.objects.create(name="Lycée Pilote", governorate=self.gov)
-        self.school_class = SchoolClass.objects.create(name="Terminal Math 1", establishment=self.school)
+        self.gov, _ = Governorate.objects.get_or_create(name="Tunis")
+        self.school, _ = SchoolEstablishment.objects.get_or_create(name="Lycée Pilote", governorate=self.gov)
+        self.school_class, _ = SchoolClass.objects.get_or_create(name="Terminal Math 1", establishment=self.school)
 
         # Create Users
-        self.user = User.objects.create_user(username='doc_tunis', email='doc@example.com', password='password123', role='USER', establishment=self.school)
-        self.admin = User.objects.create_user(username='admin_tunis', email='admin@example.com', password='password123', role='ADMIN', governorate=self.gov)
-        self.superadmin = User.objects.create_user(username='super_admin', email='super@example.com', password='password123', role='SUPERADMIN')
+        self.user = User.objects.create_user(username='doc_tunis', email='doc@example.com', password='password123', role='PRACTITIONER', establishment=self.school)
+        self.admin = User.objects.create_user(username='admin_tunis', email='admin@example.com', password='password123', role='REGIONAL_ADMIN', governorate=self.gov)
+        self.superadmin = User.objects.create_user(username='super_admin', email='super@example.com', password='password123', role='SUPER_ADMIN')
 
     def test_login_and_role_access(self):
         # Test Login
@@ -94,3 +94,116 @@ class SentinelleAPITests(APITestCase):
         self.assertIsNone(stats['global_insights']['comorbidity']['poly_3plus_pct'])
         self.assertEqual(stats['group_prevalence'], [])
         self.assertEqual(stats['top_sections'], [])
+
+    def test_practitioner_multi_establishment_class_reports(self):
+        # Practitioner can create reports for different establishments
+        gov_ariana, _ = Governorate.objects.get_or_create(name="Ariana")
+        school_b, _ = SchoolEstablishment.objects.get_or_create(name="Lycée Ariana", governorate=gov_ariana)
+        
+        self.client.force_authenticate(user=self.user)
+        
+        # Report 1 for school A (Tunis)
+        r1_payload = {
+            "governorate": self.gov.id,
+            "establishment": self.school.id,
+            "establishment_name": "Lycée Pilote Tunis",
+            "study_level": "1_AS",
+            "report_date": "2026-08-10",
+            "students_present": 25,
+            "questionnaires_collected": 25
+        }
+        res1 = self.client.post(reverse('class_report_create'), r1_payload, format='json')
+        self.assertEqual(res1.status_code, status.HTTP_201_CREATED)
+        r1_id = res1.data['id']
+        
+        # Report 2 for school B (Ariana)
+        r2_payload = {
+            "governorate": gov_ariana.id,
+            "establishment": school_b.id,
+            "establishment_name": "Lycée Ariana",
+            "study_level": "2_AS",
+            "report_date": "2026-08-11",
+            "students_present": 30,
+            "questionnaires_collected": 28
+        }
+        res2 = self.client.post(reverse('class_report_create'), r2_payload, format='json')
+        self.assertEqual(res2.status_code, status.HTTP_201_CREATED)
+        r2_id = res2.data['id']
+        
+        # Check active reports list
+        res_active = self.client.get(reverse('class_report_list') + '?is_finalized=false')
+        self.assertEqual(res_active.status_code, status.HTTP_200_OK)
+        active_ids = [r['id'] for r in res_active.data]
+        self.assertIn(r1_id, active_ids)
+        self.assertIn(r2_id, active_ids)
+        
+        # Practitioner can update (PATCH) their own report
+        res_patch = self.client.patch(reverse('class_report_detail', kwargs={'pk': r1_id}), {'students_absent': 2}, format='json')
+        self.assertEqual(res_patch.status_code, status.HTTP_200_OK)
+        self.assertEqual(res_patch.data['students_absent'], 2)
+        
+        # Finalize report 1
+        res_fin = self.client.post(reverse('class_report_finalize', kwargs={'pk': r1_id}))
+        self.assertEqual(res_fin.status_code, status.HTTP_200_OK)
+        
+        # Now only report 2 is active
+        res_active2 = self.client.get(reverse('class_report_list') + '?is_finalized=false')
+        active_ids2 = [r['id'] for r in res_active2.data]
+        self.assertNotIn(r1_id, active_ids2)
+        self.assertIn(r2_id, active_ids2)
+
+    def test_class_report_strict_user_isolation_and_superadmin_management(self):
+        # 1. Practitioner creates a class report
+        self.client.force_authenticate(user=self.user)
+        payload = {
+            "governorate": self.gov.id,
+            "establishment": self.school.id,
+            "establishment_name": "Lycée Pilote Tunis",
+            "study_level": "1_AS",
+            "report_date": "2026-08-11",
+            "students_present": 20,
+            "questionnaires_collected": 20
+        }
+        res_create = self.client.post(reverse('class_report_create'), payload, format='json')
+        self.assertEqual(res_create.status_code, status.HTTP_201_CREATED)
+        prac_report_id = res_create.data['id']
+
+        # Practitioner sees it in their own list
+        res_prac_list = self.client.get(reverse('class_report_list'))
+        self.assertEqual(res_prac_list.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res_prac_list.data), 1)
+        self.assertEqual(res_prac_list.data[0]['id'], prac_report_id)
+
+        # 2. Superadmin logs in
+        self.client.force_authenticate(user=self.superadmin)
+
+        # Superadmin default list only shows superadmin's own reports (isolated)
+        res_admin_list = self.client.get(reverse('class_report_list'))
+        self.assertEqual(res_admin_list.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res_admin_list.data), 0)
+
+        # Superadmin CAN inspect this specific user's reports in User Management
+        res_user_reports = self.client.get(reverse('class_report_list') + f'?user_id={self.user.id}')
+        self.assertEqual(res_user_reports.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(res_user_reports.data), 1)
+        self.assertEqual(res_user_reports.data[0]['id'], prac_report_id)
+
+        # Superadmin can retrieve and modify this report
+        res_detail = self.client.get(reverse('class_report_detail', kwargs={'pk': prac_report_id}))
+        self.assertEqual(res_detail.status_code, status.HTTP_200_OK)
+        self.assertEqual(res_detail.data['id'], prac_report_id)
+
+        res_patch = self.client.patch(reverse('class_report_detail', kwargs={'pk': prac_report_id}), {'students_absent': 3}, format='json')
+        self.assertEqual(res_patch.status_code, status.HTTP_200_OK)
+        self.assertEqual(res_patch.data['students_absent'], 3)
+
+        # Superadmin can finalize and reopen this report
+        res_fin = self.client.post(reverse('class_report_finalize', kwargs={'pk': prac_report_id}))
+        self.assertEqual(res_fin.status_code, status.HTTP_200_OK)
+        self.assertTrue(res_fin.data['is_finalized'])
+
+        res_reopen = self.client.post(reverse('class_report_finalize', kwargs={'pk': prac_report_id}), {'action': 'unfinalize'})
+        self.assertEqual(res_reopen.status_code, status.HTTP_200_OK)
+        self.assertFalse(res_reopen.data['is_finalized'])
+
+

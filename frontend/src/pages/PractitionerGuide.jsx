@@ -17,7 +17,12 @@ import {
     ArrowDown,
     PlusCircle,
     PlayCircle,
-    LogOut
+    LogOut,
+    Building2,
+    School,
+    Calendar,
+    Pencil,
+    Plus
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -26,9 +31,13 @@ import api from '../api';
 const PractitionerGuide = ({ user }) => {
     const navigate = useNavigate();
     const [lang, setLang] = useState('fr');
-    const role = user?.role?.toUpperCase();
+    const localUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const currentUser = user || localUser;
+    const role = currentUser?.role?.toUpperCase();
     const isOperator = role === 'OPERATOR';
-    const [activeReport, setActiveReport] = useState(null);
+    const [activeReports, setActiveReports] = useState([]);
+    const [closedReports, setClosedReports] = useState([]);
+    const [reportTab, setReportTab] = useState('active'); // 'active' | 'closed'
     const [isLoading, setIsLoading] = useState(true);
 
     const handleLogout = () => {
@@ -38,44 +47,54 @@ const PractitionerGuide = ({ user }) => {
         window.location.href = '/';
     };
 
-    const handleIgnore = async () => {
-        if (!activeReport) return;
+    const fetchReports = async () => {
+        try {
+            const [activeRes, closedRes] = await Promise.all([
+                api.get('class-report/list/?is_finalized=false'),
+                api.get('class-report/list/?is_finalized=true')
+            ]);
+            setActiveReports(Array.isArray(activeRes.data) ? activeRes.data : (activeRes.data?.results || []));
+            setClosedReports(Array.isArray(closedRes.data) ? closedRes.data : (closedRes.data?.results || []));
+        } catch (err) {
+            console.log("Error fetching reports:", err);
+            setActiveReports([]);
+            setClosedReports([]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
-        // Finalize it so it doesn't show up again
+    const handleFinalizeReport = async (reportId) => {
         if (window.confirm(lang === 'fr'
-            ? "Voulez-vous vraiment ignorer ce rapport ? Il sera clôturé et vous ne pourrez plus y lier de nouveaux formulaires automatiquement."
-            : "هل تريد حقًا تجاهل هذا التقرير؟ سيتم إغلاقه ولن تتمكن من ربط استمارات جديدة به تلقائيًا.")) {
+            ? "Voulez-vous vraiment clôturer cette session de classe ?"
+            : "هل تريد حقًا إغلاق هذه الحصة بشكل نهائي؟")) {
             try {
-                await api.post(`class-report/${activeReport.id}/finalize/`);
-                setActiveReport(null);
+                await api.post(`class-report/${reportId}/finalize/`);
+                fetchReports();
             } catch (err) {
                 console.error("Failed to finalize report", err);
-                // Fallback to just hiding it in UI
-                setActiveReport(null);
             }
         }
     };
 
+    const handleReopenReport = async (reportId) => {
+        try {
+            await api.post(`class-report/${reportId}/finalize/`, { action: 'unfinalize', is_finalized: false });
+            fetchReports();
+        } catch (err) {
+            console.error("Failed to reopen report", err);
+        }
+    };
+
     useEffect(() => {
-        const fetchActiveReport = async () => {
-            try {
-                const response = await api.get('class-report/active/');
-                console.log("Active report found:", response.data);
-                if (response.data) setActiveReport(response.data);
-            } catch (err) {
-                console.log("No active report found or error fetching:", err);
-                setActiveReport(null);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        fetchActiveReport();
+        fetchReports();
     }, []);
 
     const t = {
         fr: {
             welcome: "Guide des Procédures Administratives",
             subtitle: "Méthodologie de Collecte et Liaison des Données MedSPAD",
+            roleLabel: isOperator ? "Rôle : Opérateur" : "Rôle : Praticien",
             guideTitle: "Manuel de Procédure",
             processTitle: "Le Processus de Liaison (Tethering)",
             processSubtitle: "Comprendre comment les questionnaires sont rattachés aux classes",
@@ -229,40 +248,170 @@ const PractitionerGuide = ({ user }) => {
                 </div>
             </nav>
 
-            <main className="max-w-5xl mx-auto px-6 py-16">
-                {/* Active Session Alert (NEW) */}
+            <main className="max-w-5xl mx-auto px-6 py-12">
+                {/* Multi-School Sessions Hub (Active & Closed History) */}
                 <AnimatePresence>
-                    {activeReport && (
+                    {(activeReports.length > 0 || closedReports.length > 0) && (
                         <motion.div
                             initial={{ opacity: 0, y: -20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="mb-12 bg-blue-600 rounded-[32px] p-8 text-white shadow-2xl shadow-blue-500/20 flex flex-col md:flex-row items-center justify-between gap-6"
+                            className="mb-12 bg-gradient-to-br from-slate-900 via-slate-900 to-blue-950 rounded-[36px] p-8 text-white shadow-2xl border border-blue-500/30 relative overflow-hidden"
                         >
-                            <div className="flex items-center gap-6">
-                                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center">
-                                    <RotateCw size={32} className="animate-spin-slow" />
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-800">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 bg-blue-500/20 border border-blue-400/30 rounded-2xl flex items-center justify-center text-blue-400">
+                                        <RotateCw size={24} className={reportTab === 'active' ? "animate-spin-slow" : ""} />
+                                    </div>
+                                    <div>
+                                        <h3 className="text-xl font-black italic uppercase tracking-tight flex items-center gap-2">
+                                            {reportTab === 'active'
+                                                ? (lang === 'fr' ? 'Sessions de Classe en Cours' : 'حصص الأقسام المفتوحة')
+                                                : (lang === 'fr' ? 'Historique des Rapports Clôturés' : 'سجل الحصص المغلقة')}
+                                            <span className={`text-xs px-2.5 py-0.5 rounded-full font-bold ${reportTab === 'active' ? 'bg-blue-500/30 text-blue-300' : 'bg-amber-500/30 text-amber-300'}`}>
+                                                {reportTab === 'active' ? activeReports.length : closedReports.length}
+                                            </span>
+                                        </h3>
+                                        <p className="text-slate-400 text-xs font-medium mt-0.5">
+                                            {reportTab === 'active'
+                                                ? (lang === 'fr' ? 'Vos enquêtes terrain actives sont prêtes pour la saisie ou la reprise.' : 'حصص الاستبيان الميدانية النشطة جاهزة للإدخال أو الاستئناف.')
+                                                : (lang === 'fr' ? 'Consultez les questionnaires saisis ou réouvrez une session pour modification.' : 'استعرض الاستمارات المسجلة أو أعد فتح الحصة للتعديل.')}
+                                        </p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <h3 className="text-xl font-black italic uppercase tracking-tight">{currentT.resumeCard.title}</h3>
-                                    <p className="text-blue-100 text-sm font-medium">
-                                        {currentT.resumeCard.msg} <strong className="text-white font-black">{activeReport.establishment_name} ({activeReport.study_level})</strong>
-                                    </p>
+                                <div className="flex items-center gap-2 shrink-0">
+                                    {/* Tab Toggle Buttons */}
+                                    <div className="flex bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+                                        <button
+                                            onClick={() => setReportTab('active')}
+                                            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${reportTab === 'active' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                                        >
+                                            <PlayCircle size={13} />
+                                            {lang === 'fr' ? 'En cours' : 'جارية'} ({activeReports.length})
+                                        </button>
+                                        <button
+                                            onClick={() => setReportTab('closed')}
+                                            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${reportTab === 'closed' ? 'bg-amber-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-200'}`}
+                                        >
+                                            <CheckCircle2 size={13} />
+                                            {lang === 'fr' ? 'Clôturés' : 'مغلقة'} ({closedReports.length})
+                                        </button>
+                                    </div>
+
+                                    <button
+                                        onClick={() => navigate('/class-report')}
+                                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-lg shadow-blue-500/20 transition-all shrink-0"
+                                    >
+                                        <Plus size={15} />
+                                        {lang === 'fr' ? 'Nouveau' : 'جديد'}
+                                    </button>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-4 w-full md:w-auto">
-                                <button
-                                    onClick={() => navigate(`/session/${activeReport.id}/collect`)}
-                                    className="flex-1 md:flex-none px-8 py-4 bg-white text-blue-600 rounded-2xl font-black uppercase text-xs tracking-widest hover:bg-blue-50 transition-colors shadow-lg"
-                                >
-                                    {currentT.resumeCard.btn}
-                                </button>
-                                <button
-                                    onClick={handleIgnore}
-                                    className="px-4 py-4 bg-white/10 text-white rounded-2xl font-bold uppercase text-[10px] tracking-widest hover:bg-white/20 transition-colors"
-                                >
-                                    {currentT.resumeCard.ignore}
-                                </button>
-                            </div>
+
+                            {/* Reports Grid */}
+                            {((reportTab === 'active' ? activeReports : closedReports).length === 0) ? (
+                                <div className="py-12 text-center text-slate-500 text-xs font-bold uppercase tracking-wider">
+                                    {reportTab === 'active'
+                                        ? (lang === 'fr' ? 'Aucune session active en cours' : 'لا توجد حصص نشطة حالياً')
+                                        : (lang === 'fr' ? 'Aucun rapport clôturé dans l’historique' : 'لا توجد حصص مغلقة في السجل')}
+                                </div>
+                            ) : (
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                    {(reportTab === 'active' ? activeReports : closedReports).map(rep => {
+                                        const collected = rep.submissions_count || 0;
+                                        const rawTarget = Number(rep.questionnaires_collected);
+                                        const rawPres = Number(rep.students_present) || 0;
+                                        const rawRef = Number(rep.students_refused) || 0;
+                                        const rawNoA = Number(rep.students_without_authorization) || 0;
+                                        const target = (rawTarget > 0) ? rawTarget : Math.max(0, rawPres - rawRef - rawNoA);
+                                        const isClosed = rep.is_finalized;
+
+                                        return (
+                                            <div
+                                                key={rep.id}
+                                                className={`p-5 rounded-2xl border transition-all flex flex-col justify-between ${isClosed ? 'bg-slate-950/60 border-slate-800/80 hover:border-amber-500/50' : 'bg-slate-950/80 border-slate-800 hover:border-blue-500/50'}`}
+                                            >
+                                                <div>
+                                                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                                                        <h4 className="font-extrabold text-sm text-white line-clamp-1 flex items-center gap-1.5" title={rep.establishment_name}>
+                                                            <Building2 size={15} className={isClosed ? "text-amber-400 shrink-0" : "text-blue-400 shrink-0"} />
+                                                            {rep.establishment_name || 'Lycée'}
+                                                        </h4>
+                                                        <span className={`text-[10px] font-black uppercase px-2 py-0.5 rounded-md shrink-0 ${isClosed ? 'bg-amber-950/60 text-amber-300 border border-amber-800/40' : 'bg-slate-800 text-blue-300'}`}>
+                                                            #{rep.id}
+                                                        </span>
+                                                    </div>
+
+                                                    <div className="flex items-center gap-2 text-[11px] text-slate-400 font-medium mb-3">
+                                                        <span>{rep.study_level === '1_AS' ? '1ère AS' : '2ème AS'}</span>
+                                                        <span>•</span>
+                                                        <span>{rep.report_date}</span>
+                                                        {rep.governorate_name && (
+                                                            <>
+                                                                <span>•</span>
+                                                                <span className="text-slate-300 font-bold">{rep.governorate_name}</span>
+                                                            </>
+                                                        )}
+                                                        {isClosed && (
+                                                            <span className="ml-auto text-[9px] font-bold text-amber-400 bg-amber-950/40 px-2 py-0.5 rounded">
+                                                                {lang === 'fr' ? 'Clôturé' : 'مغلق'}
+                                                            </span>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="bg-slate-900 rounded-xl p-2.5 border border-slate-800/80 mb-3">
+                                                        <div className="flex justify-between text-[10px] font-black uppercase tracking-wider mb-1">
+                                                            <span className="text-slate-400">{lang === 'fr' ? 'Questionnaires saisis' : 'الاستمارات المسجلة'}</span>
+                                                            <span className={isClosed ? "text-amber-400 font-mono font-bold" : "text-blue-400 font-mono font-bold"}>
+                                                                {collected} {target > 0 ? `/ ${target}` : ''}
+                                                            </span>
+                                                        </div>
+                                                        <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                                            <div
+                                                                className={`h-full ${isClosed ? 'bg-gradient-to-r from-amber-500 to-emerald-400' : 'bg-gradient-to-r from-blue-500 to-emerald-400'}`}
+                                                                style={{ width: `${target > 0 ? Math.min(100, (collected / target) * 100) : (collected > 0 ? 100 : 0)}%` }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-center gap-2 pt-2 border-t border-slate-800/80">
+                                                    <button
+                                                        onClick={() => navigate(`/session/${rep.id}/collect`)}
+                                                        className={`flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all text-white ${isClosed ? 'bg-slate-800 hover:bg-slate-700' : 'bg-blue-600 hover:bg-blue-500'}`}
+                                                    >
+                                                        <FileText size={13} />
+                                                        {isClosed ? (lang === 'fr' ? 'Inspecter' : 'معاينة') : (lang === 'fr' ? 'Saisie' : 'إدخال')}
+                                                    </button>
+                                                    <button
+                                                        onClick={() => navigate(`/class-report?edit=${rep.id}`)}
+                                                        className="p-2 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-xl text-xs font-bold transition-all border border-slate-700"
+                                                        title={lang === 'fr' ? 'Modifier' : 'تعديل'}
+                                                    >
+                                                        <Pencil size={13} />
+                                                    </button>
+                                                    {isClosed ? (
+                                                        <button
+                                                            onClick={() => handleReopenReport(rep.id)}
+                                                            className="p-2 bg-slate-800 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded-xl text-xs font-bold transition-all border border-slate-700"
+                                                            title={lang === 'fr' ? 'Réouvrir la session' : 'إعادة فتح الحصة'}
+                                                        >
+                                                            <RotateCw size={13} />
+                                                        </button>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => handleFinalizeReport(rep.id)}
+                                                            className="p-2 bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 rounded-xl text-xs font-bold transition-all border border-slate-700"
+                                                            title={lang === 'fr' ? 'Clôturer' : 'إغلاق'}
+                                                        >
+                                                            <ShieldCheck size={13} />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -365,25 +514,13 @@ const PractitionerGuide = ({ user }) => {
 
                 {/* Final Call to Action */}
                 <div className="flex flex-col md:flex-row items-center justify-center gap-6 border-t border-slate-200 pt-16">
-                    {!activeReport && (
-                        <button
-                            onClick={() => navigate('/class-report')}
-                            className="w-full md:w-auto px-10 py-5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-black uppercase text-sm tracking-[2px] flex items-center justify-center gap-4 transition-all hover:scale-[1.02] active:scale-95 shadow-xl"
-                        >
-                            <PlusCircle size={20} />
-                            {currentT.actions.start}
-                        </button>
-                    )}
-
-                    {activeReport && (
-                        <button
-                            onClick={() => navigate(`/session/${activeReport.id}/collect`)}
-                            className="w-full md:w-auto px-10 py-5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-black uppercase text-sm tracking-[2px] flex items-center justify-center gap-4 transition-all hover:scale-[1.02] active:scale-95 shadow-xl"
-                        >
-                            <PlayCircle size={20} />
-                            {currentT.resumeCard.btn}
-                        </button>
-                    )}
+                    <button
+                        onClick={() => navigate('/class-report')}
+                        className="w-full md:w-auto px-10 py-5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-black uppercase text-sm tracking-[2px] flex items-center justify-center gap-4 transition-all hover:scale-[1.02] active:scale-95 shadow-xl"
+                    >
+                        <PlusCircle size={20} />
+                        {currentT.actions.start}
+                    </button>
 
                     {!isOperator && (
                         <button

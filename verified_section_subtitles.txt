@@ -1,0 +1,86 @@
+Total section blocks found: 21
+
+SECTION_A:
+   FR: Les premières questions concernent des informations générales sur votre profil et votre vie quotidienne.
+   AR: الأسئلة الأولى تتعلق بمعلومات عامة عن ملفك الشخصي وحياتك اليومية.
+--------------------------------------------------
+SECTION_B:
+   FR: Questions sur votre environnement familial, le niveau d
+   AR: أسئلة حول بيئتك العائلية، المستوى التعليمي لوالديك ووضعك الاجتماعي والاقتصادي.
+--------------------------------------------------
+SECTION_C:
+   FR: Questions concernant votre expérience personnelle et la fréquence d
+   AR: أسئلة تتعلق بتجربتك الشخصية ومدى تكرار استخدام سجائر التبغ.
+--------------------------------------------------
+SECTION_D:
+   FR: Questions sur l
+   AR: أسئلة حول استخدام وتكرار استهلاك السجائر الإلكترونية (الفاب).
+--------------------------------------------------
+SECTION_E:
+   FR: Questions portant sur l
+   AR: أسئلة تتعلق باستخدام الشيشة (النرجيلة) خلال حياتك والـ 12 شهراً الماضية.
+--------------------------------------------------
+SECTION_G:
+   FR: Questions sur la consommation de boissons alcoolisées et la fréquence d
+   AR: أسئلة حول استهلاك المشروبات الكحولية وتكرار تناول الكحول.
+--------------------------------------------------
+SECTION_H:
+   FR: Questions concernant l
+   AR: أسئلة تتعلق باستخدام المهدئات أو المنومات التي تؤخذ بدون وصفة طبية.
+--------------------------------------------------
+SECTION_I:
+   FR: Questions sur la consommation de cannabis (zatla, résine, herbe) et l
+   AR: أسئلة حول استهلاك القنب الهندي (زطلة، ماريجوانا) وتقييم الاستخدام.
+--------------------------------------------------
+SECTION_J:
+   FR: Questions relatives à l
+   AR: أسئلة تتعلق بتجربة أو إمكانية الوصول إلى المواد من نوع الكوكايين.
+--------------------------------------------------
+SECTION_K:
+   FR: Questions sur l
+   AR: أسئلة حول تجربة واستخدام الإكستاسي (MDMA).
+--------------------------------------------------
+SECTION_L:
+   FR: Questions portant sur l
+   AR: أسئلة تتعلق بتجربة واستخدام الهيروين.
+--------------------------------------------------
+SECTION_M:
+   FR: Questions sur l
+   AR: أسئلة حول استنشاق الغراء أو المذيبات أو المنتجات الأخرى المستنشقة.
+--------------------------------------------------
+SECTION_N:
+   FR: Questions sur la consommation d
+   AR: أسئلة حول استهلاك الأدوية الأخرى أو المواد النفسية لغير الأغراض الطبية.
+--------------------------------------------------
+SECTION_P:
+   FR: Questions sur l
+   AR: أسئلة حول تجربة المواد المؤثرة على العقل الجديدة الكيميائية أو الطبيعية.
+--------------------------------------------------
+SECTION_Q:
+   FR: Évaluation de votre perception des risques liés à la consommation de substances et recherche d
+   AR: تقييم تصورك للمخاطر المرتبطة باستهلاك المواد وطلب المساعدة.
+--------------------------------------------------
+SECTION_R:
+   FR: Questions sur vos habitudes d
+   AR: أسئلة حول عاداتك في استخدام الإنترنت، شبكات التواصل الاجتماعي والشاشات.
+--------------------------------------------------
+SECTION_S:
+   FR: Questions sur la pratique des jeux vidéo et le temps consacré au jeu.
+   AR: أسئلة حول ممارسة ألعاب الفيديو والوقت المخصص للعب.
+--------------------------------------------------
+SECTION_T:
+   FR: Questions sur la pratique des jeux d
+   AR: أسئلة حول ممارسة ألعاب القمار (المراهنات، اليانصيب، البوكر) والمشاكل المحتملة.
+--------------------------------------------------
+SECTION_U:
+   FR: Questions sur la sécurité au sein de l
+   AR: أسئلة حول السلامة داخل المؤسسة وحالات العنف أو المشاجرات.
+--------------------------------------------------
+SECTION_V:
+   FR: Évaluation de votre bien-être personnel, de votre état émotionnel et de votre santé globale.
+   AR: تقييم رفاهيتك الشخصية، حالتك العاطفية وصحتك العامة.
+--------------------------------------------------
+SECTION_Z:
+   FR: Questions finales garantissant l
+   AR: أسئلة نهائية تضمن السرية وتسمح بالتحقق من صدق إجاباتك.
+--------------------------------------------------

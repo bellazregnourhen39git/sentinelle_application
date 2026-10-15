@@ -1,0 +1,309 @@
+TOTAL GRID QUESTIONS WITH CODE AND ITEMS: 47
+
+GRID CODE: C.A03
+   key: 'a' | label: 'Activité sportive de tout type' => Code: (C.A03a)
+   key: 'b' | label: 'Lire des livres pour le plaisir' => Code: (C.A03b)
+   key: 'c' | label: 'Sortir le soir (bar, fête...)' => Code: (C.A03c)
+   key: 'd' | label: 'Autres loisirs (musique, art...)' => Code: (C.A03d)
+   key: 'e' | label: 'Se retrouver entre amis (rue, parc...)' => Code: (C.A03e)
+   key: 'f' | label: 'Utiliser Internet pour s’amuser' => Code: (C.A03f)
+   key: 'g' | label: 'Regarder la télévision' => Code: (C.A03g)
+
+GRID CODE: C.A04
+   key: 'a' | label: 'Parce que vous étiez malade' => Code: (C.A04a)
+   key: 'b' | label: 'Parce que vous n’aviez pas envie' => Code: (C.A04b)
+   key: 'c' | label: 'Problèmes avec l’administration' => Code: (C.A04c)
+   key: 'd' | label: 'Problèmes avec des ami(e)s' => Code: (C.A04d)
+   key: 'e' | label: 'Parce que vous avez été renvoyé' => Code: (C.A04e)
+   key: 'f' | label: 'Pour d’autres raisons' => Code: (C.A04f)
+
+GRID CODE: C.A09
+   key: 'a' | label: 'Votre mère' => Code: (C.A09a)
+   key: 'b' | label: 'Votre père' => Code: (C.A09b)
+   key: 'c' | label: 'Votre belle-mère' => Code: (C.A09c)
+   key: 'd' | label: 'Votre beau-père' => Code: (C.A09d)
+   key: 'e' | label: 'Votre fratrie' => Code: (C.A09e)
+   key: 'f' | label: 'Vos ami(e)s' => Code: (C.A09f)
+   key: 'g' | label: 'Vos camarades de classe' => Code: (C.A09g)
+   key: 'h' | label: 'Vos enseignants' => Code: (C.A09h)
+   key: 'i' | label: 'L’administration du lycée' => Code: (C.A09i)
+
+GRID CODE: C.C02
+   key: 'a' | label: 'Père' => Code: (C.C02a)
+   key: 'b' | label: 'Mère' => Code: (C.C02b)
+   key: 'c' | label: 'Fratrie' => Code: (C.C02c)
+   key: 'd' | label: 'Meilleur(e) ami(e)' => Code: (C.C02d)
+   key: 'e' | label: 'Autres ami(e)s' => Code: (C.C02e)
+
+GRID CODE: C.C03
+   key: 'lifetime_freq' | label: 'Au cours de votre vie' => Code: (C.C03a)
+   key: 'months_12_freq' | label: 'Au cours des 12 derniers mois' => Code: (C.C03b)
+
+GRID CODE: C.C05
+   key: 'age_first_use' | label: 'Fumé votre première cigarette' => Code: (C.C05a)
+   key: 'age_daily_use' | label: 'Fumé quotidiennement' => Code: (C.C05b)
+
+GRID CODE: C.D02
+   key: 'a' | label: 'Père' => Code: (C.D02a)
+   key: 'b' | label: 'Mère' => Code: (C.D02b)
+   key: 'c' | label: 'Fratrie' => Code: (C.D02c)
+   key: 'd' | label: 'Meilleur(e) ami(e)' => Code: (C.D02d)
+   key: 'e' | label: 'Autres ami(e)s' => Code: (C.D02e)
+
+GRID CODE: C.D03
+   key: 'lifetime_freq' | label: 'Au cours de votre vie' => Code: (C.D03a)
+   key: 'months_12_freq' | label: 'Au cours des 12 derniers mois' => Code: (C.D03b)
+
+GRID CODE: C.D05
+   key: 'age_first_use' | label: 'Utilisé pour la première fois une cigarette électronique' => Code: (C.D05a)
+   key: 'age_daily_use' | label: 'Utilisé quotidiennement' => Code: (C.D05b)
+
+GRID CODE: C.E02
+   key: 'a' | label: 'Père' => Code: (C.E02a)
+   key: 'b' | label: 'Mère' => Code: (C.E02b)
+   key: 'c' | label: 'Fratrie' => Code: (C.E02c)
+   key: 'd' | label: 'Meilleur(e) ami(e)' => Code: (C.E02d)
+   key: 'e' | label: 'Autres ami(e)s' => Code: (C.E02e)
+
+GRID CODE: C.E03
+   key: 'lifetime_freq' | label: 'Au cours de votre vie' => Code: (C.E03a)
+   key: 'months_12_freq' | label: 'Au cours des 12 derniers mois' => Code: (C.E03b)
+
+GRID CODE: C.E05
+   key: 'age_first_use' | label: 'Fumé pour la première fois le narguilé' => Code: (C.E05a)
+   key: 'age_daily_use' | label: 'Fumé quotidiennement le narguilé' => Code: (C.E05b)
+
+GRID CODE: C.G01
+   key: 'a' | label: 'La bière' => Code: (C.G01a)
+   key: 'b' | label: 'Les cocktails' => Code: (C.G01b)
+   key: 'c' | label: 'Les vins' => Code: (C.G01c)
+   key: 'd' | label: 'Les eaux-de-vie (Whisky, Vodka...)' => Code: (C.G01d)
+   key: 'e' | label: 'Autres boissons alcoolisées' => Code: (C.G01e)
+
+GRID CODE: C.G02
+   key: 'a' | label: 'Père' => Code: (C.G02a)
+   key: 'b' | label: 'Mère' => Code: (C.G02b)
+   key: 'c' | label: 'Fratrie' => Code: (C.G02c)
+   key: 'd' | label: 'Meilleur(e) ami(e)' => Code: (C.G02d)
+   key: 'e' | label: 'Autres ami(e)s' => Code: (C.G02e)
+
+GRID CODE: C.G03
+   key: 'lifetime_freq' | label: 'Au cours de votre vie' => Code: (C.G03a)
+   key: 'months_12_freq' | label: 'Au cours des 12 derniers mois' => Code: (C.G03b)
+
+GRID CODE: C.G04
+   key: 'a' | label: 'Bière' => Code: (C.G04a)
+   key: 'b' | label: 'Cocktails' => Code: (C.G04b)
+   key: 'c' | label: 'Vins' => Code: (C.G04c)
+   key: 'd' | label: 'Eaux-de-vie (Whisky, Vodka...)' => Code: (C.G04d)
+
+GRID CODE: C.G06
+   key: 'intoxication_lifetime' | label: 'Au cours de votre vie' => Code: (C.G06a)
+   key: 'intoxication_12months' | label: 'Au cours des 12 derniers mois' => Code: (C.G06b)
+   key: 'intoxication_30days' | label: 'Au cours des 30 derniers jours' => Code: (C.G06c)
+
+GRID CODE: C.G07
+   key: 'age_first_drink' | label: 'Boire de l’alcool' => Code: (C.G07a)
+   key: 'age_first_intoxication' | label: 'Être intoxiqué (soûl)' => Code: (C.G07b)
+
+GRID CODE: C.H02
+   key: 'a' | label: 'Père' => Code: (C.H02a)
+   key: 'b' | label: 'Mère' => Code: (C.H02b)
+   key: 'c' | label: 'Fratrie' => Code: (C.H02c)
+   key: 'd' | label: 'Meilleur(e) ami(e)' => Code: (C.H02d)
+   key: 'e' | label: 'Autres ami(e)s' => Code: (C.H02e)
+
+GRID CODE: C.H03
+   key: 'lifetime_freq' | label: 'Au cours de votre vie' => Code: (C.H03a)
+   key: 'months_12_freq' | label: 'Au cours des 12 derniers mois' => Code: (C.H03b)
+   key: 'days_30_freq' | label: 'Au cours des 30 derniers jours' => Code: (C.H03c)
+
+GRID CODE: C.I02
+   key: 'a' | label: 'Père' => Code: (C.I02a)
+   key: 'b' | label: 'Mère' => Code: (C.I02b)
+   key: 'c' | label: 'Fratrie' => Code: (C.I02c)
+   key: 'd' | label: 'Meilleur(e) ami(e)' => Code: (C.I02d)
+   key: 'e' | label: 'Autres ami(e)s' => Code: (C.I02e)
+
+GRID CODE: C.I04
+   key: 'lifetime_freq' | label: 'Au cours de votre vie' => Code: (C.I04a)
+   key: 'months_12_freq' | label: 'Au cours des 12 derniers mois' => Code: (C.I04b)
+   key: 'days_30_freq' | label: 'Au cours des 30 DERNIERS JOURS' => Code: (C.I04c)
+
+GRID CODE: C.J02
+   key: 'a' | label: 'Père' => Code: (C.J02a)
+   key: 'b' | label: 'Mère' => Code: (C.J02b)
+   key: 'c' | label: 'Fratrie' => Code: (C.J02c)
+   key: 'd' | label: 'Meilleur(e) ami(e)' => Code: (C.J02d)
+   key: 'e' | label: 'Autres ami(e)s' => Code: (C.J02e)
+
+GRID CODE: C.J03
+   key: 'lifetime_freq' | label: 'Au cours de votre vie' => Code: (C.J03a)
+   key: 'months_12_freq' | label: 'Au cours des 12 derniers mois' => Code: (C.J03b)
+   key: 'days_30_freq' | label: 'Au cours des 30 derniers jours' => Code: (C.J03c)
+
+GRID CODE: C.K02
+   key: 'a' | label: 'Père' => Code: (C.K02a)
+   key: 'b' | label: 'Mère' => Code: (C.K02b)
+   key: 'c' | label: 'Fratrie' => Code: (C.K02c)
+   key: 'd' | label: 'Meilleur(e) ami(e)' => Code: (C.K02d)
+   key: 'e' | label: 'Autres ami(e)s' => Code: (C.K02e)
+
+GRID CODE: C.K03
+   key: 'lifetime_freq' | label: 'Au cours de votre vie' => Code: (C.K03a)
+   key: 'months_12_freq' | label: 'Au cours des 12 derniers mois' => Code: (C.K03b)
+   key: 'days_30_freq' | label: 'Au cours des 30 derniers jours' => Code: (C.K03c)
+
+GRID CODE: C.L02
+   key: 'a' | label: 'Père' => Code: (C.L02a)
+   key: 'b' | label: 'Mère' => Code: (C.L02b)
+   key: 'c' | label: 'Fratrie' => Code: (C.L02c)
+   key: 'd' | label: 'Meilleur(e) ami(e)' => Code: (C.L02d)
+   key: 'e' | label: 'Autres ami(e)s' => Code: (C.L02e)
+
+GRID CODE: C.L03
+   key: 'lifetime_freq' | label: 'Au cours de votre vie' => Code: (C.L03a)
+   key: 'months_12_freq' | label: 'Au cours des 12 derniers mois' => Code: (C.L03b)
+   key: 'days_30_freq' | label: 'Au cours des 30 derniers jours' => Code: (C.L03c)
+
+GRID CODE: C.M02
+   key: 'a' | label: 'Père' => Code: (C.M02a)
+   key: 'b' | label: 'Mère' => Code: (C.M02b)
+   key: 'c' | label: 'Fratrie' => Code: (C.M02c)
+   key: 'd' | label: 'Meilleur(e) ami(e)' => Code: (C.M02d)
+   key: 'e' | label: 'Autres ami(e)s' => Code: (C.M02e)
+
+GRID CODE: C.M03
+   key: 'lifetime_freq' | label: 'Au cours de votre vie' => Code: (C.M03a)
+   key: 'months_12_freq' | label: 'Au cours des 12 derniers mois' => Code: (C.M03b)
+   key: 'days_30_freq' | label: 'Au cours des 30 derniers jours' => Code: (C.M03c)
+
+GRID CODE: C.N01
+   key: 'a' | label: 'Amphétamines' => Code: (C.N01a)
+   key: 'd' | label: 'Dipaje' => Code: (C.N01b)
+   key: 'f' | label: 'Hallucinogènes (LSD, champignons...)' => Code: (C.N01c)
+   key: 'g' | label: 'Méthamphétamines' => Code: (C.N01d)
+   key: 'h' | label: 'Antalgiques (Tramadol, Codéine...)' => Code: (C.N01e)
+   key: 'j' | label: 'Subutex' => Code: (C.N01f)
+   key: 'k' | label: 'Speed' => Code: (C.N01g)
+
+GRID CODE: C.N02
+   key: 'a' | label: 'Amphétamines' => Code: (C.N02a)
+   key: 'd' | label: 'Dipaje' => Code: (C.N02b)
+   key: 'f' | label: 'Hallucinogènes' => Code: (C.N02c)
+   key: 'g' | label: 'Méthamphétamines' => Code: (C.N02d)
+   key: 'h' | label: 'Antalgiques' => Code: (C.N02e)
+   key: 'j' | label: 'Subutex' => Code: (C.N02f)
+   key: 'k' | label: 'Speed' => Code: (C.N02g)
+
+GRID CODE: C.N03
+   key: 'a' | label: 'Amphétamines' => Code: (C.N03a)
+   key: 'd' | label: 'Dipaje' => Code: (C.N03b)
+   key: 'f' | label: 'Hallucinogènes' => Code: (C.N03c)
+   key: 'g' | label: 'Méthamphétamines' => Code: (C.N03d)
+   key: 'h' | label: 'Antalgiques' => Code: (C.N03e)
+   key: 'j' | label: 'Subutex' => Code: (C.N03f)
+   key: 'k' | label: 'Speed' => Code: (C.N03g)
+
+GRID CODE: C.N04
+   key: 'a' | label: 'Amphétamines' => Code: (C.N04a)
+   key: 'd' | label: 'Dipaje' => Code: (C.N04b)
+   key: 'f' | label: 'Hallucinogènes' => Code: (C.N04c)
+   key: 'g' | label: 'Méthamphétamines' => Code: (C.N04d)
+   key: 'h' | label: 'Antalgiques' => Code: (C.N04e)
+   key: 'j' | label: 'Subutex' => Code: (C.N04f)
+   key: 'k' | label: 'Speed' => Code: (C.N04g)
+
+GRID CODE: C.P01
+   key: 'lifetime_freq' | label: 'Au cours de votre vie' => Code: (C.P01a)
+   key: 'months_12_freq' | label: 'Au cours des 12 derniers mois' => Code: (C.P01b)
+
+GRID CODE: C.P03
+   key: 'cannabinoids' | label: 'Cannabinoïdes synthétiques' => Code: (C.P03a)
+   key: 'cathinones' | label: 'Cathinones synthétiques' => Code: (C.P03b)
+
+GRID CODE: C.Q01
+   key: 'a' | label: 'Fument des cigarettes OCCASIONNELLEMENT' => Code: (C.Q01a)
+   key: 'b' | label: 'Fument un paquet de cigarettes ou plus par jour REGULIEREMENT' => Code: (C.Q01b)
+   key: 'c' | label: 'Fument les cigarettes électroniques OCCASIONNELLEMENT' => Code: (C.Q01c)
+   key: 'd' | label: 'Fument les cigarettes électroniques REGULIEREMENT' => Code: (C.Q01d)
+   key: 'e' | label: 'Fument le narguilé OCCASIONNELLEMENT' => Code: (C.Q01e)
+   key: 'f' | label: 'Fument le narguilé REGULIEREMENT' => Code: (C.Q01f)
+   key: 'i' | label: 'Consomment les boissons alcoolisées OCCASIONNELLEMENT' => Code: (C.Q01g)
+   key: 'j' | label: 'Consomment de l’alcool presque tous les jours (1 ou 2 verres)' => Code: (C.Q01h)
+   key: 'k' | label: 'Consomment 3 verres ou plus de boissons alcoolisées presque tous les jours' => Code: (C.Q01i)
+   key: 'l' | label: 'Consomment 5 verres ou plus à la même occasion presque chaque weekend' => Code: (C.Q01j)
+
+GRID CODE: C.Q02
+   key: 'q2a' | label: 'Consomment des tranquillisants sans prescription OCCASIONNELLEMENT' => Code: (C.Q02a)
+   key: 'q2b' | label: 'Consomment des tranquillisants sans prescription REGULIEREMENT' => Code: (C.Q02b)
+   key: 'q2c' | label: 'Consomment du cannabis OCCASIONNELLEMENT' => Code: (C.Q02c)
+   key: 'q2d' | label: 'Consomment du cannabis REGULIEREMENT' => Code: (C.Q02d)
+   key: 'q2e' | label: 'Consomment de la cocaïne OCCASIONNELLEMENT' => Code: (C.Q02e)
+   key: 'q2f' | label: 'Consomment de l’Ecstasy OCCASIONNELLEMENT' => Code: (C.Q02f)
+   key: 'q2g' | label: 'Consomment de l’héroïne OCCASIONNELLEMENT' => Code: (C.Q02g)
+   key: 'q2h' | label: 'Consomment des inhalants narcotiques OCCASIONNELLEMENT' => Code: (C.Q02h)
+   key: 'q2i' | label: 'Consomment des amphétamines OCCASIONNELLEMENT' => Code: (C.Q02i)
+   key: 'q2m' | label: 'Consomment Subutex OCCASIONNELLEMENT' => Code: (C.Q02j)
+   key: 'q2k' | label: 'Consomment des cannabinoïdes synthétiques OCCASIONNELLEMENT' => Code: (C.Q02k)
+
+GRID CODE: C.Q03
+   key: 'a' | label: 'Membre(s) de la famille' => Code: (C.Q03a)
+   key: 'b' | label: 'Ami(e)s' => Code: (C.Q03b)
+   key: 'c' | label: 'Enseignants ou autres responsables du lycée' => Code: (C.Q03c)
+   key: 'd' | label: 'Médecin, psychologue...' => Code: (C.Q03d)
+   key: 'e' | label: 'Une personne de religion' => Code: (C.Q03e)
+   key: 'f' | label: 'Centres de traitement de la toxicomanie' => Code: (C.Q03f)
+   key: 'g' | label: 'Associations (ONG)' => Code: (C.Q03g)
+   key: 'h' | label: 'Autre' => Code: (C.Q03h)
+
+GRID CODE: C.R01
+   key: 'a' | label: 'Les jours de cours' => Code: (C.R01a)
+   key: 'b' | label: 'Le weekend' => Code: (C.R01b)
+
+GRID CODE: C.R02
+   key: 'a' | label: 'Vous sentiez-vous très concerné par les réseaux sociaux ?' => Code: (C.R02a)
+   key: 'b' | label: 'Avez-vous négligé d’autres activités / hobbies ?' => Code: (C.R02b)
+   key: 'c' | label: 'Mauvaise humeur si vous ne pouviez pas les utiliser ?' => Code: (C.R02c)
+
+GRID CODE: C.S03
+   key: 'a' | label: 'Es-tu passionné par les jeux (penses-tu souvent à tes activités de jeux même quand tu n’y joues pas) ?' => Code: (C.S03a)
+   key: 'b' | label: 'As-tu négligé d’autres activités/loisirs (école, devoirs, sports...) ?' => Code: (C.S03b)
+
+GRID CODE: C.T06
+   key: 'a' | label: 'Êtes-vous retourné un autre jour pour essayer de gagner l’argent que vous avez perdu ?' => Code: (C.T06a)
+   key: 'b' | label: 'Avez-vous dit aux autres que vous gagniez de l’argent, alors qu’en réalité, vous perdiez ?' => Code: (C.T06b)
+   key: 'c' | label: 'Jouer vous a-t-il causé des problèmes (disputes famille/amis, lycée) ?' => Code: (C.T06c)
+   key: 'd' | label: 'Avez-vous joué plus que vous ne l’aviez prévu au début ?' => Code: (C.T06d)
+   key: 'e' | label: 'Quelqu’un vous a-t-il critiqué ou dit que vous étiez accro ?' => Code: (C.T06e)
+   key: 'f' | label: 'Avez-vous déjà senti mal à propos de l’argent que vous pariez ?' => Code: (C.T06f)
+   key: 'g' | label: 'Avez-vous déjà eu envie d’arrêter de jouer sans y parvenir ?' => Code: (C.T06g)
+   key: 'h' | label: 'Avez-vous caché des preuves de vos jeux (tickets, argent gagné) ?' => Code: (C.T06h)
+   key: 'i' | label: 'Avez-vous eu des conflits financiers avec votre famille/amis ?' => Code: (C.T06i)
+   key: 'j' | label: 'Avez-vous emprunté de l’argent pour parier sans le rendre ?' => Code: (C.T06j)
+   key: 'k' | label: 'Avez-vous déjà manqué l’école en raison des jeux d’argent ?' => Code: (C.T06k)
+   key: 'l' | label: 'Avez-vous emprunté ou volé de l’argent pour parier ?' => Code: (C.T06l)
+
+GRID CODE: C.V01
+   key: 'a' | label: 'Avoir le sentiment que vous ne pouviez pas contrôler les choses importantes de votre vie ?' => Code: (C.V01a)
+   key: 'b' | label: 'Vous être senti confiant dans votre capacité à gérer vos problèmes personnels ?' => Code: (C.V01b)
+   key: 'c' | label: 'Avoir senti que les choses allaient dans votre sens ?' => Code: (C.V01c)
+   key: 'd' | label: 'Senti que les difficultés s\' => Code: (C.V01d)
+
+GRID CODE: C.V02
+   key: 'a' | label: 'J' => Code: (C.V02a)
+   key: 'b' | label: 'Dans l' => Code: (C.V02b)
+   key: 'c' | label: 'Je sens que je n' => Code: (C.V02c)
+   key: 'd' | label: 'Je me sens certainement inutile parfois' => Code: (C.V02d)
+   key: 'e' | label: 'Je sens que je suis une personne de valeur, au moins égale à n' => Code: (C.V02e)
+
+GRID CODE: C.V03
+   key: 'a' | label: 'Se sentir si triste ou sans espoir que vous avez arrêté vos activités habituelles ?' => Code: (C.V03a)
+   key: 'b' | label: 'Manquer d' => Code: (C.V03b)
+   key: 'c' | label: 'Être incapable de dormir à cause de vos soucis ?' => Code: (C.V03c)
+   key: 'd' | label: 'Avoir sérieusement pensé à vous blesser ou à vous faire du mal ?' => Code: (C.V03d)
+   key: 'e' | label: 'Avoir sérieusement tenté de vous suicider ?' => Code: (C.V03e)
+
+GRID CODE: C.V04
+   key: 'a' | label: 'Avez-vous ressenti le besoin de parler à un professionnel de vos problèmes psychologiques ?' => Code: (C.V04a)
+   key: 'b' | label: 'Avez-vous été hospitalisé dans un service psychiatrique ?' => Code: (C.V04b)

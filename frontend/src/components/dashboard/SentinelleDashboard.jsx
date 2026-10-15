@@ -2,9 +2,10 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 void motion;
 import {
-    Activity, Zap, ArrowRight, ArrowLeft, Info, AlertTriangle, ShieldCheck,
+    Activity, Zap, ArrowRight, ArrowLeft, Info, AlertTriangle, ShieldCheck, RotateCw,
     Layers, Search, LogOut, User, Smartphone, Scan, Bell, CheckCircle, XCircle,
-    Mail, Phone, MapPin, FileText, QrCode, Users, Pencil, Edit3, Database, ClipboardList, FileSpreadsheet, Menu, ChevronDown, BookOpen
+    Mail, Phone, MapPin, FileText, QrCode, Users, Pencil, Edit3, Database, ClipboardList, FileSpreadsheet, Menu, ChevronDown, BookOpen,
+    Building2, Plus, School, Calendar, Radio, Eye
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api';
@@ -17,6 +18,235 @@ import { useTerminology } from '../../TerminologyContext';
 import { SocialInlet, CompetitiveMatrix, NationalHeatList, ExpertAudit, ComorbiditySpectrum, RankingsLabInlet } from './IntelligenceInlets';
 import RegionalProfilePanel from './RegionalProfilePanel';
 import { isNationalAdminRole, isSuperAdminRole, isPractitionerRole } from '../../utils/roles';
+
+const ActiveReportsWidget = ({ classReports, navigate, onRefreshReports, currentUser }) => {
+    const [reportTab, setReportTab] = useState('active'); // 'active' | 'closed' | 'all'
+    const isReadOnly = ['GLOBAL_ADMIN', 'REGIONAL_ADMIN'].includes(currentUser?.role?.toUpperCase());
+    const all = classReports || [];
+    if (all.length === 0) return null;
+
+    const activeList = all.filter(r => !r.is_finalized);
+    const closedList = all.filter(r => r.is_finalized);
+    const displayed = reportTab === 'active' ? activeList : (reportTab === 'closed' ? closedList : all);
+
+    const handleReopen = async (e, reportId) => {
+        e.stopPropagation();
+        try {
+            await api.post(`class-report/${reportId}/finalize/`, { action: 'unfinalize', is_finalized: false });
+            if (onRefreshReports) onRefreshReports();
+        } catch (err) {
+            console.error("Failed to reopen report", err);
+            alert("Erreur lors de la réouverture.");
+        }
+    };
+
+    const handleFinalize = async (e, reportId) => {
+        e.stopPropagation();
+        try {
+            await api.post(`class-report/${reportId}/finalize/`);
+            if (onRefreshReports) onRefreshReports();
+        } catch (err) {
+            console.error("Failed to finalize report", err);
+            alert("Erreur lors de la clôture.");
+        }
+    };
+
+    return (
+        <motion.div
+            variants={{ hidden: { opacity: 0, y: 15 }, show: { opacity: 1, y: 0 } }}
+            className="p-6 md:p-7 rounded-[32px] bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 border border-brand-500/30 text-white shadow-2xl relative overflow-hidden"
+        >
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5 pb-4 border-b border-slate-800">
+                <div className="flex items-center gap-3">
+                    <span className="flex h-3 w-3 relative">
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+                    </span>
+                    <div>
+                        <div className="flex flex-wrap items-center gap-3">
+                            <h3 className="text-base font-black uppercase italic tracking-wider text-white flex items-center gap-2">
+                                <ClipboardList size={18} className="text-brand-400" />
+                                Rapports de Classe ({all.length})
+                            </h3>
+                            {/* Toggle Filter Buttons */}
+                            <div className="flex bg-slate-950 p-1 rounded-xl border border-slate-800 text-[11px] font-bold">
+                                <button
+                                    onClick={() => setReportTab('active')}
+                                    className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
+                                        reportTab === 'active'
+                                            ? 'bg-brand-600 text-white shadow-md'
+                                            : 'text-slate-400 hover:text-white'
+                                    }`}
+                                >
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                                    En cours ({activeList.length})
+                                </button>
+                                <button
+                                    onClick={() => setReportTab('closed')}
+                                    className={`px-3 py-1 rounded-lg transition-all flex items-center gap-1.5 ${
+                                        reportTab === 'closed'
+                                            ? 'bg-amber-500 text-white shadow-md'
+                                            : 'text-slate-400 hover:text-white'
+                                    }`}
+                                >
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                                    Clôturés ({closedList.length})
+                                </button>
+                                <button
+                                    onClick={() => setReportTab('all')}
+                                    className={`px-3 py-1 rounded-lg transition-all ${
+                                        reportTab === 'all'
+                                            ? 'bg-slate-800 text-white shadow-md'
+                                            : 'text-slate-400 hover:text-white'
+                                    }`}
+                                >
+                                    Tous ({all.length})
+                                </button>
+                            </div>
+                        </div>
+                        <p className="text-xs text-slate-400 font-medium mt-1">
+                            {reportTab === 'active' ? "Sessions d'enquête actives." : (reportTab === 'closed' ? "Historique des sessions clôturées et archivées." : "Toutes les sessions de classe.")}
+                        </p>
+                    </div>
+                </div>
+                {isReadOnly ? (
+                    <span className="px-3.5 py-1.5 bg-slate-800 border border-slate-700 text-slate-300 rounded-xl text-xs font-bold shrink-0">
+                        Mode Consultation {currentUser?.role === 'REGIONAL_ADMIN' ? '(Région)' : '(National)'}
+                    </span>
+                ) : (
+                    <button
+                        onClick={() => navigate('/class-report')}
+                        className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-500 text-white text-xs font-bold rounded-xl shadow-lg shadow-brand-500/20 transition-all shrink-0"
+                    >
+                        <Plus size={15} /> Nouveau Rapport
+                    </button>
+                )}
+            </div>
+
+            {displayed.length === 0 ? (
+                <div className="p-8 text-center bg-slate-950/50 rounded-2xl border border-slate-800/80 text-slate-400 text-xs font-bold">
+                    Aucun rapport {reportTab === 'active' ? 'en cours' : (reportTab === 'closed' ? 'clôturé' : '')} à afficher.
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
+                    {displayed.map(rep => {
+                        const collected = rep.submissions_count || 0;
+                        const rawTarget = Number(rep.questionnaires_collected);
+                        const rawPres = Number(rep.students_present) || 0;
+                        const rawRef = Number(rep.students_refused) || 0;
+                        const rawNoA = Number(rep.students_without_authorization) || 0;
+                        const target = (rawTarget > 0) ? rawTarget : Math.max(0, rawPres - rawRef - rawNoA);
+                        const isClosed = rep.is_finalized;
+
+                        return (
+                            <div 
+                                key={rep.id} 
+                                className={`p-4 rounded-2xl border transition-all flex flex-col justify-between ${
+                                    isClosed 
+                                        ? 'bg-slate-950/70 border-slate-800/90 hover:border-amber-500/40' 
+                                        : 'bg-slate-950/90 border-slate-800 hover:border-brand-500/40'
+                                }`}
+                            >
+                                <div>
+                                    <div className="flex items-start justify-between gap-2 mb-1.5">
+                                        <h4 className="font-extrabold text-sm text-white line-clamp-1 flex items-center gap-1.5" title={rep.establishment_name}>
+                                            <Building2 size={14} className={isClosed ? "text-amber-400 shrink-0" : "text-brand-400 shrink-0"} />
+                                            {rep.establishment_name || 'Lycée non précisé'}
+                                        </h4>
+                                        <div className="flex items-center gap-1.5">
+                                            {isClosed ? (
+                                                <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-amber-500/20 text-amber-300 border border-amber-500/30 shrink-0">
+                                                    Clôturé
+                                                </span>
+                                            ) : (
+                                                <span className="text-[9px] font-black uppercase px-2 py-0.5 rounded-md bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
+                                                    En cours
+                                                </span>
+                                            )}
+                                            <span className="text-[10px] font-black uppercase px-2 py-0.5 rounded-md bg-slate-800 text-brand-300 shrink-0">
+                                                #{rep.id}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-2 text-[11px] text-slate-400 font-medium mb-3">
+                                        <span>{rep.study_level === '1_AS' ? '1ère AS' : '2ème AS'}</span>
+                                        <span>•</span>
+                                        <span>{rep.report_date}</span>
+                                        {rep.governorate_name && (
+                                            <>
+                                                <span>•</span>
+                                                <span className="text-slate-300 font-bold">{rep.governorate_name}</span>
+                                            </>
+                                        )}
+                                    </div>
+                                    <div className="bg-slate-900 rounded-xl p-2.5 border border-slate-800/80 mb-3">
+                                        <div className="flex justify-between text-[10px] font-black uppercase tracking-wider mb-1">
+                                            <span className="text-slate-400">Questionnaires saisis</span>
+                                            <span className={isClosed ? "text-amber-400 font-mono font-bold" : "text-brand-400 font-mono font-bold"}>
+                                                {collected} {target > 0 ? `/ ${target}` : ''}
+                                            </span>
+                                        </div>
+                                        <div className="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                                            <div 
+                                                className={`h-full ${isClosed ? 'bg-gradient-to-r from-amber-500 to-emerald-400' : 'bg-gradient-to-r from-brand-500 to-emerald-400'}`} 
+                                                style={{ width: `${target > 0 ? Math.min(100, (collected / target) * 100) : (collected > 0 ? 100 : 0)}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2 pt-2 border-t border-slate-800/80">
+                                    {isReadOnly ? (
+                                        <button
+                                            onClick={() => navigate(`/session/${rep.id}/collect`)}
+                                            className="w-full py-2 px-3 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all shadow-sm"
+                                            title="Consulter les questionnaires"
+                                        >
+                                            <FileText size={14} /> Consulter les Formulaires
+                                        </button>
+                                    ) : (
+                                        <>
+                                            <button
+                                                onClick={() => navigate(`/session/${rep.id}/collect`)}
+                                                className="flex-1 py-2 px-2 bg-brand-600 hover:bg-brand-500 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                                                title="Voir les questionnaires"
+                                            >
+                                                <FileText size={13} /> {isClosed ? 'Consulter' : 'Saisie'}
+                                            </button>
+                                            <button
+                                                onClick={() => navigate(`/class-report?edit=${rep.id}`)}
+                                                className="p-2 bg-slate-800 hover:bg-slate-700 text-amber-300 rounded-xl text-xs font-bold transition-all border border-slate-700"
+                                                title="Modifier les infos"
+                                            >
+                                                <Pencil size={13} />
+                                            </button>
+                                            {isClosed ? (
+                                                <button
+                                                    onClick={(e) => handleReopen(e, rep.id)}
+                                                    className="py-2 px-2.5 bg-slate-800 hover:bg-emerald-600 text-emerald-400 hover:text-white rounded-xl text-xs font-bold transition-all border border-slate-700 flex items-center gap-1"
+                                                    title="Réouvrir cette session"
+                                                >
+                                                    <RotateCw size={13} />
+                                                </button>
+                                            ) : (
+                                                <button
+                                                    onClick={(e) => handleFinalize(e, rep.id)}
+                                                    className="py-2 px-2.5 bg-slate-800 hover:bg-amber-600/30 text-slate-400 hover:text-amber-300 rounded-xl text-xs font-bold transition-all border border-slate-700 flex items-center gap-1"
+                                                    title="Clôturer cette session"
+                                                >
+                                                    <ShieldCheck size={13} />
+                                                </button>
+                                            )}
+                                        </>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
+        </motion.div>
+    );
+};
 
 const NationalVigilancePanel = ({ metrics, activeSection }) => {
     const { t_dyn } = useTerminology();
@@ -104,11 +334,13 @@ const NationalVigilancePanel = ({ metrics, activeSection }) => {
 };
 
 
-const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin, activeScope, activeScopeId }) => {
+const RegionalSummaryHub = ({ data, globalInsights, activeSection, currentUser, activeScope, activeScopeId, classReports, onRefreshReports }) => {
     const { t_dyn } = useTerminology();
     const navigate = useNavigate();
     if (!data) return null;
     const { headline, kpis } = data;
+    const isSuperAdmin = isNationalAdminRole(currentUser?.role);
+    const isAuthorizedForClassReports = isPractitionerRole(currentUser?.role) || isSuperAdminRole(currentUser?.role);
 
     const sectionNames = {
         'A': t_dyn('section_wheel_A', 'Profil'),
@@ -141,8 +373,11 @@ const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin,
             variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } }}
             initial="hidden"
             animate="show"
-            className="flex flex-col gap-10"
+            className="flex flex-col gap-8"
         >
+            {/* 📋 Class Reports Widget (Active & Closed Toggles) - Scoped & Read-Only for Global/Regional Admin */}
+            <ActiveReportsWidget classReports={classReports} navigate={navigate} onRefreshReports={onRefreshReports} currentUser={currentUser} />
+
             {/* 🔬 Regional Identity Header */}
             <motion.div 
                 variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 300, damping: 24 } } }} 
@@ -164,7 +399,14 @@ const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin,
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-[4px] italic opacity-90"><EditableLabel termKey="dash_medspad" defaultValue="Medspad 2026" /></span>
                         </div>
                         
-                        {(isRegionalGov || window.location.search.includes('gouvernorat=')) && (
+                        {isPractitionerRole(currentUser?.role) ? (
+                            <button
+                                onClick={() => navigate('/guide')}
+                                className="flex items-center gap-2.5 px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[2px] bg-brand-500/20 text-brand-300 border border-brand-500/30 hover:bg-brand-500 hover:text-white transition-all italic shadow-lg cursor-pointer"
+                            >
+                                <ArrowLeft size={14} /> <EditableLabel termKey="dash_btn_back_guide" defaultValue="RETOUR AU GUIDE" />
+                            </button>
+                        ) : (isRegionalGov || window.location.search.includes('gouvernorat=')) && (
                             <button
                                 onClick={() => navigate('/superadmin')}
                                 className="flex items-center gap-2.5 px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-[2px] bg-rose-500/20 text-rose-300 border border-rose-500/30 hover:bg-rose-500 hover:text-white transition-all italic shadow-lg cursor-pointer"
@@ -195,20 +437,68 @@ const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin,
                 </div>
             </motion.div>
 
-            <motion.div variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } }} className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                {kpis?.map((kpi, idx) => (
-                    <motion.div variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} key={idx} className="pro-card p-7 rounded-[36px] group transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_40px_100px_-20px_rgba(15,23,42,0.12)] bg-white/70 backdrop-blur-3xl border border-white shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-32 h-32 bg-brand-500/5 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
-                        <div className="flex items-center justify-between mb-4 relative z-10">
-                            <p className="text-[11px] font-black text-slate-400 uppercase tracking-[3px] group-hover:text-brand-500 transition-colors italic">
-                                <EditableLabel termKey={`dash_kpi_label_${idx}`} defaultValue={kpi.label} />
-                            </p>
-                            <div className="w-2 h-2 rounded-full bg-brand-500/20 group-hover:bg-brand-500 animate-pulse transition-colors shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
-                        </div>
-                        <p className="text-5xl font-black text-slate-900 tabular-nums tracking-tighter italic mb-5 relative z-10">{kpi.value}</p>
-                        <div className="w-12 h-[3px] bg-slate-100 group-hover:w-full group-hover:bg-brand-500 transition-all duration-1000 rounded-full relative z-10 shadow-sm" />
-                    </motion.div>
-                ))}
+            <motion.div variants={{ hidden: { opacity: 0 }, show: { opacity: 1, transition: { staggerChildren: 0.1 } } }} className={`grid grid-cols-2 ${kpis?.length === 4 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'} gap-4 md:gap-5`}>
+                {kpis?.map((kpi, idx) => {
+                    const isComptabilise = kpi.label?.toLowerCase().includes('comptabilisé') && !kpi.label?.toLowerCase().includes('non');
+                    const isNonComptabilise = kpi.label?.toLowerCase().includes('non');
+                    const isSchool = kpi.label?.toLowerCase().includes('établissement') || kpi.label?.toLowerCase().includes('école');
+
+                    return (
+                        <motion.div 
+                            variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0 } }} 
+                            key={idx} 
+                            className={`pro-card p-6 md:p-7 rounded-[32px] md:rounded-[36px] group transition-all duration-500 hover:-translate-y-1.5 bg-white/80 backdrop-blur-3xl border shadow-[0_20px_60px_-15px_rgba(15,23,42,0.08)] relative overflow-hidden flex flex-col justify-between ${
+                                isComptabilise 
+                                    ? 'border-emerald-100 hover:border-emerald-300 hover:shadow-emerald-500/10' 
+                                    : isNonComptabilise 
+                                    ? 'border-rose-100 hover:border-rose-300 hover:shadow-rose-500/10' 
+                                    : 'border-white hover:border-slate-200'
+                            }`}
+                        >
+                            <div className={`absolute top-0 right-0 w-32 h-32 -translate-y-1/2 translate-x-1/2 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700 ${
+                                isComptabilise ? 'bg-emerald-500/10' : isNonComptabilise ? 'bg-rose-500/10' : 'bg-brand-500/5'
+                            }`} />
+                            
+                            <div>
+                                <div className="flex items-center justify-between mb-3 relative z-10">
+                                    <p className={`text-[10px] md:text-[11px] font-black uppercase tracking-[2px] md:tracking-[3px] italic ${
+                                        isComptabilise ? 'text-emerald-600' : isNonComptabilise ? 'text-rose-600' : 'text-slate-400 group-hover:text-brand-500'
+                                    } transition-colors`}>
+                                        <EditableLabel termKey={`dash_kpi_label_${idx}`} defaultValue={kpi.label} />
+                                    </p>
+                                    <div className={`w-2 h-2 rounded-full animate-pulse transition-colors ${
+                                        isComptabilise 
+                                            ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]' 
+                                            : isNonComptabilise 
+                                            ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.5)]' 
+                                            : 'bg-brand-500/30 shadow-[0_0_8px_rgba(16,185,129,0.4)]'
+                                    }`} />
+                                </div>
+                                
+                                <div className="flex items-baseline gap-2 mb-3 relative z-10">
+                                    <p className={`text-4xl md:text-5xl font-black tabular-nums tracking-tighter italic ${
+                                        isComptabilise ? 'text-emerald-600' : isNonComptabilise ? 'text-rose-600' : 'text-slate-900'
+                                    }`}>
+                                        {kpi.value}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div>
+                                <p className="text-[10px] text-slate-400 font-medium line-clamp-1 italic mb-3 relative z-10">
+                                    {kpi.desc}
+                                </p>
+                                <div className={`w-12 h-[3px] transition-all duration-1000 rounded-full relative z-10 shadow-sm ${
+                                    isComptabilise 
+                                        ? 'bg-emerald-200 group-hover:w-full group-hover:bg-emerald-500' 
+                                        : isNonComptabilise 
+                                        ? 'bg-rose-200 group-hover:w-full group-hover:bg-rose-500' 
+                                        : 'bg-slate-100 group-hover:w-full group-hover:bg-brand-500'
+                                }`} />
+                            </div>
+                        </motion.div>
+                    );
+                })}
             </motion.div>
 
             {/* 🛡️ Clinical Reliability Index */}
@@ -263,7 +553,7 @@ const RegionalSummaryHub = ({ data, globalInsights, activeSection, isSuperAdmin,
     );
 };
 
-const SentinelleDashboard = ({ initialScope = 'user_school', initialScopeId = null, forcedUser = null, onLogout }) => {
+const SentinelleDashboard = ({ initialScope = 'national', initialScopeId = null, forcedUser = null, onLogout }) => {
     const { isEditMode, setIsEditMode } = useTerminology();
     const navigate = useNavigate();
     const [selectedSection, setSelectedSection] = useState(null);
@@ -347,6 +637,22 @@ const SentinelleDashboard = ({ initialScope = 'user_school', initialScopeId = nu
         const timer = setTimeout(() => setShowWelcome(false), 6000);
         return () => clearTimeout(timer);
     }, []);
+
+    const [classReports, setClassReports] = useState([]);
+
+    const loadClassReports = useCallback(async () => {
+        try {
+            const res = await api.get('class-report/list/');
+            const list = Array.isArray(res.data) ? res.data : (res.data?.results || []);
+            setClassReports(list);
+        } catch {
+            setClassReports([]);
+        }
+    }, []);
+
+    useEffect(() => {
+        loadClassReports();
+    }, [currentUser, loadClassReports]);
 
     const [homepageData, setHomepageData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -590,20 +896,22 @@ const SentinelleDashboard = ({ initialScope = 'user_school', initialScopeId = nu
                                         transition={{ duration: 0.2 }}
                                         className="absolute right-0 top-14 w-64 bg-white rounded-2xl border border-slate-100 shadow-2xl shadow-slate-200/50 overflow-hidden z-50 flex flex-col py-2"
                                     >
-                                        <button onClick={() => { navigate('/scan'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
-                                            <Scan size={14} /> <EditableLabel termKey="dash_btn_scan" defaultValue="SCANNER OCR" />
-                                        </button>
+                                        {['PRACTITIONER', 'OPERATOR', 'SUPER_ADMIN', 'SUPERADMIN'].includes(currentUser?.role?.toUpperCase()) && (
+                                            <button onClick={() => { navigate('/scan'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
+                                                <Scan size={14} /> <EditableLabel termKey="dash_btn_scan" defaultValue="SCANNER OCR" />
+                                            </button>
+                                        )}
                                         <button onClick={() => { navigate('/qr'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
                                             <QrCode size={14} /> <EditableLabel termKey="dash_btn_qr" defaultValue="ACCÈS QR" />
                                         </button>
                                         
-                                        {['PRACTITIONER', 'OPERATOR', 'SUPER_ADMIN', 'GLOBAL_ADMIN', 'ADMIN'].includes(currentUser?.role?.toUpperCase()) && (
+                                        {['PRACTITIONER', 'OPERATOR', 'SUPER_ADMIN', 'SUPERADMIN'].includes(currentUser?.role?.toUpperCase()) && (
                                             <button onClick={() => { navigate('/class-report'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
                                                 <ClipboardList size={14} /> <EditableLabel termKey="dash_btn_rapport" defaultValue="Rapport de Classe" />
                                             </button>
                                         )}
 
-                                        {['PRACTITIONER', 'OPERATOR', 'SUPER_ADMIN', 'GLOBAL_ADMIN'].includes(currentUser?.role?.toUpperCase()) && (
+                                        {['PRACTITIONER', 'OPERATOR', 'SUPER_ADMIN', 'SUPERADMIN'].includes(currentUser?.role?.toUpperCase()) && (
                                             <button onClick={() => { navigate('/questionnaire'); setIsNavMenuOpen(false); }} className="flex items-center gap-3 px-5 py-3 text-[10px] font-black uppercase tracking-widest text-slate-600 hover:bg-brand-50 hover:text-brand-600 transition-colors w-full text-left">
                                                 <FileText size={14} /> <EditableLabel termKey="dash_btn_quest" defaultValue="Questionnaire" />
                                             </button>
@@ -693,28 +1001,16 @@ const SentinelleDashboard = ({ initialScope = 'user_school', initialScopeId = nu
                                             </div>
                                         </div>
 
-                                        {['SUPER_ADMIN', 'GLOBAL_ADMIN', 'REGIONAL_ANALYST', 'SUPERADMIN', 'ADMIN', 'NATIONAL'].includes(currentUser?.role?.toUpperCase()) ? (
-                                            <div className="mt-4">
-                                                <TunisiaMap
-                                                    data={homepageData?.map_data}
-                                                    activeSection={selectedSection}
-                                                    currentUser={currentUser}
-                                                    onRegionSelect={(name) => {
-                                                        navigate(`/admin/${encodeURIComponent(name)}?scope_type=gouvernorate&scope_id=${encodeURIComponent(name)}`);
-                                                    }}
-                                                />
-                                            </div>
-                                        ) : (
-                                            <div className="mt-4 pro-card p-14 rounded-[56px] border-dashed border-slate-100 flex flex-col items-center justify-center gap-6 min-h-[350px] bg-white/50">
-                                                <div className="w-16 h-16 rounded-3xl bg-slate-50 flex items-center justify-center text-slate-200">
-                                                    <ShieldCheck size={40} />
-                                                </div>
-                                                <div className="text-center">
-                                                    <p className="text-[12px] font-black text-slate-400 uppercase tracking-[6px] italic"><EditableLabel termKey="dash_hub_restr" defaultValue="Hub Géospatial Restreint" /></p>
-                                                    <p className="text-[9px] font-black text-slate-300 uppercase tracking-[2px] mt-3"><EditableLabel termKey="dash_niveau" defaultValue="Niveau d'Accès :" /> {currentUser?.role || 'INDÉFINI'}</p>
-                                                </div>
-                                            </div>
-                                        )}
+                                        <div className="mt-4">
+                                            <TunisiaMap
+                                                data={homepageData?.map_data}
+                                                activeSection={selectedSection}
+                                                currentUser={currentUser}
+                                                onRegionSelect={(name) => {
+                                                    navigate(`/admin/${encodeURIComponent(name)}?scope_type=gouvernorate&scope_id=${encodeURIComponent(name)}`);
+                                                }}
+                                            />
+                                        </div>
                                     </motion.div>
 
                                     {/* Right Column: Analytic Workflow */}
@@ -748,7 +1044,9 @@ const SentinelleDashboard = ({ initialScope = 'user_school', initialScopeId = nu
                                                         activeSection={selectedSection}
                                                         activeScope={activeScope}
                                                         activeScopeId={activeScopeId}
-                                                        isSuperAdmin={['SUPER_ADMIN', 'GLOBAL_ADMIN', 'SUPERADMIN'].includes(currentUser?.role?.toUpperCase())}
+                                                        classReports={classReports}
+                                                        onRefreshReports={loadClassReports}
+                                                        currentUser={currentUser}
                                                     />
 
                                                     {/* Points de Vigilance Grid & Rankings Lab */}
@@ -764,8 +1062,8 @@ const SentinelleDashboard = ({ initialScope = 'user_school', initialScopeId = nu
                                                         </div>
                                                     )}
 
-                                                    {/* Competitive Matrix & Regional Deep Profile (if in gov scope) */}
-                                                    {activeScope === 'gouvernorate' && activeScopeId && (
+                                                    {/* Competitive Matrix & Regional Deep Profile (if in gov scope for admin roles) */}
+                                                    {!isPractitionerRole(currentUser?.role) && activeScope === 'gouvernorate' && activeScopeId && (
                                                         <>
                                                             <CompetitiveMatrix
                                                                 rankings={homepageData?.rankings}

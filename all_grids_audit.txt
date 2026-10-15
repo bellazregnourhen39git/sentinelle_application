@@ -1,0 +1,427 @@
+Total GridQuestion calls found: 47
+
+=== GRID #1 ===
+<GridQuestion title="À Quelle fréquence pratiquez-vous chacune des activités suivantes ?" titleAr="ما مدى تكرار ممارستك لكل من الأنشطة التالية؟" code="C.A03" isRTL={isRTL}
+            options={FREQ_ACTIVITIES} values={data.section_a.activities_frequency}
+            onChange={(key, val) => updateCheck('section_a', 'activities_frequency', key, val)}
+            items={[
+              ['a', 'Activité sportive de tout type', 'نشاط رياضي من أي نوع'],
+              ['b', 'Lire des livres pour le plaisir', 'قراءة الكتب للمتعة'],
+              ['c', 'Sortir le soir (bar, fête...)', 'الخروج في المساء (ملهى، حفلة...)'],
+              ['d', 'Autres loisirs (musique, art...)', 'هوايات أخرى (موسيقى، فن...)'],
+              ['e', 'Se retrouver entre amis (rue, parc...)', 'اللقاء مع الأصدقاء (شارع، منتزه...)'],
+              ['f', 'Utiliser Internet pour s’amuser', 'استخدام الإنترنت للمتعة'],
+              ['g', 'Regarder la télévision', 'مشاهدة التلفاز']
+            ]} />
+------------------------------------------------------------
+=== GRID #2 ===
+<GridQuestion title="Au cours du dernier mois, combien de jours avez-vous manqué le lycée pour l'une des raisons suivantes ?" titleAr="خلال الشهر الماضي، كم يوماً تغيبت عن المدرسة بسبب أحد الأسباب التالية؟" code="C.A04" isRTL={isRTL}
+            options={[['1', 'Jamais'], ['2', '1 jour'], ['3', '2 jours'], ['4', '3-4 jours'], ['5', '5-6 jours'], ['6', '7 jours+']]}
+            values={data.section_a.school_absences}
+            onChange={(key, val) => updateCheck('section_a', 'school_absences', key, val)}
+            items={[
+              ['a', 'Parce que vous étiez malade', 'لأنك كنت مريضاً'],
+              ['b', 'Parce que vous n’aviez pas envie', 'لأنك لم ترغب في الذهاب'],
+              ['c', 'Problèmes avec l’administration', 'مشاكل مع الإدارة'],
+              ['d', 'Problèmes avec des ami(e)s', 'مشاكل مع الأصدقاء'],
+              ['e', 'Parce que vous avez été renvoyé', 'لأنك طُردت'],
+              ['f', 'Pour d’autres raisons', 'لأسباب أخرى']
+            ]} />
+------------------------------------------------------------
+=== GRID #3 ===
+<GridQuestion title="D’une manière générale, quel est votre degré de satisfaction de votre relation avec :" titleAr="بشكل عام، ما مدى رضاك عن علاقتك بـ:" code="C.A09" isRTL={isRTL}
+            options={SATISFACTION_SCALE} values={data.section_a.family_relationship_satisfaction}
+            onChange={(key, val) => updateCheck('section_a', 'family_relationship_satisfaction', key, val)}
+            items={[
+              ['a', 'Votre mère', 'أمك'], ['b', 'Votre père', 'أبوك'],
+              ['c', 'Votre belle-mère', 'زوجة أبيك'], ['d', 'Votre beau-père', 'زوج أمك'],
+              ['e', 'Votre fratrie', 'إخوتك'], ['f', 'Vos ami(e)s', 'أصدقاؤك'],
+              ['g', 'Vos camarades de classe', 'زملاؤك في القسم'], ['h', 'Vos enseignants', 'أساتذتك'],
+              ['i', 'L’administration du lycée', 'إدارة المعهد']
+            ]} />
+------------------------------------------------------------
+=== GRID #4 ===
+<GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume des cigarettes?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يدخن السجائر؟" code="C.C02" isRTL={isRTL}
+            options={YES_NO_DK} values={data.section_c.social_circle}
+            onChange={(key, val) => updateCheck('section_c', 'social_circle', key, val)}
+            items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+------------------------------------------------------------
+=== GRID #5 ===
+<GridQuestion title="Combien de fois avez-vous fumé des cigarettes (sans compter les cigarettes électroniques)?" titleAr="كم مرة دخنت السجائر (بدون احتساب السجائر الإلكترونية)؟" code="C.C03" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_c}
+            onChange={(key, val) => update('section_c', key, val)}
+            items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
+------------------------------------------------------------
+=== GRID #6 ===
+<GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit?" titleAr="في أي عمر بدأت تفعل ما يلي؟" code="C.C05" isRTL={isRTL}
+            options={AGE_FIRST_USE} values={data.section_c}
+            onChange={(key, val) => update('section_c', key, val)}
+            items={[['age_first_use', 'Fumé votre première cigarette', 'دخنت أول سيجارة'], ['age_daily_use', 'Fumé quotidiennement', 'دخنت يومياً']]} />
+------------------------------------------------------------
+=== GRID #7 ===
+<GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume des cigarettes électroniques?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يدخن السجائر الإلكترونية؟" code="C.D02" isRTL={isRTL}
+            options={YES_NO_DK} values={data.section_d.social_circle}
+            onChange={(key, val) => updateCheck('section_d', 'social_circle', key, val)}
+            items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+------------------------------------------------------------
+=== GRID #8 ===
+<GridQuestion title="Combien de fois avez-vous fumé des cigarettes électroniques?" titleAr="كم مرة دخنت السجائر الإلكترونية؟" code="C.D03" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_d}
+            onChange={(key, val) => update('section_d', key, val)}
+            items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
+------------------------------------------------------------
+=== GRID #9 ===
+<GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit ?" titleAr="في أي عمر بدأت تفعل ما يلي؟" code="C.D05" isRTL={isRTL}
+            options={AGE_FIRST_USE} values={data.section_d}
+            onChange={(key, val) => update('section_d', key, val)}
+            items={[['age_first_use', 'Utilisé pour la première fois une cigarette électronique', 'استخدمت السيجارة الإلكترونية لأول مرة'], ['age_daily_use', 'Utilisé quotidiennement', 'استخدمتها يومياً']]} />
+------------------------------------------------------------
+=== GRID #10 ===
+<GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume le narguilé?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يدخن الشيشة؟" code="C.E02" isRTL={isRTL}
+            options={YES_NO_DK} values={data.section_e.social_circle}
+            onChange={(key, val) => updateCheck('section_e', 'social_circle', key, val)}
+            items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+------------------------------------------------------------
+=== GRID #11 ===
+<GridQuestion title="Combien de fois avez-vous fumé narguilé?" titleAr="كم مرة دخنت الشيشة؟" code="C.E03" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_e}
+            onChange={(key, val) => update('section_e', key, val)}
+            items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
+------------------------------------------------------------
+=== GRID #12 ===
+<GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit?" titleAr="في أي عمر بدأت تفعل ما يلي؟" code="C.E05" isRTL={isRTL}
+            options={AGE_FIRST_USE} values={data.section_e}
+            onChange={(key, val) => update('section_e', key, val)}
+            items={[['age_first_use', 'Fumé pour la première fois le narguilé', 'دخنت الشيشة لأول مرة'], ['age_daily_use', 'Fumé quotidiennement le narguilé', 'دخنتها يومياً']]} />
+------------------------------------------------------------
+=== GRID #13 ===
+<GridQuestion title="À quel point pensez-vous qu'il serait difficile de vous procurer les boissons suivantes si vous le vouliez ?" titleAr="إلى أي مدى تعتقد أنه سيكون من الصعب الحصول على المشروبات التالية؟" code="C.G01" isRTL={isRTL}
+            options={DIFFICULTY_LEVELS} values={data.section_g.access_difficulty}
+            onChange={(key, val) => updateCheck('section_g', 'access_difficulty', key, val)}
+            items={[
+              ['a', 'La bière', 'البيرة'],
+              ['b', 'Les cocktails', 'الكوكتيلات'],
+              ['c', 'Les vins', 'النبيذ'],
+              ['d', 'Les eaux-de-vie (Whisky, Vodka...)', 'المشروبات الروحية (ويسكي، فودكا...)'],
+              ['e', 'Autres boissons alcoolisées', 'مشروبات كحولية أخرى']
+            ]} />
+------------------------------------------------------------
+=== GRID #14 ===
+<GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme les boissons alcoolisées?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك المشروبات الكحولية؟" code="C.G02" isRTL={isRTL}
+            options={YES_NO_DK} values={data.section_g.social_circle}
+            onChange={(key, val) => updateCheck('section_g', 'social_circle', key, val)}
+            items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+------------------------------------------------------------
+=== GRID #15 ===
+<GridQuestion title="Combien de fois avez-vous consommé des boissons alcoolisées?" titleAr="كم مرة تناولت المشروبات الكحولية؟" code="C.G03" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_g}
+            onChange={(key, val) => update('section_g', key, val)}
+            items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
+------------------------------------------------------------
+=== GRID #16 ===
+<GridQuestion title="Combien de fois avez-vous consommé les boissons alcoolisées suivantes au cours des 30 DERNIERS JOURS ?" titleAr="كم مرة استهلكت المشروبات الكحولية التالية خلال الـ 30 يومًا الماضية؟" code="C.G04" isRTL={isRTL}
+            options={FREQ_30DAYS} values={data.section_g.days_30_by_type}
+            onChange={(key, val) => updateCheck('section_g', 'days_30_by_type', key, val)}
+            items={[
+              ['a', 'Bière', 'البيرة'],
+              ['b', 'Cocktails', 'الكوكتيلات'],
+              ['c', 'Vins', 'النبيذ'],
+              ['d', 'Eaux-de-vie (Whisky, Vodka...)', 'المشروبات الروحية']
+            ]} />
+------------------------------------------------------------
+=== GRID #17 ===
+<GridQuestion title="Combien de fois (éventuellement) avez-vous été intoxiqué par la consommation des boissons alcoolisées?" titleAr="كم مرة (إن وجدت) كنت في حالة سكر بسبب تناول المشروبات الكحولية؟" code="C.G06" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_g}
+            onChange={(key, val) => update('section_g', key, val)}
+            items={[['intoxication_lifetime', 'Au cours de votre vie', 'طوال حياتك'], ['intoxication_12months', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['intoxication_30days', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
+------------------------------------------------------------
+=== GRID #18 ===
+<GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit pour la première fois ?" titleAr="في أي عمر بدأت تفعل ما يلي لأول مرة؟" code="C.G07" isRTL={isRTL}
+            options={AGE_FIRST_USE} values={data.section_g}
+            onChange={(key, val) => update('section_g', key, val)}
+            items={[['age_first_drink', 'Boire de l’alcool', 'شرب الكحول'], ['age_first_intoxication', 'Être intoxiqué (soûl)', 'الوقوع في السكر']]} />
+------------------------------------------------------------
+=== GRID #19 ===
+<GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme des tranquillisants ou sédatifs (sans ordonnance) ?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك المهدئات أو المهدئات بدون وصفة طبية؟" code="C.H02" isRTL={isRTL}
+            options={YES_NO_DK} values={data.section_h.social_circle}
+            onChange={(key, val) => updateCheck('section_h', 'social_circle', key, val)}
+            items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+------------------------------------------------------------
+=== GRID #20 ===
+<GridQuestion title="Combien de fois avez-vous consommé des tranquillisants ou sédatifs (sans ordonnance) ?" titleAr="كم مرة تناولت المهدئات أو المهدئات (بدون وصفة طبية)؟" code="C.H03" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_h}
+            onChange={(key, val) => update('section_h', key, val)}
+            items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
+------------------------------------------------------------
+=== GRID #21 ===
+<GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme du cannabis?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك القنب الهندي؟" code="C.I02" isRTL={isRTL}
+            options={YES_NO_DK} values={data.section_i.social_circle}
+            onChange={(key, val) => updateCheck('section_i', 'social_circle', key, val)}
+            items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+------------------------------------------------------------
+=== GRID #22 ===
+<GridQuestion title="Combien de fois avez-vous consommé du cannabis?" titleAr="كم مرة استهلكت القنب الهندي؟" code="C.I04" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_i}
+            onChange={(key, val) => update('section_i', key, val)}
+            items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 DERNIERS JOURS', 'خلال الـ 30 يومًا الأخيرة']]} />
+------------------------------------------------------------
+=== GRID #23 ===
+<GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de la cocaïne?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك الكوكايين؟" code="C.J02" isRTL={isRTL}
+            options={YES_NO_DK} values={data.section_j.social_circle}
+            onChange={(key, val) => updateCheck('section_j', 'social_circle', key, val)}
+            items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+------------------------------------------------------------
+=== GRID #24 ===
+<GridQuestion title="Combien de fois avez-vous consommé de la cocaïne?" titleAr="كم مرة استهلكت الكوكايين؟" code="C.J03" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_j}
+            onChange={(key, val) => update('section_j', key, val)}
+            items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
+------------------------------------------------------------
+=== GRID #25 ===
+<GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de l'Ecstasy?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك الإكستاسي؟" code="C.K02" isRTL={isRTL}
+            options={YES_NO_DK} values={data.section_k.social_circle}
+            onChange={(key, val) => updateCheck('section_k', 'social_circle', key, val)}
+            items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+------------------------------------------------------------
+=== GRID #26 ===
+<GridQuestion title="Combien de fois avez-vous consommé de l'Ecstasy?" titleAr="كم مرة استهلكت الإكستاسي؟" code="C.K03" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_k}
+            onChange={(key, val) => update('section_k', key, val)}
+            items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
+------------------------------------------------------------
+=== GRID #27 ===
+<GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de l'héroïne?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك الهيروين؟" code="C.L02" isRTL={isRTL}
+            options={YES_NO_DK} values={data.section_l.social_circle}
+            onChange={(key, val) => updateCheck('section_l', 'social_circle', key, val)}
+            items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+------------------------------------------------------------
+=== GRID #28 ===
+<GridQuestion title="Combien de fois avez-vous consommé de l'héroïne?" titleAr="كم مرة استهلكت الهيروين؟" code="C.L03" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_l}
+            onChange={(key, val) => update('section_l', key, val)}
+            items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
+------------------------------------------------------------
+=== GRID #29 ===
+<GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme des solvants ou des inhalants?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك المذيبات أو الاستنشاقات؟" code="C.M02" isRTL={isRTL}
+            options={YES_NO_DK} values={data.section_m.social_circle}
+            onChange={(key, val) => updateCheck('section_m', 'social_circle', key, val)}
+            items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+------------------------------------------------------------
+=== GRID #30 ===
+<GridQuestion title="Combien de fois avez-vous consommé des solvants ou des inhalants (Colle, Diluant, Essence...)?" titleAr="كم مرة استهلكت المذيبات أو الاستنشاقات (غراء، مخفف، بنزين...)؟" code="C.M03" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_m}
+            onChange={(key, val) => update('section_m', key, val)}
+            items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
+------------------------------------------------------------
+=== GRID #31 ===
+<GridQuestion title="À quel point pensez-vous qu'il serait difficile de vous procurer les substances suivantes si vous le vouliez ?" titleAr="إلى أي مدى تعتقد أنه سيكون من الصعب الحصول على المواد التالية؟" code="C.N01" isRTL={isRTL}
+            options={DIFFICULTY_LEVELS} values={data.section_n.access_difficulty}
+            onChange={(key, val) => updateCheck('section_n', 'access_difficulty', key, val)}
+            items={[
+              ['a', 'Amphétamines', 'الأمفيتامينات'],
+              ['d', 'Dipaje', 'ديباج'],
+              ['f', 'Hallucinogènes (LSD, champignons...)', 'المهلوسات (LSD، الفطر...)'],
+              ['g', 'Méthamphétamines', 'الميثامفيتامين'],
+              ['h', 'Antalgiques (Tramadol, Codéine...)', 'المسكنات (ترامادول، كوديين...)'],
+              ['j', 'Subutex', 'سوبوتيكس'],
+              ['k', 'Speed', 'سبيد']
+            ]} />
+------------------------------------------------------------
+=== GRID #32 ===
+<GridQuestion title="Utilisation de substances au cours de votre VIE :" titleAr="استخدام المواد خلال حياتك:" code="C.N02" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_n.lifetime_freq_by_type}
+            onChange={(key, val) => updateCheck('section_n', 'lifetime_freq_by_type', key, val)}
+            items={[
+              ['a', 'Amphétamines', 'الأمفيتامينات'],
+              ['d', 'Dipaje', 'ديباج'],
+              ['f', 'Hallucinogènes', 'المهلوسات'],
+              ['g', 'Méthamphétamines', 'الميثامفيتامين'],
+              ['h', 'Antalgiques', 'المسكنات'],
+              ['j', 'Subutex', 'سوبوتيكس'],
+              ['k', 'Speed', 'سبيد']
+            ]} />
+------------------------------------------------------------
+=== GRID #33 ===
+<GridQuestion title="Utilisation de substances au cours des 12 DERNIERS MOIS :" titleAr="استخدام المواد خلال الـ 12 شهراً الماضية:" code="C.N03" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_n.months_12_freq_by_type}
+            onChange={(key, val) => updateCheck('section_n', 'months_12_freq_by_type', key, val)}
+            items={[
+              ['a', 'Amphétamines', 'الأمفيتامينات'],
+              ['d', 'Dipaje', 'ديباج'],
+              ['f', 'Hallucinogènes', 'المهلوسات'],
+              ['g', 'Méthamphétamines', 'الميثامفيتامين'],
+              ['h', 'Antalgiques', 'المسكنات'],
+              ['j', 'Subutex', 'سوبوتيكس'],
+              ['k', 'Speed', 'سبيد']
+            ]} />
+------------------------------------------------------------
+=== GRID #34 ===
+<GridQuestion title="À quel âge avez-vous consommé pour la première fois chacune des substances suivantes ?" titleAr="في أي عمر استهلكت لأول مرة كل من المواد التالية؟" code="C.N04" isRTL={isRTL}
+            options={AGE_SCALE} values={data.section_n.age_first_use_by_type}
+            onChange={(key, val) => updateCheck('section_n', 'age_first_use_by_type', key, val)}
+            items={[
+              ['a', 'Amphétamines', 'الأمفيتامينات'],
+              ['d', 'Dipaje', 'ديباج'],
+              ['f', 'Hallucinogènes', 'المهلوسات'],
+              ['g', 'Méthamphétamines', 'الميثامفيتامين'],
+              ['h', 'Antalgiques', 'المسكنات'],
+              ['j', 'Subutex', 'سوبوتيكس'],
+              ['k', 'Speed', 'سبيد']
+            ]} />
+------------------------------------------------------------
+=== GRID #35 ===
+<GridQuestion title="Combien de fois avez-vous consommé l'une de ces substances (NSP) ?" titleAr="كم مرة استهلكت إحدى هذه المواد (NSP)؟" code="C.P01" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_p}
+            onChange={(key, val) => update('section_p', key, val)}
+            items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
+------------------------------------------------------------
+=== GRID #36 ===
+<GridQuestion title="Combien de fois DANS VOTRE VIE avez-vous consommé l'une des substances suivantes ?" titleAr="كم مرة في حياتك استهلكت إحدى المواد التالية؟" code="C.P03" isRTL={isRTL}
+            options={FREQ_LIFETIME} values={data.section_p.substances}
+            onChange={(key, val) => updateCheck('section_p', 'substances', key, val)}
+            items={[
+              ['cannabinoids', 'Cannabinoïdes synthétiques', 'الكانابينويدات الاصطناعية'],
+              ['cathinones', 'Cathinones synthétiques', 'الكاثينونات الاصطناعية']
+            ]} />
+------------------------------------------------------------
+=== GRID #37 ===
+<GridQuestion title="À votre avis, quel risque les gens courent-ils de se nuire (physique ou autre) s'ils font ce qui suit :" titleAr="برأيك، ما المخاطر التي يتعرض لها الناس (جسدياً أو غير ذلك) إذا فعلوا ما يلي:" code="C.Q01" isRTL={isRTL}
+            options={RISK_LEVELS} values={data.section_q.risk_perceptions}
+            onChange={(key, val) => updateCheck('section_q', 'risk_perceptions', key, val)}
+            items={[
+              ['a', 'Fument des cigarettes OCCASIONNELLEMENT', 'تدخين السجائر أحياناً'],
+              ['b', 'Fument un paquet de cigarettes ou plus par jour REGULIEREMENT', 'تدخين علبة سجائر أو أكثر يومياً بانتظام'],
+              ['c', 'Fument les cigarettes électroniques OCCASIONNELLEMENT', 'تدخين السجائر الإلكترونية أحياناً'],
+              ['d', 'Fument les cigarettes électroniques REGULIEREMENT', 'تدخين السجائر الإلكترونية بانتظام'],
+              ['e', 'Fument le narguilé OCCASIONNELLEMENT', 'تدخين الشيشة أحياناً'],
+              ['f', 'Fument le narguilé REGULIEREMENT', 'تدخين الشيشة بانتظام'],
+              ['i', 'Consomment les boissons alcoolisées OCCASIONNELLEMENT', 'تناول المشروبات الكحولية أحياناً'],
+              ['j', 'Consomment de l’alcool presque tous les jours (1 ou 2 verres)', 'تناول الكحول يومياً تقريباً (كأس أو كأسان)'],
+              ['k', 'Consomment 3 verres ou plus de boissons alcoolisées presque tous les jours', 'تناول 3 كؤوس أو أكثر من الكحول يومياً تقريباً'],
+              ['l', 'Consomment 5 verres ou plus à la même occasion presque chaque weekend', 'تناول 5 كؤوس أو أكثر في نفس المناسبة كل نهاية أسبوع تقريباً']
+            ]} />
+------------------------------------------------------------
+=== GRID #38 ===
+<GridQuestion title="À votre avis, quel risque les gens courent-ils de se nuire s'ils font ce qui suit :" titleAr="برأيك، ما المخاطر التي يتعرض لها الناس إذا فعلوا ما يلي:" code="C.Q02" isRTL={isRTL}
+            options={RISK_LEVELS} values={data.section_q.risk_perceptions}
+            onChange={(key, val) => updateCheck('section_q', 'risk_perceptions', key, val)}
+            items={[
+              ['q2a', 'Consomment des tranquillisants sans prescription OCCASIONNELLEMENT', 'تناول المهدئات بدون وصفة أحياناً'],
+              ['q2b', 'Consomment des tranquillisants sans prescription REGULIEREMENT', 'تناول المهدئات بدون وصفة بانتظام'],
+              ['q2c', 'Consomment du cannabis OCCASIONNELLEMENT', 'استهلاك القنب الهندي أحياناً'],
+              ['q2d', 'Consomment du cannabis REGULIEREMENT', 'استهلاك القنب الهندي بانتظام'],
+              ['q2e', 'Consomment de la cocaïne OCCASIONNELLEMENT', 'استهلاك الكوكايين أحياناً'],
+              ['q2f', 'Consomment de l’Ecstasy OCCASIONNELLEMENT', 'استهلاك الإكستاسي أحياناً'],
+              ['q2g', 'Consomment de l’héroïne OCCASIONNELLEMENT', 'استهلاك الهيروين أحياناً'],
+              ['q2h', 'Consomment des inhalants narcotiques OCCASIONNELLEMENT', 'استنشاق المواد المخدرة أحياناً'],
+              ['q2i', 'Consomment des amphétamines OCCASIONNELLEMENT', 'استهلاك الأمفيتامينات أحياناً'],
+              ['q2m', 'Consomment Subutex OCCASIONNELLEMENT', 'استهلاك السوبوتيكس أحياناً'],
+              ['q2k', 'Consomment des cannabinoïdes synthétiques OCCASIONNELLEMENT', 'استهلاك الكانابينويدات الاصطناعية أحياناً']
+            ]} />
+------------------------------------------------------------
+=== GRID #39 ===
+<GridQuestion title="Si vous aviez un problème lié à l’alcool ou aux drogues, vers qui vous tourneriez-vous pour obtenir de l’aide ?" titleAr="إذا كانت لديك مشكلة متعلقة بالكحول أو المخدرات، إلى من ستتوجه للحصول على مساعدة؟" code="C.Q03" isRTL={isRTL}
+            options={YES_NO_DK} values={data.section_q.help_sources}
+            onChange={(key, val) => updateCheck('section_q', 'help_sources', key, val)}
+            items={[
+              ['a', 'Membre(s) de la famille', 'أفراد العائلة'],
+              ['b', 'Ami(e)s', 'الأصدقاء'],
+              ['c', 'Enseignants ou autres responsables du lycée', 'الأساتذة أو مسؤولو المعهد'],
+              ['d', 'Médecin, psychologue...', 'طبيب، أخصائي نفسي...'],
+              ['e', 'Une personne de religion', 'رجل دين'],
+              ['f', 'Centres de traitement de la toxicomanie', 'مراكز علاج الإدمان'],
+              ['g', 'Associations (ONG)', 'الجمعيات (منظمات غير حكومية)'],
+              ['h', 'Autre', 'خيار آخر']
+            ]} />
+------------------------------------------------------------
+=== GRID #40 ===
+<GridQuestion title="Au cours des 30 DERNIERS JOURS, combien d’heures avez-vous passé par jour sur les réseaux sociaux ?" titleAr="خلال الـ 30 يوماً الماضية، كم ساعة قضيتها يومياً على وسائل التواصل الاجتماعي؟" code="C.R01" isRTL={isRTL}
+            options={FREQ_DIGITAL} values={data.section_r.hours_per_day_breakdown}
+            onChange={(key, val) => updateCheck('section_r', 'hours_per_day_breakdown', key, val)}
+            items={[
+              ['a', 'Les jours de cours', 'أيام الدراسة'],
+              ['b', 'Le weekend', 'نهاية الأسبوع']
+            ]} />
+------------------------------------------------------------
+=== GRID #41 ===
+<GridQuestion title="Dans quelle mesure êtes-vous d’accord ou en désaccord avec les avis suivants concernant l’utilisation des réseaux sociaux :" titleAr="إلى أي مدى توافق أو تختلف مع الآراء التالية بخصوص استخدام وسائل التواصل الاجتماعي:" code="C.R02" isRTL={isRTL}
+            options={AGREEMENT_SCALE_SIMPLE} values={data.section_r.agreement}
+            onChange={(key, val) => updateCheck('section_r', 'agreement', key, val)}
+            items={[
+              ['a', 'Vous sentiez-vous très concerné par les réseaux sociaux ?', 'انشغال شديد بالشبكات؟'],
+              ['b', 'Avez-vous négligé d’autres activités / hobbies ?', 'إهمال الأنشطة الأخرى؟'],
+              ['c', 'Mauvaise humeur si vous ne pouviez pas les utiliser ?', 'سوء الحالة المزاجية بدونها؟']
+            ]} />
+------------------------------------------------------------
+=== GRID #42 ===
+<GridQuestion title="Dans quelle mesure êtes-vous d’accord ou en désaccord avec les avis suivants concernant les jeux vidéo :" titleAr="إلى أي مدى توافق أو تختلف مع الآراء التالية بخصوص ألعاب الفيديو:" code="C.S03" isRTL={isRTL}
+            options={AGREEMENT_SCALE_SIMPLE} values={data.section_s.agreement}
+            onChange={(key, val) => updateCheck('section_s', 'agreement', key, val)}
+            items={[
+              ['a', 'Es-tu passionné par les jeux (penses-tu souvent à tes activités de jeux même quand tu n’y joues pas) ?', 'هل أنت شغوف بالألعاب (هل تفكر غالباً في أنشطة اللعب الخاصة بك حتى عندما لا تلعب)؟'],
+              ['b', 'As-tu négligé d’autres activités/loisirs (école, devoirs, sports...) ?', 'هل أهملت أنشطة/هوايات أخرى (المدرسة، الفروض المنزلية، الرياضة...)؟']
+            ]} />
+------------------------------------------------------------
+=== GRID #43 ===
+<GridQuestion title="Si vous avez joué aux jeux d’argent durant les 12 DERNIERS MOIS… :" titleAr="إذا كنت قد لعبت ألعاب القمار خلال الـ 12 شهراً الماضية...:" code="C.T06" isRTL={isRTL}
+            options={YES_NO} values={data.section_t.gambling_problems}
+            onChange={(key, val) => updateCheck('section_t', 'gambling_problems', key, val)}
+            items={[
+              ['a', 'Êtes-vous retourné un autre jour pour essayer de gagner l’argent que vous avez perdu ?', 'هل عدت يوماً آخر لمحاولة استعادة المال الذي خسرته؟'],
+              ['b', 'Avez-vous dit aux autres que vous gagniez de l’argent, alors qu’en réalité, vous perdiez ?', 'هل قلت للآخرين أنك تربح المال بينما كنت في الواقع تخسر؟'],
+              ['c', 'Jouer vous a-t-il causé des problèmes (disputes famille/amis, lycée) ?', 'هل سبب لك اللعب مشاكل (خلافات مع العائلة/الأصدقاء، المعهد)؟'],
+              ['d', 'Avez-vous joué plus que vous ne l’aviez prévu au début ?', 'هل لعبت أكثر مما كنت تتوقع في البداية؟'],
+              ['e', 'Quelqu’un vous a-t-il critiqué ou dit que vous étiez accro ?', 'هل انتقدك شخص ما أو قال لك أنك مدمن؟'],
+              ['f', 'Avez-vous déjà senti mal à propos de l’argent que vous pariez ?', 'هل شعرت يوماً بالسوء تجاه المبالغ التي تراهن بها؟'],
+              ['g', 'Avez-vous déjà eu envie d’arrêter de jouer sans y parvenir ?', 'هل رغبت يوماً في التوقف عن اللعب ولم تستطع؟'],
+              ['h', 'Avez-vous caché des preuves de vos jeux (tickets, argent gagné) ?', 'هل أخفيت أدلة على لعبك (تذاكر، أموال فائزة)؟'],
+              ['i', 'Avez-vous eu des conflits financiers avec votre famille/amis ?', 'هل دخلت في صراعات مالية مع عائلتك أو أصدقائك؟'],
+              ['j', 'Avez-vous emprunté de l’argent pour parier sans le rendre ?', 'هل اقترضت مالاً للمراهنة ولم ترجعه؟'],
+              ['k', 'Avez-vous déjà manqué l’école en raison des jeux d’argent ?', 'هل تغيبت عن المدرسة بسبب أنشطة القمار؟'],
+              ['l', 'Avez-vous emprunté ou volé de l’argent pour parier ?', 'هل اقترضت أو سرقت مالاً للمراهنة؟']
+            ]} />
+------------------------------------------------------------
+=== GRID #44 ===
+<GridQuestion title="Au cours du DERNIER MOIS, à quelle fréquence avez-vous :" titleAr="خلال الشهر الماضي، كم مرة:" code="C.V01" isRTL={isRTL}
+            options={STRESS_FREQ} values={data.section_v}
+            onChange={(key, val) => update('section_v', key, val)}
+            items={[
+              ['a', 'Avoir le sentiment que vous ne pouviez pas contrôler les choses importantes de votre vie ?', 'الشعور بعدم القدرة على التحكم في أمور حياتك المهمة؟'],
+              ['b', 'Vous être senti confiant dans votre capacité à gérer vos problèmes personnels ?', 'الشعور بالثقة في قدرتك على التعامل مع مشاكلك الشخصية؟'],
+              ['c', 'Avoir senti que les choses allaient dans votre sens ?', 'الشعور بأن الأمور تسير لصالحك؟'],
+              ['d', 'Senti que les difficultés s\'accumulaient à un point tel que vous ne pouviez pas les surmonter ?', 'الشعور بأن الصعوبات تتراكم لدرجة لا يمكنك التغلب عليها؟']
+            ]} />
+------------------------------------------------------------
+=== GRID #45 ===
+<GridQuestion title="À quel point êtes-vous d’accord ou en désaccord avec chacune des propositions suivantes ?" titleAr="إلى أي مدى توافق أو تختلف مع كل من المقترحات التالية؟" code="C.V02" isRTL={isRTL}
+            options={AGREEMENT_SCALE} values={data.section_v.self_esteem}
+            onChange={(key, val) => updateCheck('section_v', 'self_esteem', key, val)}
+            items={[
+              ['a', "J'ai beaucoup de bonnes qualités", "لدي الكثير من الصفات الجيدة"],
+              ['b', "Dans l'ensemble, je suis satisfait de moi", "بشكل عام، أنا راضٍ عن نفسي"],
+              ['c', "Je sens que je n'ai pas grand-chose dont je puisse être fier", "أشعر أنه ليس لدي الكثير لأفخر به"],
+              ['d', "Je me sens certainement inutile parfois", "أشعر بالتأكيد أنني عديم الفائدة أحياناً"],
+              ['e', "Je sens que je suis une personne de valeur, au moins égale à n'importe qui d'autre", "أشعر أنني شخص ذو قيمة، على الأقل مساوٍ لأي شخص آخر"]
+            ]} />
+------------------------------------------------------------
+=== GRID #46 ===
+<GridQuestion title="Au cours des 12 DERNIERS MOIS, vous est-il arrivé de :" titleAr="خلال الـ 12 شهرًا الماضية، هل حدث لك أن:" code="C.V03" isRTL={isRTL}
+            options={YES_NO} values={data.section_v.mental_health_states}
+            onChange={(key, val) => updateCheck('section_v', 'mental_health_states', key, val)}
+            items={[
+              ['a', "Se sentir si triste ou sans espoir que vous avez arrêté vos activités habituelles ?", "الشعور بالحزن أو فقدان الأمل لدرجة التوقف عن أنشطتك المعتادة؟"],
+              ['b', "Manquer d'espoir en l'avenir ?", "فقدان الأمل في المستقبل؟"],
+              ['c', "Être incapable de dormir à cause de vos soucis ?", "عدم القدرة على النوم بسبب الهموم؟"],
+              ['d', "Avoir sérieusement pensé à vous blesser ou à vous faire du mal ?", "فكرت بجدية في إيذاء نفسك؟"],
+              ['e', "Avoir sérieusement tenté de vous suicider ?", "حاولت بجدية الانتحار؟"]
+            ]} />
+------------------------------------------------------------
+=== GRID #47 ===
+<GridQuestion title="Au cours des 12 DERNIERS MOIS :" titleAr="خلال الـ 12 شهرًا الماضية:" code="C.V04" isRTL={isRTL}
+            options={YES_NO} values={data.section_v.help_seeking}
+            onChange={(key, val) => updateCheck('section_v', 'help_seeking', key, val)}
+            items={[
+              ['a', "Avez-vous ressenti le besoin de parler à un professionnel de vos problèmes psychologiques ?", "هل شعرت بالحاجة للتحدث مع اختصاصي عن مشاكلك النفسية؟"],
+              ['b', "Avez-vous été hospitalisé dans un service psychiatrique ?", "هل دخلت المستشفى في قسم الأمراض النفسية؟"]
+            ]} />
+------------------------------------------------------------

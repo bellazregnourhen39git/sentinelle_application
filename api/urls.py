@@ -67,8 +67,11 @@ urlpatterns = [
     # Class Reports
     path('class-report/', ClassReportCreateView.as_view(), name='class_report_create'),
     path('class-report/list/', ClassReportListView.as_view(), name='class_report_list'),
+    path('class-reports/', ClassReportListView.as_view(), name='class_reports_alias'),
     path('class-report/<int:pk>/', ClassReportDetailView.as_view(), name='class_report_detail'),
+    path('class-reports/<int:pk>/', ClassReportDetailView.as_view(), name='class_reports_detail_alias'),
     path('class-report/<int:pk>/finalize/', ClassReportFinalizeView.as_view(), name='class_report_finalize'),
+    path('class-reports/<int:pk>/finalize/', ClassReportFinalizeView.as_view(), name='class_reports_finalize_alias'),
     path('class-report/active/', LatestActiveReportView.as_view(), name='latest_active_report'),
     path('class-report-fields/', DynamicClassReportFieldListView.as_view(), name='class_report_fields_list'),
     path('class-report-fields/<str:code>/', DynamicClassReportFieldDetailView.as_view(), name='class_report_fields_detail'),

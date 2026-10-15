@@ -10,7 +10,6 @@ Remplacez TOUT le contenu par ceci :
 
 
 version: "3.9"
-
 services:
   db:
     image: postgres:16-alpine
@@ -59,7 +58,9 @@ volumes:
 
 
 
+important:*********************************************
 Enregistrez le fichier (Ctrl+S) et fermez le Bloc-notes.
+*******************************************************
 
 
 ETAPE 2: Ouvrez PowerShell et executez ces commandes

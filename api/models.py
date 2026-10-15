@@ -125,7 +125,7 @@ class QuestionnaireSession(models.Model):
     # Tethering to Class Report
     class_report = models.ForeignKey(
         'ClassReport', 
-        on_delete=models.SET_NULL, 
+        on_delete=models.CASCADE, 
         null=True, 
         blank=True, 
         related_name="submissions",
@@ -272,7 +272,7 @@ HONESTY_SCALE = [
 class SectionA(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_a")
 
-    gender = models.CharField(max_length=1, choices=[("M", "Masculin"), ("F", "Féminin")])
+    gender = models.CharField(max_length=100, blank=True, null=True, choices=[("M", "Masculin"), ("F", "Féminin")])
     birth_month = models.PositiveSmallIntegerField(null=True, blank=True)
     birth_year = models.PositiveSmallIntegerField(null=True, blank=True)
     
@@ -280,7 +280,7 @@ class SectionA(models.Model):
     activities_frequency = models.JSONField(default=dict, blank=True) # {sports, reading, going_out, hobbies, park, internet, tv}
     
     # Performance (C.A08)
-    academic_performance = models.CharField(max_length=2, blank=True, choices=[
+    academic_performance = models.CharField(max_length=100, blank=True, choices=[
         ("1", "En dessous de la moyenne (<10/20)"),
         ("2", "Moyen [10 – 12]"),
         ("3", "En dessus de la moyenne (>12/20)"),
@@ -290,19 +290,19 @@ class SectionA(models.Model):
     household_members = models.JSONField(default=list, blank=True)
     
     # Parents absence (C.A10)
-    parents_absence_reason = models.CharField(max_length=2, blank=True, choices=[
+    parents_absence_reason = models.CharField(max_length=100, blank=True, choices=[
         ("1", "Décès"), ("2", "Divorce/Séparation"), ("3", "Migration"), ("4", "Autre"),
     ])
     
     # Nights out (C.A11)
-    nights_out_30days = models.CharField(max_length=2, blank=True, choices=[
+    nights_out_30days = models.CharField(max_length=100, blank=True, choices=[
         ("1", "Aucune"), ("2", "1"), ("3", "2"), ("4", "3"),
         ("5", "4"), ("6", "5"), ("7", "6"), ("8", "7 ou plus"),
     ])
     
     family_relationship_satisfaction = models.JSONField(default=dict, blank=True)
     school_absences = models.JSONField(default=dict, blank=True)
-    school_appreciation = models.CharField(max_length=2, blank=True)
+    school_appreciation = models.CharField(max_length=100, blank=True)
     parents_absence_reason_other = models.CharField(max_length=255, blank=True)
 
     def __str__(self):
@@ -328,8 +328,15 @@ class SectionB(models.Model):
         ("11", "Non applicable"),
     ]
 
-    father_education = models.CharField(max_length=2, blank=True, choices=EDUCATION_LEVEL)
-    mother_education = models.CharField(max_length=2, blank=True, choices=EDUCATION_LEVEL)
+    father_education = models.CharField(max_length=100, blank=True, choices=EDUCATION_LEVEL)
+    father_primary_success = models.CharField(max_length=100, blank=True)
+    father_middle_success = models.CharField(max_length=100, blank=True)
+    father_secondary_success = models.CharField(max_length=100, blank=True)
+
+    mother_education = models.CharField(max_length=100, blank=True, choices=EDUCATION_LEVEL)
+    mother_primary_success = models.CharField(max_length=100, blank=True)
+    mother_middle_success = models.CharField(max_length=100, blank=True)
+    mother_secondary_success = models.CharField(max_length=100, blank=True)
 
     EMPLOYMENT_STATUS = [
         ("1", "Oui, à plein temps"),
@@ -340,11 +347,11 @@ class SectionB(models.Model):
         ("6", "Non applicable"),
     ]
 
-    father_job = models.CharField(max_length=2, blank=True, choices=EMPLOYMENT_STATUS)
-    mother_job = models.CharField(max_length=2, blank=True, choices=EMPLOYMENT_STATUS)
+    father_job = models.CharField(max_length=100, blank=True, choices=EMPLOYMENT_STATUS)
+    mother_job = models.CharField(max_length=100, blank=True, choices=EMPLOYMENT_STATUS)
 
-    economic_status = models.CharField(max_length=20, blank=True)
-    private_room = models.CharField(max_length=2, blank=True)
+    economic_status = models.CharField(max_length=100, blank=True)
+    private_room = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return f"SectionB | Session {self.session_id}"
@@ -354,112 +361,112 @@ class SectionB(models.Model):
 
 class SectionC(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_c")
-    access_difficulty = models.CharField(max_length=2, blank=True, choices=DIFFICULTY_LEVELS)
+    access_difficulty = models.CharField(max_length=100, blank=True, choices=DIFFICULTY_LEVELS)
     social_circle = models.JSONField(default=dict, blank=True)
-    lifetime_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    months_12_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    days_30_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_30DAYS_CIGS)
-    age_first_use = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
-    age_daily_use = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
+    lifetime_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    months_12_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    days_30_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_30DAYS_CIGS)
+    age_first_use = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
+    age_daily_use = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
 
 class SectionD(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_d")
-    access_difficulty = models.CharField(max_length=2, blank=True, choices=DIFFICULTY_LEVELS)
+    access_difficulty = models.CharField(max_length=100, blank=True, choices=DIFFICULTY_LEVELS)
     social_circle = models.JSONField(default=dict, blank=True)
-    lifetime_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    months_12_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    days_30_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_30DAYS_VAPE)
-    age_first_use = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
-    age_daily_use = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
+    lifetime_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    months_12_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    days_30_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_30DAYS_VAPE)
+    age_first_use = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
+    age_daily_use = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
 
 class SectionE(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_e")
-    access_difficulty = models.CharField(max_length=2, blank=True, choices=DIFFICULTY_LEVELS)
+    access_difficulty = models.CharField(max_length=100, blank=True, choices=DIFFICULTY_LEVELS)
     social_circle = models.JSONField(default=dict, blank=True)
-    lifetime_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    months_12_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    days_30_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_30DAYS_HOOKAH)
-    age_first_use = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
-    age_daily_use = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
+    lifetime_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    months_12_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    days_30_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_30DAYS_HOOKAH)
+    age_first_use = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
+    age_daily_use = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
 
 class SectionG(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_g")
     access_difficulty = models.JSONField(default=dict, blank=True)
     social_circle = models.JSONField(default=dict, blank=True)
-    lifetime_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    months_12_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    days_30_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
+    lifetime_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    months_12_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    days_30_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
     days_30_by_type = models.JSONField(default=dict, blank=True)
-    binge_drinking_30days = models.CharField(max_length=2, blank=True, choices=[
+    binge_drinking_30days = models.CharField(max_length=100, blank=True, choices=[
         ("1", "Aucune fois"), ("2", "1"), ("3", "2"), ("4", "3-5"), ("5", "6-9"), ("6", "≥ 10"),
     ])
-    intoxication_lifetime = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    intoxication_12months = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    intoxication_30days = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    age_first_drink = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
-    age_first_intoxication = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
+    intoxication_lifetime = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    intoxication_12months = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    intoxication_30days = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    age_first_drink = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
+    age_first_intoxication = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
 
 class SectionH(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_h")
-    access_difficulty = models.CharField(max_length=2, blank=True, choices=DIFFICULTY_LEVELS)
+    access_difficulty = models.CharField(max_length=100, blank=True, choices=DIFFICULTY_LEVELS)
     social_circle = models.JSONField(default=dict, blank=True)
-    lifetime_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    months_12_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    days_30_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    age_first_use = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
+    lifetime_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    months_12_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    days_30_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    age_first_use = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
 
 class SectionI(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_i")
-    access_difficulty = models.CharField(max_length=2, blank=True, choices=DIFFICULTY_LEVELS)
+    access_difficulty = models.CharField(max_length=100, blank=True, choices=DIFFICULTY_LEVELS)
     social_circle = models.JSONField(default=dict, blank=True)
-    lifetime_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    months_12_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    days_30_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    age_first_use = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
-    use_last_12months = models.CharField(max_length=2, blank=True, choices=YES_NO)
+    lifetime_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    months_12_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    days_30_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    age_first_use = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
+    use_last_12months = models.CharField(max_length=100, blank=True, choices=YES_NO)
     cannabis_types_12months = models.JSONField(default=dict, blank=True)
     cannabis_problems_12months = models.JSONField(default=dict, blank=True)
 
 
 class SectionJ(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_j")
-    access_difficulty = models.CharField(max_length=2, blank=True, choices=DIFFICULTY_LEVELS)
+    access_difficulty = models.CharField(max_length=100, blank=True, choices=DIFFICULTY_LEVELS)
     social_circle = models.JSONField(default=dict, blank=True)
-    lifetime_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    months_12_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    days_30_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    age_first_use = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
-    use_last_12months = models.CharField(max_length=2, blank=True, choices=YES_NO)
+    lifetime_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    months_12_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    days_30_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    age_first_use = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
+    use_last_12months = models.CharField(max_length=100, blank=True, choices=YES_NO)
 
 class SectionK(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_k")
-    access_difficulty = models.CharField(max_length=2, blank=True, choices=DIFFICULTY_LEVELS)
+    access_difficulty = models.CharField(max_length=100, blank=True, choices=DIFFICULTY_LEVELS)
     social_circle = models.JSONField(default=dict, blank=True)
-    lifetime_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    months_12_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    days_30_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    age_first_use = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
-    use_last_12months = models.CharField(max_length=2, blank=True, choices=YES_NO)
+    lifetime_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    months_12_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    days_30_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    age_first_use = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
+    use_last_12months = models.CharField(max_length=100, blank=True, choices=YES_NO)
 
 class SectionL(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_l")
-    access_difficulty = models.CharField(max_length=2, blank=True, choices=DIFFICULTY_LEVELS)
+    access_difficulty = models.CharField(max_length=100, blank=True, choices=DIFFICULTY_LEVELS)
     social_circle = models.JSONField(default=dict, blank=True)
-    lifetime_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    months_12_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    days_30_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    age_first_use = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
-    use_last_12months = models.CharField(max_length=2, blank=True, choices=YES_NO)
+    lifetime_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    months_12_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    days_30_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    age_first_use = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
+    use_last_12months = models.CharField(max_length=100, blank=True, choices=YES_NO)
 
 class SectionM(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_m")
-    access_difficulty = models.CharField(max_length=2, blank=True, choices=DIFFICULTY_LEVELS)
+    access_difficulty = models.CharField(max_length=100, blank=True, choices=DIFFICULTY_LEVELS)
     social_circle = models.JSONField(default=dict, blank=True)
-    lifetime_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    months_12_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    days_30_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    age_first_use = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
-    use_last_12months = models.CharField(max_length=2, blank=True, choices=YES_NO)
+    lifetime_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    months_12_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    days_30_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    age_first_use = models.CharField(max_length=100, blank=True, choices=AGE_SCALE)
+    use_last_12months = models.CharField(max_length=100, blank=True, choices=YES_NO)
 
 
 # ─── Section N — Nouvelles Substances Psychoactives ─────────────────────────────
@@ -471,16 +478,16 @@ class SectionN(models.Model):
     months_12_freq_by_type = models.JSONField(default=dict, blank=True)
     age_first_use_by_type = models.JSONField(default=dict, blank=True)
     forms = models.JSONField(default=dict, blank=True)
-    synthetic_cannabinoids = models.CharField(max_length=2, blank=True, choices=YES_NO)
-    synthetic_cathinones = models.CharField(max_length=2, blank=True, choices=YES_NO)
+    synthetic_cannabinoids = models.CharField(max_length=100, blank=True, choices=YES_NO)
+    synthetic_cathinones = models.CharField(max_length=100, blank=True, choices=YES_NO)
 
 class SectionP(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_p")
-    lifetime_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
-    months_12_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
+    lifetime_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
+    months_12_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
     forms = models.JSONField(default=dict, blank=True)
     substances = models.JSONField(default=dict, blank=True)
-    fictive_substance_consumption = models.CharField(max_length=2, blank=True, choices=YES_NO)
+    fictive_substance_consumption = models.CharField(max_length=100, blank=True, choices=YES_NO)
 
 class SectionQ(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_q")
@@ -494,35 +501,37 @@ class SectionR(models.Model):
 
 class SectionS(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_s")
-    hours_per_day = models.CharField(max_length=2, blank=True, choices=FREQUENCY_DIGITAL)
-    days_per_week = models.CharField(max_length=2, blank=True)
+    hours_per_day = models.CharField(max_length=100, blank=True, choices=FREQUENCY_DIGITAL)
+    hours_per_day_school = models.CharField(max_length=100, blank=True)
+    hours_per_day_non_school = models.CharField(max_length=100, blank=True)
+    days_per_week = models.CharField(max_length=100, blank=True)
     agreement = models.JSONField(default=dict, blank=True)
 
 class SectionT(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_t")
-    months_12_freq = models.CharField(max_length=2, blank=True, choices=FREQUENCY_LIFETIME)
+    months_12_freq = models.CharField(max_length=100, blank=True, choices=FREQUENCY_LIFETIME)
     offline_games = models.JSONField(default=dict, blank=True)
     online_games = models.JSONField(default=dict, blank=True)
-    felt_need_increase = models.CharField(max_length=2, blank=True, choices=YES_NO)
-    lied_about_it = models.CharField(max_length=2, blank=True, choices=YES_NO)
+    felt_need_increase = models.CharField(max_length=100, blank=True, choices=YES_NO)
+    lied_about_it = models.CharField(max_length=100, blank=True, choices=YES_NO)
     gambling_problems = models.JSONField(default=dict, blank=True)
 
 class SectionU(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_u")
-    fights_12months = models.CharField(max_length=2, blank=True)
-    fight_circumstances = models.CharField(max_length=20, blank=True)
-    fight_location = models.CharField(max_length=20, blank=True)
-    staff_intervention = models.CharField(max_length=2, blank=True, choices=YES_NO)
+    fights_12months = models.CharField(max_length=100, blank=True)
+    fight_circumstances = models.CharField(max_length=100, blank=True)
+    fight_location = models.CharField(max_length=100, blank=True)
+    staff_intervention = models.CharField(max_length=100, blank=True, choices=YES_NO)
     fight_consequences = models.JSONField(default=list, blank=True)
-    serious_injury_12months = models.CharField(max_length=20, blank=True)
+    serious_injury_12months = models.CharField(max_length=100, blank=True)
     harassment = models.JSONField(default=dict, blank=True)
 
 class SectionV(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_v")
-    a = models.CharField(max_length=2, blank=True)
-    b = models.CharField(max_length=2, blank=True)
-    c = models.CharField(max_length=2, blank=True)
-    d = models.CharField(max_length=2, blank=True)
+    a = models.CharField(max_length=100, blank=True)
+    b = models.CharField(max_length=100, blank=True)
+    c = models.CharField(max_length=100, blank=True)
+    d = models.CharField(max_length=100, blank=True)
     self_esteem = models.JSONField(default=dict, blank=True)
     mental_health_states = models.JSONField(default=dict, blank=True)
     help_seeking = models.JSONField(default=dict, blank=True)
@@ -530,9 +539,9 @@ class SectionV(models.Model):
 
 class SectionZ(models.Model):
     session = models.OneToOneField(QuestionnaireSession, on_delete=models.CASCADE, related_name="section_z")
-    honesty_level = models.CharField(max_length=2, blank=True)
-    honesty_cannabis = models.CharField(max_length=2, blank=True, choices=AGE_SCALE) # Wait, HONESTY_SCALE?
-    honesty_heroin = models.CharField(max_length=2, blank=True, choices=AGE_SCALE)
+    honesty_level = models.CharField(max_length=100, blank=True)
+    honesty_cannabis = models.CharField(max_length=100, blank=True)
+    honesty_heroin = models.CharField(max_length=100, blank=True)
 
     def __str__(self):
         return f"SectionZ | Session {self.session_id}"
@@ -595,6 +604,7 @@ class DynamicQuestion(models.Model):
         TEXT = "TEXT", _("Text Input")
         RADIO = "RADIO", _("Single Choice")
         NUMBER = "NUMBER", _("Number Input")
+        MATRIX = "MATRIX", _("Matrix / Grid Question")
         SECTION = "SECTION", _("New Section")
 
     code = models.CharField(max_length=50, unique=True, help_text="Unique identifier (e.g., Z.01 or custom)")
@@ -602,7 +612,8 @@ class DynamicQuestion(models.Model):
     label_fr = models.TextField()
     label_ar = models.TextField(blank=True, null=True)
     question_type = models.CharField(max_length=10, choices=QuestionType.choices, default=QuestionType.TEXT)
-    options_json = models.JSONField(default=list, blank=True, help_text="List of choices for RADIO type: [['val', 'fr', 'ar'], ...]")
+    options_json = models.JSONField(default=list, blank=True, help_text="List of choices/columns for RADIO/MATRIX: [['val', 'fr', 'ar'], ...]")
+    items_json = models.JSONField(default=list, blank=True, help_text="List of rows/sub-questions for MATRIX type: [['key', 'fr', 'ar'], ...]")
     
     is_hidden = models.BooleanField(default=False, help_text="If True, this question (even core ones) will be hidden from the UI")
     is_dynamic = models.BooleanField(default=True, help_text="True if added by admin, False if it's an override of a core question")

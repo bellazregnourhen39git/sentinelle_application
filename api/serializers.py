@@ -164,146 +164,189 @@ class DynamicClassReportFieldSerializer(serializers.ModelSerializer):
 
 class ClassReportSerializer(serializers.ModelSerializer):
     governorate_name = serializers.CharField(source='governorate.name', read_only=True)
+    submissions_count = serializers.IntegerField(source='submissions.count', read_only=True)
+    governorate = serializers.PrimaryKeyRelatedField(queryset=Governorate.objects.all(), required=False, allow_null=True)
+    establishment = serializers.PrimaryKeyRelatedField(queryset=SchoolEstablishment.objects.all(), required=False, allow_null=True)
 
     class Meta:
         model = ClassReport
         fields = '__all__'
 
+    def validate(self, attrs):
+        user = self.context['request'].user if 'request' in self.context else None
+        
+        # If governorate is not provided in payload, fallback to user's governorate
+        if not attrs.get('governorate') and user and getattr(user, 'governorate', None):
+            attrs['governorate'] = user.governorate
+            
+        # If still no governorate and establishment is given, infer from establishment
+        if not attrs.get('governorate') and attrs.get('establishment') and attrs['establishment'].governorate:
+            attrs['governorate'] = attrs['establishment'].governorate
+
+        if not attrs.get('governorate') and not self.instance:
+            raise serializers.ValidationError({"governorate": "Le gouvernorat est requis."})
+
+        # Auto-fill establishment name if not given
+        if attrs.get('establishment') and not attrs.get('establishment_name'):
+            attrs['establishment_name'] = attrs['establishment'].name
+
+        # Auto-resolve or create SchoolEstablishment if establishment_name is provided
+        if not attrs.get('establishment') and attrs.get('establishment_name') and attrs.get('governorate'):
+            name = attrs['establishment_name'].strip()
+            if name:
+                est = SchoolEstablishment.objects.filter(name__iexact=name, governorate=attrs['governorate']).first()
+                if not est:
+                    est = SchoolEstablishment.objects.create(name=name, governorate=attrs['governorate'])
+                attrs['establishment'] = est
+
+        return attrs
+
     def create(self, validated_data):
         user = self.context['request'].user if 'request' in self.context else None
-        if user and user.is_authenticated and (user.role == 'PRACTITIONER' or user.role == 'OPERATOR'):
-            # Auto-link to user's establishment and governorate if missing
-            if not validated_data.get('establishment') and user.establishment:
-                validated_data['establishment'] = user.establishment
-                validated_data['establishment_name'] = user.establishment.name
-            if not validated_data.get('governorate') and user.governorate:
-                validated_data['governorate'] = user.governorate
+        if user and user.is_authenticated:
+            validated_data['created_by'] = user
         return super().create(validated_data)
 
 
 # ─── Section Serializers ─────────────────────────────────────────────────────────
 
-class SectionASerializer(serializers.ModelSerializer):
+class DynamicSectionModelSerializer(serializers.ModelSerializer):
+    """
+    Custom ModelSerializer that relaxes static ChoiceField validation
+    to allow dynamic questionnaire options and custom administrator choices.
+    """
+    def build_standard_field(self, field_name, model_field):
+        field_class, field_kwargs = super().build_standard_field(field_name, model_field)
+        if field_class == serializers.ChoiceField:
+            field_class = serializers.CharField
+            field_kwargs.pop('choices', None)
+            field_kwargs['allow_blank'] = True
+            field_kwargs['allow_null'] = True
+            field_kwargs['required'] = False
+        return field_class, field_kwargs
+
+
+class SectionASerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionA
         exclude = ('session',)
 
 
-class SectionBSerializer(serializers.ModelSerializer):
+class SectionBSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionB
         exclude = ('session',)
 
 
-class SectionCSerializer(serializers.ModelSerializer):
+class SectionCSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionC
         exclude = ('session',)
 
 
-class SectionDSerializer(serializers.ModelSerializer):
+class SectionDSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionD
         exclude = ('session',)
 
 
-class SectionESerializer(serializers.ModelSerializer):
+class SectionESerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionE
         exclude = ('session',)
 
 
-class SectionGSerializer(serializers.ModelSerializer):
+class SectionGSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionG
         exclude = ('session',)
 
 
-class SectionHSerializer(serializers.ModelSerializer):
+class SectionHSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionH
         exclude = ('session',)
 
 
-class SectionISerializer(serializers.ModelSerializer):
+class SectionISerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionI
         exclude = ('session',)
 
 
-class SectionJSerializer(serializers.ModelSerializer):
+class SectionJSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionJ
         exclude = ('session',)
 
 
-class SectionKSerializer(serializers.ModelSerializer):
+class SectionKSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionK
         exclude = ('session',)
 
 
-class SectionLSerializer(serializers.ModelSerializer):
+class SectionLSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionL
         exclude = ('session',)
 
 
-class SectionMSerializer(serializers.ModelSerializer):
+class SectionMSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionM
         exclude = ('session',)
 
 
-class SectionNSerializer(serializers.ModelSerializer):
+class SectionNSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionN
         exclude = ('session',)
 
 
-class SectionPSerializer(serializers.ModelSerializer):
+class SectionPSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionP
         exclude = ('session',)
 
 
-class SectionQSerializer(serializers.ModelSerializer):
+class SectionQSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionQ
         exclude = ('session',)
 
 
-class SectionRSerializer(serializers.ModelSerializer):
+class SectionRSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionR
         exclude = ('session',)
 
 
-class SectionSSerializer(serializers.ModelSerializer):
+class SectionSSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionS
         exclude = ('session',)
 
 
-class SectionTSerializer(serializers.ModelSerializer):
+class SectionTSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionT
         exclude = ('session',)
 
 
-class SectionUSerializer(serializers.ModelSerializer):
+class SectionUSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionU
         exclude = ('session',)
 
 
-class SectionVSerializer(serializers.ModelSerializer):
+class SectionVSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionV
         exclude = ('session',)
 
 
-class SectionZSerializer(serializers.ModelSerializer):
+class SectionZSerializer(DynamicSectionModelSerializer):
     class Meta:
         model = SectionZ
         exclude = ('session',)
@@ -424,32 +467,41 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
     def validate(self, validated_data):
         initial_data = self.initial_data or {}
 
-        if 'school' not in validated_data:
-            if initial_data.get('school_id') is not None:
-                validated_data['school'] = SchoolEstablishment.objects.filter(pk=initial_data['school_id']).first()
-            elif initial_data.get('establishment') is not None:
-                validated_data['school'] = SchoolEstablishment.objects.filter(pk=initial_data['establishment']).first()
-
-        if 'governorate' not in validated_data:
-            governorate_value = initial_data.get('governorate_id') or initial_data.get('governorate')
-            if governorate_value is not None:
-                validated_data['governorate'] = Governorate.objects.filter(pk=governorate_value).first()
-
         school_class = validated_data.get('school_class')
         class_report = validated_data.get('class_report')
-        school = validated_data.get('school')
-        governorate = validated_data.get('governorate')
 
-        if school_class:
-            validated_data['school'] = school_class.establishment
-            if school_class.establishment and school_class.establishment.governorate:
-                validated_data['governorate'] = school_class.establishment.governorate
+        if class_report:
+            if not class_report.establishment and class_report.establishment_name and class_report.governorate:
+                name = class_report.establishment_name.strip()
+                if name:
+                    est = SchoolEstablishment.objects.filter(name__iexact=name, governorate=class_report.governorate).first()
+                    if not est:
+                        est = SchoolEstablishment.objects.create(name=name, governorate=class_report.governorate)
+                    class_report.establishment = est
+                    class_report.save(update_fields=['establishment'])
 
-        if class_report and not school_class:
             if class_report.establishment:
                 validated_data['school'] = class_report.establishment
             if class_report.governorate:
                 validated_data['governorate'] = class_report.governorate
+        elif school_class:
+            validated_data['school'] = school_class.establishment
+            if school_class.establishment and school_class.establishment.governorate:
+                validated_data['governorate'] = school_class.establishment.governorate
+        else:
+            if 'school' not in validated_data:
+                if initial_data.get('school_id') is not None:
+                    validated_data['school'] = SchoolEstablishment.objects.filter(pk=initial_data['school_id']).first()
+                elif initial_data.get('establishment') is not None:
+                    validated_data['school'] = SchoolEstablishment.objects.filter(pk=initial_data['establishment']).first()
+
+            if 'governorate' not in validated_data:
+                governorate_value = initial_data.get('governorate_id') or initial_data.get('governorate')
+                if governorate_value is not None:
+                    validated_data['governorate'] = Governorate.objects.filter(pk=governorate_value).first()
+
+        school = validated_data.get('school')
+        governorate = validated_data.get('governorate')
 
         if school and not governorate and school.governorate:
             validated_data['governorate'] = school.governorate
@@ -457,11 +509,36 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
         if 'answers' in initial_data and 'extra_answers' not in validated_data:
             validated_data['extra_answers'] = initial_data.get('answers', {})
 
-        if not validated_data.get('school') or not validated_data.get('governorate'):
-            raise serializers.ValidationError({
-                'school': 'School/establishment must be provided.',
-                'governorate': 'Governorate must be provided.',
-            })
+        request = self.context.get('request')
+        user = getattr(request, 'user', None) if request else None
+
+        if not validated_data.get('school'):
+            if user and getattr(user, 'establishment', None):
+                validated_data['school'] = user.establishment
+            else:
+                validated_data['school'] = SchoolEstablishment.objects.first()
+
+        if not validated_data.get('governorate'):
+            if validated_data.get('school') and validated_data['school'].governorate:
+                validated_data['governorate'] = validated_data['school'].governorate
+            elif user and getattr(user, 'governorate', None):
+                validated_data['governorate'] = user.governorate
+            else:
+                validated_data['governorate'] = Governorate.objects.first()
+
+        if self.instance:
+            if not validated_data.get('school'):
+                validated_data['school'] = self.instance.school
+            if not validated_data.get('governorate'):
+                validated_data['governorate'] = self.instance.governorate
+
+        errors = {}
+        if not validated_data.get('school'):
+            errors['school'] = 'School/establishment must be provided (or linked via a class report).'
+        if not validated_data.get('governorate'):
+            errors['governorate'] = 'Governorate must be provided (or linked via a class report).'
+        if errors:
+            raise serializers.ValidationError(errors)
 
         return validated_data
 
@@ -483,7 +560,7 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
             'id', 'created_at', 'school', 'governorate',
             'tobacco_user', 'ecig_user', 'hookah_user', 'alcohol_user', 'tranquilizer_user',
             'cannabis_user', 'cocaine_user', 'ecstasy_user', 'heroin_user', 'inhalant_user',
-            'has_risk_behavior', 'is_valid', 'exclusion_reason',
+            'has_risk_behavior',
         )
 
     def update(self, instance, validated_data):
@@ -548,28 +625,37 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
                 ecstasy_user, heroin_user, inhalant_user,
             ])
             
-            # Simple validation recalculation
-            is_valid = True
-            exclusion_reasons = []
-            section_a_data = updated_sections_data.get('section_a') or {}
-            gender = section_a_data.get('gender')
-            if not gender or gender not in ['M', 'F']:
-                is_valid = False
-                exclusion_reasons.append("Genre non précisé")
+            # Validation recalculation: respect explicit manual toggle if provided in payload
+            if 'is_valid' in validated_data:
+                instance.is_valid = validated_data['is_valid']
+                if 'exclusion_reason' in validated_data:
+                    instance.exclusion_reason = validated_data['exclusion_reason']
+                elif not instance.is_valid and not instance.exclusion_reason:
+                    instance.exclusion_reason = "Exclu manuellement (non comptabilisé)"
+                elif instance.is_valid:
+                    instance.exclusion_reason = None
+            else:
+                is_valid = True
+                exclusion_reasons = []
+                section_a_data = updated_sections_data.get('section_a') or {}
+                gender = section_a_data.get('gender')
+                if not gender or str(gender).strip() in ['', 'null', 'none']:
+                    is_valid = False
+                    exclusion_reasons.append("Genre non précisé")
+                    
+                birth_year = section_a_data.get('birth_year')
+                if birth_year:
+                    try:
+                        birth_year_int = int(birth_year)
+                        age = 2026 - birth_year_int
+                        if age < 12 or age > 21:
+                            is_valid = False
+                            exclusion_reasons.append(f"Âge hors limites ({age} ans)")
+                    except (ValueError, TypeError):
+                        pass
                 
-            birth_year = section_a_data.get('birth_year')
-            if birth_year:
-                try:
-                    birth_year_int = int(birth_year)
-                    age = 2026 - birth_year_int
-                    if age < 15 or age > 18:
-                        is_valid = False
-                        exclusion_reasons.append(f"Âge hors limites ({age} ans)")
-                except (ValueError, TypeError):
-                    pass
-            
-            instance.is_valid = is_valid
-            instance.exclusion_reason = " | ".join(exclusion_reasons) if not is_valid else None
+                instance.is_valid = is_valid
+                instance.exclusion_reason = " | ".join(exclusion_reasons) if not is_valid else None
             
             instance.save()
             
@@ -586,6 +672,15 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
             validated_data['school'] = school_class.establishment
             validated_data['governorate'] = school_class.establishment.governorate
         elif class_report:
+            if not class_report.establishment and class_report.establishment_name and class_report.governorate:
+                name = class_report.establishment_name.strip()
+                if name:
+                    est = SchoolEstablishment.objects.filter(name__iexact=name, governorate=class_report.governorate).first()
+                    if not est:
+                        est = SchoolEstablishment.objects.create(name=name, governorate=class_report.governorate)
+                    class_report.establishment = est
+                    class_report.save(update_fields=['establishment'])
+
             if class_report.establishment:
                 validated_data['school'] = class_report.establishment
             if class_report.governorate:
@@ -595,11 +690,13 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
             if school.governorate:
                 validated_data['governorate'] = school.governorate
 
-        if not validated_data.get('school') or not validated_data.get('governorate'):
-            raise serializers.ValidationError({
-                'school': 'School/establishment must be provided.',
-                'governorate': 'Governorate must be provided.',
-            })
+        errors = {}
+        if not validated_data.get('school'):
+            errors['school'] = 'School/establishment must be provided (or linked via a class report).'
+        if not validated_data.get('governorate'):
+            errors['governorate'] = 'Governorate must be provided (or linked via a class report).'
+        if errors:
+            raise serializers.ValidationError(errors)
         
         # Pop all nested section data
         sections_data = {key: validated_data.pop(key, None) for key in SECTION_MAP}
@@ -642,37 +739,36 @@ class QuestionnaireSessionSerializer(serializers.ModelSerializer):
             exclusion_reasons = []
             
             # 1. Gender non précisé
-            # Validate against SectionA gender choices.
             section_a_data = sections_data.get('section_a') or {}
             gender = section_a_data.get('gender')
-            if not gender or gender not in ['M', 'F']:
+            if not gender or str(gender).strip() in ['', 'null', 'none']:
                 is_valid = False
                 exclusion_reasons.append("Genre non précisé")
                 
-            # 2. Age < 15 or > 18
+            # 2. Age hors limites
             birth_year = section_a_data.get('birth_year')
             if birth_year:
                 try:
                     birth_year_int = int(birth_year)
                     age = 2026 - birth_year_int
-                    if age < 15 or age > 18:
+                    if age < 12 or age > 21:
                         is_valid = False
                         exclusion_reasons.append(f"Âge hors limites ({age} ans)")
                 except (ValueError, TypeError):
                     pass
             
-            # 3. Taux de valeurs manquantes par questionnaire > 50%
+            # 3. Taux de valeurs manquantes par questionnaire
             total_fields = 0
             missing_fields = 0
             
             for sec_key, sec_data in sections_data.items():
-                if sec_data:
+                if sec_data and any(v not in [None, '', [], {}] for v in sec_data.values()):
                     total_fields += len(sec_data.keys())
                     missing_fields += sum(1 for v in sec_data.values() if v in [None, '', [], {}])
             
-            if total_fields > 0 and (missing_fields / total_fields) > 0.5:
+            if total_fields >= 10 and (missing_fields / total_fields) > 0.8:
                 is_valid = False
-                exclusion_reasons.append(f"Valeurs manquantes > 50% ({missing_fields}/{total_fields})")
+                exclusion_reasons.append(f"Valeurs manquantes > 80% ({missing_fields}/{total_fields})")
             
             # 4. Consommation de substance fictive (Section P / Question piège)
             section_p_data = sections_data.get('section_p') or {}

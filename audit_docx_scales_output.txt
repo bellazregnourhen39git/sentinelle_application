@@ -1,0 +1,1238 @@
+FOUND CHOICE CONSTANTS IN QUESTIONNAIREFORM.JSX:
+
+FREQ_LIFETIME (7 choices):
+   ['1', 'Jamais', 'أبداً'],
+   ['2', '1-2 fois', '1-2 مرة'],
+   ['3', '3-5 fois', '3-5 مرات'],
+   ['4', '6-9 fois', '6-9 مرات'],
+   ['5', '10-19 fois', '10-19 مرة'],
+   ['6', '20-39 fois', '20-39 مرة'],
+   ['7', '40 fois ou plus', '40 مرة أو أكثر'],
+
+FREQ_30DAYS_CIGS (7 choices):
+   ['1', 'Jamais', 'أبداً'],
+   ['2', '< 1 cigarette par semaine', 'أقل من سيجارة واحدة في الأسبوع'],
+   ['3', '< 1 cigarette par jour', 'أقل من سيجارة واحدة في اليوم'],
+   ['4', '1-5 par jour', '1-5 في اليوم'],
+   ['5', '6-10 par jour', '6-10 في اليوم'],
+   ['6', '11-20 par jour', '11-20 في اليوم'],
+   ['7', '> 20 par jour', 'أكثر من 20 في اليوم'],
+
+FREQ_30DAYS_VAPE (4 choices):
+   ['1', 'Jamais', 'أبداً'],
+   ['2', '< 1 fois par semaine', 'أقل من مرة في الأسبوع'],
+   ['3', 'Au moins 1 fois par semaine', 'على الأقل مرة واحدة في الأسبوع'],
+   ['4', 'Tous les jours ou presque', 'يومياً أو تقريباً كل يوم'],
+
+FREQ_30DAYS_HOOKAH (7 choices):
+   ['1', 'Jamais', 'أبداً'],
+   ['2', '< 1 par semaine', 'أقل من مرة في الأسبوع'],
+   ['3', '< 1 par jour', 'أقل من مرة في اليوم'],
+   ['4', '1-5 par jour', '1-5 في اليوم'],
+   ['5', '6-10 par jour', '6-10 في اليوم'],
+   ['6', '11-20 par jour', '11-20 في اليوم'],
+   ['7', '> 20 par jour', 'أكثر من 20 في اليوم'],
+
+FREQ_30DAYS_STANDARD (7 choices):
+   ['1', 'Jamais', 'أبداً'],
+   ['2', '1-2 fois', '1-2 مرة'],
+   ['3', '3-5 fois', '3-5 مرات'],
+   ['4', '6-9 fois', '6-9 مرات'],
+   ['5', '10-19 fois', '10-19 مرة'],
+   ['6', '20-39 fois', '20-39 مرة'],
+   ['7', '40 fois ou plus', '40 مرة أو أكثر'],
+
+RISK_LEVELS (5 choices):
+   ['1', 'Sans risque', 'بدون خطر'],
+   ['2', 'Léger risque', 'خطر خفيف'],
+   ['3', 'Risque modéré', 'خطر متوسط'],
+   ['4', 'Grand risque', 'خطر كبير'],
+   ['5', 'Ne sait pas', 'لا أعرف'],
+
+FREQ_ACTIVITIES (5 choices):
+   ['1', 'Jamais', 'أبداً'],
+   ['2', 'Quelques fois par an', 'بضع مرات في السنة'],
+   ['3', '1 ou 2 fois par mois', 'مرة أو مرتين في الشهر'],
+   ['4', 'Au moins une fois par semaine', 'مرة واحدة على الأقل في الأسبوع'],
+   ['5', 'Presque tous les jours', 'كل يوم'],
+
+FREQ_DIGITAL (6 choices):
+   ['1', 'Aucune', 'لا شيء'],
+   ['2', 'Une demi-heure ou moins', 'نصف ساعة أو أقل'],
+   ['3', 'Environ 1 heure', 'حوالي ساعة واحدة'],
+   ['4', 'Environ 2-3 heures', 'حوالي 2-3 ساعات'],
+   ['5', 'Environ 4-5 heures', 'حوالي 4-5 ساعات'],
+   ['6', '6 heures ou plus', '6 ساعات أو أكثر'],
+
+DIFFICULTY (4 choices):
+   ['1', 'Impossible', 'مستحيل'],
+   ['2', 'Difficile', 'صعب'],
+   ['3', 'Facile', 'سهل'],
+   ['4', 'Ne sait pas', 'لا أعرف'],
+
+SOCIAL_CIRCLE (4 choices):
+   ['1', 'Aucun', 'لا يوجد'],
+   ['2', 'Quelques-uns', 'القليل منهم'],
+   ['3', 'La plupart', 'أغلبهم'],
+   ['4', 'Tous', 'جميعهم'],
+
+PARENTS_USE (4 choices):
+   ['1', 'Non', 'لا'],
+   ['2', 'Parfois', 'أحياناً'],
+   ['3', 'Souvent', 'غالباً'],
+   ['4', 'Ne sait pas', 'لا أعرف'],
+
+FREQ_BINGE (6 choices):
+   ['1', 'Aucune fois', 'ولا مرة'],
+   ['2', '1 fois', 'مرة واحدة'],
+   ['3', '2 fois', 'مرتين'],
+   ['4', '3-5 fois', '3-5 مرات'],
+   ['5', '6-9 fois', '6-9 مرات'],
+   ['6', '10 fois ou plus', '10 مرات أو أكثر'],
+
+FREQ_GAMBLING (7 choices):
+   ['0', 'Jamais', 'أبداً'],
+   ['1', '1-2 fois', '1-2 مرة'],
+   ['2', '3-5 fois', '3-5 مرات'],
+   ['3', '6-9 fois', '6-9 مرات'],
+   ['4', '10-19 fois', '10-19 مرة'],
+   ['5', '20-39 fois', '20-39 مرة'],
+   ['6', '40 fois ou plus', '40 مرة أو أكثر'],
+
+AGE_SCALE (5 choices):
+   ['1', 'Jamais / Je n’ai jamais utilisé', 'أبداً / لم أستخدمه أبداً'],
+   ['2', '9 ans ou moins', '9 سنوات أو أقل'],
+   ['3', '10 ans', '10 سنوات'], ['4', '11 ans', '11 سنوات'], ['5', '12 ans', '12 سنوات'],
+   ['6', '13 ans', '13 سنوات'], ['7', '14 ans', '14 سنوات'], ['8', '15 ans', '15 سنوات'],
+   ['9', '16 ans ou plus', '16 سنة أو أكثر'],
+
+HONESTY_SCALE (5 choices):
+   ['1', 'J’ai déjà déclaré [cela]', 'لقد ذكرت ذلك بالفعل'],
+   ['2', 'Oui, sans aucun doute', 'نعم، بدون أدنى شك'],
+   ['3', 'Probablement oui', 'ربما نعم'],
+   ['4', 'Probablement pas', 'ربما لا'],
+   ['5', 'Non, sans aucun doute', 'لا، بدون أدنى شك'],
+
+PERFORMANCE (3 choices):
+   ['1', 'En dessous de la moyenne (<10/20)', 'أقل من المعدل'],
+   ['2', 'Moyen [10 – 12]', 'متوسط'],
+   ['3', 'En dessus de la moyenne (>12/20)', 'فوق المعدل'],
+
+EDUCATION (11 choices):
+   ['1', 'Non scolarisé', 'بدون تعليم'],
+   ['2', 'Primaire (n’a pas réussi sa 6ème année)', 'ابتدائي (لم ينجح في السنة السادسة)'],
+   ['3', 'Primaire (a réussi sa 6ème année)', 'ابتدائي (نجح في السنة السادسة)'],
+   ['4', 'Collège (n’a pas réussi sa 9ème année)', 'إعدادي (لم ينجح في السنة التاسعة)'],
+   ['5', 'Collège (a réussi sa 9ème année)', 'إعدادي (نجح في السنة التاسعة)'],
+   ['6', 'Secondaire (n’a pas réussi son BAC)', 'ثانوي (لم ينجح في البكالوريا)'],
+   ['7', 'Secondaire (a réussi son BAC)', 'ثانوي (نجح في البكالوريا)'],
+   ['8', 'Supérieur ou plus', 'جامعي أو أكثر'],
+   ['9', 'Formation professionnelle', 'تكوين مهني'],
+   ['10', 'Je ne sais pas', 'لا أعرف'],
+   ['11', 'Non applicable', 'غير قابل للتطبيق'],
+
+JOBS (6 choices):
+   ['1', 'Oui, à plein temps', 'نعم، بدوام كامل'],
+   ['2', 'Oui, à temps partiel', 'نعم، بدوام جزئي'],
+   ['3', 'Ne travaille pas', 'لا يعمل'],
+   ['4', 'Retraité(e)', 'متقاعد(ة)'],
+   ['5', 'Je ne sais pas', 'لا أعرف'],
+   ['6', 'Non applicable', 'غير قابل للتطبيق'],
+
+HOUSEHOLD (6 choices):
+   ['1', 'Père', 'الأب'], ['2', 'Mère', 'الأم'],
+   ['3', 'Beau-père (conjoint de votre mère)', 'زوج الأم'], ['4', 'Belle-mère (conjointe de votre père)', 'زوجة الأب'],
+   ['5', 'Frère(s)', 'إخوة'], ['6', 'Sœur(s)', 'أخوات'],
+   ['7', 'Grands parent(s)', 'أجداد'],
+   ['8', 'Autres proches', 'أقارب آخرون'],
+   ['9', 'Je ne vis avec aucun de mes proches (par exemple : orphelinat, foyer, etc.)', 'لا أعيش مع أي من أقاربي'],
+
+YES_NO (1 choices):
+   ['1', 'Oui', 'نعم'], ['2', 'Non', 'لا']
+
+YES_NO_INV (1 choices):
+   ['1', 'Non', 'لا'], ['2', 'Oui', 'نعم']
+
+YES_NO_01 (1 choices):
+   ['0', 'Non', 'لا'], ['1', 'Oui', 'نعم']
+
+YES_NO_DK (1 choices):
+   ['1', 'Oui', 'نعم'], ['2', 'Non', 'لا'], ['3', 'Ne sait pas', 'لا أعرف']
+
+STRESS_FREQ (5 choices):
+   ['1', 'Jamais', 'أبداً'],
+   ['2', 'Presque jamais', 'نادراً'],
+   ['3', 'Parfois', 'أحياناً'],
+   ['4', 'Assez souvent', 'في أغلب الأحيان'],
+   ['5', 'Très souvent', 'دائماً'],
+
+SATISFACTION_SCALE (6 choices):
+   ['1', 'Très satisfait(e)', 'راضٍ جداً'],
+   ['2', 'Satisfait(e)', 'راضٍ'],
+   ['3', 'Ni satisfait(e) ni insatisfait(e)', 'محايد'],
+   ['4', 'Pas tellement satisfait(e)', 'غير راضٍ تماماً'],
+   ['5', 'Non satisfait(e)', 'غير راضٍ'],
+   ['6', 'Non applicable', 'غير قابل للتطبيق'],
+
+FIGHT_FREQUENCY (8 choices):
+   ['1', '0 fois', '0 مرة'],
+   ['2', '1 fois', '1 مرة'],
+   ['3', '2-3 fois', '2-3 مرات'],
+   ['4', '4-5 fois', '4-5 مرات'],
+   ['5', '6-7 fois', '6-7 مرات'],
+   ['6', '8-9 fois', '8-9 مرات'],
+   ['7', '10-11 fois', '10-11 مرّة'],
+   ['8', '12 fois ou plus', '12 مرة أو أكثر'],
+
+AGREEMENT_SCALE (5 choices):
+   ['0', 'Pas du tout', 'لا أوافق بشدة'],
+   ['1', 'Plutôt pas', 'لا أوافق'],
+   ['2', 'Ni d\'accord ni pas d\'accord', 'محايد'],
+   ['3', 'Plutôt d\'accord', 'أوافق'],
+   ['4', 'Tout à fait d\'accord', 'أوافق بشدة'],
+
+ECONOMIC (3 choices):
+   ['1', 'Supérieure aux autres familles', 'أعلى من بقية العائلات'],
+   ['2', 'Identique aux autres familles', 'مماثلة لبقية العائلات'],
+   ['3', 'Inférieure aux autres familles', 'أقل من بقية العائلات'],
+
+SECTIONS (1039 choices):
+   {
+   id: 'section_a',
+   letter: 'A',
+   title: 'Informations Générales',
+   titleAr: 'معلومات عامة',
+   subtitle: 'Les premières questions concernent des informations générales sur vous',
+   subtitleAr: 'الأسئلة الأولى تتعلق بمعلومات عامة عنك',
+   color: 'bg-slate-900',
+   content: (
+   <div className="space-y-12">
+   {/* C.A01 */}
+   <div>
+   <FieldLabel code="C.A01" fr="Genre?" ar="الجنس؟" isRTL={isRTL} />
+   <RadioGroup name="gender" value={data.section_a.gender} onChange={handleChange('section_a')}
+   options={[['M', 'Masculin', 'ذكر'], ['F', 'Féminin', 'أنثى']]} isRTL={isRTL} />
+   </div>
+   {/* C.A02 */}
+   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+   <div className="grid grid-cols-2 gap-4">
+   <div>
+   <FieldLabel code="C.A02m" fr="Mois de naissance" ar="شهر الميلاد" isRTL={isRTL} />
+   <SelectField name="birth_month" value={data.section_a.birth_month} onChange={handleChange('section_a')} isRTL={isRTL}
+   options={['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'].map((m, i) => [String(i + 1), m, m])} />
+   </div>
+   <div>
+   <FieldLabel code="C.A02a" fr="Année de naissance" ar="سنة الميلاد" isRTL={isRTL} />
+   <input type="number" name="birth_year" placeholder="2008" value={data.section_a.birth_year} onChange={handleChange('section_a')}
+   className="w-full border-2 border-slate-100 rounded-xl px-4 py-[10.5px] bg-slate-50 text-slate-800 font-medium focus:border-blue-500 outline-none" />
+   </div>
+   </div>
+   </div>
+   {/* C.A03 */}
+   <GridQuestion title="À Quelle fréquence pratiquez-vous chacune des activités suivantes ?" titleAr="ما مدى تكرار ممارستك لكل من الأنشطة التالية؟" code="C.A03" isRTL={isRTL}
+   options={FREQ_ACTIVITIES} values={data.section_a.activities_frequency}
+   onChange={(key, val) => updateCheck('section_a', 'activities_frequency', key, val)}
+   items={[
+   ['a', 'Activité sportive de tout type', 'نشاط رياضي من أي نوع'],
+   ['b', 'Lire des livres pour le plaisir', 'قراءة الكتب للمتعة'],
+   ['c', 'Sortir le soir (bar, fête...)', 'الخروج في المساء (ملهى، حفلة...)'],
+   ['d', 'Autres loisirs (musique, art...)', 'هوايات أخرى (موسيقى، فن...)'],
+   ['e', 'Se retrouver entre amis (rue, parc...)', 'اللقاء مع الأصدقاء (شارع، منتزه...)'],
+   ['f', 'Utiliser Internet pour s’amuser', 'استخدام الإنترنت للمتعة'],
+   ['g', 'Regarder la télévision', 'مشاهدة التلفاز']
+   ]} />
+   {/* C.A04 */}
+   <GridQuestion title="Au cours du dernier mois, combien de jours avez-vous manqué le lycée pour l'une des raisons suivantes ?" titleAr="خلال الشهر الماضي، كم يوماً تغيبت عن المدرسة بسبب أحد الأسباب التالية؟" code="C.A04" isRTL={isRTL}
+   options={[['1', 'Jamais'], ['2', '1 jour'], ['3', '2 jours'], ['4', '3-4 jours'], ['5', '5-6 jours'], ['6', '7 jours+']]}
+   values={data.section_a.school_absences}
+   onChange={(key, val) => updateCheck('section_a', 'school_absences', key, val)}
+   items={[
+   ['a', 'Parce que vous étiez malade', 'لأنك كنت مريضاً'],
+   ['b', 'Parce que vous n’aviez pas envie', 'لأنك لم ترغب في الذهاب'],
+   ['c', 'Problèmes avec l’administration', 'مشاكل مع الإدارة'],
+   ['d', 'Problèmes avec des ami(e)s', 'مشاكل مع الأصدقاء'],
+   ['e', 'Parce que vous avez été renvoyé', 'لأنك طُردت'],
+   ['f', 'Pour d’autres raisons', 'لأسباب أخرى']
+   ]} />
+   {/* C.A05 */}
+   <div>
+   <FieldLabel code="C.A05" fr="Comment évaluez-vous votre rendement scolaire à la fin du dernier trimestre ?" ar="كيف تقيم مستواك الدراسي؟" isRTL={isRTL} />
+   <RadioGroup name="academic_performance" value={data.section_a.academic_performance} onChange={handleChange('section_a')} isRTL={isRTL} options={PERFORMANCE} />
+   </div>
+   {/* C.A06 */}
+   <div>
+   <FieldLabel code="C.A06" fr="Dans quelle mesure appréciez-vous l'école ?" ar="إلى أي مدى تحب المدرسة؟" isRTL={isRTL} />
+   <RadioGroup name="school_appreciation" value={data.section_a.school_appreciation} onChange={handleChange('section_a')} isRTL={isRTL}
+   options={[['1', 'Je l’apprécie beaucoup', 'أحبها كثيراً'], ['2', 'Je l’apprécie assez', 'أحبها نوعاً ما'], ['3', 'Je ne l’apprécie pas tellement', 'لا أحبها كثيراً'], ['4', 'Je ne l’apprécie pas du tout', 'لا أحبها أبداً']]} />
+   </div>
+   {/* C.A07 */}
+   <div>
+   <FieldLabel code="C.A07" fr="Laquelle/lesquelles des personnes suivantes vit avec vous dans la même maison?" ar="من من الأشخاص التاليين يعيش معك؟" isRTL={isRTL} />
+   <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-4">
+   {HOUSEHOLD.map(([val, fr, ar]) => (
+   <label key={val} className={`flex items-center space-x-3 p-4 rounded-2xl border-2 transition-all cursor-pointer ${data.section_a.household_members.includes(val) ? 'bg-blue-50 border-blue-500' : 'bg-slate-50 border-transparent hover:border-slate-200'}`}>
+   <input type="checkbox" checked={data.section_a.household_members.includes(val)}
+   onChange={() => toggleList('section_a', 'household_members', val)}
+   className="w-5 h-5 rounded text-blue-600 focus:ring-blue-500" />
+   <span className="text-[10px] font-black text-slate-400 mr-2">{val}</span>
+   <span className="text-slate-800 font-bold text-sm">{isRTL ? ar : fr}</span>
+   </label>
+   ))}
+   </div>
+   </div>
+   {/* C.A07/2 */}
+   <div>
+   <FieldLabel code="C.A07/2" fr="Si vous n’habitez pas avec vos parents ensemble, précisez pourquoi ?" ar="إذا كنت لا تعيش مع والديك، وضح السبب" isRTL={isRTL} />
+   <RadioGroup name="parents_absence_reason" value={data.section_a.parents_absence_reason} onChange={handleChange('section_a')}
+   options={[['1', 'Décès', 'وفاة'], ['2', 'Divorce', 'طلاق'], ['3', 'Migration', 'هجرة'], ['4', 'Autres causes', 'أسباب أخرى']]} isRTL={isRTL} />
+   {data.section_a.parents_absence_reason === '4' && (
+   <input type="text" name="parents_absence_reason_other" placeholder="Précisez..." value={data.section_a.parents_absence_reason_other}
+   onChange={handleChange('section_a')} className="mt-4 w-full border-b-2 border-slate-200 py-2 focus:border-blue-500 outline-none" />
+   )}
+   </div>
+   {/* C.A08 */}
+   <div>
+   <FieldLabel code="C.A08" fr="Durant les 30 derniers jours, combien de nuits avez vous passé en dehors de la maison ?" ar="خلال الـ 30 يومًا الماضية، كم ليلة قضيتها خارج المنزل؟" isRTL={isRTL} />
+   <SelectField name="nights_out_30days" value={data.section_a.nights_out_30days} onChange={handleChange('section_a')} isRTL={isRTL}
+   options={[['1', 'Aucune nuit', 'لا ليلة'], ['2', '1 nuit', 'ليلة واحدة'], ['3', '2 nuits', 'ليلتان'], ['4', '3 nuits', '3 ليالي'], ['5', '4 nuits', '4 ليالي'], ['6', '5 nuits', '5 ليالي'], ['7', '6 nuits', '6 ليالي'], ['8', '7 nuits ou plus', '7 ليالي أو أكثر']]} />
+   </div>
+   {/* C.A09 */}
+   <GridQuestion title="D’une manière générale, quel est votre degré de satisfaction de votre relation avec :" titleAr="بشكل عام، ما مدى رضاك عن علاقتك بـ:" code="C.A09" isRTL={isRTL}
+   options={SATISFACTION_SCALE} values={data.section_a.family_relationship_satisfaction}
+   onChange={(key, val) => updateCheck('section_a', 'family_relationship_satisfaction', key, val)}
+   items={[
+   ['a', 'Votre mère', 'أمك'], ['b', 'Votre père', 'أبوك'],
+   ['c', 'Votre belle-mère', 'زوجة أبيك'], ['d', 'Votre beau-père', 'زوج أمك'],
+   ['e', 'Votre fratrie', 'إخوتك'], ['f', 'Vos ami(e)s', 'أصدقاؤك'],
+   ['g', 'Vos camarades de classe', 'زملاؤك في القسم'], ['h', 'Vos enseignants', 'أساتذتك'],
+   ['i', 'L’administration du lycée', 'إدارة المعهد']
+   ]} />
+   </div>
+   )
+   },
+   {
+   id: 'section_b',
+   letter: 'B',
+   title: 'Famille & Situation Socio-Économique',
+   titleAr: 'العائلة والوضع الاجتماعي - الاقتصادي',
+   color: 'bg-blue-900',
+   content: (
+   <div className="space-y-12">
+   {/* C.B01 */}
+   <div>
+   <FieldLabel code="C.B01" fr="Quel est le plus haut niveau de scolarité atteint par votre père ?" ar="ما هو أعلى مستوى تعليمي وصل إليه والدك؟" isRTL={isRTL} />
+   <RadioGroup name="father_education" value={data.section_b.father_education} onChange={handleChange('section_b')} options={EDUCATION} isRTL={isRTL} />
+   </div>
+   {/* C.B02 */}
+   <div>
+   <FieldLabel code="C.B02" fr="Quel est le plus haut niveau de scolarité atteint par votre mère ?" ar="ما هو أعلى مستوى تعليمي وصلت إليه والدتك؟" isRTL={isRTL} />
+   <RadioGroup name="mother_education" value={data.section_b.mother_education} onChange={handleChange('section_b')} options={EDUCATION} isRTL={isRTL} />
+   </div>
+   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+   {/* C.B03 */}
+   <div>
+   <FieldLabel code="C.B03" fr="Votre père a-t-il un emploi ?" ar="هل والدك يعمل؟" isRTL={isRTL} />
+   <RadioGroup name="father_job" value={data.section_b.father_job} onChange={handleChange('section_b')} options={JOB_STATUS} isRTL={isRTL} />
+   </div>
+   {/* C.B04 */}
+   <div>
+   <FieldLabel code="C.B04" fr="Votre mère a-t-elle un emploi ?" ar="هل والدتك تعمل؟" isRTL={isRTL} />
+   <RadioGroup name="mother_job" value={data.section_b.mother_job} onChange={handleChange('section_b')} options={JOB_STATUS} isRTL={isRTL} />
+   </div>
+   </div>
+   {/* C.B05 */}
+   <div>
+   <FieldLabel code="C.B05" fr="Comment décrivez-vous la situation économique de votre famille par rapport au niveau économique des autres familles en Tunisie ?" ar="كيف تصف الوضع الاقتصادي لعائلتك مقارنة بالعائلات الأخرى؟" isRTL={isRTL} />
+   <RadioGroup name="economic_status" value={data.section_b.economic_status} onChange={handleChange('section_b')} options={ECONOMIC} isRTL={isRTL} />
+   </div>
+   {/* C.B06 */}
+   <div>
+   <FieldLabel code="C.B06" fr="Avez-vous une chambre à vous seul(e) ?" ar="هل لديك غرفة خاصة بك؟" isRTL={isRTL} />
+   <RadioGroup name="private_room" value={data.section_b.private_room} onChange={handleChange('section_b')} options={YES_NO} isRTL={isRTL} />
+   </div>
+   </div>
+   )
+   },
+   {
+   id: 'section_c',
+   letter: 'C',
+   title: 'Consommation de Tabac',
+   titleAr: 'استهلاك التبغ',
+   subtitle: 'Section C',
+   subtitleAr: 'القسم C',
+   color: 'bg-amber-600',
+   content: (
+   <div className="space-y-12">
+   {/* C.C01 */}
+   <div>
+   <FieldLabel code="C.C01" fr="À quel point pensez-vous qu'il serait difficile de vous procurer des cigarettes si vous le vouliez?" ar="إلى أي مدى تعتقد أنه سيكون من الصعب الحصول على السجائر؟" isRTL={isRTL} />
+   <RadioGroup name="access_difficulty" value={data.section_c.access_difficulty} onChange={handleChange('section_c')} options={DIFFICULTY_LEVELS} isRTL={isRTL} />
+   </div>
+   {/* C.C02 */}
+   <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume des cigarettes?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يدخن السجائر؟" code="C.C02" isRTL={isRTL}
+   options={YES_NO_DK} values={data.section_c.social_circle}
+   onChange={(key, val) => updateCheck('section_c', 'social_circle', key, val)}
+   items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+   {/* C.C03 */}
+   <GridQuestion title="Combien de fois avez-vous fumé des cigarettes (sans compter les cigarettes électroniques)?" titleAr="كم مرة دخنت السجائر (بدون احتساب السجائر الإلكترونية)؟" code="C.C03" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_c}
+   onChange={(key, val) => update('section_c', key, val)}
+   items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
+   {/* C.C04 */}
+   <div>
+   <FieldLabel code="C.C04" fr="Combien de fois avez-vous fumé des cigarettes au cours des 30 DERNIERS JOURS? (sans compter les cigarettes électroniques)" ar="كم مرة دخنت السجائر خلال الـ 30 يومًا الماضية؟" isRTL={isRTL} />
+   <RadioGroup name="days_30_freq" value={data.section_c.days_30_freq} onChange={handleChange('section_c')} options={FREQ_30DAYS_CIGS} isRTL={isRTL} />
+   </div>
+   {/* C.C05 */}
+   <GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit?" titleAr="في أي عمر بدأت تفعل ما يلي؟" code="C.C05" isRTL={isRTL}
+   options={AGE_FIRST_USE} values={data.section_c}
+   onChange={(key, val) => update('section_c', key, val)}
+   items={[['age_first_use', 'Fumé votre première cigarette', 'دخنت أول سيجارة'], ['age_daily_use', 'Fumé quotidiennement', 'دخنت يومياً']]} />
+   </div>
+   )
+   },
+   {
+   id: 'section_d',
+   letter: 'D',
+   title: 'Cigarettes Électroniques',
+   titleAr: 'السجائر الإلكترونية',
+   subtitle: 'Section D',
+   subtitleAr: 'القسم D',
+   color: 'bg-emerald-600',
+   content: (
+   <div className="space-y-12">
+   {/* C.D01 */}
+   <div>
+   <FieldLabel code="C.D01" fr="À quel point pensez-vous qu'il serait difficile de vous procurer des cigarettes électroniques si vous le vouliez? " ar="إلى أي مدى تعتقد أنه سيكون من الصعب الحصول على السجائر الإلكترونية؟" isRTL={isRTL} />
+   <RadioGroup name="access_difficulty" value={data.section_d.access_difficulty} onChange={handleChange('section_d')} options={DIFFICULTY_LEVELS} isRTL={isRTL} />
+   </div>
+   {/* C.D02 */}
+   <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume des cigarettes électroniques?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يدخن السجائر الإلكترونية؟" code="C.D02" isRTL={isRTL}
+   options={YES_NO_DK} values={data.section_d.social_circle}
+   onChange={(key, val) => updateCheck('section_d', 'social_circle', key, val)}
+   items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+   {/* C.D03 */}
+   <GridQuestion title="Combien de fois avez-vous fumé des cigarettes électroniques?" titleAr="كم مرة دخنت السجائر الإلكترونية؟" code="C.D03" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_d}
+   onChange={(key, val) => update('section_d', key, val)}
+   items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
+   {/* C.D04 */}
+   <div>
+   <FieldLabel code="C.D04" fr="Combien de fois avez-vous fumé des cigarettes électroniques au cours des 30 DERNIERS JOURS?" ar="كم مرة دخنت السجائر الإلكترونية خلال الـ 30 يومًا الماضية؟" isRTL={isRTL} />
+   <RadioGroup name="days_30_freq" value={data.section_d.days_30_freq} onChange={handleChange('section_d')} options={FREQ_30DAYS_VAPE} isRTL={isRTL} />
+   </div>
+   {/* C.D05 */}
+   <GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit ?" titleAr="في أي عمر بدأت تفعل ما يلي؟" code="C.D05" isRTL={isRTL}
+   options={AGE_FIRST_USE} values={data.section_d}
+   onChange={(key, val) => update('section_d', key, val)}
+   items={[['age_first_use', 'Utilisé pour la première fois une cigarette électronique', 'استخدمت السيجارة الإلكترونية لأول مرة'], ['age_daily_use', 'Utilisé quotidiennement', 'استخدمتها يومياً']]} />
+   </div>
+   )
+   },
+   {
+   id: 'section_e',
+   letter: 'E',
+   title: 'Consommation de Narguilé (Chicha)',
+   titleAr: 'استهلاك النرجيلة (شيشة)',
+   subtitle: 'Section E',
+   subtitleAr: 'القسم E',
+   color: 'bg-orange-600',
+   content: (
+   <div className="space-y-12">
+   {/* C.E01 */}
+   <div>
+   <FieldLabel code="C.E01" fr="À quel point pensez-vous qu'il serait difficile de vous procurer un narguilé si vous le vouliez ?" ar="إلى أي مدى تعتقد أنه سيكون من الصعب الحصول على الشيشة؟" isRTL={isRTL} />
+   <RadioGroup name="access_difficulty" value={data.section_e.access_difficulty} onChange={handleChange('section_e')} options={DIFFICULTY_LEVELS} isRTL={isRTL} />
+   </div>
+   {/* C.E02 */}
+   <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui fume le narguilé?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يدخن الشيشة؟" code="C.E02" isRTL={isRTL}
+   options={YES_NO_DK} values={data.section_e.social_circle}
+   onChange={(key, val) => updateCheck('section_e', 'social_circle', key, val)}
+   items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+   {/* C.E03 */}
+   <GridQuestion title="Combien de fois avez-vous fumé narguilé?" titleAr="كم مرة دخنت الشيشة؟" code="C.E03" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_e}
+   onChange={(key, val) => update('section_e', key, val)}
+   items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
+   {/* C.E04 */}
+   <div>
+   <FieldLabel code="C.E04" fr="Combien de fois avez-vous fumé le narguilé au cours des 30 DERNIERS JOURS ?" ar="كم مرة دخنت الشيشة خلال الـ 30 يومًا الماضية؟" isRTL={isRTL} />
+   <RadioGroup name="days_30_freq" value={data.section_e.days_30_freq} onChange={handleChange('section_e')} options={FREQ_30DAYS_HOOKAH} isRTL={isRTL} />
+   </div>
+   {/* C.E05 */}
+   <GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit?" titleAr="في أي عمر بدأت تفعل ما يلي؟" code="C.E05" isRTL={isRTL}
+   options={AGE_FIRST_USE} values={data.section_e}
+   onChange={(key, val) => update('section_e', key, val)}
+   items={[['age_first_use', 'Fumé pour la première fois le narguilé', 'دخنت الشيشة لأول مرة'], ['age_daily_use', 'Fumé quotidiennement le narguilé', 'دخنتها يومياً']]} />
+   </div>
+   )
+   },
+   {
+   id: 'section_g',
+   letter: 'G',
+   title: 'Boissons Alcoolisées',
+   titleAr: 'المشروبات الكحولية',
+   color: 'bg-amber-800',
+   content: (
+   <div className="space-y-12">
+   {/* C.G01 */}
+   <GridQuestion title="À quel point pensez-vous qu'il serait difficile de vous procurer les boissons suivantes si vous le vouliez ?" titleAr="إلى أي مدى تعتقد أنه سيكون من الصعب الحصول على المشروبات التالية؟" code="C.G01" isRTL={isRTL}
+   options={DIFFICULTY_LEVELS} values={data.section_g.access_difficulty}
+   onChange={(key, val) => updateCheck('section_g', 'access_difficulty', key, val)}
+   items={[
+   ['a', 'La bière', 'البيرة'],
+   ['b', 'Les cocktails', 'الكوكتيلات'],
+   ['c', 'Les vins', 'النبيذ'],
+   ['d', 'Les eaux-de-vie (Whisky, Vodka...)', 'المشروبات الروحية (ويسكي، فودكا...)'],
+   ['e', 'Autres boissons alcoolisées', 'مشروبات كحولية أخرى']
+   ]} />
+   {/* C.G02 */}
+   <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme les boissons alcoolisées?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك المشروبات الكحولية؟" code="C.G02" isRTL={isRTL}
+   options={YES_NO_DK} values={data.section_g.social_circle}
+   onChange={(key, val) => updateCheck('section_g', 'social_circle', key, val)}
+   items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+   {/* C.G03 */}
+   <GridQuestion title="Combien de fois avez-vous consommé des boissons alcoolisées?" titleAr="كم مرة تناولت المشروبات الكحولية؟" code="C.G03" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_g}
+   onChange={(key, val) => update('section_g', key, val)}
+   items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
+   {/* C.G04 */}
+   <GridQuestion title="Combien de fois avez-vous consommé les boissons alcoolisées suivantes au cours des 30 DERNIERS JOURS ?" titleAr="كم مرة استهلكت المشروبات الكحولية التالية خلال الـ 30 يومًا الماضية؟" code="C.G04" isRTL={isRTL}
+   options={FREQ_30DAYS} values={data.section_g.days_30_by_type}
+   onChange={(key, val) => updateCheck('section_g', 'days_30_by_type', key, val)}
+   items={[
+   ['a', 'Bière', 'البيرة'],
+   ['b', 'Cocktails', 'الكوكتيلات'],
+   ['c', 'Vins', 'النبيذ'],
+   ['d', 'Eaux-de-vie (Whisky, Vodka...)', 'المشروبات الروحية']
+   ]} />
+   {/* C.G05 */}
+   <div>
+   <FieldLabel code="C.G05" fr="Durant les 30 DERNIERS JOURS, combien de fois avez-vous consommé 5 boissons alcoolisées ou plus à la même occasion ?" ar="خلال الـ 30 يومًا الماضية، كم مرة تناولت 5 مشروبات كحولية أو أكثر؟" isRTL={isRTL} />
+   <RadioGroup name="binge_drinking_30days" value={data.section_g.binge_drinking_30days} onChange={handleChange('section_g')} options={FREQ_BINGE} isRTL={isRTL} />
+   </div>
+   {/* C.G06 */}
+   <GridQuestion title="Combien de fois (éventuellement) avez-vous été intoxiqué par la consommation des boissons alcoolisées?" titleAr="كم مرة (إن وجدت) كنت في حالة سكر بسبب تناول المشروبات الكحولية؟" code="C.G06" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_g}
+   onChange={(key, val) => update('section_g', key, val)}
+   items={[['intoxication_lifetime', 'Au cours de votre vie', 'طوال حياتك'], ['intoxication_12months', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['intoxication_30days', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
+   {/* C.G07 */}
+   <GridQuestion title="À quel âge avez-vous commencé à faire ce qui suit pour la première fois ?" titleAr="في أي عمر بدأت تفعل ما يلي لأول مرة؟" code="C.G07" isRTL={isRTL}
+   options={AGE_FIRST_USE} values={data.section_g}
+   onChange={(key, val) => update('section_g', key, val)}
+   items={[['age_first_drink', 'Boire de l’alcool', 'شرب الكحول'], ['age_first_intoxication', 'Être intoxiqué (soûl)', 'الوقوع في السكر']]} />
+   </div>
+   )
+   },
+   {
+   id: 'section_h',
+   letter: 'H',
+   title: 'Tranquillisants ou Sédatifs (sans ordonnance)',
+   titleAr: 'المهدئات أو المهدئات (بدون وصفة طبية)',
+   subtitle: 'Section H',
+   subtitleAr: 'القسم H',
+   color: 'bg-purple-900',
+   content: (
+   <div className="space-y-12">
+   {/* C.H01 */}
+   <div>
+   <FieldLabel code="C.H01" fr="À quel point pensez-vous qu'il serait difficile de vous procurer des tranquillisants ou sédatifs (sans ordonnance) si vous le vouliez ?" ar="إلى أي مدى تعتقد أنه سيكون من الصعب الحصول على المهدئات؟" isRTL={isRTL} />
+   <RadioGroup name="access_difficulty" value={data.section_h.access_difficulty} onChange={handleChange('section_h')} options={DIFFICULTY_LEVELS} isRTL={isRTL} />
+   </div>
+   {/* C.H02 */}
+   <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme des tranquillisants ou sédatifs (sans ordonnance) ?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك المهدئات أو المهدئات بدون وصفة طبية؟" code="C.H02" isRTL={isRTL}
+   options={YES_NO_DK} values={data.section_h.social_circle}
+   onChange={(key, val) => updateCheck('section_h', 'social_circle', key, val)}
+   items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+   {/* C.H03 */}
+   <GridQuestion title="Combien de fois avez-vous consommé des tranquillisants ou sédatifs (sans ordonnance) ?" titleAr="كم مرة تناولت المهدئات أو المهدئات (بدون وصفة طبية)؟" code="C.H03" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_h}
+   onChange={(key, val) => update('section_h', key, val)}
+   items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
+   {/* C.H04 */}
+   <div>
+   <FieldLabel code="C.H04" fr="À quel âge avez-vous consommé des tranquillisants ou sédatifs (sans ordonnance) pour la première fois ?" ar="العمر عند أول مرة" isRTL={isRTL} />
+   <SelectField name="age_first_use" value={data.section_h.age_first_use} onChange={handleChange('section_h')} options={AGE_SCALE} isRTL={isRTL} />
+   </div>
+   </div>
+   )
+   },
+   {
+   id: 'section_i',
+   letter: 'I',
+   title: 'Cannabis (Zatla, Marihuana...)',
+   titleAr: 'القنب الهندي (زطلة، ماريجوانا...)',
+   subtitle: 'Section I',
+   subtitleAr: 'القسم I',
+   color: 'bg-green-900',
+   content: (
+   <div className="space-y-12">
+   {/* C.I01 */}
+   <div>
+   <FieldLabel code="C.I01" fr="À quel point pensez-vous qu'il serait difficile de vous procurer du cannabis si vous le vouliez ?" ar="إلى أي مدى تعتقد أنه سيكون من الصعب الحصول على القنب الهندي؟" isRTL={isRTL} />
+   <RadioGroup name="access_difficulty" value={data.section_i.access_difficulty} onChange={handleChange('section_i')} options={DIFFICULTY_LEVELS} isRTL={isRTL} />
+   </div>
+   {/* C.I02 */}
+   <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme du cannabis?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك القنب الهندي؟" code="C.I02" isRTL={isRTL}
+   options={YES_NO_DK} values={data.section_i.social_circle}
+   onChange={(key, val) => updateCheck('section_i', 'social_circle', key, val)}
+   items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+   {/* C.I03 */}
+   <div>
+   <FieldLabel code="C.I03" fr="À quel âge avez-vous consommé du cannabis pour la première fois ?" ar="العمر عند أول مرة" isRTL={isRTL} />
+   <SelectField name="age_first_use" value={data.section_i.age_first_use} onChange={handleChange('section_i')} options={AGE_SCALE} isRTL={isRTL} />
+   </div>
+   {/* C.I04 */}
+   <GridQuestion title="Combien de fois avez-vous consommé du cannabis?" titleAr="كم مرة استهلكت القنب الهندي؟" code="C.I04" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_i}
+   onChange={(key, val) => update('section_i', key, val)}
+   items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 DERNIERS JOURS', 'خلال الـ 30 يومًا الأخيرة']]} />
+   {/* C.I06 */}
+   <div>
+   <FieldLabel code="C.I06" fr="Avez-vous consommé du cannabis durant les 12 DERNIERS MOIS ?" ar="هل استهلكت القنب الهندي خلال الـ 12 شهرًا الماضية؟" isRTL={isRTL} />
+   <RadioGroup name="use_last_12months" value={data.section_i.use_last_12months} onChange={handleChange('section_i')} options={YES_NO} isRTL={isRTL} />
+   </div>
+   <div className="p-6 bg-slate-50 rounded-3xl border-2 border-slate-100">
+   <h4 className="font-bold text-slate-800 mb-4 tracking-tight"><span className="text-[10px] font-black text-slate-400 uppercase mr-2">C.I08</span>{isRTL ? 'أنواع القنب المستعملة خلال الـ 12 شهرًا الأخيرة:' : 'Plus précisément, quel type de cannabis avez-vous utilisé au cours des 12 derniers mois?'}</h4>
+   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+   {[['a', 'Résine (Zatla, Hachich)', 'راتنج (زطلة، حشيش)'], ['b', 'Herbe (Marihuana, Kif, Fleur)', 'أوراق (ماريجوانا، كيف، زهرة)']].map(([key, fr, ar]) => (
+   <label key={key} className={`flex items-center space-x-3 p-4 bg-white rounded-2xl border-2 transition-all cursor-pointer ${data.section_i.cannabis_types_12months[key] ? 'border-green-500 bg-green-50/30' : 'border-slate-100'}`}>
+   <input type="checkbox" checked={data.section_i.cannabis_types_12months[key]}
+   onChange={(e) => updateCheck('section_i', 'cannabis_types_12months', key, e.target.checked)} className="w-5 h-5 rounded text-green-600 focus:ring-green-500" />
+   <span className="font-bold text-slate-700">{isRTL ? ar : fr}</span>
+   </label>
+   ))}
+   </div>
+   </div>
+   <div className="p-8 bg-slate-100 rounded-[2.5rem] border-2 border-white shadow-sm">
+   <div className="mb-6 flex items-center justify-between">
+   <h4 className="text-xl font-black text-slate-900 flex items-center gap-3">
+   <span className="px-3 py-1 bg-green-100 text-green-700 text-xs rounded-full uppercase tracking-tighter">SCREENING CAST</span>
+   {isRTL ? 'مشاكل متعلقة بالقنب (آخر 12 شهر):' : 'Evaluation Usage Cannabis (12m)'}
+   </h4>
+   </div>
+   <div className="space-y-4">
+   {[
+   ['a', 'C.I09/1', 'Consommé avant midi ?', 'قبل الظهر؟'],
+   ['b', 'C.I09/2', 'Consommé seul ?', 'وحدك؟'],
+   ['c', 'C.I09/3', 'Problèmes de mémoire ?', 'مشاكل في الذاكرة؟'],
+   ['d', 'C.I09/4', 'Famille/amis conseillé d’arrêter ?', 'نصيحة العائلة/الأصدقاء بالتوقف؟'],
+   ['e', 'C.I09/5', 'Essai de s’arrêter sans succès ?', 'محاولة التوقف بدون نجاح؟'],
+   ['f', 'C.I09/6', 'Problèmes (dispute, accident...) ?', 'مشاكل (شجار، حادث...)؟']
+   ].map(([key, code, fr, ar]) => (
+   <div key={key} className="flex flex-col md:flex-row md:items-center justify-between p-4 bg-white rounded-2xl border border-slate-200/50 hover:border-green-200 transition-colors gap-4">
+   <div className="flex items-center gap-3">
+   <span className="text-[10px] font-black text-slate-400 bg-slate-50 px-2 py-1 rounded-md uppercase tracking-wider">{code}</span>
+   <span className="font-bold text-slate-700">{isRTL ? ar : fr}</span>
+   </div>
+   <RadioGroup name={key} value={data.section_i.cannabis_problems_12months[key]}
+   onChange={(e) => updateCheck('section_i', 'cannabis_problems_12months', key, e.target.value)} options={YES_NO} isRTL={isRTL} />
+   </div>
+   ))}
+   </div>
+   </div>
+   </div>
+   )
+   },
+   {
+   id: 'section_j',
+   letter: 'J',
+   title: 'Cocaïne',
+   titleAr: 'الكوكايين',
+   subtitle: 'Section J',
+   subtitleAr: 'القسم J',
+   color: 'bg-red-900',
+   content: (
+   <div className="space-y-12">
+   {/* C.J01 */}
+   <div>
+   <FieldLabel code="C.J01" fr="À quel point pensez-vous qu'il serait difficile de vous procurer de la cocaïne si vous le vouliez?" ar="إلى أي مدى تعتقد أنه سيكون من الصعب الحصول على الكوكايين؟" isRTL={isRTL} />
+   <RadioGroup name="access_difficulty" value={data.section_j.access_difficulty} onChange={handleChange('section_j')} options={DIFFICULTY_LEVELS} isRTL={isRTL} />
+   </div>
+   {/* C.J02 */}
+   <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de la cocaïne?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك الكوكايين؟" code="C.J02" isRTL={isRTL}
+   options={YES_NO_DK} values={data.section_j.social_circle}
+   onChange={(key, val) => updateCheck('section_j', 'social_circle', key, val)}
+   items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+   {/* C.J03 */}
+   <GridQuestion title="Combien de fois avez-vous consommé de la cocaïne?" titleAr="كم مرة استهلكت الكوكايين؟" code="C.J03" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_j}
+   onChange={(key, val) => update('section_j', key, val)}
+   items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
+   {/* C.J04 */}
+   <div>
+   <FieldLabel code="C.J04" fr="À quel âge avez-vous consommé de la cocaïne pour la première fois?" ar="العمر عند أول مرة" isRTL={isRTL} />
+   <SelectField name="age_first_use" value={data.section_j.age_first_use} onChange={handleChange('section_j')} options={AGE_SCALE} isRTL={isRTL} />
+   </div>
+   </div>
+   )
+   },
+   {
+   id: 'section_k',
+   letter: 'K',
+   title: 'Ecstasy',
+   titleAr: 'إكستاسي',
+   subtitle: 'Section K',
+   subtitleAr: 'القسم K',
+   color: 'bg-pink-900',
+   content: (
+   <div className="space-y-12">
+   {/* C.K01 */}
+   <div>
+   <FieldLabel code="C.K01" fr="À quel point pensez-vous qu'il serait difficile de vous procurer de l'Ecstasy si vous le vouliez?" ar="إلى أي مدى تعتقد أنه سيكون من الصعب الحصول على الإكستاسي؟" isRTL={isRTL} />
+   <RadioGroup name="access_difficulty" value={data.section_k.access_difficulty} onChange={handleChange('section_k')} options={DIFFICULTY_LEVELS} isRTL={isRTL} />
+   </div>
+   {/* C.K02 */}
+   <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de l'Ecstasy?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك الإكستاسي؟" code="C.K02" isRTL={isRTL}
+   options={YES_NO_DK} values={data.section_k.social_circle}
+   onChange={(key, val) => updateCheck('section_k', 'social_circle', key, val)}
+   items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+   {/* C.K03 */}
+   <GridQuestion title="Combien de fois avez-vous consommé de l'Ecstasy?" titleAr="كم مرة استهلكت الإكستاسي؟" code="C.K03" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_k}
+   onChange={(key, val) => update('section_k', key, val)}
+   items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
+   {/* C.K04 */}
+   <div>
+   <FieldLabel code="C.K04" fr="À quel âge avez-vous consommé de l'Ecstasy pour la première fois?" ar="العمر عند أول مرة" isRTL={isRTL} />
+   <SelectField name="age_first_use" value={data.section_k.age_first_use} onChange={handleChange('section_k')} options={AGE_SCALE} isRTL={isRTL} />
+   </div>
+   </div>
+   )
+   },
+   {
+   id: 'section_l',
+   letter: 'L',
+   title: 'Héroïne',
+   titleAr: 'هيروين',
+   subtitle: 'Section L',
+   subtitleAr: 'القسم L',
+   color: 'bg-stone-900',
+   content: (
+   <div className="space-y-12">
+   {/* C.L01 */}
+   <div>
+   <FieldLabel code="C.L01" fr="À quel point pensez-vous qu'il serait difficile de vous procurer de l'héroïne si vous le vouliez?" ar="إلى أي مدى تعتقد أنه سيكون من الصعب الحصول على الهيروين؟" isRTL={isRTL} />
+   <RadioGroup name="access_difficulty" value={data.section_l.access_difficulty} onChange={handleChange('section_l')} options={DIFFICULTY_LEVELS} isRTL={isRTL} />
+   </div>
+   {/* C.L02 */}
+   <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme de l'héroïne?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك الهيروين؟" code="C.L02" isRTL={isRTL}
+   options={YES_NO_DK} values={data.section_l.social_circle}
+   onChange={(key, val) => updateCheck('section_l', 'social_circle', key, val)}
+   items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+   {/* C.L03 */}
+   <GridQuestion title="Combien de fois avez-vous consommé de l'héroïne?" titleAr="كم مرة استهلكت الهيروين؟" code="C.L03" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_l}
+   onChange={(key, val) => update('section_l', key, val)}
+   items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
+   {/* C.L04 */}
+   <div>
+   <FieldLabel code="C.L04" fr="À quel âge avez-vous consommé de l'héroïne pour la première fois?" ar="العمر عند أول مرة" isRTL={isRTL} />
+   <SelectField name="age_first_use" value={data.section_l.age_first_use} onChange={handleChange('section_l')} options={AGE_SCALE} isRTL={isRTL} />
+   </div>
+   </div>
+   )
+   },
+   {
+   id: 'section_m',
+   letter: 'M',
+   title: 'Solvants et Inhalants',
+   titleAr: 'المذيبات والمستنشقات',
+   subtitle: 'Section M',
+   subtitleAr: 'القسم M',
+   color: 'bg-blue-900',
+   content: (
+   <div className="space-y-12">
+   {/* C.M01 */}
+   <div>
+   <FieldLabel code="C.M01" fr="À quel point pensez-vous qu'il serait difficile de vous procurer des solvants ou des inhalants (Colle, Diluant, Essence...) si vous le vouliez?" ar="إلى أي مدى تعتقد أنه سيكون من الصعب الحصول على المذيبات أو الاستنشاقات؟" isRTL={isRTL} />
+   <RadioGroup name="access_difficulty" value={data.section_m.access_difficulty} onChange={handleChange('section_m')} options={DIFFICULTY_LEVELS} isRTL={isRTL} />
+   </div>
+   {/* C.M02 */}
+   <GridQuestion title="Y a-t-il quelqu'un parmi les membres de votre famille ou vos amis qui consomme des solvants ou des inhalants?" titleAr="هل هناك شخص من أفراد عائلتك أو أصدقائك يستهلك المذيبات أو الاستنشاقات؟" code="C.M02" isRTL={isRTL}
+   options={YES_NO_DK} values={data.section_m.social_circle}
+   onChange={(key, val) => updateCheck('section_m', 'social_circle', key, val)}
+   items={[['a', 'Père', 'الأب'], ['b', 'Mère', 'الأم'], ['c', 'Fratrie', 'الإخوة'], ['d', 'Meilleur(e) ami(e)', 'أفضل صديق'], ['e', 'Autres ami(e)s', 'أصدقاء آخرون']]} />
+   {/* C.M03 */}
+   <GridQuestion title="Combien de fois avez-vous consommé des solvants ou des inhalants (Colle, Diluant, Essence...)?" titleAr="كم مرة استهلكت المذيبات أو الاستنشاقات (غراء، مخفف، بنزين...)؟" code="C.M03" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_m}
+   onChange={(key, val) => update('section_m', key, val)}
+   items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة'], ['days_30_freq', 'Au cours des 30 derniers jours', 'خلال الـ 30 يومًا الأخيرة']]} />
+   {/* C.M04 */}
+   <div>
+   <FieldLabel code="C.M04" fr="À quel âge avez-vous consommé des solvants ou des inhalants pour la première fois?" ar="العمر عند أول مرة" isRTL={isRTL} />
+   <SelectField name="age_first_use" value={data.section_m.age_first_use} onChange={handleChange('section_m')} options={AGE_SCALE} isRTL={isRTL} />
+   </div>
+   </div>
+   )
+   },
+   {
+   id: 'section_n',
+   letter: 'N',
+   title: 'Autres Substances Narcotiques',
+   titleAr: 'مواد مخدرة أخرى',
+   subtitle: 'Section N',
+   subtitleAr: 'القسم N',
+   color: 'bg-yellow-800',
+   content: (
+   <div className="space-y-12">
+   {/* C.N01 Access */}
+   <GridQuestion title="À quel point pensez-vous qu'il serait difficile de vous procurer les substances suivantes si vous le vouliez ?" titleAr="إلى أي مدى تعتقد أنه سيكون من الصعب الحصول على المواد التالية؟" code="C.N01" isRTL={isRTL}
+   options={DIFFICULTY_LEVELS} values={data.section_n.access_difficulty}
+   onChange={(key, val) => updateCheck('section_n', 'access_difficulty', key, val)}
+   items={[
+   ['a', 'Amphétamines', 'الأمفيتامينات'],
+   ['d', 'Dipaje', 'ديباج'],
+   ['f', 'Hallucinogènes (LSD, champignons...)', 'المهلوسات (LSD، الفطر...)'],
+   ['g', 'Méthamphétamines', 'الميثامفيتامين'],
+   ['h', 'Antalgiques (Tramadol, Codéine...)', 'المسكنات (ترامادول، كوديين...)'],
+   ['j', 'Subutex', 'سوبوتيكس'],
+   ['k', 'Speed', 'سبيد']
+   ]} />
+   {/* C.N02-N03-N04 Grid */}
+   <GridQuestion title="Utilisation de substances au cours de votre VIE :" titleAr="استخدام المواد خلال حياتك:" code="C.N02" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_n.lifetime_freq_by_type}
+   onChange={(key, val) => updateCheck('section_n', 'lifetime_freq_by_type', key, val)}
+   items={[
+   ['a', 'Amphétamines', 'الأمفيتامينات'],
+   ['d', 'Dipaje', 'ديباج'],
+   ['f', 'Hallucinogènes', 'المهلوسات'],
+   ['g', 'Méthamphétamines', 'الميثامفيتامين'],
+   ['h', 'Antalgiques', 'المسكنات'],
+   ['j', 'Subutex', 'سوبوتيكس'],
+   ['k', 'Speed', 'سبيد']
+   ]} />
+   <GridQuestion title="Utilisation de substances au cours des 12 DERNIERS MOIS :" titleAr="استخدام المواد خلال الـ 12 شهراً الماضية:" code="C.N03" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_n.months_12_freq_by_type}
+   onChange={(key, val) => updateCheck('section_n', 'months_12_freq_by_type', key, val)}
+   items={[
+   ['a', 'Amphétamines', 'الأمفيتامينات'],
+   ['d', 'Dipaje', 'ديباج'],
+   ['f', 'Hallucinogènes', 'المهلوسات'],
+   ['g', 'Méthamphétamines', 'الميثامفيتامين'],
+   ['h', 'Antalgiques', 'المسكنات'],
+   ['j', 'Subutex', 'سوبوتيكس'],
+   ['k', 'Speed', 'سبيد']
+   ]} />
+   <GridQuestion title="À quel âge avez-vous consommé pour la première fois chacune des substances suivantes ?" titleAr="في أي عمر استهلكت لأول مرة كل من المواد التالية؟" code="C.N04" isRTL={isRTL}
+   options={AGE_SCALE} values={data.section_n.age_first_use_by_type}
+   onChange={(key, val) => updateCheck('section_n', 'age_first_use_by_type', key, val)}
+   items={[
+   ['a', 'Amphétamines', 'الأمفيتامينات'],
+   ['d', 'Dipaje', 'ديباج'],
+   ['f', 'Hallucinogènes', 'المهلوسات'],
+   ['g', 'Méthamphétamines', 'الميثامفيتامين'],
+   ['h', 'Antalgiques', 'المسكنات'],
+   ['j', 'Subutex', 'سوبوتيكس'],
+   ['k', 'Speed', 'سبيد']
+   ]} />
+   </div>
+   )
+   },
+   {
+   id: 'section_p',
+   letter: 'P',
+   title: 'Nouvelles Substances Narcotiques (NSP)',
+   titleAr: 'المواد المخدرة الجديدة (NSP)',
+   subtitle: 'Section P',
+   subtitleAr: 'القسم P',
+   color: 'bg-indigo-900',
+   content: (
+   <div className="space-y-12">
+   {/* C.P01 */}
+   <GridQuestion title="Combien de fois avez-vous consommé l'une de ces substances (NSP) ?" titleAr="كم مرة استهلكت إحدى هذه المواد (NSP)؟" code="C.P01" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_p}
+   onChange={(key, val) => update('section_p', key, val)}
+   items={[['lifetime_freq', 'Au cours de votre vie', 'طوال حياتك'], ['months_12_freq', 'Au cours des 12 derniers mois', 'خلال الـ 12 شهرًا الأخيرة']]} />
+   {/* C.P02 Formes */}
+   <div className="p-6 bg-slate-50 rounded-3xl border-2 border-slate-100">
+   <h4 className="font-bold text-slate-800 mb-4 tracking-tight"><span className="text-[10px] font-black text-slate-400 uppercase mr-2">C.P02</span>{isRTL ? 'تحت أي شكل كانت هذه المواد خلال الـ 12 شهرًا الأخيرة:' : 'Quelle forme avaient ces substances au cours des 12 derniers mois ?'}</h4>
+   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+   {[
+   ['a', 'Poudre', 'مسحوق'],
+   ['b', 'Comprimés', 'أقراص'],
+   ['c', 'Liquide', 'سوائل'],
+   ['d', 'Autre', 'أخرى']
+   ].map(([key, fr, ar]) => (
+   <label key={key} className={`flex items-center space-x-3 p-4 bg-white rounded-2xl border-2 transition-all cursor-pointer ${data.section_p.forms[key] ? 'border-indigo-500 bg-indigo-50/30' : 'border-slate-100'}`}>
+   <input type="checkbox" checked={data.section_p.forms[key]}
+   onChange={(e) => updateCheck('section_p', 'forms', key, e.target.checked)} className="w-5 h-5 rounded text-indigo-600 focus:ring-indigo-500" />
+   <span className="font-bold text-slate-700">{isRTL ? ar : fr}</span>
+   </label>
+   ))}
+   </div>
+   </div>
+   {/* C.P03 Types */}
+   <GridQuestion title="Combien de fois DANS VOTRE VIE avez-vous consommé l'une des substances suivantes ?" titleAr="كم مرة في حياتك استهلكت إحدى المواد التالية؟" code="C.P03" isRTL={isRTL}
+   options={FREQ_LIFETIME} values={data.section_p.substances}
+   onChange={(key, val) => updateCheck('section_p', 'substances', key, val)}
+   items={[
+   ['cannabinoids', 'Cannabinoïdes synthétiques', 'الكانابينويدات الاصطناعية'],
+   ['cathinones', 'Cathinones synthétiques', 'الكاثينونات الاصطناعية']
+   ]} />
+   </div>
+   )
+   },
+   {
+   id: 'section_q',
+   letter: 'Q',
+   title: 'Perception des Risques et Aide',
+   titleAr: 'إدراك المخاطر والمساعدة',
+   subtitle: 'Section Q',
+   subtitleAr: 'القسم Q',
+   color: 'bg-emerald-800',
+   content: (
+   <div className="space-y-12">
+   {/* C.Q01-Q02 */}
+   {/* C.Q01 */}
+   <GridQuestion title="À votre avis, quel risque les gens courent-ils de se nuire (physique ou autre) s'ils font ce qui suit :" titleAr="برأيك، ما المخاطر التي يتعرض لها الناس (جسدياً أو غير ذلك) إذا فعلوا ما يلي:" code="C.Q01" isRTL={isRTL}
+   options={RISK_LEVELS} values={data.section_q.risk_perceptions}
+   onChange={(key, val) => updateCheck('section_q', 'risk_perceptions', key, val)}
+   items={[
+   ['a', 'Fument des cigarettes OCCASIONNELLEMENT', 'تدخين السجائر أحياناً'],
+   ['b', 'Fument un paquet de cigarettes ou plus par jour REGULIEREMENT', 'تدخين علبة سجائر أو أكثر يومياً بانتظام'],
+   ['c', 'Fument les cigarettes électroniques OCCASIONNELLEMENT', 'تدخين السجائر الإلكترونية أحياناً'],
+   ['d', 'Fument les cigarettes électroniques REGULIEREMENT', 'تدخين السجائر الإلكترونية بانتظام'],
+   ['e', 'Fument le narguilé OCCASIONNELLEMENT', 'تدخين الشيشة أحياناً'],
+   ['f', 'Fument le narguilé REGULIEREMENT', 'تدخين الشيشة بانتظام'],
+   ['i', 'Consomment les boissons alcoolisées OCCASIONNELLEMENT', 'تناول المشروبات الكحولية أحياناً'],
+   ['j', 'Consomment de l’alcool presque tous les jours (1 ou 2 verres)', 'تناول الكحول يومياً تقريباً (كأس أو كأسان)'],
+   ['k', 'Consomment 3 verres ou plus de boissons alcoolisées presque tous les jours', 'تناول 3 كؤوس أو أكثر من الكحول يومياً تقريباً'],
+   ['l', 'Consomment 5 verres ou plus à la même occasion presque chaque weekend', 'تناول 5 كؤوس أو أكثر في نفس المناسبة كل نهاية أسبوع تقريباً']
+   ]} />
+   {/* C.Q02 */}
+   <GridQuestion title="À votre avis, quel risque les gens courent-ils de se nuire s'ils font ce qui suit :" titleAr="برأيك، ما المخاطر التي يتعرض لها الناس إذا فعلوا ما يلي:" code="C.Q02" isRTL={isRTL}
+   options={RISK_LEVELS} values={data.section_q.risk_perceptions}
+   onChange={(key, val) => updateCheck('section_q', 'risk_perceptions', key, val)}
+   items={[
+   ['q2a', 'Consomment des tranquillisants sans prescription OCCASIONNELLEMENT', 'تناول المهدئات بدون وصفة أحياناً'],
+   ['q2b', 'Consomment des tranquillisants sans prescription REGULIEREMENT', 'تناول المهدئات بدون وصفة بانتظام'],
+   ['q2c', 'Consomment du cannabis OCCASIONNELLEMENT', 'استهلاك القنب الهندي أحياناً'],
+   ['q2d', 'Consomment du cannabis REGULIEREMENT', 'استهلاك القنب الهندي بانتظام'],
+   ['q2e', 'Consomment de la cocaïne OCCASIONNELLEMENT', 'استهلاك الكوكايين أحياناً'],
+   ['q2f', 'Consomment de l’Ecstasy OCCASIONNELLEMENT', 'استهلاك الإكستاسي أحياناً'],
+   ['q2g', 'Consomment de l’héroïne OCCASIONNELLEMENT', 'استهلاك الهيروين أحياناً'],
+   ['q2h', 'Consomment des inhalants narcotiques OCCASIONNELLEMENT', 'استنشاق المواد المخدرة أحياناً'],
+   ['q2i', 'Consomment des amphétamines OCCASIONNELLEMENT', 'استهلاك الأمفيتامينات أحياناً'],
+   ['q2m', 'Consomment Subutex OCCASIONNELLEMENT', 'استهلاك السوبوتيكس أحياناً'],
+   ['q2k', 'Consomment des cannabinoïdes synthétiques OCCASIONNELLEMENT', 'استهلاك الكانابينويدات الاصطناعية أحياناً']
+   ]} />
+   {/* C.Q03 */}
+   <GridQuestion title="Si vous aviez un problème lié à l’alcool ou aux drogues, vers qui vous tourneriez-vous pour obtenir de l’aide ?" titleAr="إذا كانت لديك مشكلة متعلقة بالكحول أو المخدرات، إلى من ستتوجه للحصول على مساعدة؟" code="C.Q03" isRTL={isRTL}
+   options={YES_NO_DK} values={data.section_q.help_sources}
+   onChange={(key, val) => updateCheck('section_q', 'help_sources', key, val)}
+   items={[
+   ['a', 'Membre(s) de la famille', 'أفراد العائلة'],
+   ['b', 'Ami(e)s', 'الأصدقاء'],
+   ['c', 'Enseignants ou autres responsables du lycée', 'الأساتذة أو مسؤولو المعهد'],
+   ['d', 'Médecin, psychologue...', 'طبيب، أخصائي نفسي...'],
+   ['e', 'Une personne de religion', 'رجل دين'],
+   ['f', 'Centres de traitement de la toxicomanie', 'مراكز علاج الإدمان'],
+   ['g', 'Associations (ONG)', 'الجمعيات (منظمات غير حكومية)'],
+   ['h', 'Autre', 'خيار آخر']
+   ]} />
+   {/* C.Q04 */}
+   <div>
+   <FieldLabel code="C.Q04" fr="Pensez-vous que vous fumeriez du cannabis si l'un de vos meilleurs amis vous en proposait ?" ar="هل تعتقد أنك ستدخن القنب الهندي إذا عرضه عليك أحد أعز أصدقائك؟" isRTL={isRTL} />
+   <RadioGroup name="friend_use_risk" value={data.section_q.friend_use_risk} onChange={handleChange('section_q')}
+   options={[['1', 'Certainement non', 'بالتأكيد لا'], ['2', 'Probablement non', 'على الأرجح لا'], ['3', 'Probablement oui', 'على الأرجح نعم'], ['4', 'Certainement oui', 'بالتأكيد نعم']]} isRTL={isRTL} />
+   </div>
+   </div>
+   )
+   },
+   {
+   id: 'section_r',
+   letter: 'R',
+   title: 'Réseaux Sociaux',
+   titleAr: 'وسائل التواصل الاجتماعي',
+   subtitle: 'Section R',
+   subtitleAr: 'القسم R',
+   color: 'bg-indigo-800',
+   content: (
+   <div className="space-y-12">
+   {/* C.R01 */}
+   <GridQuestion title="Au cours des 30 DERNIERS JOURS, combien d’heures avez-vous passé par jour sur les réseaux sociaux ?" titleAr="خلال الـ 30 يوماً الماضية، كم ساعة قضيتها يومياً على وسائل التواصل الاجتماعي؟" code="C.R01" isRTL={isRTL}
+   options={FREQ_DIGITAL} values={data.section_r.hours_per_day_breakdown}
+   onChange={(key, val) => updateCheck('section_r', 'hours_per_day_breakdown', key, val)}
+   items={[
+   ['a', 'Les jours de cours', 'أيام الدراسة'],
+   ['b', 'Le weekend', 'نهاية الأسبوع']
+   ]} />
+   {/* C.R02 */}
+   <GridQuestion title="Dans quelle mesure êtes-vous d’accord ou en désaccord avec les avis suivants concernant l’utilisation des réseaux sociaux :" titleAr="إلى أي مدى توافق أو تختلف مع الآراء التالية بخصوص استخدام وسائل التواصل الاجتماعي:" code="C.R02" isRTL={isRTL}
+   options={AGREEMENT_SCALE_SIMPLE} values={data.section_r.agreement}
+   onChange={(key, val) => updateCheck('section_r', 'agreement', key, val)}
+   items={[
+   ['a', 'Vous sentiez-vous très concerné par les réseaux sociaux ?', 'انشغال شديد بالشبكات؟'],
+   ['b', 'Avez-vous négligé d’autres activités / hobbies ?', 'إهمال الأنشطة الأخرى؟'],
+   ['c', 'Mauvaise humeur si vous ne pouviez pas les utiliser ?', 'سوء الحالة المزاجية بدونها؟']
+   ]} />
+   </div>
+   )
+   },
+   {
+   id: 'section_s',
+   letter: 'S',
+   title: 'Jeux Vidéo',
+   titleAr: 'ألعاب الفيديو',
+   subtitle: 'Section S',
+   subtitleAr: 'القسم S',
+   color: 'bg-sky-900',
+   content: (
+   <div className="space-y-12">
+   {/* C.S01 */}
+   <div>
+   <FieldLabel code="C.S01" fr="Durant les 30 DERNIERS JOURS, combien d’heures en moyenne par jour avez-vous passé sur les jeux vidéo ?" ar="خلال الـ 30 يومًا الأخيرة، كم ساعة في اليوم قضيتها في ألعاب الفيديو؟" isRTL={isRTL} />
+   <SelectField name="hours_per_day" value={data.section_s.hours_per_day} onChange={handleChange('section_s')} options={FREQ_DIGITAL} isRTL={isRTL} />
+   </div>
+   {/* C.S02 */}
+   <div>
+   <FieldLabel code="C.S02" fr="Au cours des 7 DERNIERS JOURS, combien de jours avez-vous passé sur les jeux vidéo ?" ar="خلال الـ 7 أيام الماضية، كم يوماً لعبت فيها ألعاب الفيديو؟" isRTL={isRTL} />
+   <SelectField name="days_per_week" value={data.section_s.days_per_week} onChange={handleChange('section_s')}
+   options={[['0', '0'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5'], ['6', '6'], ['7', '7']]} isRTL={isRTL} />
+   </div>
+   {/* C.S03 */}
+   <GridQuestion title="Dans quelle mesure êtes-vous d’accord ou en désaccord avec les avis suivants concernant les jeux vidéo :" titleAr="إلى أي مدى توافق أو تختلف مع الآراء التالية بخصوص ألعاب الفيديو:" code="C.S03" isRTL={isRTL}
+   options={AGREEMENT_SCALE_SIMPLE} values={data.section_s.agreement}
+   onChange={(key, val) => updateCheck('section_s', 'agreement', key, val)}
+   items={[
+   ['a', 'Es-tu passionné par les jeux (penses-tu souvent à tes activités de jeux même quand tu n’y joues pas) ?', 'هل أنت شغوف بالألعاب (هل تفكر غالباً في أنشطة اللعب الخاصة بك حتى عندما لا تلعب)؟'],
+   ['b', 'As-tu négligé d’autres activités/loisirs (école, devoirs, sports...) ?', 'هل أهملت أنشطة/هوايات أخرى (المدرسة، الفروض المنزلية، الرياضة...)؟']
+   ]} />
+   </div>
+   )
+   },
+   {
+   id: 'section_t',
+   letter: 'T',
+   title: "Jeux d'Argent",
+   subtitle: 'Section T',
+   subtitleAr: 'القسم T',
+   color: 'bg-orange-900',
+   content: (
+   <div className="space-y-12">
+   {/* C.T01 */}
+   <div>
+   <FieldLabel code="C.T01" fr="Au cours des 12 derniers mois, avec quelle fréquence avez-vous joué de l'argent (loto, paris, cartes...) ?" ar="خلال الـ 12 شهراً الماضية، كم مرة لعبت بالمال (لوتو، رهانات، ورق...)؟" isRTL={isRTL} />
+   <SelectField name="months_12_freq" value={data.section_t.months_12_freq} onChange={handleChange('section_t')} options={FREQ_GAMBLING} isRTL={isRTL} />
+   </div>
+   {/* C.T02 */}
+   <div className="p-6 bg-slate-50 rounded-3xl border-2 border-slate-100">
+   <h4 className="font-bold text-slate-800 mb-4 tracking-tight"><span className="text-[10px] font-black text-slate-400 uppercase mr-2">C.T02</span>{isRTL ? 'خلال الـ 12 شهراً الماضية، هل لعبت ألعاب حظ من أجل المال (خارج الإنترنت):' : "Au cours des 12 derniers mois, avez-vous joué de l'argent hors ligne (pas sur internet) à :"}</h4>
+   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+   {[
+   ['slot_machines', 'Machines à sous', 'آلة القمار'],
+   ['cards_dice', 'Cartes ou dés', 'ورق أو نرد'],
+   ['lottery', 'Loterie, bingo', 'ياصيب، بينغو'],
+   ['sports_betting', 'Paris sportifs ou animaux', 'رهانات رياضية'],
+   ['other', 'Autres', 'أخرى']
+   ].map(([key, fr, ar]) => (
+   <label key={`offline_${key}`} className={`flex items-center space-x-3 p-3 bg-white rounded-xl border-2 transition-all cursor-pointer ${data.section_t.offline_games[key] ? 'border-orange-500 bg-orange-50/30' : 'border-slate-100'}`}>
+   <input type="checkbox" checked={data.section_t.offline_games[key] || false}
+   onChange={(e) => updateCheck('section_t', 'offline_games', key, e.target.checked)} className="w-5 h-5 rounded text-orange-600 focus:ring-orange-500" />
+   <span className="font-bold text-slate-700 text-sm">{isRTL ? ar : fr}</span>
+   </label>
+   ))}
+   </div>
+   </div>
+   {/* C.T03 */}
+   <div className="p-6 bg-slate-50 rounded-3xl border-2 border-slate-100">
+   <h4 className="font-bold text-slate-800 mb-4 tracking-tight"><span className="text-[10px] font-black text-slate-400 uppercase mr-2">C.T03</span>{isRTL ? 'خلال الـ 12 شهراً الماضية، هل لعبت ألعاب حظ من أجل المال (على الإنترنت):' : "Au cours des 12 derniers mois, avez-vous joué de l'argent sur internet à :"}</h4>
+   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+   {[
+   ['slot_machines', 'Machines à sous', 'آلة القمار'],
+   ['cards_dice', 'Cartes ou dés', 'ورق أو نرد'],
+   ['lottery', 'Loterie, bingo', 'ياصيب، بينغو'],
+   ['sports_betting', 'Paris sportifs ou animaux', 'رهانات رياضية'],
+   ['other', 'Autres', 'أخرى']
+   ].map(([key, fr, ar]) => (
+   <label key={`online_${key}`} className={`flex items-center space-x-3 p-3 bg-white rounded-xl border-2 transition-all cursor-pointer ${data.section_t.online_games[key] ? 'border-orange-500 bg-orange-50/30' : 'border-slate-100'}`}>
+   <input type="checkbox" checked={data.section_t.online_games[key] || false}
+   onChange={(e) => updateCheck('section_t', 'online_games', key, e.target.checked)} className="w-5 h-5 rounded text-orange-600 focus:ring-orange-500" />
+   <span className="font-bold text-slate-700 text-sm">{isRTL ? ar : fr}</span>
+   </label>
+   ))}
+   </div>
+   </div>
+   {/* C.T04-05 */}
+   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+   <div className="p-6 bg-orange-50 rounded-3xl border-2 border-orange-100">
+   <FieldLabel code="C.T04" fr="Avez-vous déjà ressenti le besoin d’augmenter les enjeux (mises) ?" ar="الحاجة لزيادة الرهانات؟" isRTL={isRTL} />
+   <RadioGroup name="felt_need_increase" value={data.section_t.felt_need_increase} onChange={handleChange('section_t')} options={YES_NO} isRTL={isRTL} />
+   </div>
+   <div className="p-6 bg-orange-50 rounded-3xl border-2 border-orange-100">
+   <FieldLabel code="C.T05" fr="Avez-vous déjà menti sur l'ampleur de vos jeux ?" ar="هل كذبت بشأن مدى لعبك؟" isRTL={isRTL} />
+   <RadioGroup name="lied_about_it" value={data.section_t.lied_about_it} onChange={handleChange('section_t')} options={YES_NO} isRTL={isRTL} />
+   </div>
+   </div>
+   {/* C.T06 */}
+   <GridQuestion title="Si vous avez joué aux jeux d’argent durant les 12 DERNIERS MOIS… :" titleAr="إذا كنت قد لعبت ألعاب القمار خلال الـ 12 شهراً الماضية...:" code="C.T06" isRTL={isRTL}
+   options={YES_NO} values={data.section_t.gambling_problems}
+   onChange={(key, val) => updateCheck('section_t', 'gambling_problems', key, val)}
+   items={[
+   ['a', 'Êtes-vous retourné un autre jour pour essayer de gagner l’argent que vous avez perdu ?', 'هل عدت يوماً آخر لمحاولة استعادة المال الذي خسرته؟'],
+   ['b', 'Avez-vous dit aux autres que vous gagniez de l’argent, alors qu’en réalité, vous perdiez ?', 'هل قلت للآخرين أنك تربح المال بينما كنت في الواقع تخسر؟'],
+   ['c', 'Jouer vous a-t-il causé des problèmes (disputes famille/amis, lycée) ?', 'هل سبب لك اللعب مشاكل (خلافات مع العائلة/الأصدقاء، المعهد)؟'],
+   ['d', 'Avez-vous joué plus que vous ne l’aviez prévu au début ?', 'هل لعبت أكثر مما كنت تتوقع في البداية؟'],
+   ['e', 'Quelqu’un vous a-t-il critiqué ou dit que vous étiez accro ?', 'هل انتقدك شخص ما أو قال لك أنك مدمن؟'],
+   ['f', 'Avez-vous déjà senti mal à propos de l’argent que vous pariez ?', 'هل شعرت يوماً بالسوء تجاه المبالغ التي تراهن بها؟'],
+   ['g', 'Avez-vous déjà eu envie d’arrêter de jouer sans y parvenir ?', 'هل رغبت يوماً في التوقف عن اللعب ولم تستطع؟'],
+   ['h', 'Avez-vous caché des preuves de vos jeux (tickets, argent gagné) ?', 'هل أخفيت أدلة على لعبك (تذاكر، أموال فائزة)؟'],
+   ['i', 'Avez-vous eu des conflits financiers avec votre famille/amis ?', 'هل دخلت في صراعات مالية مع عائلتك أو أصدقائك؟'],
+   ['j', 'Avez-vous emprunté de l’argent pour parier sans le rendre ?', 'هل اقترضت مالاً للمراهنة ولم ترجعه؟'],
+   ['k', 'Avez-vous déjà manqué l’école en raison des jeux d’argent ?', 'هل تغيبت عن المدرسة بسبب أنشطة القمار؟'],
+   ['l', 'Avez-vous emprunté ou volé de l’argent pour parier ?', 'هل اقترضت أو سرقت مالاً للمراهنة؟']
+   ]} />
+   </div>
+   )
+   },
+   {
+   id: 'section_u',
+   letter: 'U',
+   title: 'Violence & Sécurité',
+   titleAr: 'العنف والأمن',
+   subtitle: 'Section U',
+   subtitleAr: 'القسم U',
+   color: 'bg-red-800',
+   content: (
+   <div className="space-y-12">
+   {/* C.U01 */}
+   <div>
+   <FieldLabel code="C.U01" fr="Au cours des 12 derniers mois, combien de fois avez-vous été impliqué dans une bagarre physique ?" ar="خلال الـ 12 شهراً الماضية، كم مرة شاركت في مشاجرة جسدية؟" isRTL={isRTL} />
+   <SelectField name="fights_12months" value={data.section_u.fights_12months} onChange={handleChange('section_u')} options={FIGHT_FREQUENCY} isRTL={isRTL} />
+   </div>
+   {/* C.U02 */}
+   <div>
+   <FieldLabel code="C.U02" fr="Quelles étaient les circonstances de la dernière bagarre ?" ar="ما هي ظروف المشاجرة الأخيرة؟" isRTL={isRTL} />
+   <RadioGroup name="fight_circumstances" value={data.section_u.fight_circumstances} onChange={handleChange('section_u')}
+   options={[['1', 'Je me battais avec quelqu\'un (J’étais l’initiateur)', 'كنت أقاتل شخصاً ما (أنا من بدأ)'], ['2', 'J’ai été attaqué, agressé ou maltraité', 'تعرضت للهجوم أو الاعتداء أو سوء المعاملة']]} isRTL={isRTL} />
+   </div>
+   {/* C.U03 */}
+   <div>
+   <FieldLabel code="C.U03" fr="Quel était le lieu de la bagarre ?" ar="أين كان مكان المشاجرة؟" isRTL={isRTL} />
+   <RadioGroup name="fight_location" value={data.section_u.fight_location} onChange={handleChange('section_u')}
+   options={[['1', 'Au sein du lycée', 'داخل المعهد'], ['2', 'À l’extérieur du lycée', 'خارج المعهد']]} isRTL={isRTL} />
+   </div>
+   {/* C.U04 */}
+   <div>
+   <FieldLabel code="C.U04" fr="En cas de problème, est-ce que le personnel du lycée intervient pour vous aider ?" ar="في حالة وجود مشكلة، هل يتدخل موظفو المعهد لمساعدتك؟" isRTL={isRTL} />
+   <RadioGroup name="staff_intervention" value={data.section_u.staff_intervention} onChange={handleChange('section_u')} options={YES_NO} isRTL={isRTL} />
+   </div>
+   {/* C.U05 */}
+   <div className="p-6 bg-slate-50 rounded-3xl border-2 border-slate-100">
+   <h4 className="font-bold text-slate-800 mb-4 tracking-tight"><span className="text-[10px] font-black text-slate-400 uppercase mr-2">C.U05</span>{isRTL ? 'هل عانيت من أي من العواقب التالية بعد المشاجرة؟' : 'Avez-vous vécu l’une des conséquences suivantes suite à une bagarre ?'}</h4>
+   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+   {[
+   ['a', 'Absentéisme du lycée', 'التغيب عن المعهد'],
+   ['b', 'Défaut de concentration aux études', 'عدم التركيز في الدراسة'],
+   ['c', 'Anxiété et peur', 'القلق والخوف'],
+   ['d', 'Cauchemars', 'كوابيس'],
+   ['e', 'Insomnie', 'أرق']
+   ].map(([key, fr, ar]) => (
+   <label key={key} className={`flex items-center space-x-3 p-3 bg-white rounded-xl border-2 transition-all cursor-pointer ${data.section_u.fight_consequences.includes(key) ? 'border-red-500 bg-red-50/30' : 'border-slate-100'}`}>
+   <input type="checkbox" checked={data.section_u.fight_consequences.includes(key)}
+   onChange={() => toggleList('section_u', 'fight_consequences', key)} className="w-5 h-5 rounded text-red-600 focus:ring-red-500" />
+   <span className="font-bold text-slate-700 text-sm">{isRTL ? ar : fr}</span>
+   </label>
+   ))}
+   </div>
+   </div>
+   {/* C.U06 */}
+   <div>
+   <FieldLabel code="C.U06" fr="Au cours des 12 derniers mois, dans quelle circonstance avez-vous été très gravement blessé ?" ar="خلال الـ 12 شهرًا الماضية، في أي ظرف تعرضت لإصابة خطيرة جدًا؟" isRTL={isRTL} />
+   <RadioGroup name="serious_injury_12months" value={data.section_u.serious_injury_12months} onChange={handleChange('section_u')}
+   options={[
+   ['1', 'Je n\'ai pas été très gravement blessé', 'لم أصب بجروح خطيرة'],
+   ['2', 'Je me suis blessé accidentellement', 'أصبت عن طريق الخطأ'],
+   ['3', 'Quelqu\'un d\'autre m\'a blessé accidentellement', 'أصابني شخص آخر عن طريق الخطأ'],
+   ['4', 'Je me suis blessé délibérément', 'أصبت نفسي عمداً'],
+   ['5', 'Quelqu\'un d\'autre m\'a blessé délibérément', 'أصابني شخص آخر عمداً']
+   ]} isRTL={isRTL} />
+   </div>
+   </div>
+   )
+   },
+   {
+   id: 'section_v',
+   letter: 'V',
+   title: 'Santé Mentale',
+   titleAr: 'الصحة النفسية',
+   subtitle: 'Section V',
+   subtitleAr: 'القسم V',
+   color: 'bg-violet-800',
+   content: (
+   <div className="space-y-12">
+   {/* C.V01 */}
+   <GridQuestion title="Au cours du DERNIER MOIS, à quelle fréquence avez-vous :" titleAr="خلال الشهر الماضي، كم مرة:" code="C.V01" isRTL={isRTL}
+   options={STRESS_FREQ} values={data.section_v}
+   onChange={(key, val) => update('section_v', key, val)}
+   items={[
+   ['a', 'Avoir le sentiment que vous ne pouviez pas contrôler les choses importantes de votre vie ?', 'الشعور بعدم القدرة على التحكم في أمور حياتك المهمة؟'],
+   ['b', 'Vous être senti confiant dans votre capacité à gérer vos problèmes personnels ?', 'الشعور بالثقة في قدرتك على التعامل مع مشاكلك الشخصية؟'],
+   ['c', 'Avoir senti que les choses allaient dans votre sens ?', 'الشعور بأن الأمور تسير لصالحك؟'],
+   ['d', 'Senti que les difficultés s\'accumulaient à un point tel que vous ne pouviez pas les surmonter ?', 'الشعور بأن الصعوبات تتراكم لدرجة لا يمكنك التغلب عليها؟']
+   ]} />
+   {/* C.V02 */}
+   <GridQuestion title="À quel point êtes-vous d’accord ou en désaccord avec chacune des propositions suivantes ?" titleAr="إلى أي مدى توافق أو تختلف مع كل من المقترحات التالية؟" code="C.V02" isRTL={isRTL}
+   options={AGREEMENT_SCALE} values={data.section_v.self_esteem}
+   onChange={(key, val) => updateCheck('section_v', 'self_esteem', key, val)}
+   items={[
+   ['a', "J'ai beaucoup de bonnes qualités", "لدي الكثير من الصفات الجيدة"],
+   ['b', "Dans l'ensemble, je suis satisfait de moi", "بشكل عام، أنا راضٍ عن نفسي"],
+   ['c', "Je sens que je n'ai pas grand-chose dont je puisse être fier", "أشعر أنه ليس لدي الكثير لأفخر به"],
+   ['d', "Je me sens certainement inutile parfois", "أشعر بالتأكيد أنني عديم الفائدة أحياناً"],
+   ['e', "Je sens que je suis une personne de valeur, au moins égale à n'importe qui d'autre", "أشعر أنني شخص ذو قيمة، على الأقل مساوٍ لأي شخص آخر"]
+   ]} />
+   {/* C.V03 */}
+   <GridQuestion title="Au cours des 12 DERNIERS MOIS, vous est-il arrivé de :" titleAr="خلال الـ 12 شهرًا الماضية، هل حدث لك أن:" code="C.V03" isRTL={isRTL}
+   options={YES_NO} values={data.section_v.mental_health_states}
+   onChange={(key, val) => updateCheck('section_v', 'mental_health_states', key, val)}
+   items={[
+   ['a', "Se sentir si triste ou sans espoir que vous avez arrêté vos activités habituelles ?", "الشعور بالحزن أو فقدان الأمل لدرجة التوقف عن أنشطتك المعتادة؟"],
+   ['b', "Manquer d'espoir en l'avenir ?", "فقدان الأمل في المستقبل؟"],
+   ['c', "Être incapable de dormir à cause de vos soucis ?", "عدم القدرة على النوم بسبب الهموم؟"],
+   ['d', "Avoir sérieusement pensé à vous blesser ou à vous faire du mal ?", "فكرت بجدية في إيذاء نفسك؟"],
+   ['e', "Avoir sérieusement tenté de vous suicider ?", "حاولت بجدية الانتحار؟"]
+   ]} />
+   {/* C.V04 */}
+   <GridQuestion title="Au cours des 12 DERNIERS MOIS :" titleAr="خلال الـ 12 شهرًا الماضية:" code="C.V04" isRTL={isRTL}
+   options={YES_NO} values={data.section_v.help_seeking}
+   onChange={(key, val) => updateCheck('section_v', 'help_seeking', key, val)}
+   items={[
+   ['a', "Avez-vous ressenti le besoin de parler à un professionnel de vos problèmes psychologiques ?", "هل شعرت بالحاجة للتحدث مع اختصاصي عن مشاكلك النفسية؟"],
+   ['b', "Avez-vous été hospitalisé dans un service psychiatrique ?", "هل دخلت المستشفى في قسم الأمراض النفسية؟"]
+   ]} />
+   </div>
+   )
+   },
+   {
+   id: 'section_z',
+   letter: 'Z',
+   title: 'Validation (Honnêteté)',
+   titleAr: 'التحقق (الصدق)',
+   subtitle: 'Section Z',
+   subtitleAr: 'القسم Z',
+   color: 'bg-slate-900',
+   content: (
+   <div className="space-y-12">
+   {/* C.Z01 */}
+   <div className="p-6 bg-slate-50 rounded-3xl border-2 border-slate-100">
+   <FieldLabel code="C.Z01" fr="Si vous étiez un consommateur d'alcool, pensez-vous que vous auriez répondu à ce questionnaire comme vous l'avez fait ?" ar="لو كنت مستهلكاً للكحول، هل تعتقد أنك كنت ستجيب على هذا الاستبيان كما فعلت؟" isRTL={isRTL} />
+   <RadioGroup name="honesty_level" value={data.section_z.honesty_level} onChange={handleChange('section_z')}
+   options={[
+   ['1', "J'ai déjà déclaré avoir consommé de l'alcool", 'لقد صرحت بالفعل باستهلاك الكحول'],
+   ['2', 'Oui, sans aucun doute', 'نعم، بدون أدنى شك'],
+   ['3', 'Probablement oui', 'على الأرجح نعم'],
+   ['4', 'Probablement pas', 'على الأرجح لا'],
+   ['5', 'Non, sans aucun doute', 'لا، بدون أدنى شك'],
+   ]} isRTL={isRTL} />
+   </div>
+   {/* C.Z02 */}
+   <div className="p-6 bg-slate-50 rounded-3xl border-2 border-slate-100">
+   <FieldLabel code="C.Z02" fr="Si vous étiez un consommateur de cannabis, pensez-vous que vous répondriez à ce questionnaire comme vous l’avez fait ?" ar="لو كنت مستهلكاً للقنب الهندي، هل تعتقد أنك كنت ستجيب على هذا الاستبيان كما فعلت؟" isRTL={isRTL} />
+   <RadioGroup name="honesty_cannabis" value={data.section_z.honesty_cannabis} onChange={handleChange('section_z')}
+   options={HONESTY_SCALE} isRTL={isRTL} />
+   </div>
+   </div>
+   )
+   }

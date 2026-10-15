@@ -1,0 +1,63 @@
+=== INLINE OPTION #1 ===
+  ['M', 'Masculin', 'ذكر'], ['F', 'Féminin', 'أنثى']
+
+=== INLINE OPTION #2 ===
+  'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'].map((m, i) => [String(i + 1), m, m])} />
+  </div>
+  <div>
+  <FieldLabel code="C.A02a" fr="Année de naissance" ar="سنة الميلاد" isRTL={isRTL} />
+  <input type="number" name="birth_year" placeholder="2008" value={data.section_a.birth_year} onChange={handleChange('section_a')}
+  className="w-full border-2 border-slate-100 rounded-xl px-4 py-[10.5px] bg-slate-50 text-slate-800 font-medium focus:border-blue-500 outline-none" />
+  </div>
+  </div>
+  </div>
+  {/* C.A03 */}
+  <GridQuestion title="À Quelle fréquence pratiquez-vous chacune des activités suivantes ?" titleAr="ما مدى تكرار ممارستك لكل من الأنشطة التالية؟" code="C.A03" isRTL={isRTL}
+  options={FREQ_ACTIVITIES} values={data.section_a.activities_frequency}
+  onChange={(key, val) => updateCheck('section_a', 'activities_frequency', key, val)}
+  items={[
+  ['a', 'Activité sportive de tout type', 'نشاط رياضي من أي نوع'],
+  ['b', 'Lire des livres pour le plaisir', 'قراءة الكتب للمتعة'],
+  ['c', 'Sortir le soir (bar, fête...)', 'الخروج في المساء (ملهى، حفلة...)'],
+  ['d', 'Autres loisirs (musique, art...)', 'هوايات أخرى (موسيقى، فن...)'],
+  ['e', 'Se retrouver entre amis (rue, parc...)', 'اللقاء مع الأصدقاء (شارع، منتزه...)'],
+  ['f', 'Utiliser Internet pour s’amuser', 'استخدام الإنترنت للمتعة'],
+  ['g', 'Regarder la télévision', 'مشاهدة التلفاز']
+
+=== INLINE OPTION #3 ===
+  ['1', 'Jamais'], ['2', '1 jour'], ['3', '2 jours'], ['4', '3-4 jours'], ['5', '5-6 jours'], ['6', '7 jours+']
+
+=== INLINE OPTION #4 ===
+  ['1', 'Je l’apprécie beaucoup', 'أحبها كثيراً'], ['2', 'Je l’apprécie assez', 'أحبها نوعاً ما'], ['3', 'Je ne l’apprécie pas tellement', 'لا أحبها كثيراً'], ['4', 'Je ne l’apprécie pas du tout', 'لا أحبها أبداً']
+
+=== INLINE OPTION #5 ===
+  ['1', 'Décès', 'وفاة'], ['2', 'Divorce', 'طلاق'], ['3', 'Migration', 'هجرة'], ['4', 'Autres causes', 'أسباب أخرى']
+
+=== INLINE OPTION #6 ===
+  ['1', 'Aucune nuit', 'لا ليلة'], ['2', '1 nuit', 'ليلة واحدة'], ['3', '2 nuits', 'ليلتان'], ['4', '3 nuits', '3 ليالي'], ['5', '4 nuits', '4 ليالي'], ['6', '5 nuits', '5 ليالي'], ['7', '6 nuits', '6 ليالي'], ['8', '7 nuits ou plus', '7 ليالي أو أكثر']
+
+=== INLINE OPTION #7 ===
+  ['1', 'Certainement non', 'بالتأكيد لا'], ['2', 'Probablement non', 'على الأرجح لا'], ['3', 'Probablement oui', 'على الأرجح نعم'], ['4', 'Certainement oui', 'بالتأكيد نعم']
+
+=== INLINE OPTION #8 ===
+  ['0', '0'], ['1', '1'], ['2', '2'], ['3', '3'], ['4', '4'], ['5', '5'], ['6', '6'], ['7', '7']
+
+=== INLINE OPTION #9 ===
+  ['1', 'Je me battais avec quelqu\'un (J’étais l’initiateur)', 'كنت أقاتل شخصاً ما (أنا من بدأ)'], ['2', 'J’ai été attaqué, agressé ou maltraité', 'تعرضت للهجوم أو الاعتداء أو سوء المعاملة']
+
+=== INLINE OPTION #10 ===
+  ['1', 'Au sein du lycée', 'داخل المعهد'], ['2', 'À l’extérieur du lycée', 'خارج المعهد']
+
+=== INLINE OPTION #11 ===
+  ['1', 'Je n\'ai pas été très gravement blessé', 'لم أصب بجروح خطيرة'],
+  ['2', 'Je me suis blessé accidentellement', 'أصبت عن طريق الخطأ'],
+  ['3', 'Quelqu\'un d\'autre m\'a blessé accidentellement', 'أصابني شخص آخر عن طريق الخطأ'],
+  ['4', 'Je me suis blessé délibérément', 'أصبت نفسي عمداً'],
+  ['5', 'Quelqu\'un d\'autre m\'a blessé délibérément', 'أصابني شخص آخر عمداً']
+
+=== INLINE OPTION #12 ===
+  ['1', "J'ai déjà déclaré avoir consommé de l'alcool", 'لقد صرحت بالفعل باستهلاك الكحول'],
+  ['2', 'Oui, sans aucun doute', 'نعم، بدون أدنى شك'],
+  ['3', 'Probablement oui', 'على الأرجح نعم'],
+  ['4', 'Probablement pas', 'على الأرجح لا'],
+  ['5', 'Non, sans aucun doute', 'لا، بدون أدنى شك'],

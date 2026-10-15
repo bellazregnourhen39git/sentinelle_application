@@ -1,0 +1,110 @@
+Section [A] (section_a)
+   Title FR: Informations Générales | Title AR: معلومات عامة
+   Subtitle FR: Les premières questions concernent des informations générales sur votre profil et votre vie quotidienne.
+   Subtitle AR: الأسئلة الأولى تتعلق بمعلومات عامة عن ملفك الشخصي وحياتك اليومية.
+--------------------------------------------------
+Section [B] (section_b)
+   Title FR: Famille & Situation Socio-Économique | Title AR: العائلة والوضع الاجتماعي - الاقتصادي
+   Subtitle FR: 
+   Subtitle AR: 
+--------------------------------------------------
+Section [C] (section_c)
+   Title FR: Consommation de Tabac | Title AR: استهلاك التبغ
+   Subtitle FR: Questions concernant votre expérience personnelle et la fréquence d
+   Subtitle AR: 
+--------------------------------------------------
+Section [D] (section_d)
+   Title FR: Cigarettes Électroniques | Title AR: السجائر الإلكترونية
+   Subtitle FR: Questions sur l
+   Subtitle AR: 
+--------------------------------------------------
+Section [E] (section_e)
+   Title FR: Consommation de Narguilé (Chicha) | Title AR: استهلاك النرجيلة (شيشة)
+   Subtitle FR: Questions portant sur l
+   Subtitle AR: 
+--------------------------------------------------
+Section [G] (section_g)
+   Title FR: Boissons Alcoolisées | Title AR: المشروبات الكحولية
+   Subtitle FR: 
+   Subtitle AR: 
+--------------------------------------------------
+Section [H] (section_h)
+   Title FR: Tranquillisants ou Sédatifs (sans ordonnance) | Title AR: المهدئات أو المهدئات (بدون وصفة طبية)
+   Subtitle FR: Questions concernant l
+   Subtitle AR: 
+--------------------------------------------------
+Section [I] (section_i)
+   Title FR: Cannabis (Zatla, Marihuana...) | Title AR: القنب الهندي (زطلة، ماريجوانا...)
+   Subtitle FR: Questions sur la consommation de cannabis (zatla, résine, herbe) et l’évaluation d
+   Subtitle AR: 
+--------------------------------------------------
+Section [J] (section_j)
+   Title FR: Cocaïne | Title AR: الكوكايين
+   Subtitle FR: Questions relatives à l
+   Subtitle AR: 
+--------------------------------------------------
+Section [K] (section_k)
+   Title FR: Ecstasy | Title AR: إكستاسي
+   Subtitle FR: Questions sur l
+   Subtitle AR: 
+--------------------------------------------------
+Section [L] (section_l)
+   Title FR: Héroïne | Title AR: هيروين
+   Subtitle FR: Questions portant sur l
+   Subtitle AR: 
+--------------------------------------------------
+Section [M] (section_m)
+   Title FR: Solvants et Inhalants | Title AR: المذيبات والمستنشقات
+   Subtitle FR: Questions sur l
+   Subtitle AR: 
+--------------------------------------------------
+Section [N] (section_n)
+   Title FR: Autres Substances Narcotiques | Title AR: مواد مخدرة أخرى
+   Subtitle FR: Questions sur la consommation d
+   Subtitle AR: 
+--------------------------------------------------
+Section [P] (section_p)
+   Title FR: Nouvelles Substances Narcotiques (NSP) | Title AR: المواد المخدرة الجديدة (NSP)
+   Subtitle FR: Questions sur l
+   Subtitle AR: 
+--------------------------------------------------
+Section [Q] (section_q)
+   Title FR: Perception des Risques et Aide | Title AR: إدراك المخاطر والمساعدة
+   Subtitle FR: Évaluation de votre perception des risques liés à la consommation de substances et recherche d
+   Subtitle AR: 
+--------------------------------------------------
+Section [R] (section_r)
+   Title FR: Réseaux Sociaux | Title AR: وسائل التواصل الاجتماعي
+   Subtitle FR: Questions sur vos habits d
+   Subtitle AR: 
+--------------------------------------------------
+Section [S] (section_s)
+   Title FR: Jeux Vidéo | Title AR: ألعاب الفيديو
+   Subtitle FR: Questions sur la pratique des jeux vidéo et le temps consacré au jeu.
+   Subtitle AR: أسئلة حول ممارسة ألعاب الفيديو والوقت المخصص للعب.
+--------------------------------------------------
+Section [T] (section_t)
+   Title FR: Jeux d | Title AR: 
+   Subtitle FR: 
+   Subtitle AR: 
+--------------------------------------------------
+Section [U] (section_u)
+   Title FR: Violence & Sécurité | Title AR: العنف والأمن
+   Subtitle FR: Questions sur la sécurité au sein de l
+   Subtitle AR: 
+--------------------------------------------------
+Section [V] (section_v)
+   Title FR: Santé Mentale | Title AR: الصحة النفسية
+   Subtitle FR: Évaluation de votre bien-être personnel, de votre état émotionnel et de votre santé globale.
+   Subtitle AR: تقييم رفاهيتك الشخصية، حالتك العاطفية وصحتك العامة.
+--------------------------------------------------
+Section [Z] (section_z)
+   Title FR: Validation (Honnêteté) | Title AR: التحقق (الصدق)
+   Subtitle FR: Questions finales garantissant l
+   Subtitle AR: 
+--------------------------------------------------
+Section [+] (add_section)
+   Title FR: Nouvelle Section | Title AR: 
+   Subtitle FR: 
+   Subtitle AR: 
+--------------------------------------------------
